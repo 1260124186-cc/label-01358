@@ -8,6 +8,32 @@ const THEMES = {
   SYSTEM: 'system'
 };
 
+const TAB_BAR_STYLES = {
+  light: {
+    color: '#BDC3C7',
+    selectedColor: '#FF6B6B',
+    backgroundColor: '#FFFFFF',
+    borderStyle: 'white'
+  },
+  dark: {
+    color: '#6B7280',
+    selectedColor: '#FF8A8A',
+    backgroundColor: '#1A1D28',
+    borderStyle: 'black'
+  }
+};
+
+const NAV_BAR_STYLES = {
+  light: {
+    frontColor: '#ffffff',
+    backgroundColor: '#FF6B6B'
+  },
+  dark: {
+    frontColor: '#ffffff',
+    backgroundColor: '#8B3A3A'
+  }
+};
+
 function getSettings() {
   return storage.get(THEME_KEY) || { mode: THEMES.SYSTEM };
 }
@@ -32,6 +58,31 @@ function getResolvedTheme(mode) {
   return mode;
 }
 
+function updateTabBarStyle(isDark) {
+  const styleKey = isDark ? 'dark' : 'light';
+  const style = TAB_BAR_STYLES[styleKey];
+  try {
+    wx.setTabBarStyle({
+      color: style.color,
+      selectedColor: style.selectedColor,
+      backgroundColor: style.backgroundColor,
+      borderStyle: style.borderStyle
+    });
+  } catch (e) {}
+}
+
+function updateNavigationBarStyle(isDark) {
+  const styleKey = isDark ? 'dark' : 'light';
+  const style = NAV_BAR_STYLES[styleKey];
+  try {
+    wx.setNavigationBarColor({
+      frontColor: style.frontColor,
+      backgroundColor: style.backgroundColor,
+      animation: { duration: 300, timingFunc: 'easeIn' }
+    });
+  } catch (e) {}
+}
+
 function applyTheme(mode) {
   const resolved = getResolvedTheme(mode);
   const isDark = resolved === THEMES.DARK;
@@ -50,6 +101,9 @@ function applyTheme(mode) {
       }
     });
   } catch (e) {}
+
+  updateTabBarStyle(isDark);
+  updateNavigationBarStyle(isDark);
 
   return resolved;
 }
@@ -92,10 +146,14 @@ function isDarkMode() {
 
 module.exports = {
   THEMES,
+  TAB_BAR_STYLES,
+  NAV_BAR_STYLES,
   getSettings,
   saveSettings,
   getSystemTheme,
   getResolvedTheme,
+  updateTabBarStyle,
+  updateNavigationBarStyle,
   applyTheme,
   init,
   setMode,

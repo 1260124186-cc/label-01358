@@ -19,6 +19,8 @@ const mockWx = {
   onThemeChange: jest.fn((cb) => {
     themeChangeCallbacks.push(cb);
   }),
+  setTabBarStyle: jest.fn(),
+  setNavigationBarColor: jest.fn(),
   setStorageSync: jest.fn(),
   getStorageSync: jest.fn()
 };
@@ -40,6 +42,8 @@ beforeEach(() => {
   mockStorage.set.mockClear();
   mockWx.getSystemInfoSync.mockClear();
   mockWx.onThemeChange.mockClear();
+  mockWx.setTabBarStyle.mockClear();
+  mockWx.setNavigationBarColor.mockClear();
   mockAppGlobalData = { themeMode: 'system', isDark: false };
   mockApp.mockClear();
   mockApp.mockReturnValue({ globalData: mockAppGlobalData });
@@ -279,5 +283,166 @@ describe('isDarkMode', () => {
     expect(theme.isDarkMode()).toBe(true);
     mockWx.getSystemInfoSync.mockReturnValue({ theme: 'light' });
     expect(theme.isDarkMode()).toBe(false);
+  });
+});
+
+describe('TAB_BAR_STYLES 常量', () => {
+  test('应包含 light 和 dark 两种样式', () => {
+    expect(theme.TAB_BAR_STYLES.light).toBeDefined();
+    expect(theme.TAB_BAR_STYLES.dark).toBeDefined();
+  });
+
+  test('light 样式应包含完整字段', () => {
+    const style = theme.TAB_BAR_STYLES.light;
+    expect(style).toHaveProperty('color');
+    expect(style).toHaveProperty('selectedColor');
+    expect(style).toHaveProperty('backgroundColor');
+    expect(style).toHaveProperty('borderStyle');
+    expect(style.borderStyle).toBe('white');
+  });
+
+  test('dark 样式应包含完整字段', () => {
+    const style = theme.TAB_BAR_STYLES.dark;
+    expect(style).toHaveProperty('color');
+    expect(style).toHaveProperty('selectedColor');
+    expect(style).toHaveProperty('backgroundColor');
+    expect(style).toHaveProperty('borderStyle');
+    expect(style.borderStyle).toBe('black');
+  });
+
+  test('dark 背景色应与 CSS 变量 --color-bg-card 一致', () => {
+    expect(theme.TAB_BAR_STYLES.dark.backgroundColor).toBe('#1A1D28');
+  });
+});
+
+describe('NAV_BAR_STYLES 常量', () => {
+  test('应包含 light 和 dark 两种样式', () => {
+    expect(theme.NAV_BAR_STYLES.light).toBeDefined();
+    expect(theme.NAV_BAR_STYLES.dark).toBeDefined();
+  });
+
+  test('light 和 dark 的 frontColor 都应为白色', () => {
+    expect(theme.NAV_BAR_STYLES.light.frontColor).toBe('#ffffff');
+    expect(theme.NAV_BAR_STYLES.dark.frontColor).toBe('#ffffff');
+  });
+
+  test('dark 背景色应比 light 更深', () => {
+    expect(theme.NAV_BAR_STYLES.dark.backgroundColor).not.toBe(theme.NAV_BAR_STYLES.light.backgroundColor);
+  });
+});
+
+describe('updateTabBarStyle', () => {
+  test('深色模式应设置 dark tabBar 样式', () => {
+    theme.updateTabBarStyle(true);
+    expect(mockWx.setTabBarStyle).toHaveBeenCalledWith({
+      color: theme.TAB_BAR_STYLES.dark.color,
+      selectedColor: theme.TAB_BAR_STYLES.dark.selectedColor,
+      backgroundColor: theme.TAB_BAR_STYLES.dark.backgroundColor,
+      borderStyle: theme.TAB_BAR_STYLES.dark.borderStyle
+    });
+  });
+
+  test('浅色模式应设置 light tabBar 样式', () => {
+    theme.updateTabBarStyle(false);
+    expect(mockWx.setTabBarStyle).toHaveBeenCalledWith({
+      color: theme.TAB_BAR_STYLES.light.color,
+      selectedColor: theme.TAB_BAR_STYLES.light.selectedColor,
+      backgroundColor: theme.TAB_BAR_STYLES.light.backgroundColor,
+      borderStyle: theme.TAB_BAR_STYLES.light.borderStyle
+    });
+  });
+
+  test('wx.setTabBarStyle 异常时不应报错', () => {
+    mockWx.setTabBarStyle.mockImplementation(() => { throw new Error('fail'); });
+    expect(() => theme.updateTabBarStyle(true)).not.toThrow();
+  });
+});
+
+describe('updateNavigationBarStyle', () => {
+  test('深色模式应设置 dark 导航栏样式', () => {
+    theme.updateNavigationBarStyle(true);
+    expect(mockWx.setNavigationBarColor).toHaveBeenCalledWith({
+      frontColor: theme.NAV_BAR_STYLES.dark.frontColor,
+      backgroundColor: theme.NAV_BAR_STYLES.dark.backgroundColor,
+      animation: { duration: 300, timingFunc: 'easeIn' }
+    });
+  });
+
+  test('浅色模式应设置 light 导航栏样式', () => {
+    theme.updateNavigationBarStyle(false);
+    expect(mockWx.setNavigationBarColor).toHaveBeenCalledWith({
+      frontColor: theme.NAV_BAR_STYLES.light.frontColor,
+      backgroundColor: theme.NAV_BAR_STYLES.light.backgroundColor,
+      animation: { duration: 300, timingFunc: 'easeIn' }
+    });
+  });
+
+  test('wx.setNavigationBarColor 异常时不应报错', () => {
+    mockWx.setNavigationBarColor.mockImplementation(() => { throw new Error('fail'); });
+    expect(() => theme.updateNavigationBarStyle(true)).not.toThrow();
+  });
+});
+
+describe('applyTheme 联动 tabBar 和 navigationBar', () => {
+  test('dark 模式应同时更新 tabBar 和 navigationBar', () => {
+    theme.applyTheme('dark');
+    expect(mockWx.setTabBarStyle).toHaveBeenCalledWith(
+      expect.objectContaining({ backgroundColor: theme.TAB_BAR_STYLES.dark.backgroundColor })
+    );
+    expect(mockWx.setNavigationBarColor).toHaveBeenCalledWith(
+      expect.objectContaining({ backgroundColor: theme.NAV_BAR_STYLES.dark.backgroundColor })
+    );
+  });
+
+  test('light 模式应同时更新 tabBar 和 navigationBar', () => {
+    theme.applyTheme('light');
+    expect(mockWx.setTabBarStyle).toHaveBeenCalledWith(
+      expect.objectContaining({ backgroundColor: theme.TAB_BAR_STYLES.light.backgroundColor })
+    );
+    expect(mockWx.setNavigationBarColor).toHaveBeenCalledWith(
+      expect.objectContaining({ backgroundColor: theme.NAV_BAR_STYLES.light.backgroundColor })
+    );
+  });
+});
+
+describe('setMode 联动 tabBar', () => {
+  test('设置 dark 模式应更新 tabBar 为深色样式', () => {
+    theme.setMode('dark');
+    expect(mockWx.setTabBarStyle).toHaveBeenCalledWith(
+      expect.objectContaining({ borderStyle: 'black' })
+    );
+  });
+
+  test('设置 light 模式应更新 tabBar 为浅色样式', () => {
+    theme.setMode('light');
+    expect(mockWx.setTabBarStyle).toHaveBeenCalledWith(
+      expect.objectContaining({ borderStyle: 'white' })
+    );
+  });
+
+  test('设置 system 模式且系统为深色时 tabBar 应为深色', () => {
+    mockWx.getSystemInfoSync.mockReturnValue({ theme: 'dark' });
+    theme.setMode('system');
+    expect(mockWx.setTabBarStyle).toHaveBeenCalledWith(
+      expect.objectContaining({ borderStyle: 'black' })
+    );
+  });
+});
+
+describe('init 联动 tabBar', () => {
+  test('初始化为 dark 模式时 tabBar 应为深色', () => {
+    mockStorage._store['theme_settings'] = { mode: 'dark' };
+    theme.init();
+    expect(mockWx.setTabBarStyle).toHaveBeenCalledWith(
+      expect.objectContaining({ borderStyle: 'black' })
+    );
+  });
+
+  test('初始化为 light 模式时 tabBar 应为浅色', () => {
+    mockStorage._store['theme_settings'] = { mode: 'light' };
+    theme.init();
+    expect(mockWx.setTabBarStyle).toHaveBeenCalledWith(
+      expect.objectContaining({ borderStyle: 'white' })
+    );
   });
 });
