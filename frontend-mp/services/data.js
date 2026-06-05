@@ -504,6 +504,33 @@ function getSurveyResponses(surveyId) {
   return responses.filter(r => r.surveyId === surveyId);
 }
 
+function calculatePercentages(items, total) {
+  if (total <= 0) {
+    return items.map(() => 0);
+  }
+
+  const rawPercentages = items.map(item => item.count / total * 100);
+  const floored = rawPercentages.map(p => Math.floor(p));
+  let remainder = 100 - floored.reduce((sum, p) => sum + p, 0);
+
+  const differences = rawPercentages.map((p, i) => ({
+    index: i,
+    diff: p - floored[i]
+  }));
+
+  differences.sort((a, b) => b.diff - a.diff);
+
+  const result = [...floored];
+  let i = 0;
+  while (remainder > 0) {
+    result[differences[i % differences.length].index]++;
+    remainder--;
+    i++;
+  }
+
+  return result;
+}
+
 function getSurveyStatistics(surveyId) {
   const survey = getSurveyDetail(surveyId);
   if (!survey) return null;
@@ -536,10 +563,9 @@ function getSurveyStatistics(surveyId) {
         }
       });
 
-      optionCounts.forEach(opt => {
-        opt.percentage = responses.length > 0
-          ? Math.round(opt.count / responses.length * 100)
-          : 0;
+      const singlePercentages = calculatePercentages(optionCounts, responses.length);
+      optionCounts.forEach((opt, idx) => {
+        opt.percentage = singlePercentages[idx];
       });
 
       stat.options = optionCounts;
@@ -563,10 +589,9 @@ function getSurveyStatistics(surveyId) {
       });
 
       const totalSelections = optionCounts.reduce((sum, opt) => sum + opt.count, 0);
-      optionCounts.forEach(opt => {
-        opt.percentage = totalSelections > 0
-          ? Math.round(opt.count / totalSelections * 100)
-          : 0;
+      const multiPercentages = calculatePercentages(optionCounts, totalSelections);
+      optionCounts.forEach((opt, idx) => {
+        opt.percentage = multiPercentages[idx];
       });
 
       stat.options = optionCounts;

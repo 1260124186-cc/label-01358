@@ -77,7 +77,8 @@ mixPage({
         if (!res[0]) return;
         const canvas = res[0].node;
         const ctx = canvas.getContext('2d');
-        const dpr = wx.getWindowInfo().pixelRatio;
+        const sysInfo = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+        const dpr = sysInfo.pixelRatio || 2;
         const width = res[0].width;
         const height = res[0].height;
         canvas.width = width * dpr;
@@ -148,7 +149,8 @@ mixPage({
         if (!res[0]) return;
         const canvas = res[0].node;
         const ctx = canvas.getContext('2d');
-        const dpr = wx.getWindowInfo().pixelRatio;
+        const sysInfo = wx.getWindowInfo ? wx.getWindowInfo() : wx.getSystemInfoSync();
+        const dpr = sysInfo.pixelRatio || 2;
         const width = res[0].width;
         const height = res[0].height;
         canvas.width = width * dpr;
