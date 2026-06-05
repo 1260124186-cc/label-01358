@@ -30,11 +30,84 @@ jest.mock('../utils/withTheme', () => ({
 
 require('../pages/survey-fill/index');
 
+function parsePath(path) {
+  const result = [];
+  let current = '';
+  let i = 0;
+
+  while (i < path.length) {
+    if (path[i] === '.') {
+      if (current) {
+        result.push(current);
+        current = '';
+      }
+      i++;
+    } else if (path[i] === '[') {
+      if (current) {
+        result.push(current);
+        current = '';
+      }
+      i++;
+      while (i < path.length && path[i] !== ']') {
+        current += path[i];
+        i++;
+      }
+      if (current.match(/^\d+$/)) {
+        result.push(parseInt(current, 10));
+      } else {
+        result.push(current);
+      }
+      current = '';
+      i++;
+    } else {
+      current += path[i];
+      i++;
+    }
+  }
+
+  if (current) {
+    result.push(current);
+  }
+
+  return result;
+}
+
+function setDataByPath(obj, path, value) {
+  const keys = parsePath(path);
+  const lastKey = keys.pop();
+  let current = obj;
+
+  for (let i = 0; i < keys.length; i++) {
+    const key = keys[i];
+    const nextKey = keys[i + 1] !== undefined ? keys[i + 1] : lastKey;
+
+    if (typeof nextKey === 'number' && !Array.isArray(current[key])) {
+      current[key] = [];
+    } else if (typeof nextKey === 'string' && (!current[key] || typeof current[key] !== 'object')) {
+      current[key] = {};
+    }
+
+    current = current[key];
+  }
+
+  current[lastKey] = value;
+}
+
+function deepClone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
 function createPageInstance(initialData = {}) {
   const instance = {
-    data: { ...pageConfig.data, ...initialData },
+    data: deepClone({ ...pageConfig.data, ...initialData }),
     setData: jest.fn(function(updates) {
-      this.data = { ...this.data, ...updates };
+      Object.keys(updates).forEach(key => {
+        if (key.includes('.') || key.includes('[')) {
+          setDataByPath(this.data, key, updates[key]);
+        } else {
+          this.data[key] = updates[key];
+        }
+      });
     })
   };
 
