@@ -1,0 +1,105 @@
+<view class="page">
+  <!-- 顶部筛选 -->
+  <view class="filter-section">
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-tabs">
+        <view 
+          class="filter-tab {{currentCategory === '' ? 'active' : ''}}"
+          bindtap="onCategoryChange"
+          data-category=""
+        >全部</view>
+        <view 
+          class="filter-tab {{currentCategory === item.value ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="value"
+          bindtap="onCategoryChange"
+          data-category="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </scroll-view>
+    <view class="filter-price" bindtap="onShowPricePicker">
+      <text class="price-text">{{currentPriceText || '价格'}}</text>
+      <text class="price-arrow">▼</text>
+    </view>
+  </view>
+
+  <!-- 商品列表 -->
+  <scroll-view 
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{list.length > 0}}">
+      <view class="goods-grid">
+        <view 
+          class="goods-card"
+          wx:for="{{list}}"
+          wx:key="id"
+          hover-class="goods-card-hover"
+          bindtap="onItemTap"
+          data-item="{{item}}"
+        >
+          <view class="goods-image-wrap">
+            <image 
+              class="goods-image" 
+              src="{{item.images[0] || '/assets/images/default-goods.png'}}" 
+              mode="aspectFill" 
+            />
+            <view class="goods-status {{item.status}}" wx:if="{{item.status !== 'selling'}}">
+              {{item.statusText}}
+            </view>
+          </view>
+          <view class="goods-info">
+            <text class="goods-title">{{item.title}}</text>
+            <text class="goods-desc">{{item.description}}</text>
+            <view class="goods-bottom">
+              <text class="goods-price">¥{{item.priceText}}</text>
+              <text class="goods-views">{{item.views}}浏览</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty 
+      wx:if="{{!loading && list.length === 0}}" 
+      text="暂无商品信息"
+      showAction="{{true}}"
+      actionText="发布商品"
+      bindaction="onPublish"
+    />
+  </scroll-view>
+
+  <!-- 发布按钮 -->
+  <view class="publish-btn" hover-class="publish-btn-hover" bindtap="onPublish">
+    <text class="publish-icon">+</text>
+  </view>
+
+  <!-- 价格选择器 -->
+  <view class="picker-mask {{showPricePicker ? 'show' : ''}}" bindtap="onHidePricePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择价格区间</text>
+        <text class="picker-close" bindtap="onHidePricePicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view 
+          class="picker-option {{currentPriceRange === '' ? 'active' : ''}}"
+          bindtap="onPriceSelect"
+          data-value=""
+        >不限价格</view>
+        <view 
+          class="picker-option {{currentPriceRange === item.value ? 'active' : ''}}"
+          wx:for="{{priceRanges}}"
+          wx:key="value"
+          bindtap="onPriceSelect"
+          data-value="{{item.value}}"
+          data-min="{{item.min}}"
+          data-max="{{item.max}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+</view>

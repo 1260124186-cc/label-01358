@@ -1,0 +1,100 @@
+<view class="page">
+  <!-- 头像 -->
+  <view class="avatar-section">
+    <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+      <view class="avatar-wrap">
+        <image class="avatar-image" src="{{formData.avatarUrl || '/assets/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="avatar-edit">
+          <text class="edit-icon">📷</text>
+        </view>
+      </view>
+    </button>
+    <text class="avatar-tip">点击更换头像</text>
+  </view>
+
+  <!-- 表单 -->
+  <view class="form-section">
+    <view class="form-card">
+      <view class="form-item">
+        <text class="form-label">昵称</text>
+        <input 
+          class="form-input" 
+          type="nickname"
+          placeholder="请输入昵称"
+          value="{{formData.nickName}}"
+          bindinput="onInputChange"
+          bindblur="onNicknameBlur"
+          data-field="nickName"
+          maxlength="20"
+        />
+      </view>
+      
+      <view class="form-item">
+        <text class="form-label">性别</text>
+        <picker 
+          class="form-picker-wrap"
+          mode="selector" 
+          range="{{genderOptions}}" 
+          value="{{genderIndex}}"
+          bindchange="onGenderChange"
+        >
+          <view class="form-picker">
+            <text class="picker-text {{formData.gender !== undefined ? '' : 'placeholder'}}">{{formData.gender !== undefined ? genderOptions[formData.gender] : '请选择性别'}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">出生日期</text>
+        <picker 
+          class="form-picker-wrap"
+          mode="date" 
+          value="{{formData.birthday}}"
+          start="1950-01-01"
+          end="{{today}}"
+          bindchange="onBirthdayChange"
+        >
+          <view class="form-picker">
+            <text class="picker-text {{formData.birthday ? '' : 'placeholder'}}">{{formData.birthday || '请选择出生日期'}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">所在地区</text>
+        <picker 
+          class="form-picker-wrap"
+          mode="region" 
+          value="{{formData.region}}"
+          bindchange="onRegionChange"
+        >
+          <view class="form-picker">
+            <text class="picker-text {{formData.region && formData.region.length > 0 ? '' : 'placeholder'}}">{{formData.region && formData.region.length > 0 ? formData.region.join(' ') : '请选择地区'}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item no-border">
+        <text class="form-label">个性签名</text>
+        <input 
+          class="form-input" 
+          placeholder="一句话介绍自己"
+          value="{{formData.signature}}"
+          bindinput="onInputChange"
+          data-field="signature"
+          maxlength="50"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 保存按钮 -->
+  <view class="submit-section">
+    <btn type="primary" size="large" block="{{true}}" loading="{{saving}}" bind:click="onSave">
+      保存
+    </btn>
+  </view>
+</view>

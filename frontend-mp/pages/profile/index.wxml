@@ -1,0 +1,97 @@
+<view class="page">
+  <!-- 用户信息 -->
+  <view class="user-section">
+    <view class="user-card">
+      <image class="user-avatar" src="{{userInfo.avatarUrl || '/assets/images/default-avatar.png'}}" mode="aspectFill" />
+      <view class="user-info">
+        <text class="user-name">{{userInfo.nickName || '未登录'}}</text>
+        <text class="user-desc" wx:if="{{userInfo.nickName}}">欢迎使用校园生活服务</text>
+        <text class="user-desc" wx:else>登录后享受更多服务</text>
+      </view>
+      <view class="user-action" bindtap="onEditProfile">
+        <text class="action-text">{{userInfo.nickName ? '编辑' : '登录'}}</text>
+        <text class="action-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能菜单 -->
+  <view class="menu-section">
+    <view class="menu-card">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="favorites">
+        <view class="menu-icon-wrap" style="background-color: #FEF3C7;">
+          <text class="menu-icon">★</text>
+        </view>
+        <text class="menu-text">我的收藏</text>
+        <text class="menu-count" wx:if="{{favoritesCount > 0}}">{{favoritesCount}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="history">
+        <view class="menu-icon-wrap" style="background-color: #DBEAFE;">
+          <text class="menu-icon">🕐</text>
+        </view>
+        <text class="menu-text">浏览历史</text>
+        <text class="menu-count" wx:if="{{historyCount > 0}}">{{historyCount}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我的发布 -->
+  <view class="menu-section">
+    <view class="section-title">我的发布</view>
+    <view class="menu-card">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="myLostFound">
+        <view class="menu-icon-wrap" style="background-color: #FEE2E2;">
+          <text class="menu-icon">🔍</text>
+        </view>
+        <text class="menu-text">失物招领</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="myMarket">
+        <view class="menu-icon-wrap" style="background-color: #D1FAE5;">
+          <text class="menu-icon">🛒</text>
+        </view>
+        <text class="menu-text">二手商品</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 其他 -->
+  <view class="menu-section">
+    <view class="section-title">其他</view>
+    <view class="menu-card">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onClearCache">
+        <view class="menu-icon-wrap" style="background-color: #F3F4F6;">
+          <text class="menu-icon">🗑</text>
+        </view>
+        <text class="menu-text">清除缓存</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onAbout">
+        <view class="menu-icon-wrap" style="background-color: #F3F4F6;">
+          <text class="menu-icon">ℹ</text>
+        </view>
+        <text class="menu-text">关于我们</text>
+        <text class="menu-arrow">›</text>
+      </view>
+      
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onLogout" wx:if="{{userInfo.nickName}}">
+        <view class="menu-icon-wrap" style="background-color: #FEE2E2;">
+          <text class="menu-icon">🚪</text>
+        </view>
+        <text class="menu-text">退出登录</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 版本信息 -->
+  <view class="version-section">
+    <text class="version-text">校园生活服务 v1.0.0</text>
+  </view>
+</view>

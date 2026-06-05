@@ -1,0 +1,242 @@
+/* 失物招领详情 - 与首页风格统一 */
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
+}
+
+/* ==================== 图片区域 ==================== */
+.image-section {
+  background-color: #1F2937;
+}
+
+.image-swiper {
+  height: 480rpx;
+}
+
+.swiper-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* ==================== 基本信息 ==================== */
+.info-section {
+  background-color: var(--color-bg-card);
+  padding: 28rpx;
+  margin-bottom: 20rpx;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.info-type {
+  padding: 10rpx 24rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+}
+
+.type-lost {
+  color: #E74C3C;
+  background: linear-gradient(135deg, #FFEAEA 0%, #FFD4D4 100%);
+}
+
+.type-found {
+  color: #27AE60;
+  background: linear-gradient(135deg, #E8F8EF 0%, #D1F2E1 100%);
+}
+
+.info-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 10rpx 20rpx;
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.action-btn:active {
+  transform: scale(0.96);
+}
+
+.action-btn.active {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+}
+
+.action-icon {
+  font-size: 28rpx;
+  color: var(--color-text-muted);
+}
+
+.action-btn.active .action-icon {
+  color: #F59E0B;
+}
+
+.action-text {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+}
+
+.info-title {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  margin-bottom: 12rpx;
+}
+
+.info-time {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+}
+
+/* ==================== 详细信息 ==================== */
+.detail-section {
+  padding: 0 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.detail-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: 0 24rpx;
+  box-shadow: var(--shadow-card);
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid var(--color-border-light);
+}
+
+.detail-item:last-child {
+  border-bottom: none;
+}
+
+.detail-label {
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+}
+
+.detail-value {
+  font-size: 28rpx;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+/* ==================== 描述 ==================== */
+.desc-section {
+  padding: 0 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 16rpx;
+}
+
+.section-title::before {
+  content: '';
+  width: 6rpx;
+  height: 28rpx;
+  background: linear-gradient(180deg, var(--color-primary) 0%, #FF8E8E 100%);
+  border-radius: 3rpx;
+  margin-right: 12rpx;
+}
+
+.desc-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: 24rpx;
+  box-shadow: var(--shadow-card);
+}
+
+.desc-text {
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+}
+
+/* ==================== 联系方式 ==================== */
+.contact-section {
+  padding: 0 24rpx;
+}
+
+.contact-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: 0 24rpx;
+  box-shadow: var(--shadow-card);
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid var(--color-border-light);
+}
+
+.contact-item:last-child {
+  border-bottom: none;
+}
+
+.contact-label {
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+}
+
+.contact-value {
+  font-size: 28rpx;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.contact-value.phone {
+  color: var(--color-primary);
+}
+
+/* ==================== 底部操作栏 ==================== */
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20rpx 24rpx;
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  background-color: var(--color-bg-card);
+  box-shadow: 0 -8rpx 32rpx rgba(0, 0, 0, 0.08);
+  z-index: 100;
+}
+
+.bottom-bar .btn {
+  width: 100% !important;
+}
+
+/* ==================== 空状态 ==================== */
+.empty-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: var(--color-text-muted);
+}

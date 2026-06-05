@@ -1,0 +1,145 @@
+/**
+ * 本地存储封装
+ */
+
+const STORAGE_KEYS = {
+  USER_INFO: 'userInfo',
+  LOST_FOUND_LIST: 'lostFoundList',
+  MARKET_LIST: 'marketList',
+  FAVORITES: 'favorites',
+  HISTORY: 'history'
+};
+
+/**
+ * 同步获取存储数据
+ */
+function get(key) {
+  try {
+    return wx.getStorageSync(key) || null;
+  } catch (e) {
+    console.error(`Storage get error [${key}]:`, e);
+    return null;
+  }
+}
+
+/**
+ * 同步设置存储数据
+ */
+function set(key, data) {
+  try {
+    wx.setStorageSync(key, data);
+    return true;
+  } catch (e) {
+    console.error(`Storage set error [${key}]:`, e);
+    return false;
+  }
+}
+
+/**
+ * 同步删除存储数据
+ */
+function remove(key) {
+  try {
+    wx.removeStorageSync(key);
+    return true;
+  } catch (e) {
+    console.error(`Storage remove error [${key}]:`, e);
+    return false;
+  }
+}
+
+/**
+ * 异步获取存储数据
+ */
+function getAsync(key) {
+  return new Promise((resolve, reject) => {
+    wx.getStorage({
+      key,
+      success: (res) => resolve(res.data),
+      fail: () => resolve(null)
+    });
+  });
+}
+
+/**
+ * 异步设置存储数据
+ */
+function setAsync(key, data) {
+  return new Promise((resolve, reject) => {
+    wx.setStorage({
+      key,
+      data,
+      success: () => resolve(true),
+      fail: (err) => reject(err)
+    });
+  });
+}
+
+/**
+ * 获取列表数据
+ */
+function getList(key) {
+  const data = get(key);
+  return Array.isArray(data) ? data : [];
+}
+
+/**
+ * 添加到列表
+ */
+function addToList(key, item) {
+  const list = getList(key);
+  list.unshift(item);
+  return set(key, list);
+}
+
+/**
+ * 从列表中删除
+ */
+function removeFromList(key, id, idField = 'id') {
+  const list = getList(key);
+  const newList = list.filter(item => item[idField] !== id);
+  return set(key, newList);
+}
+
+/**
+ * 更新列表中的项
+ */
+function updateInList(key, id, updates, idField = 'id') {
+  const list = getList(key);
+  const index = list.findIndex(item => item[idField] === id);
+  if (index > -1) {
+    list[index] = { ...list[index], ...updates };
+    return set(key, list);
+  }
+  return false;
+}
+
+/**
+ * 检查项是否在列表中
+ */
+function isInList(key, id, idField = 'id') {
+  const list = getList(key);
+  return list.some(item => item[idField] === id);
+}
+
+/**
+ * 清空列表
+ */
+function clearList(key) {
+  return set(key, []);
+}
+
+module.exports = {
+  STORAGE_KEYS,
+  get,
+  set,
+  remove,
+  getAsync,
+  setAsync,
+  getList,
+  addToList,
+  removeFromList,
+  updateInList,
+  isInList,
+  clearList
+};

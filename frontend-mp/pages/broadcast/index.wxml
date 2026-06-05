@@ -1,0 +1,79 @@
+<view class="page">
+  <!-- 当前播放 -->
+  <view class="player-section" wx:if="{{currentAudio}}">
+    <view class="player-card">
+      <image class="player-cover" src="{{currentAudio.cover}}" mode="aspectFill" />
+      <view class="player-info">
+        <text class="player-title">{{currentAudio.title}}</text>
+        <text class="player-desc">{{currentAudio.description}}</text>
+        
+        <!-- 进度条 -->
+        <view class="progress-wrap">
+          <slider 
+            class="progress-slider"
+            min="0"
+            max="{{duration}}"
+            value="{{currentTime}}"
+            activeColor="#FFFFFF"
+            backgroundColor="rgba(255,255,255,0.3)"
+            block-size="16"
+            block-color="#FFFFFF"
+            bindchange="onSeek"
+          />
+          <view class="progress-time">
+            <text>{{currentTimeText}}</text>
+            <text>{{durationText}}</text>
+          </view>
+        </view>
+        
+        <!-- 控制按钮 -->
+        <view class="player-controls">
+          <view class="control-btn" bindtap="onPrev">
+            <text class="control-icon">⏮</text>
+          </view>
+          <view class="control-btn play-btn {{isPlaying ? 'playing' : ''}}" bindtap="onPlayPause">
+            <text class="control-icon">{{isPlaying ? '⏸' : '▶'}}</text>
+          </view>
+          <view class="control-btn" bindtap="onNext">
+            <text class="control-icon">⏭</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 播放列表 -->
+  <view class="list-section">
+    <view class="section-header">
+      <view class="section-title-wrap">
+        <view class="section-icon"></view>
+        <text class="section-title">节目列表</text>
+      </view>
+      <text class="section-count">共{{broadcastList.length}}个节目</text>
+    </view>
+    <view class="broadcast-list">
+      <view 
+        class="broadcast-item {{currentAudio && currentAudio.id === item.id ? 'active' : ''}}"
+        wx:for="{{broadcastList}}"
+        wx:key="id"
+        bindtap="onSelectAudio"
+        data-item="{{item}}"
+      >
+        <image class="broadcast-cover" src="{{item.cover}}" mode="aspectFill" />
+        <view class="broadcast-info">
+          <text class="broadcast-title">{{item.title}}</text>
+          <text class="broadcast-desc">{{item.description}}</text>
+          <text class="broadcast-duration">时长: {{item.duration}}</text>
+        </view>
+        <view class="broadcast-status" wx:if="{{currentAudio && currentAudio.id === item.id}}">
+          <view class="playing-indicator" wx:if="{{isPlaying}}">
+            <view class="bar"></view>
+            <view class="bar"></view>
+            <view class="bar"></view>
+          </view>
+          <text class="status-text" wx:else>暂停</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

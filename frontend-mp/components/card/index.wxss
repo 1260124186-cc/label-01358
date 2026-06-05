@@ -1,0 +1,46 @@
+.card {
+  background-color: #FFFFFF;
+  border-radius: 24rpx;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.card-hover {
+  transform: scale(0.99);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 24rpx 0;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.card-more {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 0;
+}
+
+.more-text {
+  font-size: 26rpx;
+  color: #6B7280;
+}
+
+.more-icon {
+  font-size: 28rpx;
+  color: #9CA3AF;
+  margin-left: 4rpx;
+}
+
+.card-body {
+  padding: 24rpx;
+}

@@ -1,0 +1,70 @@
+<view class="page">
+  <!-- 顶部轮播 -->
+  <view class="swiper-section">
+    <swiper 
+      class="scenery-swiper"
+      indicator-dots="{{true}}"
+      indicator-color="rgba(255,255,255,0.4)"
+      indicator-active-color="#FFFFFF"
+      autoplay="{{true}}"
+      interval="{{5000}}"
+      duration="{{600}}"
+      circular="{{true}}"
+      current="{{currentIndex}}"
+      easing-function="easeInOutCubic"
+      bindchange="onSwiperChange"
+    >
+      <swiper-item 
+        wx:for="{{sceneryList}}" 
+        wx:key="id"
+        bindtap="onPreviewImage"
+        data-index="{{index}}"
+      >
+        <view class="swiper-item">
+          <image class="swiper-image" src="{{item.image}}" mode="aspectFill" />
+          <view class="swiper-overlay"></view>
+          <view class="swiper-info">
+            <text class="swiper-title">{{item.title}}</text>
+            <text class="swiper-desc">{{item.description}}</text>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 缩略图列表 -->
+  <view class="thumb-section">
+    <view class="section-header">
+      <view class="section-title-wrap">
+        <view class="section-icon"></view>
+        <text class="section-title">全部风光</text>
+      </view>
+      <text class="section-count">共{{sceneryList.length}}张</text>
+    </view>
+    <view class="thumb-grid">
+      <view 
+        class="thumb-item {{currentIndex === index ? 'active' : ''}}"
+        wx:for="{{sceneryList}}"
+        wx:key="id"
+        bindtap="onThumbTap"
+        data-index="{{index}}"
+      >
+        <view class="thumb-image-wrap">
+          <image class="thumb-image" src="{{item.image}}" mode="aspectFill" />
+          <view class="thumb-mask" wx:if="{{currentIndex === index}}">
+            <text class="thumb-current">当前</text>
+          </view>
+        </view>
+        <text class="thumb-title">{{item.title}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 提示 -->
+  <view class="tip-section">
+    <view class="tip-card">
+      <text class="tip-icon">👆</text>
+      <text class="tip-text">点击图片可全屏预览</text>
+    </view>
+  </view>
+</view>

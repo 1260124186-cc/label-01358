@@ -1,0 +1,12 @@
+<view class="card {{customClass}}" hover-class="{{hoverable ? 'card-hover' : ''}}" bindtap="onTap">
+  <view wx:if="{{title}}" class="card-header">
+    <text class="card-title">{{title}}</text>
+    <view wx:if="{{showMore}}" class="card-more" catchtap="onMore">
+      <text class="more-text">{{moreText || '更多'}}</text>
+      <text class="more-icon">›</text>
+    </view>
+  </view>
+  <view class="card-body">
+    <slot></slot>
+  </view>
+</view>

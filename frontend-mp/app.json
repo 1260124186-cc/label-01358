@@ -1,0 +1,61 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/lost-found/index",
+    "pages/lost-found-publish/index",
+    "pages/lost-found-detail/index",
+    "pages/market/index",
+    "pages/market-publish/index",
+    "pages/market-detail/index",
+    "pages/scenery/index",
+    "pages/broadcast/index",
+    "pages/profile/index",
+    "pages/profile-edit/index",
+    "pages/favorites/index",
+    "pages/history/index",
+    "pages/announcement-detail/index",
+    "pages/login/index"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FF6B6B",
+    "navigationBarTitleText": "校园生活服务",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F8F9FA",
+    "backgroundTextStyle": "dark",
+    "enablePullDownRefresh": false
+  },
+  "tabBar": {
+    "color": "#BDC3C7",
+    "selectedColor": "#FF6B6B",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/icons/home.png",
+        "selectedIconPath": "assets/icons/home-active.png"
+      },
+      {
+        "pagePath": "pages/lost-found/index",
+        "text": "失物招领",
+        "iconPath": "assets/icons/lost.png",
+        "selectedIconPath": "assets/icons/lost-active.png"
+      },
+      {
+        "pagePath": "pages/market/index",
+        "text": "二手市场",
+        "iconPath": "assets/icons/market.png",
+        "selectedIconPath": "assets/icons/market-active.png"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "assets/icons/profile.png",
+        "selectedIconPath": "assets/icons/profile-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

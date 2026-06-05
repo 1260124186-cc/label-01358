@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "校园生活服务",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "card": "/components/card/index"
+  }
+}

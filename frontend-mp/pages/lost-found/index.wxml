@@ -1,0 +1,107 @@
+<view class="page">
+  <!-- 顶部筛选 -->
+  <view class="filter-section">
+    <view class="filter-tabs">
+      <view 
+        class="filter-tab {{currentType === '' ? 'active' : ''}}"
+        bindtap="onTypeChange"
+        data-type=""
+      >全部</view>
+      <view 
+        class="filter-tab {{currentType === 'lost' ? 'active' : ''}}"
+        bindtap="onTypeChange"
+        data-type="lost"
+      >寻物启事</view>
+      <view 
+        class="filter-tab {{currentType === 'found' ? 'active' : ''}}"
+        bindtap="onTypeChange"
+        data-type="found"
+      >失物招领</view>
+    </view>
+    <view class="filter-picker" bindtap="onShowItemTypePicker">
+      <text class="picker-text">{{currentItemTypeText || '物品类型'}}</text>
+      <text class="picker-arrow">▼</text>
+    </view>
+  </view>
+
+  <!-- 列表 -->
+  <scroll-view 
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+    bindscrolltolower="onLoadMore"
+  >
+    <view class="list-container" wx:if="{{list.length > 0}}">
+      <view 
+        class="item-card"
+        wx:for="{{list}}"
+        wx:key="id"
+        hover-class="item-card-hover"
+        bindtap="onItemTap"
+        data-item="{{item}}"
+      >
+        <view class="item-header">
+          <view class="item-type {{item.type === 'lost' ? 'type-lost' : 'type-found'}}">
+            {{item.type === 'lost' ? '寻物' : '招领'}}
+          </view>
+          <text class="item-time">{{item.timeText}}</text>
+        </view>
+        <view class="item-body">
+          <view class="item-info">
+            <text class="item-title">{{item.title}}</text>
+            <text class="item-desc">{{item.description}}</text>
+            <view class="item-tags">
+              <text class="item-tag">{{item.itemTypeText}}</text>
+              <text class="item-tag">{{item.locationText}}</text>
+            </view>
+          </view>
+          <image 
+            wx:if="{{item.images && item.images.length > 0}}" 
+            class="item-image" 
+            src="{{item.images[0]}}" 
+            mode="aspectFill" 
+          />
+        </view>
+      </view>
+    </view>
+
+    <empty 
+      wx:if="{{!loading && list.length === 0}}" 
+      text="暂无失物招领信息"
+      showAction="{{true}}"
+      actionText="发布信息"
+      bindaction="onPublish"
+    />
+  </scroll-view>
+
+  <!-- 发布按钮 -->
+  <view class="publish-btn" hover-class="publish-btn-hover" bindtap="onPublish">
+    <text class="publish-icon">+</text>
+  </view>
+
+  <!-- 物品类型选择器 -->
+  <view class="picker-mask {{showItemTypePicker ? 'show' : ''}}" bindtap="onHideItemTypePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择物品类型</text>
+        <text class="picker-close" bindtap="onHideItemTypePicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view 
+          class="picker-option {{currentItemType === '' ? 'active' : ''}}"
+          bindtap="onItemTypeSelect"
+          data-value=""
+        >全部类型</view>
+        <view 
+          class="picker-option {{currentItemType === item.value ? 'active' : ''}}"
+          wx:for="{{itemTypes}}"
+          wx:key="value"
+          bindtap="onItemTypeSelect"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+</view>

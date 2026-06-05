@@ -1,0 +1,122 @@
+<view class="page">
+  <!-- 公告轮播 -->
+  <view class="banner-section">
+    <swiper 
+      class="banner-swiper"
+      indicator-dots="{{true}}"
+      indicator-color="rgba(255,255,255,0.4)"
+      indicator-active-color="#FFFFFF"
+      autoplay="{{true}}"
+      interval="{{4000}}"
+      duration="{{600}}"
+      circular="{{true}}"
+      easing-function="easeInOutCubic"
+    >
+      <swiper-item 
+        wx:for="{{announcements}}" 
+        wx:key="id"
+        bindtap="onAnnouncementTap"
+        data-item="{{item}}"
+      >
+        <view class="banner-item">
+          <image class="banner-image" src="{{item.image}}" mode="aspectFill" />
+          <view class="banner-overlay"></view>
+          <view class="banner-content">
+            <text class="banner-tag">公告</text>
+            <text class="banner-title">{{item.title}}</text>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 功能分类导航 -->
+  <view class="nav-section">
+    <view class="nav-grid">
+      <view 
+        class="nav-item" 
+        wx:for="{{navItems}}" 
+        wx:key="id"
+        bindtap="onNavTap"
+        data-item="{{item}}"
+      >
+        <view class="nav-icon-wrap" style="background: {{item.bgColor}};">
+          <image class="nav-icon" src="{{item.icon}}" mode="aspectFit" />
+        </view>
+        <text class="nav-text">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="quick-section">
+    <view class="quick-grid">
+      <view class="quick-item" hover-class="hover-scale" bindtap="onQuickPublish" data-type="lost">
+        <view class="quick-icon" style="background: linear-gradient(135deg, #FFE8E8 0%, #FFD4D4 100%);">
+          <text>📝</text>
+        </view>
+        <view class="quick-info">
+          <text class="quick-title">发布寻物</text>
+          <text class="quick-desc">快速发布</text>
+        </view>
+        <text class="quick-arrow">›</text>
+      </view>
+      <view class="quick-item" hover-class="hover-scale" bindtap="onQuickPublish" data-type="market">
+        <view class="quick-icon" style="background: linear-gradient(135deg, #E8F4FF 0%, #D4EBFF 100%);">
+          <text>🏷️</text>
+        </view>
+        <view class="quick-info">
+          <text class="quick-title">发布闲置</text>
+          <text class="quick-desc">一键出售</text>
+        </view>
+        <text class="quick-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 校园动态 -->
+  <view class="news-section">
+    <view class="section-header">
+      <view class="section-title-wrap">
+        <view class="section-icon"></view>
+        <text class="section-title">校园动态</text>
+      </view>
+      <view class="section-more" bindtap="onMoreNews">
+        <text class="more-text">查看更多</text>
+        <text class="more-arrow">›</text>
+      </view>
+    </view>
+    
+    <view class="news-card">
+      <scroll-view 
+        class="news-scroll" 
+        scroll-y="{{true}}" 
+        enhanced="{{true}}" 
+        show-scrollbar="{{false}}"
+        refresher-enabled="{{true}}"
+        refresher-triggered="{{refreshing}}"
+        bindrefresherrefresh="onRefresh"
+      >
+        <view 
+          class="news-item"
+          wx:for="{{newsList}}"
+          wx:key="id"
+          bindtap="onNewsTap"
+          data-item="{{item}}"
+        >
+          <view class="news-content">
+            <text class="news-title">{{item.title}}</text>
+            <text class="news-summary">{{item.summary}}</text>
+            <view class="news-meta">
+              <text class="news-time">{{item.timeText}}</text>
+              <text class="news-tag">校园</text>
+            </view>
+          </view>
+          <view class="news-image">
+            <image src="{{item.image}}" mode="aspectFill" />
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+</view>

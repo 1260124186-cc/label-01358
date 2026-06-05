@@ -1,0 +1,15 @@
+<button 
+  class="btn btn-{{type}} btn-{{size}} {{block ? 'btn-block' : ''}} {{loading || disabled ? 'btn-disabled' : ''}}"
+  hover-class="{{loading || disabled ? '' : 'btn-hover'}}"
+  disabled="{{loading || disabled}}"
+  form-type="{{formType}}"
+  open-type="{{openType}}"
+  bindtap="onClick"
+  bindgetuserinfo="onGetUserInfo"
+>
+  <view wx:if="{{loading}}" class="btn-loading">
+    <view class="loading-spinner"></view>
+  </view>
+  <image wx:if="{{icon && !loading}}" class="btn-icon" src="{{icon}}" mode="aspectFit" />
+  <view class="btn-label"><slot></slot></view>
+</button>

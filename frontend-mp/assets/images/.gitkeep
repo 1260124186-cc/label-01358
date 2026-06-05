@@ -1,0 +1,13 @@
+# 图片资源目录
+# 需要添加以下图片文件：
+# - default-avatar.png (默认头像)
+# - default-banner.png (默认轮播图)
+# - default-news.png (默认新闻图)
+# - default-goods.png (默认商品图)
+# - default-scenery.png (默认风光图)
+# - default-broadcast.png (默认广播封面)
+# - empty.png (空状态图)
+# - banner1.png, banner2.png, banner3.png (公告轮播图)
+# - news1.png, news2.png, news3.png, news4.png (新闻图片)
+# - scenery1-6.png (校园风光图片)
+# - broadcast1-5.png (广播封面图片)

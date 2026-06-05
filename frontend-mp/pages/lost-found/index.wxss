@@ -1,0 +1,322 @@
+/* 失物招领列表 - 参考闲鱼/小红书设计 */
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+}
+
+/* ==================== 筛选区域 ==================== */
+.filter-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 24rpx;
+  background-color: var(--color-bg-card);
+  border-bottom: 1rpx solid var(--color-border-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 12rpx;
+}
+
+.filter-tab {
+  padding: 14rpx 28rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.filter-tab:active {
+  transform: scale(0.96);
+}
+
+.filter-tab.active {
+  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
+}
+
+.filter-picker {
+  display: flex;
+  align-items: center;
+  padding: 14rpx 20rpx;
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.filter-picker:active {
+  background-color: var(--color-border);
+}
+
+.picker-text {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  margin-right: 8rpx;
+}
+
+.picker-arrow {
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+}
+
+/* ==================== 列表区域 ==================== */
+.list-scroll {
+  height: calc(100vh - 100rpx);
+}
+
+.list-container {
+  padding: 20rpx;
+}
+
+/* ==================== 卡片样式 ==================== */
+.item-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-2xl);
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-fast);
+  overflow: hidden;
+}
+
+.item-card:active {
+  transform: scale(0.99);
+  box-shadow: var(--shadow-sm);
+}
+
+.item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.item-type {
+  padding: 8rpx 20rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+}
+
+.type-lost {
+  color: #E74C3C;
+  background: linear-gradient(135deg, #FFEAEA 0%, #FFD4D4 100%);
+}
+
+.type-found {
+  color: #27AE60;
+  background: linear-gradient(135deg, #E8F8EF 0%, #D1F2E1 100%);
+}
+
+.item-time {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+.item-body {
+  display: flex;
+}
+
+.item-info {
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+.item-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  margin-bottom: 10rpx;
+}
+
+.item-desc {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-bottom: 16rpx;
+}
+
+.item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+.item-tag {
+  padding: 6rpx 14rpx;
+  font-size: 22rpx;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-xs);
+}
+
+.item-image {
+  width: 180rpx;
+  height: 140rpx;
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.item-image image {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.item-card:active .item-image image {
+  transform: scale(1.05);
+}
+
+/* ==================== 发布按钮 ==================== */
+.publish-btn {
+  position: fixed;
+  right: 32rpx;
+  bottom: calc(200rpx + env(safe-area-inset-bottom));
+  width: 120rpx;
+  height: 120rpx;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 32rpx rgba(255, 107, 107, 0.45);
+  transition: all var(--transition-normal);
+  z-index: 100;
+}
+
+.publish-btn::before {
+  content: '';
+  position: absolute;
+  top: -8rpx;
+  left: -8rpx;
+  right: -8rpx;
+  bottom: -8rpx;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  border-radius: 50%;
+  opacity: 0.3;
+  z-index: -1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.1); opacity: 0.15; }
+}
+
+.publish-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
+}
+
+.publish-icon {
+  font-size: 56rpx;
+  color: #FFFFFF;
+  font-weight: 300;
+  line-height: 1;
+}
+
+/* ==================== 选择器弹窗 ==================== */
+.picker-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.picker-mask.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.picker-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.picker-mask.show .picker-content {
+  transform: translateY(0);
+}
+
+.picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 32rpx;
+  border-bottom: 1rpx solid var(--color-border-light);
+}
+
+.picker-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.picker-close {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-input);
+  border-radius: 50%;
+}
+
+.picker-options {
+  padding: 16rpx 32rpx 32rpx;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.picker-option {
+  padding: 24rpx 0;
+  font-size: 30rpx;
+  color: var(--color-text-primary);
+  border-bottom: 1rpx solid var(--color-border-light);
+  transition: all var(--transition-fast);
+}
+
+.picker-option:last-child {
+  border-bottom: none;
+}
+
+.picker-option:active {
+  background-color: var(--color-bg-page);
+}
+
+.picker-option.active {
+  color: var(--color-primary);
+  font-weight: 600;
+}

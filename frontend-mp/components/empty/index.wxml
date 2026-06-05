@@ -1,0 +1,18 @@
+<view class="empty-container">
+  <image 
+    class="empty-image" 
+    src="{{image || '/assets/images/empty.png'}}" 
+    mode="aspectFit"
+  />
+  <text class="empty-text">{{text || '暂无数据'}}</text>
+  <button 
+    wx:if="{{showAction}}" 
+    class="empty-btn {{loading ? 'loading' : ''}}"
+    hover-class="empty-btn-hover"
+    disabled="{{loading}}"
+    bindtap="onAction"
+  >
+    <text wx:if="{{loading}}" class="loading-icon"></text>
+    {{actionText || '刷新'}}
+  </button>
+</view>

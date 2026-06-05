@@ -1,0 +1,16 @@
+<view class="page" wx:if="{{detail}}">
+  <!-- 封面图 -->
+  <image class="cover-image" src="{{detail.image}}" mode="aspectFill" wx:if="{{detail.image}}" />
+  
+  <!-- 内容 -->
+  <view class="content-section">
+    <text class="content-title">{{detail.title}}</text>
+    <text class="content-time">{{detail.timeText}}</text>
+    <view class="content-divider"></view>
+    <text class="content-text">{{detail.content}}</text>
+  </view>
+</view>
+
+<view class="page empty-page" wx:else>
+  <text class="empty-text">公告不存在</text>
+</view>

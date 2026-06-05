@@ -1,0 +1,91 @@
+<view class="page" wx:if="{{detail}}">
+  <!-- 图片轮播 -->
+  <view class="image-section" wx:if="{{detail.images && detail.images.length > 0}}">
+    <swiper 
+      class="image-swiper"
+      indicator-dots="{{detail.images.length > 1}}"
+      indicator-color="rgba(255,255,255,0.5)"
+      indicator-active-color="#FFFFFF"
+    >
+      <swiper-item 
+        wx:for="{{detail.images}}" 
+        wx:key="index"
+        bindtap="onPreviewImage"
+        data-index="{{index}}"
+      >
+        <image class="swiper-image" src="{{item}}" mode="aspectFill" />
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="info-section">
+    <view class="info-header">
+      <view class="info-type {{detail.type === 'lost' ? 'type-lost' : 'type-found'}}">
+        {{detail.type === 'lost' ? '寻物启事' : '失物招领'}}
+      </view>
+      <view class="info-actions">
+        <view 
+          class="action-btn {{isFavorite ? 'active' : ''}}" 
+          bindtap="onToggleFavorite"
+        >
+          <text class="action-icon">{{isFavorite ? '★' : '☆'}}</text>
+          <text class="action-text">{{isFavorite ? '已收藏' : '收藏'}}</text>
+        </view>
+      </view>
+    </view>
+    
+    <text class="info-title">{{detail.title}}</text>
+    <text class="info-time">发布于 {{detail.timeText}}</text>
+  </view>
+
+  <!-- 详细信息 -->
+  <view class="detail-section">
+    <view class="detail-card">
+      <view class="detail-item">
+        <text class="detail-label">物品类型</text>
+        <text class="detail-value">{{detail.itemTypeText}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">{{detail.type === 'lost' ? '丢失地点' : '拾取地点'}}</text>
+        <text class="detail-value">{{detail.locationText}}</text>
+      </view>
+      <view class="detail-item">
+        <text class="detail-label">{{detail.type === 'lost' ? '丢失时间' : '拾取时间'}}</text>
+        <text class="detail-value">{{detail.date}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 描述 -->
+  <view class="desc-section">
+    <view class="section-title">详细描述</view>
+    <view class="desc-card">
+      <text class="desc-text">{{detail.description}}</text>
+    </view>
+  </view>
+
+  <!-- 联系方式 -->
+  <view class="contact-section">
+    <view class="section-title">联系方式</view>
+    <view class="contact-card">
+      <view class="contact-item">
+        <text class="contact-label">联系人</text>
+        <text class="contact-value">{{detail.contact}}</text>
+      </view>
+      <view class="contact-item">
+        <text class="contact-label">联系电话</text>
+        <text class="contact-value phone" bindtap="onCallPhone">{{detail.phone}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="bottom-bar">
+    <btn type="primary" size="large" block="{{true}}" bind:click="onCallPhone">立即联系</btn>
+  </view>
+</view>
+
+<view class="page empty-page" wx:else>
+  <text class="empty-text">信息不存在或已删除</text>
+</view>

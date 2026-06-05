@@ -1,0 +1,147 @@
+<view class="page">
+  <form bindsubmit="onSubmit">
+    <!-- 图片上传 -->
+    <view class="form-section">
+      <view class="section-title">商品图片</view>
+      <view class="image-card">
+        <view class="image-list">
+          <view 
+            class="image-item"
+            wx:for="{{formData.images}}"
+            wx:key="index"
+          >
+            <image class="preview-image" src="{{item}}" mode="aspectFill" />
+            <view class="image-delete" catchtap="onDeleteImage" data-index="{{index}}">×</view>
+          </view>
+          <view 
+            class="image-add"
+            wx:if="{{formData.images.length < 9}}"
+            bindtap="onChooseImage"
+          >
+            <text class="add-icon">+</text>
+            <text class="add-text">添加图片</text>
+          </view>
+        </view>
+        <text class="image-tip">最多上传9张图片，第一张为封面</text>
+      </view>
+    </view>
+
+    <!-- 基本信息 -->
+    <view class="form-section">
+      <view class="section-title">商品信息</view>
+      <view class="form-card">
+        <view class="form-item">
+          <text class="form-label">商品名称</text>
+          <input 
+            class="form-input" 
+            placeholder="请输入商品名称"
+            value="{{formData.title}}"
+            bindinput="onInputChange"
+            data-field="title"
+            maxlength="30"
+          />
+        </view>
+        
+        <view class="form-item">
+          <text class="form-label">商品分类</text>
+          <picker 
+            class="form-picker-wrap"
+            mode="selector" 
+            range="{{categories}}" 
+            range-key="label"
+            value="{{categoryIndex}}"
+            bindchange="onCategoryChange"
+          >
+            <view class="form-picker">
+              <text class="picker-text {{formData.category ? '' : 'placeholder'}}">{{formData.category ? categoryText : '请选择分类'}}</text>
+              <text class="picker-arrow">›</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">商品价格</text>
+          <view class="price-input-wrap">
+            <text class="price-symbol">¥</text>
+            <input 
+              class="price-input" 
+              type="digit"
+              placeholder="0.00"
+              value="{{formData.price}}"
+              bindinput="onInputChange"
+              data-field="price"
+            />
+          </view>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">原价（选填）</text>
+          <view class="price-input-wrap">
+            <text class="price-symbol">¥</text>
+            <input 
+              class="price-input" 
+              type="digit"
+              placeholder="0.00"
+              value="{{formData.originalPrice}}"
+              bindinput="onInputChange"
+              data-field="originalPrice"
+            />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 详细描述 -->
+    <view class="form-section">
+      <view class="section-title">商品描述</view>
+      <view class="form-card">
+        <textarea 
+          class="form-textarea"
+          placeholder="请描述商品的品牌、型号、新旧程度、使用时长等信息"
+          value="{{formData.description}}"
+          bindinput="onInputChange"
+          data-field="description"
+          maxlength="500"
+        />
+        <text class="textarea-count">{{formData.description.length || 0}}/500</text>
+      </view>
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="form-section">
+      <view class="section-title">联系方式</view>
+      <view class="form-card">
+        <view class="form-item">
+          <text class="form-label">联系人</text>
+          <input 
+            class="form-input" 
+            placeholder="请输入联系人姓名"
+            value="{{formData.contact}}"
+            bindinput="onInputChange"
+            data-field="contact"
+            maxlength="20"
+          />
+        </view>
+        <view class="form-item no-border">
+          <text class="form-label">联系电话</text>
+          <input 
+            class="form-input" 
+            type="number"
+            placeholder="请输入联系电话"
+            value="{{formData.phone}}"
+            bindinput="onInputChange"
+            data-field="phone"
+            maxlength="11"
+          />
+        </view>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-section">
+      <btn type="primary" size="large" block="{{true}}" loading="{{submitting}}" bind:click="onSubmit">
+        发布商品
+      </btn>
+    </view>
+  </form>
+</view>

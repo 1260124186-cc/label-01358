@@ -1,0 +1,10 @@
+# 图标资源目录
+# 需要添加以下图标文件：
+# - home.png / home-active.png (TabBar首页图标)
+# - lost.png / lost-active.png (TabBar失物招领图标)
+# - market.png / market-active.png (TabBar二手市场图标)
+# - profile.png / profile-active.png (TabBar我的图标)
+# - nav-lost.png (首页导航-失物招领)
+# - nav-market.png (首页导航-二手市场)
+# - nav-scenery.png (首页导航-校园风光)
+# - nav-broadcast.png (首页导航-校园广播)

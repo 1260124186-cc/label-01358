@@ -1,0 +1,329 @@
+/* 二手市场列表 - 参考闲鱼瀑布流设计 */
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+}
+
+/* ==================== 筛选区域 ==================== */
+.filter-section {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  background-color: var(--color-bg-card);
+  border-bottom: 1rpx solid var(--color-border-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.filter-scroll {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.filter-tabs {
+  display: inline-flex;
+  gap: 12rpx;
+  padding-right: 16rpx;
+}
+
+.filter-tab {
+  display: inline-block;
+  padding: 14rpx 24rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.filter-tab:active {
+  transform: scale(0.96);
+}
+
+.filter-tab.active {
+  color: #FFFFFF;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
+}
+
+.filter-price {
+  display: flex;
+  align-items: center;
+  padding: 14rpx 20rpx;
+  margin-left: 16rpx;
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.filter-price:active {
+  background-color: var(--color-border);
+}
+
+.price-text {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  margin-right: 8rpx;
+}
+
+.price-arrow {
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+}
+
+/* ==================== 列表区域 ==================== */
+.list-scroll {
+  height: calc(100vh - 100rpx);
+}
+
+.list-container {
+  padding: 16rpx;
+}
+
+/* ==================== 瀑布流商品卡片 ==================== */
+.goods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.goods-card {
+  width: calc(50% - 8rpx);
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-fast);
+}
+
+.goods-card:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-sm);
+}
+
+.goods-image-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.goods-image {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s ease;
+}
+
+.goods-card:active .goods-image {
+  transform: scale(1.05);
+}
+
+.goods-status {
+  position: absolute;
+  top: 12rpx;
+  left: 12rpx;
+  padding: 8rpx 16rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(8rpx);
+  -webkit-backdrop-filter: blur(8rpx);
+}
+
+.goods-status.reserved {
+  color: #F59E0B;
+  background-color: rgba(254, 243, 199, 0.95);
+}
+
+.goods-status.sold {
+  color: #6B7280;
+  background-color: rgba(243, 244, 246, 0.95);
+}
+
+.goods-info {
+  padding: 16rpx 16rpx 20rpx;
+}
+
+.goods-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-bottom: 8rpx;
+  min-height: 78rpx;
+}
+
+.goods-desc {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  margin-bottom: 12rpx;
+}
+
+.goods-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.goods-price {
+  font-size: 36rpx;
+  font-weight: 800;
+  color: var(--color-primary);
+}
+
+.goods-price::before {
+  content: '¥';
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.goods-views {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+
+/* ==================== 发布按钮 ==================== */
+.publish-btn {
+  position: fixed;
+  right: 32rpx;
+  bottom: calc(200rpx + env(safe-area-inset-bottom));
+  width: 120rpx;
+  height: 120rpx;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 32rpx rgba(255, 107, 107, 0.45);
+  transition: all var(--transition-normal);
+  z-index: 100;
+}
+
+.publish-btn::before {
+  content: '';
+  position: absolute;
+  top: -8rpx;
+  left: -8rpx;
+  right: -8rpx;
+  bottom: -8rpx;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  border-radius: 50%;
+  opacity: 0.3;
+  z-index: -1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.1); opacity: 0.15; }
+}
+
+.publish-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.35);
+}
+
+.publish-icon {
+  font-size: 56rpx;
+  color: #FFFFFF;
+  font-weight: 300;
+  line-height: 1;
+}
+
+/* ==================== 选择器弹窗 ==================== */
+.picker-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.picker-mask.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.picker-content {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.picker-mask.show .picker-content {
+  transform: translateY(0);
+}
+
+.picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 32rpx;
+  border-bottom: 1rpx solid var(--color-border-light);
+}
+
+.picker-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.picker-close {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  color: var(--color-text-muted);
+  background-color: var(--color-bg-input);
+  border-radius: 50%;
+}
+
+.picker-options {
+  padding: 16rpx 32rpx 32rpx;
+}
+
+.picker-option {
+  padding: 24rpx 0;
+  font-size: 30rpx;
+  color: var(--color-text-primary);
+  border-bottom: 1rpx solid var(--color-border-light);
+  transition: all var(--transition-fast);
+}
+
+.picker-option:last-child {
+  border-bottom: none;
+}
+
+.picker-option:active {
+  background-color: var(--color-bg-page);
+}
+
+.picker-option.active {
+  color: var(--color-primary);
+  font-weight: 600;
+}
