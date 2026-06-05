@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "创建问卷",
+  "usingComponents": {
+    "btn": "/components/btn/index"
+  }
+}

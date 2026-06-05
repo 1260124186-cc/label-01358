@@ -1,0 +1,115 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <block wx:if="{{survey}}">
+    <view class="result-header card">
+      <view class="card-body">
+        <text class="result-title">{{survey.title}}</text>
+        <text class="result-desc" wx:if="{{survey.description}}">{{survey.description}}</text>
+        <view class="result-stats">
+          <view class="stat-item">
+            <text class="stat-value">{{totalResponses}}</text>
+            <text class="stat-label">参与人数</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-value">{{survey.questions.length}}</text>
+            <text class="stat-label">题目数</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="chart-toggle">
+      <view
+        class="toggle-btn {{chartType === 'bar' ? 'active' : ''}}"
+        bindtap="onChartTypeChange"
+        data-type="bar"
+      >柱状图</view>
+      <view
+        class="toggle-btn {{chartType === 'pie' ? 'active' : ''}}"
+        bindtap="onChartTypeChange"
+        data-type="pie"
+      >饼图</view>
+    </view>
+
+    <view
+      class="stat-card card"
+      wx:for="{{questionStats}}"
+      wx:key="id"
+    >
+      <view class="card-body">
+        <view class="stat-question-header">
+          <text class="stat-index">{{index + 1}}</text>
+          <text class="stat-title">{{item.title}}</text>
+          <view class="stat-type-tag {{item.type}}">
+            {{item.type === 'single' ? '单选' : item.type === 'multiple' ? '多选' : '填空'}}
+          </view>
+        </view>
+
+        <text class="stat-total">共 {{item.totalCount}} 人回答</text>
+
+        <block wx:if="{{item.type !== 'fill'}}">
+          <canvas
+            id="chart-{{index}}"
+            type="2d"
+            class="chart-canvas"
+          ></canvas>
+
+          <view class="legend">
+            <view
+              class="legend-item"
+              wx:for="{{item.options}}"
+              wx:for-item="opt"
+              wx:for-index="optIdx"
+              wx:key="optIdx"
+            >
+              <view class="legend-dot" style="background-color: {{optIdx < 10 ? ['#FF6B6B','#4ECDC4','#FFE66D','#667EEA','#FA709A','#2ECC71','#F39C12','#3498DB','#9B59B6','#E74C3C'][optIdx] : '#999'}};"></view>
+              <text class="legend-label">{{opt.label}}</text>
+              <text class="legend-count">{{opt.count}}票</text>
+              <text class="legend-percent">{{opt.percentage}}%</text>
+            </view>
+          </view>
+
+          <view class="progress-list">
+            <view
+              class="progress-item"
+              wx:for="{{item.options}}"
+              wx:for-item="opt"
+              wx:for-index="optIdx"
+              wx:key="optIdx"
+            >
+              <view class="progress-label-row">
+                <text class="progress-label">{{opt.label}}</text>
+                <text class="progress-percent">{{opt.percentage}}%</text>
+              </view>
+              <view class="progress-bar">
+                <view
+                  class="progress-fill"
+                  style="width: {{opt.percentage}}%; background-color: {{optIdx < 10 ? ['#FF6B6B','#4ECDC4','#FFE66D','#667EEA','#FA709A','#2ECC71','#F39C12','#3498DB','#9B59B6','#E74C3C'][optIdx] : '#999'}};"
+                ></view>
+              </view>
+            </view>
+          </view>
+        </block>
+
+        <block wx:if="{{item.type === 'fill'}}">
+          <view class="fill-responses">
+            <view
+              class="fill-response-item"
+              wx:for="{{item.fillAnswers}}"
+              wx:for-item="ans"
+              wx:for-index="ansIdx"
+              wx:key="ansIdx"
+            >
+              <view class="response-avatar">{{ans[0] || '?'}}</view>
+              <text class="response-text">{{ans}}</text>
+            </view>
+            <view class="no-response" wx:if="{{item.fillAnswers.length === 0}}">
+              <text>暂无回答</text>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </block>
+</view>

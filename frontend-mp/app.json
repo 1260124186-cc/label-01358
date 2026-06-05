@@ -15,7 +15,11 @@
     "pages/favorites/index",
     "pages/history/index",
     "pages/announcement-detail/index",
-    "pages/login/index"
+    "pages/login/index",
+    "pages/survey-list/index",
+    "pages/survey-create/index",
+    "pages/survey-fill/index",
+    "pages/survey-result/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

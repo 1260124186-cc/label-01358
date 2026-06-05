@@ -1,0 +1,175 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="form-section">
+    <view class="section-title">基本信息</view>
+    <view class="form-card">
+      <view class="form-item">
+        <text class="form-label">问卷标题</text>
+        <input
+          class="form-input"
+          placeholder="请输入问卷标题"
+          value="{{formData.title}}"
+          bindinput="onTitleInput"
+          maxlength="50"
+        />
+      </view>
+      <view class="form-item no-border">
+        <text class="form-label">问卷描述</text>
+      </view>
+      <textarea
+        class="form-textarea"
+        placeholder="请输入问卷描述（选填）"
+        value="{{formData.description}}"
+        bindinput="onDescInput"
+        maxlength="200"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-header">
+      <text class="section-title">题目列表</text>
+      <view class="add-q-btn" bindtap="onAddQuestion">
+        <text>+ 添加题目</text>
+      </view>
+    </view>
+
+    <view
+      class="question-card card"
+      wx:for="{{formData.questions}}"
+      wx:key="id"
+    >
+      <view class="card-body">
+        <view class="question-header">
+          <view class="question-index">{{index + 1}}</view>
+          <view class="question-type-tag {{item.type}}">
+            {{item.type === 'single' ? '单选' : item.type === 'multiple' ? '多选' : '填空'}}
+          </view>
+          <view class="question-actions">
+            <view
+              class="q-action {{index === 0 ? 'disabled' : ''}}"
+              catchtap="onMoveUp"
+              data-index="{{index}}"
+            >↑</view>
+            <view
+              class="q-action {{index === formData.questions.length - 1 ? 'disabled' : ''}}"
+              catchtap="onMoveDown"
+              data-index="{{index}}"
+            >↓</view>
+            <view
+              class="q-action delete"
+              catchtap="onDeleteQuestion"
+              data-index="{{index}}"
+            >✕</view>
+          </view>
+        </view>
+
+        <input
+          class="question-title-input"
+          placeholder="请输入题目标题"
+          value="{{item.title}}"
+          bindinput="onQuestionTitleInput"
+          data-index="{{index}}"
+          maxlength="100"
+        />
+
+        <block wx:if="{{item.type !== 'fill'}}">
+          <view class="option-list">
+            <view
+              class="option-item"
+              wx:for="{{item.options}}"
+              wx:for-item="opt"
+              wx:for-index="oIndex"
+              wx:key="oIndex"
+            >
+              <view class="option-radio {{item.type === 'multiple' ? 'checkbox' : ''}}">
+                <text wx:if="{{item.type === 'single'}}">○</text>
+                <text wx:else>☐</text>
+              </view>
+              <input
+                class="option-input"
+                value="{{opt}}"
+                bindinput="onOptionInput"
+                data-q-index="{{index}}"
+                data-o-index="{{oIndex}}"
+                maxlength="50"
+              />
+              <view
+                class="option-delete"
+                catchtap="onDeleteOption"
+                data-q-index="{{index}}"
+                data-o-index="{{oIndex}}"
+              >✕</view>
+            </view>
+          </view>
+          <view
+            class="add-option-btn"
+            catchtap="onAddOption"
+            data-index="{{index}}"
+          >
+            <text>+ 添加选项</text>
+          </view>
+        </block>
+
+        <block wx:if="{{item.type === 'fill'}}">
+          <view class="fill-hint">
+            <text>答题者将在此处输入文字</text>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <btn type="primary" size="large" block="{{true}}" loading="{{submitting}}" bind:click="onSubmit">
+      发布问卷
+    </btn>
+  </view>
+
+  <view
+    class="picker-mask {{showTypePicker ? 'show' : ''}}"
+    bindtap="onHideTypePicker"
+  >
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择题目类型</text>
+        <text class="picker-close" bindtap="onHideTypePicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option"
+          bindtap="onTypeSelect"
+          data-type="single"
+        >
+          <view class="type-icon">○</view>
+          <view class="type-info">
+            <text class="type-name">单选题</text>
+            <text class="type-desc">从多个选项中选择一个</text>
+          </view>
+        </view>
+        <view
+          class="picker-option"
+          bindtap="onTypeSelect"
+          data-type="multiple"
+        >
+          <view class="type-icon">☐</view>
+          <view class="type-info">
+            <text class="type-name">多选题</text>
+            <text class="type-desc">从多个选项中选择多个</text>
+          </view>
+        </view>
+        <view
+          class="picker-option"
+          bindtap="onTypeSelect"
+          data-type="fill"
+        >
+          <view class="type-icon">✎</view>
+          <view class="type-info">
+            <text class="type-name">填空题</text>
+            <text class="type-desc">自由输入文字回答</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

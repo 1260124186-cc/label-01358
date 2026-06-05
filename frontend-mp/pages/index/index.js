@@ -32,6 +32,13 @@ Page({
         icon: '/assets/icons/nav-broadcast.png',
         bgColor: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
         url: '/pages/broadcast/index'
+      },
+      {
+        id: 'survey',
+        name: '问卷调研',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)',
+        url: '/pages/survey-list/index'
       }
     ],
     newsList: [],

@@ -1,0 +1,107 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="filter-section">
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-tabs">
+        <view
+          class="filter-tab {{currentTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabChange"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{list.length > 0}}">
+      <view
+        class="survey-card card"
+        wx:for="{{list}}"
+        wx:key="id"
+        hover-class="survey-card-hover"
+        bindtap="onItemTap"
+        data-item="{{item}}"
+      >
+        <view class="card-body">
+          <view class="survey-header">
+            <view class="survey-title-row">
+              <text class="survey-title">{{item.title}}</text>
+              <view class="survey-status {{item.status}}">
+                <text>{{item.statusText}}</text>
+              </view>
+            </view>
+            <text class="survey-desc" wx:if="{{item.description}}">{{item.description}}</text>
+          </view>
+
+          <view class="survey-meta">
+            <view class="meta-item">
+              <text class="meta-icon">📋</text>
+              <text class="meta-text">{{item.questionCount}}题</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">👥</text>
+              <text class="meta-text">{{item.responseCount}}人已填</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">🕐</text>
+              <text class="meta-text">{{item.timeText}}</text>
+            </view>
+          </view>
+
+          <view class="survey-actions">
+            <view class="action-left">
+              <view class="responded-tag" wx:if="{{item.hasResponded}}">
+                <text>已填写</text>
+              </view>
+            </view>
+            <view class="action-right">
+              <view
+                class="action-btn result-btn"
+                catchtap="onViewResult"
+                data-id="{{item.id}}"
+              >查看结果</view>
+              <block wx:if="{{item.isOwner && item.status === 'active'}}">
+                <view
+                  class="action-btn close-btn"
+                  catchtap="onCloseSurvey"
+                  data-id="{{item.id}}"
+                >结束</view>
+                <view
+                  class="action-btn delete-btn"
+                  catchtap="onDeleteSurvey"
+                  data-id="{{item.id}}"
+                >删除</view>
+              </block>
+              <view
+                wx:if="{{item.isOwner && item.status === 'closed'}}"
+                class="action-btn delete-btn"
+                catchtap="onDeleteSurvey"
+                data-id="{{item.id}}"
+              >删除</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{!loading && list.length === 0}}"
+      text="暂无问卷"
+      showAction="{{true}}"
+      actionText="创建问卷"
+      bindaction="onCreate"
+    />
+  </scroll-view>
+
+  <view class="create-btn" hover-class="create-btn-hover" bindtap="onCreate">
+    <text class="create-icon">+</text>
+  </view>
+</view>

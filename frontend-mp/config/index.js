@@ -224,6 +224,17 @@ function getLabelByValue(list, value) {
   return item ? item.label : value;
 }
 
+const SURVEY_QUESTION_TYPES = [
+  { value: 'single', label: '单选题' },
+  { value: 'multiple', label: '多选题' },
+  { value: 'fill', label: '填空题' }
+];
+
+const SURVEY_STATUS = [
+  { value: 'active', label: '进行中' },
+  { value: 'closed', label: '已结束' }
+];
+
 module.exports = {
   LOST_FOUND_TYPES,
   ITEM_TYPES,
@@ -238,5 +249,7 @@ module.exports = {
   CAMPUS_NEWS,
   SCENERY_LIST,
   BROADCAST_LIST,
+  SURVEY_QUESTION_TYPES,
+  SURVEY_STATUS,
   getLabelByValue
 };

@@ -408,6 +408,189 @@ function globalSearch(filters) {
   return { lostList, marketList, newsList };
 }
 
+// ==================== 问卷调研 ====================
+
+function getSurveyList(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.SURVEY_LIST);
+
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  if (filters.keyword) {
+    const keyword = filters.keyword.toLowerCase();
+    list = list.filter(item =>
+      item.title.toLowerCase().includes(keyword) ||
+      (item.description && item.description.toLowerCase().includes(keyword))
+    );
+  }
+
+  return list;
+}
+
+function getSurveyDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.SURVEY_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function createSurvey(data) {
+  const item = {
+    id: util.generateId(),
+    ...data,
+    createTime: Date.now(),
+    updateTime: Date.now(),
+    status: 'active',
+    responseCount: 0
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.SURVEY_LIST, item);
+  return success ? item : null;
+}
+
+function updateSurvey(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.SURVEY_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+}
+
+function deleteSurvey(id) {
+  storage.removeFromList(STORAGE_KEYS.SURVEY_LIST, id);
+  const responses = storage.getList(STORAGE_KEYS.SURVEY_RESPONSES);
+  const remaining = responses.filter(r => r.surveyId !== id);
+  storage.set(STORAGE_KEYS.SURVEY_RESPONSES, remaining);
+  return true;
+}
+
+function closeSurvey(id) {
+  return storage.updateInList(STORAGE_KEYS.SURVEY_LIST, id, {
+    status: 'closed',
+    updateTime: Date.now()
+  });
+}
+
+function hasUserResponded(surveyId, userId) {
+  const responses = storage.getList(STORAGE_KEYS.SURVEY_RESPONSES);
+  return responses.some(r => r.surveyId === surveyId && r.userId === userId);
+}
+
+function submitSurveyResponse(surveyId, userId, answers) {
+  if (hasUserResponded(surveyId, userId)) {
+    return false;
+  }
+
+  const response = {
+    id: util.generateId(),
+    surveyId,
+    userId,
+    answers,
+    createTime: Date.now()
+  };
+
+  storage.addToList(STORAGE_KEYS.SURVEY_RESPONSES, response);
+
+  const survey = getSurveyDetail(surveyId);
+  if (survey) {
+    storage.updateInList(STORAGE_KEYS.SURVEY_LIST, surveyId, {
+      responseCount: (survey.responseCount || 0) + 1
+    });
+  }
+
+  return response;
+}
+
+function getSurveyResponses(surveyId) {
+  const responses = storage.getList(STORAGE_KEYS.SURVEY_RESPONSES);
+  return responses.filter(r => r.surveyId === surveyId);
+}
+
+function getSurveyStatistics(surveyId) {
+  const survey = getSurveyDetail(surveyId);
+  if (!survey) return null;
+
+  const responses = getSurveyResponses(surveyId);
+  const questions = survey.questions || [];
+
+  const stats = questions.map(q => {
+    const stat = {
+      id: q.id,
+      title: q.title,
+      type: q.type,
+      totalCount: responses.length
+    };
+
+    if (q.type === 'single') {
+      const optionCounts = (q.options || []).map(opt => ({
+        label: opt,
+        count: 0,
+        percentage: 0
+      }));
+
+      responses.forEach(r => {
+        const answer = r.answers.find(a => a.questionId === q.id);
+        if (answer && answer.value) {
+          const idx = q.options.indexOf(answer.value);
+          if (idx > -1) {
+            optionCounts[idx].count++;
+          }
+        }
+      });
+
+      optionCounts.forEach(opt => {
+        opt.percentage = responses.length > 0
+          ? Math.round(opt.count / responses.length * 100)
+          : 0;
+      });
+
+      stat.options = optionCounts;
+    } else if (q.type === 'multiple') {
+      const optionCounts = (q.options || []).map(opt => ({
+        label: opt,
+        count: 0,
+        percentage: 0
+      }));
+
+      responses.forEach(r => {
+        const answer = r.answers.find(a => a.questionId === q.id);
+        if (answer && Array.isArray(answer.value)) {
+          answer.value.forEach(v => {
+            const idx = q.options.indexOf(v);
+            if (idx > -1) {
+              optionCounts[idx].count++;
+            }
+          });
+        }
+      });
+
+      const totalSelections = optionCounts.reduce((sum, opt) => sum + opt.count, 0);
+      optionCounts.forEach(opt => {
+        opt.percentage = totalSelections > 0
+          ? Math.round(opt.count / totalSelections * 100)
+          : 0;
+      });
+
+      stat.options = optionCounts;
+    } else if (q.type === 'fill') {
+      const fillAnswers = [];
+      responses.forEach(r => {
+        const answer = r.answers.find(a => a.questionId === q.id);
+        if (answer && answer.value) {
+          fillAnswers.push(answer.value);
+        }
+      });
+      stat.fillAnswers = fillAnswers;
+    }
+
+    return stat;
+  });
+
+  return {
+    survey,
+    totalResponses: responses.length,
+    questionStats: stats
+  };
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -433,5 +616,16 @@ module.exports = {
   clearHistory,
   removeHistory,
 
-  globalSearch
+  globalSearch,
+
+  getSurveyList,
+  getSurveyDetail,
+  createSurvey,
+  updateSurvey,
+  deleteSurvey,
+  closeSurvey,
+  hasUserResponded,
+  submitSurveyResponse,
+  getSurveyResponses,
+  getSurveyStatistics
 };

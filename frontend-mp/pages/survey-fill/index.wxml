@@ -1,0 +1,98 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <block wx:if="{{survey}}">
+    <view class="survey-header card">
+      <view class="card-body">
+        <text class="survey-title">{{survey.title}}</text>
+        <text class="survey-desc" wx:if="{{survey.description}}">{{survey.description}}</text>
+        <view class="survey-info">
+          <text class="info-text">共{{survey.questions.length}}题</text>
+          <text class="info-text">{{survey.responseCount}}人已填</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{alreadyResponded}}" class="responded-banner">
+      <text class="responded-icon">✓</text>
+      <text class="responded-text">您已填写过此问卷</text>
+      <view class="responded-action" bindtap="onViewResult">查看结果</view>
+    </view>
+
+    <view
+      class="question-card card"
+      wx:for="{{survey.questions}}"
+      wx:key="id"
+    >
+      <view class="card-body">
+        <view class="question-header">
+          <text class="question-index">{{index + 1}}</text>
+          <text class="question-title">{{item.title}}</text>
+          <text class="question-required">*</text>
+          <view class="question-type-tag {{item.type}}">
+            {{item.type === 'single' ? '单选' : item.type === 'multiple' ? '多选' : '填空'}}
+          </view>
+        </view>
+
+        <block wx:if="{{item.type === 'single'}}">
+          <view class="option-group">
+            <view
+              class="option-item {{answers[item.id] === opt ? 'selected' : ''}} {{alreadyResponded ? 'disabled' : ''}}"
+              wx:for="{{item.options}}"
+              wx:for-item="opt"
+              wx:for-index="oIndex"
+              wx:key="oIndex"
+              bindtap="{{alreadyResponded ? '' : 'onSingleSelect'}}"
+              data-q-id="{{item.id}}"
+              data-value="{{opt}}"
+            >
+              <view class="option-radio">
+                <view class="radio-dot {{answers[item.id] === opt ? 'checked' : ''}}"></view>
+              </view>
+              <text class="option-text">{{opt}}</text>
+            </view>
+          </view>
+        </block>
+
+        <block wx:if="{{item.type === 'multiple'}}">
+          <view class="option-group">
+            <view
+              class="option-item {{(answers[item.id] || []).indexOf(opt) > -1 ? 'selected' : ''}} {{alreadyResponded ? 'disabled' : ''}}"
+              wx:for="{{item.options}}"
+              wx:for-item="opt"
+              wx:for-index="oIndex"
+              wx:key="oIndex"
+              bindtap="{{alreadyResponded ? '' : 'onMultipleSelect'}}"
+              data-q-id="{{item.id}}"
+              data-value="{{opt}}"
+            >
+              <view class="option-checkbox">
+                <view class="checkbox-inner {{(answers[item.id] || []).indexOf(opt) > -1 ? 'checked' : ''}}">
+                  <text wx:if="{{(answers[item.id] || []).indexOf(opt) > -1}}">✓</text>
+                </view>
+              </view>
+              <text class="option-text">{{opt}}</text>
+            </view>
+          </view>
+        </block>
+
+        <block wx:if="{{item.type === 'fill'}}">
+          <textarea
+            class="fill-textarea"
+            placeholder="请输入您的回答"
+            value="{{answers[item.id]}}"
+            bindinput="onFillInput"
+            data-q-id="{{item.id}}"
+            maxlength="500"
+            disabled="{{alreadyResponded}}"
+          />
+        </block>
+      </view>
+    </view>
+
+    <view class="submit-section" wx:if="{{!alreadyResponded}}">
+      <btn type="primary" size="large" block="{{true}}" loading="{{submitting}}" bind:click="onSubmit">
+        提交问卷
+      </btn>
+    </view>
+  </block>
+</view>

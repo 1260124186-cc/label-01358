@@ -9,7 +9,9 @@ const STORAGE_KEYS = {
   FAVORITES: 'favorites',
   HISTORY: 'history',
   THEME_SETTINGS: 'theme_settings',
-  SEARCH_HISTORY: 'searchHistory'
+  SEARCH_HISTORY: 'searchHistory',
+  SURVEY_LIST: 'surveyList',
+  SURVEY_RESPONSES: 'surveyResponses'
 };
 
 /**
