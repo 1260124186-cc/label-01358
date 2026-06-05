@@ -65,6 +65,121 @@ describe('survey-fill 页面', () => {
       expect(pageConfig.data.answers).toEqual({});
       expect(pageConfig.data.submitting).toBe(false);
       expect(pageConfig.data.alreadyResponded).toBe(false);
+      expect(pageConfig.data.questionOptionsWithState).toEqual({});
+    });
+  });
+
+  describe('computeOptionStates', () => {
+    const mockSurvey = {
+      id: 'survey123',
+      title: '测试问卷',
+      status: 'active',
+      responseCount: 0,
+      questions: [
+        { id: 'q1', type: 'single', title: '单选题', options: ['A', 'B'] },
+        { id: 'q2', type: 'multiple', title: '多选题', options: ['X', 'Y', 'Z'] },
+        { id: 'q3', type: 'fill', title: '填空题' }
+      ]
+    };
+
+    test('无问卷时不应报错', () => {
+      pageInstance.data.survey = null;
+      expect(() => pageInstance.computeOptionStates()).not.toThrow();
+      expect(pageInstance.data.questionOptionsWithState).toEqual({});
+    });
+
+    test('无 questions 时不应报错', () => {
+      pageInstance.data.survey = { ...mockSurvey, questions: undefined };
+      expect(() => pageInstance.computeOptionStates()).not.toThrow();
+      expect(pageInstance.data.questionOptionsWithState).toEqual({});
+    });
+
+    test('多选题无 options 时不应报错', () => {
+      pageInstance.data.survey = {
+        ...mockSurvey,
+        questions: [{ id: 'q2', type: 'multiple', title: '多选题' }]
+      };
+      expect(() => pageInstance.computeOptionStates()).not.toThrow();
+    });
+
+    test('应正确计算未选择时的选项状态', () => {
+      pageInstance.data.survey = mockSurvey;
+      pageInstance.data.answers = { q2: [] };
+
+      pageInstance.computeOptionStates();
+
+      expect(pageInstance.setData).toHaveBeenCalledWith({
+        questionOptionsWithState: {
+          q2: [
+            { label: 'X', selected: false },
+            { label: 'Y', selected: false },
+            { label: 'Z', selected: false }
+          ]
+        }
+      });
+    });
+
+    test('应正确计算部分选择时的选项状态', () => {
+      pageInstance.data.survey = mockSurvey;
+      pageInstance.data.answers = { q2: ['X', 'Z'] };
+
+      pageInstance.computeOptionStates();
+
+      expect(pageInstance.setData).toHaveBeenCalledWith({
+        questionOptionsWithState: {
+          q2: [
+            { label: 'X', selected: true },
+            { label: 'Y', selected: false },
+            { label: 'Z', selected: true }
+          ]
+        }
+      });
+    });
+
+    test('应正确计算全部选择时的选项状态', () => {
+      pageInstance.data.survey = mockSurvey;
+      pageInstance.data.answers = { q2: ['X', 'Y', 'Z'] };
+
+      pageInstance.computeOptionStates();
+
+      expect(pageInstance.setData).toHaveBeenCalledWith({
+        questionOptionsWithState: {
+          q2: [
+            { label: 'X', selected: true },
+            { label: 'Y', selected: true },
+            { label: 'Z', selected: true }
+          ]
+        }
+      });
+    });
+
+    test('多选题 answers 未定义时应视为未选择', () => {
+      pageInstance.data.survey = mockSurvey;
+      pageInstance.data.answers = {};
+
+      pageInstance.computeOptionStates();
+
+      expect(pageInstance.setData).toHaveBeenCalledWith({
+        questionOptionsWithState: {
+          q2: [
+            { label: 'X', selected: false },
+            { label: 'Y', selected: false },
+            { label: 'Z', selected: false }
+          ]
+        }
+      });
+    });
+
+    test('单选题和填空题不应生成选项状态', () => {
+      pageInstance.data.survey = mockSurvey;
+      pageInstance.data.answers = { q1: 'A', q2: ['X'], q3: '回答' };
+
+      pageInstance.computeOptionStates();
+
+      const states = pageInstance.setData.mock.calls[0][0].questionOptionsWithState;
+      expect(Object.keys(states)).toEqual(['q2']);
+      expect(states.q1).toBeUndefined();
+      expect(states.q3).toBeUndefined();
     });
   });
 
@@ -146,6 +261,27 @@ describe('survey-fill 页面', () => {
       expect(pageInstance.data.answers.q3).toBe('');
     });
 
+    test('loadSurvey 应调用 computeOptionStates', () => {
+      mockDataService.getSurveyDetail.mockReturnValue(mockSurvey);
+      const computeSpy = jest.spyOn(pageInstance, 'computeOptionStates');
+
+      pageInstance.loadSurvey('survey123');
+
+      expect(computeSpy).toHaveBeenCalled();
+    });
+
+    test('loadSurvey 应设置 questionOptionsWithState', () => {
+      mockDataService.getSurveyDetail.mockReturnValue(mockSurvey);
+
+      pageInstance.loadSurvey('survey123');
+
+      const setDataCalls = pageInstance.setData.mock.calls;
+      const lastCall = setDataCalls[setDataCalls.length - 1][0];
+      expect(lastCall.questionOptionsWithState).toBeDefined();
+      expect(lastCall.questionOptionsWithState.q2).toBeDefined();
+      expect(lastCall.questionOptionsWithState.q2.length).toBe(3);
+    });
+
     test('无 questions 时不应报错', () => {
       mockDataService.getSurveyDetail.mockReturnValue({ ...mockSurvey, questions: undefined });
 
@@ -201,34 +337,40 @@ describe('survey-fill 页面', () => {
 
     test('未选择时应添加选项', () => {
       pageInstance.data.alreadyResponded = false;
+      const computeSpy = jest.spyOn(pageInstance, 'computeOptionStates');
 
       pageInstance.onMultipleSelect({
         currentTarget: { dataset: { qId: 'q2', value: 'X' } }
       });
 
       expect(pageInstance.setData).toHaveBeenCalledWith({ 'answers.q2': ['X'] });
+      expect(computeSpy).toHaveBeenCalled();
     });
 
     test('已选择时应取消选项', () => {
       pageInstance.data.alreadyResponded = false;
       pageInstance.data.answers.q2 = ['X', 'Y'];
+      const computeSpy = jest.spyOn(pageInstance, 'computeOptionStates');
 
       pageInstance.onMultipleSelect({
         currentTarget: { dataset: { qId: 'q2', value: 'X' } }
       });
 
       expect(pageInstance.setData).toHaveBeenCalledWith({ 'answers.q2': ['Y'] });
+      expect(computeSpy).toHaveBeenCalled();
     });
 
     test('answers 未定义时应创建数组', () => {
       pageInstance.data.alreadyResponded = false;
       pageInstance.data.answers = {};
+      const computeSpy = jest.spyOn(pageInstance, 'computeOptionStates');
 
       pageInstance.onMultipleSelect({
         currentTarget: { dataset: { qId: 'q2', value: 'X' } }
       });
 
       expect(pageInstance.setData).toHaveBeenCalledWith({ 'answers.q2': ['X'] });
+      expect(computeSpy).toHaveBeenCalled();
     });
   });
 

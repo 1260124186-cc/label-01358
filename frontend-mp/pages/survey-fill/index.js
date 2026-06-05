@@ -9,7 +9,8 @@ mixPage({
     survey: null,
     answers: {},
     submitting: false,
-    alreadyResponded: false
+    alreadyResponded: false,
+    questionOptionsWithState: {}
   },
 
   onLoad(options) {
@@ -58,6 +59,25 @@ mixPage({
     });
 
     this.setData({ survey, answers });
+    this.computeOptionStates();
+  },
+
+  computeOptionStates() {
+    const { survey, answers } = this.data;
+    if (!survey || !survey.questions) return;
+
+    const states = {};
+    survey.questions.forEach(q => {
+      if (q.type === 'multiple' && q.options) {
+        const selected = answers[q.id] || [];
+        states[q.id] = q.options.map(opt => ({
+          label: opt,
+          selected: selected.indexOf(opt) > -1
+        }));
+      }
+    });
+
+    this.setData({ questionOptionsWithState: states });
   },
 
   onSingleSelect(e) {
@@ -81,6 +101,7 @@ mixPage({
     }
 
     this.setData({ [`answers.${qId}`]: newValues });
+    this.computeOptionStates();
   },
 
   onFillInput(e) {

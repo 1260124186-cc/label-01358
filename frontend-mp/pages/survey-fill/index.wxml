@@ -56,21 +56,21 @@
         <block wx:if="{{item.type === 'multiple'}}">
           <view class="option-group">
             <view
-              class="option-item {{(answers[item.id] || []).indexOf(opt) > -1 ? 'selected' : ''}} {{alreadyResponded ? 'disabled' : ''}}"
-              wx:for="{{item.options}}"
+              class="option-item {{opt.selected ? 'selected' : ''}} {{alreadyResponded ? 'disabled' : ''}}"
+              wx:for="{{questionOptionsWithState[item.id]}}"
               wx:for-item="opt"
               wx:for-index="oIndex"
-              wx:key="oIndex"
+              wx:key="label"
               bindtap="onMultipleSelect"
               data-q-id="{{item.id}}"
-              data-value="{{opt}}"
+              data-value="{{opt.label}}"
             >
               <view class="option-checkbox">
-                <view class="checkbox-inner {{(answers[item.id] || []).indexOf(opt) > -1 ? 'checked' : ''}}">
-                  <text wx:if="{{(answers[item.id] || []).indexOf(opt) > -1}}">✓</text>
+                <view class="checkbox-inner {{opt.selected ? 'checked' : ''}}">
+                  <text wx:if="{{opt.selected}}">✓</text>
                 </view>
               </view>
-              <text class="option-text">{{opt}}</text>
+              <text class="option-text">{{opt.label}}</text>
             </view>
           </view>
         </block>
