@@ -61,11 +61,13 @@ mixPage({
   },
 
   onSingleSelect(e) {
+    if (this.data.alreadyResponded) return;
     const { qId, value } = e.currentTarget.dataset;
     this.setData({ [`answers.${qId}`]: value });
   },
 
   onMultipleSelect(e) {
+    if (this.data.alreadyResponded) return;
     const { qId, value } = e.currentTarget.dataset;
     const current = this.data.answers[qId] || [];
     const index = current.indexOf(value);
@@ -82,6 +84,7 @@ mixPage({
   },
 
   onFillInput(e) {
+    if (this.data.alreadyResponded) return;
     const { qId } = e.currentTarget.dataset;
     this.setData({ [`answers.${qId}`]: e.detail.value });
   },

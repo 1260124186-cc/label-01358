@@ -41,7 +41,7 @@
               wx:for-item="opt"
               wx:for-index="oIndex"
               wx:key="oIndex"
-              bindtap="{{alreadyResponded ? '' : 'onSingleSelect'}}"
+              bindtap="onSingleSelect"
               data-q-id="{{item.id}}"
               data-value="{{opt}}"
             >
@@ -61,7 +61,7 @@
               wx:for-item="opt"
               wx:for-index="oIndex"
               wx:key="oIndex"
-              bindtap="{{alreadyResponded ? '' : 'onMultipleSelect'}}"
+              bindtap="onMultipleSelect"
               data-q-id="{{item.id}}"
               data-value="{{opt}}"
             >
