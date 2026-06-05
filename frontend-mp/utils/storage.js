@@ -8,7 +8,8 @@ const STORAGE_KEYS = {
   MARKET_LIST: 'marketList',
   FAVORITES: 'favorites',
   HISTORY: 'history',
-  THEME_SETTINGS: 'theme_settings'
+  THEME_SETTINGS: 'theme_settings',
+  SEARCH_HISTORY: 'searchHistory'
 };
 
 /**
@@ -130,6 +131,30 @@ function clearList(key) {
   return set(key, []);
 }
 
+function getSearchHistory() {
+  return getList(STORAGE_KEYS.SEARCH_HISTORY);
+}
+
+function addSearchHistory(keyword) {
+  if (!keyword || !keyword.trim()) return false;
+  const trimmed = keyword.trim();
+  const list = getList(STORAGE_KEYS.SEARCH_HISTORY);
+  const filtered = list.filter(item => item !== trimmed);
+  filtered.unshift(trimmed);
+  if (filtered.length > 20) filtered.splice(20);
+  return set(STORAGE_KEYS.SEARCH_HISTORY, filtered);
+}
+
+function removeSearchHistory(keyword) {
+  const list = getList(STORAGE_KEYS.SEARCH_HISTORY);
+  const newList = list.filter(item => item !== keyword);
+  return set(STORAGE_KEYS.SEARCH_HISTORY, newList);
+}
+
+function clearSearchHistory() {
+  return set(STORAGE_KEYS.SEARCH_HISTORY, []);
+}
+
 module.exports = {
   STORAGE_KEYS,
   get,
@@ -142,5 +167,9 @@ module.exports = {
   removeFromList,
   updateInList,
   isInList,
-  clearList
+  clearList,
+  getSearchHistory,
+  addSearchHistory,
+  removeSearchHistory,
+  clearSearchHistory
 };

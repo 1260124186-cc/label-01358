@@ -117,7 +117,6 @@ Page({
   onQuickPublish(e) {
     const { type } = e.currentTarget.dataset;
 
-    // 检查登录状态
     if (!util.checkLogin()) {
       return;
     }
@@ -127,5 +126,9 @@ Page({
     } else if (type === 'market') {
       util.navigateTo('/pages/market-publish/index');
     }
+  },
+
+  onSearchTap() {
+    util.navigateTo('/pages/search/index');
   }
 });

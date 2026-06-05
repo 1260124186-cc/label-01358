@@ -1,0 +1,292 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 搜索栏 -->
+  <view class="search-header">
+    <view class="search-bar">
+      <view class="search-icon">
+        <text class="icon-search">🔍</text>
+      </view>
+      <input
+        class="search-input"
+        placeholder="搜索失物招领、二手市场、校园动态..."
+        placeholder-class="search-placeholder"
+        value="{{keyword}}"
+        bindinput="onInputChange"
+        bindconfirm="onSearch"
+        confirm-type="search"
+        focus="{{true}}"
+      />
+      <view class="search-clear" wx:if="{{keyword}}" bindtap="onClearInput">
+        <text>✕</text>
+      </view>
+    </view>
+    <view class="search-btn" bindtap="onSearch">
+      <text>搜索</text>
+    </view>
+  </view>
+
+  <!-- 搜索历史 -->
+  <view class="history-section" wx:if="{{showHistory && searchHistory.length > 0}}">
+    <view class="section-header">
+      <text class="history-title">搜索历史</text>
+      <view class="history-clear" bindtap="onClearHistory">
+        <text class="clear-text">清空</text>
+      </view>
+    </view>
+    <view class="history-tags">
+      <view
+        class="history-tag"
+        wx:for="{{searchHistory}}"
+        wx:key="*this"
+        bindtap="onHistoryTap"
+        data-keyword="{{item}}"
+      >
+        <text class="history-tag-text">{{item}}</text>
+        <view class="history-tag-close" catchtap="onRemoveHistory" data-keyword="{{item}}">
+          <text>✕</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 搜索结果区域 -->
+  <view class="results-section" wx:if="{{showResults}}">
+    <!-- Tab 切换 -->
+    <view class="tab-bar">
+      <view
+        class="tab-item {{currentTab === item.value ? 'tab-active' : ''}}"
+        wx:for="{{tabs}}"
+        wx:key="value"
+        bindtap="onTabChange"
+        data-value="{{item.value}}"
+      >
+        <text class="tab-text">{{item.label}}</text>
+        <view class="tab-indicator" wx:if="{{currentTab === item.value}}"></view>
+      </view>
+    </view>
+
+    <!-- 筛选栏 -->
+    <view class="filter-bar">
+      <view
+        class="filter-item {{activeFilter === 'sort' ? 'filter-active' : ''}} {{currentSort !== 'latest' ? 'filter-selected' : ''}}"
+        bindtap="onToggleFilter"
+        data-filter="sort"
+      >
+        <text class="filter-text">{{currentSortText}}</text>
+        <text class="filter-arrow {{activeFilter === 'sort' ? 'arrow-up' : ''}}">▼</text>
+      </view>
+      <view
+        class="filter-item {{activeFilter === 'price' ? 'filter-active' : ''}} {{currentPriceRange ? 'filter-selected' : ''}}"
+        bindtap="onToggleFilter"
+        data-filter="price"
+      >
+        <text class="filter-text">{{currentPriceText}}</text>
+        <text class="filter-arrow {{activeFilter === 'price' ? 'arrow-up' : ''}}">▼</text>
+      </view>
+      <view
+        class="filter-item {{activeFilter === 'category' ? 'filter-active' : ''}} {{currentCategory ? 'filter-selected' : ''}}"
+        bindtap="onToggleFilter"
+        data-filter="category"
+      >
+        <text class="filter-text">{{currentCategoryText}}</text>
+        <text class="filter-arrow {{activeFilter === 'category' ? 'arrow-up' : ''}}">▼</text>
+      </view>
+      <view
+        class="filter-item {{activeFilter === 'time' ? 'filter-active' : ''}} {{currentTimeRange ? 'filter-selected' : ''}}"
+        bindtap="onToggleFilter"
+        data-filter="time"
+      >
+        <text class="filter-text">{{currentTimeText}}</text>
+        <text class="filter-arrow {{activeFilter === 'time' ? 'arrow-up' : ''}}">▼</text>
+      </view>
+      <view
+        class="filter-reset"
+        wx:if="{{currentSort !== 'latest' || currentPriceRange || currentCategory || currentTimeRange}}"
+        bindtap="onResetFilters"
+      >
+        <text class="reset-text">重置</text>
+      </view>
+    </view>
+
+    <!-- 筛选面板 -->
+    <view class="filter-panel" wx:if="{{showFilterPanel}}">
+      <view class="filter-mask" bindtap="onCloseFilter"></view>
+      <view class="filter-content">
+        <!-- 排序选项 -->
+        <view class="filter-group" wx:if="{{activeFilter === 'sort'}}">
+          <view
+            class="filter-option {{currentSort === item.value ? 'option-active' : ''}}"
+            wx:for="{{sortOptions}}"
+            wx:key="value"
+            bindtap="onSortSelect"
+            data-value="{{item.value}}"
+          >
+            <text>{{item.label}}</text>
+            <text wx:if="{{currentSort === item.value}}" class="option-check">✓</text>
+          </view>
+        </view>
+
+        <!-- 价格选项 -->
+        <view class="filter-group" wx:if="{{activeFilter === 'price'}}">
+          <view
+            class="filter-option {{currentPriceRange === item.value ? 'option-active' : ''}}"
+            wx:for="{{priceRanges}}"
+            wx:key="value"
+            bindtap="onPriceSelect"
+            data-value="{{item.value}}"
+            data-min="{{item.min}}"
+            data-max="{{item.max}}"
+          >
+            <text>{{item.label}}</text>
+            <text wx:if="{{currentPriceRange === item.value}}" class="option-check">✓</text>
+          </view>
+        </view>
+
+        <!-- 分类选项 -->
+        <view class="filter-group" wx:if="{{activeFilter === 'category'}}">
+          <view
+            class="filter-option {{currentCategory === item.value ? 'option-active' : ''}}"
+            wx:for="{{currentTab === 'lost' ? lostItemTypes : marketCategories}}"
+            wx:key="value"
+            bindtap="onCategorySelect"
+            data-value="{{item.value}}"
+          >
+            <text>{{item.label}}</text>
+            <text wx:if="{{currentCategory === item.value}}" class="option-check">✓</text>
+          </view>
+          <view
+            class="filter-option {{!currentCategory ? 'option-active' : ''}}"
+            bindtap="onCategorySelect"
+            data-value=""
+          >
+            <text>全部</text>
+            <text wx:if="{{!currentCategory}}" class="option-check">✓</text>
+          </view>
+        </view>
+
+        <!-- 时间选项 -->
+        <view class="filter-group" wx:if="{{activeFilter === 'time'}}">
+          <view
+            class="filter-option {{currentTimeRange === item.value ? 'option-active' : ''}}"
+            wx:for="{{timeRanges}}"
+            wx:key="value"
+            bindtap="onTimeSelect"
+            data-value="{{item.value}}"
+          >
+            <text>{{item.label}}</text>
+            <text wx:if="{{currentTimeRange === item.value}}" class="option-check">✓</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 结果列表 -->
+    <scroll-view class="results-list" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+
+      <!-- 失物招领结果 -->
+      <view class="result-group" wx:if="{{(currentTab === 'all' || currentTab === 'lost') && lostList.length > 0}}">
+        <view class="result-group-header" wx:if="{{currentTab === 'all'}}">
+          <view class="result-group-icon lost-icon"></view>
+          <text class="result-group-title">失物招领</text>
+          <text class="result-group-count">{{lostList.length}}条</text>
+        </view>
+        <view
+          class="result-card lost-card"
+          wx:for="{{lostList}}"
+          wx:key="id"
+          bindtap="onLostItemTap"
+          data-item="{{item}}"
+          hover-class="hover-opacity"
+        >
+          <view class="result-card-body">
+            <view class="result-card-top">
+              <view class="tag tag-{{item.type === 'lost' ? 'danger' : 'success'}}">
+                {{item.type === 'lost' ? '寻物' : '招领'}}
+              </view>
+              <view class="tag tag-primary" wx:if="{{item.itemTypeText}}">{{item.itemTypeText}}</view>
+            </view>
+            <text class="result-card-title">{{item.title}}</text>
+            <text class="result-card-desc">{{item.description}}</text>
+            <view class="result-card-meta">
+              <text class="meta-location" wx:if="{{item.locationText}}">📍 {{item.locationText}}</text>
+              <text class="meta-time">{{item.timeText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 二手市场结果 -->
+      <view class="result-group" wx:if="{{(currentTab === 'all' || currentTab === 'market') && marketList.length > 0}}">
+        <view class="result-group-header" wx:if="{{currentTab === 'all'}}">
+          <view class="result-group-icon market-icon"></view>
+          <text class="result-group-title">二手市场</text>
+          <text class="result-group-count">{{marketList.length}}条</text>
+        </view>
+        <view
+          class="result-card market-card"
+          wx:for="{{marketList}}"
+          wx:key="id"
+          bindtap="onMarketItemTap"
+          data-item="{{item}}"
+          hover-class="hover-opacity"
+        >
+          <view class="result-card-body">
+            <view class="result-card-top">
+              <view class="tag tag-info" wx:if="{{item.categoryText}}">{{item.categoryText}}</view>
+              <view class="tag tag-{{item.status === 'selling' ? 'success' : (item.status === 'reserved' ? 'warning' : 'muted')}}" >{{item.statusText}}</view>
+            </view>
+            <text class="result-card-title">{{item.title}}</text>
+            <view class="result-card-price">
+              <text class="price-symbol">¥</text>
+              <text class="price-value">{{item.priceText}}</text>
+            </view>
+            <view class="result-card-meta">
+              <text class="meta-views" wx:if="{{item.views}}">👁 {{item.views}}</text>
+              <text class="meta-time">{{item.timeText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 校园动态结果 -->
+      <view class="result-group" wx:if="{{(currentTab === 'all' || currentTab === 'news') && newsList.length > 0}}">
+        <view class="result-group-header" wx:if="{{currentTab === 'all'}}">
+          <view class="result-group-icon news-icon"></view>
+          <text class="result-group-title">校园动态</text>
+          <text class="result-group-count">{{newsList.length}}条</text>
+        </view>
+        <view
+          class="result-card news-card"
+          wx:for="{{newsList}}"
+          wx:key="id"
+          bindtap="onNewsItemTap"
+          data-item="{{item}}"
+          hover-class="hover-opacity"
+        >
+          <view class="result-card-body">
+            <view class="result-card-top">
+              <view class="tag tag-primary">动态</view>
+            </view>
+            <text class="result-card-title">{{item.title}}</text>
+            <text class="result-card-desc" wx:if="{{item.summary}}">{{item.summary}}</text>
+            <view class="result-card-meta">
+              <text class="meta-time">{{item.timeText}}</text>
+            </view>
+          </view>
+          <view class="news-thumb" wx:if="{{item.image}}">
+            <image src="{{item.image}}" mode="aspectFill" />
+          </view>
+        </view>
+      </view>
+
+      <!-- 空结果 -->
+      <view class="empty-result" wx:if="{{showResults && lostList.length === 0 && marketList.length === 0 && newsList.length === 0}}">
+        <view class="empty-icon">🔍</view>
+        <text class="empty-text">未找到相关结果</text>
+        <text class="empty-hint">换个关键词试试吧</text>
+      </view>
+
+      <view class="results-bottom"></view>
+    </scroll-view>
+  </view>
+</view>

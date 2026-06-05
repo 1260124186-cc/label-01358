@@ -51,6 +51,28 @@ const PRICE_RANGES = [
   { value: '500+', label: '500元以上', min: 500, max: Infinity }
 ];
 
+const SORT_OPTIONS = [
+  { value: 'latest', label: '最新', field: 'createTime', order: 'desc' },
+  { value: 'price_asc', label: '价格低到高', field: 'price', order: 'asc' },
+  { value: 'price_desc', label: '价格高到低', field: 'price', order: 'desc' },
+  { value: 'views', label: '浏览量', field: 'views', order: 'desc' }
+];
+
+const TIME_RANGES = [
+  { value: '', label: '不限' },
+  { value: '1d', label: '一天内' },
+  { value: '3d', label: '三天内' },
+  { value: '1w', label: '一周内' },
+  { value: '1m', label: '一个月内' }
+];
+
+const SEARCH_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'lost', label: '失物招领' },
+  { value: 'market', label: '二手市场' },
+  { value: 'news', label: '校园动态' }
+];
+
 // 商品状态
 const MARKET_STATUS = [
   { value: 'selling', label: '在售' },
@@ -208,6 +230,9 @@ module.exports = {
   LOCATIONS,
   MARKET_CATEGORIES,
   PRICE_RANGES,
+  SORT_OPTIONS,
+  TIME_RANGES,
+  SEARCH_TABS,
   MARKET_STATUS,
   ANNOUNCEMENTS,
   CAMPUS_NEWS,

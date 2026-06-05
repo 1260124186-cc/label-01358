@@ -5,6 +5,39 @@
   padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
 }
 
+/* ==================== 搜索入口 ==================== */
+.search-entry {
+  padding: 16rpx 24rpx 0;
+}
+
+.search-entry-bar {
+  display: flex;
+  align-items: center;
+  height: 72rpx;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-full);
+  padding: 0 24rpx;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.search-entry-bar:active {
+  transform: scale(0.99);
+  box-shadow: var(--shadow-xs);
+}
+
+.search-entry-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.search-entry-placeholder {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  flex: 1;
+}
+
 /* ==================== 轮播区域 ==================== */
 .banner-section {
   padding: 24rpx 24rpx 0;
@@ -363,4 +396,9 @@
 
 .dark .quick-item:active {
   box-shadow: var(--shadow-xs);
+}
+
+.dark .search-entry-bar {
+  background-color: var(--color-bg-card);
+  border: 1rpx solid var(--color-border);
 }
