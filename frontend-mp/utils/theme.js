@@ -32,25 +32,21 @@ function getResolvedTheme(mode) {
   return mode;
 }
 
-function applyTheme(mode, page) {
+function applyTheme(mode) {
   const resolved = getResolvedTheme(mode);
   const isDark = resolved === THEMES.DARK;
 
-  if (page && page.setData) {
-    page.setData({ darkMode: isDark });
+  const app = getApp();
+  if (app && app.globalData) {
+    app.globalData.themeMode = mode;
+    app.globalData.isDark = isDark;
   }
 
-  const pages = getCurrentPages();
-  pages.forEach(p => {
-    if (p && p.setData) {
-      p.setData({ darkMode: isDark });
-    }
-  });
-
   try {
-    wx.setPageStyle({
-      style: {
-        darkmode: isDark
+    const pages = getCurrentPages();
+    pages.forEach(p => {
+      if (p && p.setData) {
+        p.setData({ darkMode: isDark });
       }
     });
   } catch (e) {}
@@ -58,29 +54,31 @@ function applyTheme(mode, page) {
   return resolved;
 }
 
+let _themeChangeHandler = null;
+
 function init() {
   const settings = getSettings();
   const resolved = applyTheme(settings.mode);
 
-  try {
-    wx.onThemeChange((result) => {
-      const currentSettings = getSettings();
-      if (currentSettings.mode === THEMES.SYSTEM) {
-        const isDark = result.theme === THEMES.DARK;
-        const pages = getCurrentPages();
-        pages.forEach(p => {
-          if (p && p.setData) {
-            p.setData({ darkMode: isDark });
-          }
-        });
-      }
-    });
-  } catch (e) {}
+  if (!_themeChangeHandler) {
+    try {
+      _themeChangeHandler = function (result) {
+        const currentSettings = getSettings();
+        if (currentSettings.mode === THEMES.SYSTEM) {
+          applyTheme(THEMES.SYSTEM);
+        }
+      };
+      wx.onThemeChange(_themeChangeHandler);
+    } catch (e) {}
+  }
 
   return { mode: settings.mode, resolved, isDark: resolved === THEMES.DARK };
 }
 
 function setMode(mode) {
+  if (!Object.values(THEMES).includes(mode)) {
+    mode = THEMES.SYSTEM;
+  }
   const settings = { mode };
   saveSettings(settings);
   const resolved = applyTheme(mode);

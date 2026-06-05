@@ -341,26 +341,26 @@
 }
 
 /* ==================== 暗色模式 - 轮播图对比度增强 ==================== */
-page.dark .banner-overlay {
+.dark .banner-overlay {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.15) 100%);
 }
 
-page.dark .banner-tag {
+.dark .banner-tag {
   background: rgba(255, 138, 138, 0.95);
 }
 
-page.dark .banner-title {
+.dark .banner-title {
   text-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.5);
 }
 
-page.dark .nav-item:active {
+.dark .nav-item:active {
   transform: scale(0.92);
 }
 
-page.dark .news-item:active {
+.dark .news-item:active {
   background-color: var(--color-bg-input);
 }
 
-page.dark .quick-item:active {
+.dark .quick-item:active {
   box-shadow: var(--shadow-xs);
 }

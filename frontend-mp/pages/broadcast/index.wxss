@@ -289,51 +289,51 @@
 }
 
 /* ==================== 暗色模式 - 播放器对比度增强 ==================== */
-page.dark .player-card {
+.dark .player-card {
   background: linear-gradient(135deg, #8B3A3A 0%, #9E5050 50%, #8B6B50 100%);
   box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.5);
 }
 
-page.dark .player-card::before {
+.dark .player-card::before {
   background: rgba(255, 255, 255, 0.06);
 }
 
-page.dark .player-card::after {
+.dark .player-card::after {
   background: rgba(255, 255, 255, 0.04);
 }
 
-page.dark .player-title {
+.dark .player-title {
   text-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.4);
 }
 
-page.dark .player-desc {
+.dark .player-desc {
   color: rgba(255, 255, 255, 0.9);
 }
 
-page.dark .progress-time {
+.dark .progress-time {
   color: rgba(255, 255, 255, 0.85);
 }
 
-page.dark .control-btn {
+.dark .control-btn {
   background-color: rgba(255, 255, 255, 0.2);
 }
 
-page.dark .control-btn:active {
+.dark .control-btn:active {
   background-color: rgba(255, 255, 255, 0.3);
 }
 
-page.dark .control-btn.play-btn {
+.dark .control-btn.play-btn {
   background-color: #FFFFFF;
 }
 
-page.dark .control-btn.play-btn .control-icon {
+.dark .control-btn.play-btn .control-icon {
   color: #C04040;
 }
 
-page.dark .broadcast-item:active {
+.dark .broadcast-item:active {
   background-color: var(--color-bg-input);
 }
 
-page.dark .broadcast-item.active {
+.dark .broadcast-item.active {
   background: linear-gradient(135deg, rgba(255, 138, 138, 0.12) 0%, rgba(255, 142, 142, 0.06) 100%);
 }

@@ -12,16 +12,7 @@
       "outputPath": ""
     },
     "useCompilerPlugins": false,
-    "minifyWXML": true,
-    "swc": true,
-    "disableSWC": false,
-    "compileWorklet": false,
-    "uploadWithSourceMap": true,
-    "packNpmManually": false,
-    "minifyWXSS": true,
-    "localPlugins": false,
-    "disableUseStrict": false,
-    "condition": false
+    "minifyWXML": true
   },
   "compileType": "miniprogram",
   "simulatorPluginLibVersion": {},
@@ -30,6 +21,5 @@
     "include": []
   },
   "appid": "touristappid",
-  "editorSetting": {},
-  "libVersion": "3.16.1"
+  "editorSetting": {}
 }

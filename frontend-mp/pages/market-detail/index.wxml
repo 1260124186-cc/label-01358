@@ -1,7 +1,8 @@
-<view class="page" wx:if="{{detail}}">
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
   <!-- 图片轮播 -->
   <view class="image-section">
-    <swiper 
+    <swiper
       class="image-swiper"
       indicator-dots="{{detail.images.length > 1}}"
       indicator-color="rgba(255,255,255,0.5)"
@@ -9,8 +10,8 @@
       current="{{currentImageIndex}}"
       bindchange="onSwiperChange"
     >
-      <swiper-item 
-        wx:for="{{detail.images}}" 
+      <swiper-item
+        wx:for="{{detail.images}}"
         wx:key="index"
         bindtap="onPreviewImage"
         data-index="{{index}}"
@@ -38,8 +39,8 @@
     <view class="info-header">
       <text class="info-title">{{detail.title}}</text>
       <view class="info-actions">
-        <view 
-          class="action-btn {{isFavorite ? 'active' : ''}}" 
+        <view
+          class="action-btn {{isFavorite ? 'active' : ''}}"
           bindtap="onToggleFavorite"
         >
           <text class="action-icon">{{isFavorite ? '★' : '☆'}}</text>
@@ -89,6 +90,6 @@
   </view>
 </view>
 
-<view class="page empty-page" wx:else>
+<view class="page empty-page {{darkMode ? 'dark' : ''}}" wx:else>
   <text class="empty-text">商品不存在或已下架</text>
 </view>

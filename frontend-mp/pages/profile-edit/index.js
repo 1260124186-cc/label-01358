@@ -1,9 +1,11 @@
 const app = getApp();
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
+const { mixPage } = require('../../utils/withTheme');
 
-Page({
+mixPage({
   data: {
+    darkMode: false,
     formData: {
       avatarUrl: '',
       nickName: '',
@@ -22,13 +24,13 @@ Page({
     const now = new Date();
     const today = util.formatTime(now, 'YYYY-MM-DD');
     this.setData({ today });
-    
+
     this.loadUserInfo();
   },
 
   loadUserInfo() {
     const userInfo = app.globalData.userInfo || {};
-    
+
     this.setData({
       formData: {
         avatarUrl: userInfo.avatarUrl || '',
@@ -92,14 +94,14 @@ Page({
 
   async onSave() {
     const { formData } = this.data;
-    
+
     if (!formData.nickName.trim()) {
       util.showToast('请输入昵称');
       return;
     }
-    
+
     this.setData({ saving: true });
-    
+
     try {
       // 保存头像到本地
       let avatarUrl = formData.avatarUrl;
@@ -111,14 +113,14 @@ Page({
           // 保存失败使用原路径
         }
       }
-      
+
       const userInfo = {
         ...formData,
         avatarUrl
       };
-      
+
       app.updateUserInfo(userInfo);
-      
+
       await util.showSuccess('保存成功');
       util.navigateBack();
     } catch (e) {

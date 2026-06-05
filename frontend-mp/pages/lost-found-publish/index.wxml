@@ -1,10 +1,11 @@
-<view class="page">
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
   <form bindsubmit="onSubmit">
     <!-- 类型选择 -->
     <view class="form-section">
       <view class="section-title">信息类型</view>
       <view class="type-selector">
-        <view 
+        <view
           class="type-option {{formData.type === 'lost' ? 'active' : ''}}"
           bindtap="onTypeSelect"
           data-type="lost"
@@ -13,7 +14,7 @@
           <text class="type-text">寻物启事</text>
           <text class="type-desc">我丢失了物品</text>
         </view>
-        <view 
+        <view
           class="type-option {{formData.type === 'found' ? 'active' : ''}}"
           bindtap="onTypeSelect"
           data-type="found"
@@ -31,8 +32,8 @@
       <view class="form-card">
         <view class="form-item">
           <text class="form-label">标题</text>
-          <input 
-            class="form-input" 
+          <input
+            class="form-input"
             placeholder="请输入标题（如：丢失一把钥匙）"
             value="{{formData.title}}"
             bindinput="onInputChange"
@@ -40,13 +41,13 @@
             maxlength="30"
           />
         </view>
-        
+
         <view class="form-item">
           <text class="form-label">物品类型</text>
-          <picker 
+          <picker
             class="form-picker-wrap"
-            mode="selector" 
-            range="{{itemTypes}}" 
+            mode="selector"
+            range="{{itemTypes}}"
             range-key="label"
             value="{{itemTypeIndex}}"
             bindchange="onItemTypeChange"
@@ -60,10 +61,10 @@
 
         <view class="form-item">
           <text class="form-label">{{formData.type === 'lost' ? '丢失地点' : '拾取地点'}}</text>
-          <picker 
+          <picker
             class="form-picker-wrap"
-            mode="selector" 
-            range="{{locations}}" 
+            mode="selector"
+            range="{{locations}}"
             range-key="label"
             value="{{locationIndex}}"
             bindchange="onLocationChange"
@@ -77,9 +78,9 @@
 
         <view class="form-item">
           <text class="form-label">{{formData.type === 'lost' ? '丢失时间' : '拾取时间'}}</text>
-          <picker 
+          <picker
             class="form-picker-wrap"
-            mode="date" 
+            mode="date"
             value="{{formData.date}}"
             end="{{today}}"
             bindchange="onDateChange"
@@ -97,7 +98,7 @@
     <view class="form-section">
       <view class="section-title">详细描述</view>
       <view class="form-card">
-        <textarea 
+        <textarea
           class="form-textarea"
           placeholder="请详细描述物品特征，便于失主/拾取者辨认"
           value="{{formData.description}}"
@@ -114,7 +115,7 @@
       <view class="section-title">上传图片（选填）</view>
       <view class="form-card">
         <view class="image-list">
-          <view 
+          <view
             class="image-item"
             wx:for="{{formData.images}}"
             wx:key="index"
@@ -122,7 +123,7 @@
             <image class="preview-image" src="{{item}}" mode="aspectFill" />
             <view class="image-delete" catchtap="onDeleteImage" data-index="{{index}}">×</view>
           </view>
-          <view 
+          <view
             class="image-add"
             wx:if="{{formData.images.length < 3}}"
             bindtap="onChooseImage"
@@ -141,8 +142,8 @@
       <view class="form-card">
         <view class="form-item">
           <text class="form-label">联系人</text>
-          <input 
-            class="form-input" 
+          <input
+            class="form-input"
             placeholder="请输入联系人姓名"
             value="{{formData.contact}}"
             bindinput="onInputChange"
@@ -152,8 +153,8 @@
         </view>
         <view class="form-item no-border">
           <text class="form-label">联系电话</text>
-          <input 
-            class="form-input" 
+          <input
+            class="form-input"
             type="number"
             placeholder="请输入联系电话"
             value="{{formData.phone}}"

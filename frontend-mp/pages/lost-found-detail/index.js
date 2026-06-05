@@ -2,9 +2,11 @@ const dataService = require('../../services/data');
 const config = require('../../config/index');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
+const { mixPage } = require('../../utils/withTheme');
 
-Page({
+mixPage({
   data: {
+    darkMode: false,
     id: '',
     detail: null,
     isFavorite: false
@@ -25,7 +27,7 @@ Page({
 
   loadDetail() {
     const detail = dataService.getLostFoundDetail(this.data.id);
-    
+
     if (detail) {
       const formattedDetail = {
         ...detail,
@@ -33,12 +35,12 @@ Page({
         itemTypeText: config.getLabelByValue(config.ITEM_TYPES, detail.itemType),
         locationText: config.getLabelByValue(config.LOCATIONS, detail.location)
       };
-      
+
       this.setData({ detail: formattedDetail });
-      
+
       // 添加到浏览历史
       dataService.addHistory(detail, 'lostFound');
-      
+
       // 检查收藏状态
       this.checkFavorite();
     }
@@ -60,9 +62,9 @@ Page({
     if (!util.checkLogin()) {
       return;
     }
-    
+
     const { id, isFavorite, detail } = this.data;
-    
+
     if (isFavorite) {
       dataService.removeFavorite(id, 'lostFound');
       this.setData({ isFavorite: false });
@@ -79,7 +81,7 @@ Page({
     if (!util.checkLogin()) {
       return;
     }
-    
+
     const { phone } = this.data.detail;
     wx.makePhoneCall({
       phoneNumber: phone,

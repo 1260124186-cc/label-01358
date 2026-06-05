@@ -1,4 +1,5 @@
-<view class="page">
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
   <!-- 顶部操作 -->
   <view class="header-section" wx:if="{{list.length > 0}}">
     <text class="header-count">共{{list.length}}条记录</text>
@@ -10,7 +11,7 @@
   <!-- 列表 -->
   <scroll-view class="list-scroll" scroll-y="{{true}}">
     <view class="list-container" wx:if="{{list.length > 0}}">
-      <view 
+      <view
         class="item-card"
         wx:for="{{list}}"
         wx:key="id"
@@ -18,10 +19,10 @@
         bindtap="onItemTap"
         data-item="{{item}}"
       >
-        <image 
-          class="item-image" 
-          src="{{item.data.images[0] || '/assets/images/default-goods.png'}}" 
-          mode="aspectFill" 
+        <image
+          class="item-image"
+          src="{{item.data.images[0] || '/assets/images/default-goods.png'}}"
+          mode="aspectFill"
         />
         <view class="item-info">
           <view class="item-type-tag {{item.type}}">
@@ -37,8 +38,8 @@
       </view>
     </view>
 
-    <empty 
-      wx:if="{{list.length === 0}}" 
+    <empty
+      wx:if="{{list.length === 0}}"
       text="暂无浏览记录"
     />
   </scroll-view>

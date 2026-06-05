@@ -1,14 +1,15 @@
-<view class="page">
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
   <!-- 顶部筛选 -->
   <view class="filter-section">
     <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
       <view class="filter-tabs">
-        <view 
+        <view
           class="filter-tab {{currentCategory === '' ? 'active' : ''}}"
           bindtap="onCategoryChange"
           data-category=""
         >全部</view>
-        <view 
+        <view
           class="filter-tab {{currentCategory === item.value ? 'active' : ''}}"
           wx:for="{{categories}}"
           wx:key="value"
@@ -24,7 +25,7 @@
   </view>
 
   <!-- 商品列表 -->
-  <scroll-view 
+  <scroll-view
     class="list-scroll"
     scroll-y="{{true}}"
     refresher-enabled="{{true}}"
@@ -33,7 +34,7 @@
   >
     <view class="list-container" wx:if="{{list.length > 0}}">
       <view class="goods-grid">
-        <view 
+        <view
           class="goods-card"
           wx:for="{{list}}"
           wx:key="id"
@@ -42,10 +43,10 @@
           data-item="{{item}}"
         >
           <view class="goods-image-wrap">
-            <image 
-              class="goods-image" 
-              src="{{item.images[0] || '/assets/images/default-goods.png'}}" 
-              mode="aspectFill" 
+            <image
+              class="goods-image"
+              src="{{item.images[0] || '/assets/images/default-goods.png'}}"
+              mode="aspectFill"
             />
             <view class="goods-status {{item.status}}" wx:if="{{item.status !== 'selling'}}">
               {{item.statusText}}
@@ -63,8 +64,8 @@
       </view>
     </view>
 
-    <empty 
-      wx:if="{{!loading && list.length === 0}}" 
+    <empty
+      wx:if="{{!loading && list.length === 0}}"
       text="暂无商品信息"
       showAction="{{true}}"
       actionText="发布商品"
@@ -85,12 +86,12 @@
         <text class="picker-close" bindtap="onHidePricePicker">×</text>
       </view>
       <view class="picker-options">
-        <view 
+        <view
           class="picker-option {{currentPriceRange === '' ? 'active' : ''}}"
           bindtap="onPriceSelect"
           data-value=""
         >不限价格</view>
-        <view 
+        <view
           class="picker-option {{currentPriceRange === item.value ? 'active' : ''}}"
           wx:for="{{priceRanges}}"
           wx:key="value"

@@ -1,7 +1,8 @@
-<view class="page" wx:if="{{detail}}">
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
   <!-- 封面图 -->
   <image class="cover-image" src="{{detail.image}}" mode="aspectFill" wx:if="{{detail.image}}" />
-  
+
   <!-- 内容 -->
   <view class="content-section">
     <text class="content-title">{{detail.title}}</text>
@@ -11,6 +12,6 @@
   </view>
 </view>
 
-<view class="page empty-page" wx:else>
+<view class="page empty-page {{darkMode ? 'dark' : ''}}" wx:else>
   <text class="empty-text">公告不存在</text>
 </view>

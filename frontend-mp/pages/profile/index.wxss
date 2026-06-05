@@ -240,14 +240,14 @@
 }
 
 /* ==================== 暗色模式适配 ==================== */
-page.dark .user-section {
+.dark .user-section {
   background: linear-gradient(135deg, #8B3A3A 0%, #9E5050 50%, #8B6B50 100%);
 }
 
-page.dark .menu-icon-wrap {
+.dark .menu-icon-wrap {
   opacity: 0.9;
 }
 
-page.dark .menu-item:active {
+.dark .menu-item:active {
   background-color: var(--color-bg-input);
 }

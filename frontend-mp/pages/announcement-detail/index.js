@@ -1,8 +1,10 @@
 const config = require('../../config/index');
 const util = require('../../utils/util');
+const { mixPage } = require('../../utils/withTheme');
 
-Page({
+mixPage({
   data: {
+    darkMode: false,
     detail: null
   },
 
@@ -14,7 +16,7 @@ Page({
 
   loadDetail(id) {
     const detail = config.ANNOUNCEMENTS.find(item => item.id === id);
-    
+
     if (detail) {
       this.setData({
         detail: {
@@ -22,7 +24,7 @@ Page({
           timeText: util.formatTime(detail.createTime, 'YYYY-MM-DD HH:mm')
         }
       });
-      
+
       wx.setNavigationBarTitle({
         title: detail.title.substring(0, 10) + (detail.title.length > 10 ? '...' : '')
       });

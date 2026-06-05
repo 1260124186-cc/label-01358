@@ -1,9 +1,11 @@
 const dataService = require('../../services/data');
 const config = require('../../config/index');
 const util = require('../../utils/util');
+const { mixPage } = require('../../utils/withTheme');
 
-Page({
+mixPage({
   data: {
+    darkMode: false,
     list: [],
     loading: false,
     refreshing: false,
@@ -33,17 +35,17 @@ Page({
 
     return new Promise((resolve) => {
       const filters = {};
-      
+
       if (this.data.currentType) {
         filters.type = this.data.currentType;
       }
-      
+
       if (this.data.currentItemType) {
         filters.itemType = this.data.currentItemType;
       }
 
       const list = dataService.getLostFoundList(filters);
-      
+
       const formattedList = list.map(item => ({
         ...item,
         timeText: util.relativeTime(item.createTime),
@@ -87,13 +89,13 @@ Page({
   onItemTypeSelect(e) {
     const { value } = e.currentTarget.dataset;
     const item = this.data.itemTypes.find(i => i.value === value);
-    
+
     this.setData({
       currentItemType: value,
       currentItemTypeText: item ? item.label : '',
       showItemTypePicker: false
     });
-    
+
     this.loadList();
   },
 

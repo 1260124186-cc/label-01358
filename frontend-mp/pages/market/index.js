@@ -1,9 +1,11 @@
 const dataService = require('../../services/data');
 const config = require('../../config/index');
 const util = require('../../utils/util');
+const { mixPage } = require('../../utils/withTheme');
 
-Page({
+mixPage({
   data: {
+    darkMode: false,
     list: [],
     loading: false,
     refreshing: false,
@@ -36,21 +38,21 @@ Page({
 
     return new Promise((resolve) => {
       const filters = {};
-      
+
       if (this.data.currentCategory) {
         filters.category = this.data.currentCategory;
       }
-      
+
       if (this.data.minPrice !== undefined) {
         filters.minPrice = this.data.minPrice;
       }
-      
+
       if (this.data.maxPrice !== undefined && this.data.maxPrice !== Infinity) {
         filters.maxPrice = this.data.maxPrice;
       }
 
       const list = dataService.getMarketList(filters);
-      
+
       const formattedList = list.map(item => ({
         ...item,
         priceText: util.formatPrice(item.price),
@@ -89,7 +91,7 @@ Page({
   onPriceSelect(e) {
     const { value, min, max } = e.currentTarget.dataset;
     const item = this.data.priceRanges.find(i => i.value === value);
-    
+
     this.setData({
       currentPriceRange: value,
       currentPriceText: item ? item.label : '',
@@ -97,7 +99,7 @@ Page({
       maxPrice: max !== undefined ? max : undefined,
       showPricePicker: false
     });
-    
+
     this.loadList();
   },
 

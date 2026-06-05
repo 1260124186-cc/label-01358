@@ -1,4 +1,5 @@
-<view class="page">
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
   <!-- Logo区域 -->
   <view class="logo-section">
     <view class="logo-wrap">
@@ -13,8 +14,8 @@
     <view class="form-card">
       <view class="form-item">
         <text class="form-icon">📱</text>
-        <input 
-          class="form-input" 
+        <input
+          class="form-input"
           placeholder="请输入账号/手机号"
           value="{{formData.account}}"
           bindinput="onInputChange"
@@ -25,8 +26,8 @@
 
       <view class="form-item {{isLogin ? 'no-border' : ''}}">
         <text class="form-icon">🔒</text>
-        <input 
-          class="form-input" 
+        <input
+          class="form-input"
           placeholder="请输入密码"
           password="{{!showPassword}}"
           value="{{formData.password}}"
@@ -40,8 +41,8 @@
       <!-- 注册时确认密码 -->
       <view class="form-item no-border" wx:if="{{!isLogin}}">
         <text class="form-icon">🔒</text>
-        <input 
-          class="form-input" 
+        <input
+          class="form-input"
           placeholder="请确认密码"
           password="{{!showPassword}}"
           value="{{formData.confirmPassword}}"

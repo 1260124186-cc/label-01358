@@ -1,7 +1,8 @@
-<view class="page">
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
   <!-- 顶部轮播 -->
   <view class="swiper-section">
-    <swiper 
+    <swiper
       class="scenery-swiper"
       indicator-dots="{{true}}"
       indicator-color="rgba(255,255,255,0.4)"
@@ -14,8 +15,8 @@
       easing-function="easeInOutCubic"
       bindchange="onSwiperChange"
     >
-      <swiper-item 
-        wx:for="{{sceneryList}}" 
+      <swiper-item
+        wx:for="{{sceneryList}}"
         wx:key="id"
         bindtap="onPreviewImage"
         data-index="{{index}}"
@@ -42,7 +43,7 @@
       <text class="section-count">共{{sceneryList.length}}张</text>
     </view>
     <view class="thumb-grid">
-      <view 
+      <view
         class="thumb-item {{currentIndex === index ? 'active' : ''}}"
         wx:for="{{sceneryList}}"
         wx:key="id"

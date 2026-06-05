@@ -60,8 +60,6 @@ App({
   setThemeMode(mode) {
     try {
       const result = theme.setMode(mode);
-      this.globalData.themeMode = result.mode;
-      this.globalData.isDark = result.isDark;
       return result;
     } catch (e) {
       console.error('设置主题失败:', e);

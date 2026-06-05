@@ -1,8 +1,10 @@
 const dataService = require('../../services/data');
 const util = require('../../utils/util');
+const { mixPage } = require('../../utils/withTheme');
 
-Page({
+mixPage({
   data: {
+    darkMode: false,
     list: [],
     currentTab: 'all'
   },
@@ -18,12 +20,12 @@ Page({
   loadList() {
     const { currentTab } = this.data;
     const type = currentTab === 'all' ? '' : currentTab;
-    
+
     const list = dataService.getFavorites(type).map(item => ({
       ...item,
       timeText: util.relativeTime(item.createTime)
     }));
-    
+
     this.setData({ list });
   },
 
@@ -35,7 +37,7 @@ Page({
 
   onItemTap(e) {
     const { item } = e.currentTarget.dataset;
-    
+
     if (item.type === 'lostFound') {
       util.navigateTo(`/pages/lost-found-detail/index?id=${item.id}`);
     } else if (item.type === 'market') {
@@ -45,9 +47,9 @@ Page({
 
   async onRemove(e) {
     const { item } = e.currentTarget.dataset;
-    
+
     const confirm = await util.showConfirm('确定要取消收藏吗？');
-    
+
     if (confirm) {
       dataService.removeFavorite(item.id, item.type);
       this.loadList();

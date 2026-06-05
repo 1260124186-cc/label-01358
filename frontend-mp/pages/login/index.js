@@ -1,9 +1,11 @@
 const app = getApp();
 const util = require('../../utils/util');
 const storage = require('../../utils/storage');
+const { mixPage } = require('../../utils/withTheme');
 
-Page({
+mixPage({
   data: {
+    darkMode: false,
     isLogin: true,
     showPassword: false,
     submitting: false,

@@ -2,9 +2,11 @@ const dataService = require('../../services/data');
 const config = require('../../config/index');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
+const { mixPage } = require('../../utils/withTheme');
 
-Page({
+mixPage({
   data: {
+    darkMode: false,
     formData: {
       title: '',
       category: '',
@@ -68,59 +70,59 @@ Page({
 
   validateForm() {
     const { formData } = this.data;
-    
+
     if (formData.images.length === 0) {
       util.showToast('请至少上传一张图片');
       return false;
     }
-    
+
     if (!formData.title.trim()) {
       util.showToast('请输入商品名称');
       return false;
     }
-    
+
     if (!formData.category) {
       util.showToast('请选择商品分类');
       return false;
     }
-    
+
     if (!formData.price || parseFloat(formData.price) <= 0) {
       util.showToast('请输入有效的商品价格');
       return false;
     }
-    
+
     if (!formData.description.trim()) {
       util.showToast('请输入商品描述');
       return false;
     }
-    
+
     if (!formData.contact.trim()) {
       util.showToast('请输入联系人');
       return false;
     }
-    
+
     if (!formData.phone.trim()) {
       util.showToast('请输入联系电话');
       return false;
     }
-    
+
     if (!util.isValidPhone(formData.phone)) {
       util.showToast('请输入正确的手机号');
       return false;
     }
-    
+
     return true;
   },
 
   async onSubmit() {
     if (!this.validateForm()) return;
-    
+
     this.setData({ submitting: true });
-    
+
     try {
       // 模拟网络请求延迟
       await new Promise(resolve => setTimeout(resolve, 800));
-      
+
       // 保存图片到本地文件系统
       const savedImages = [];
       for (const tempPath of this.data.formData.images) {
@@ -132,16 +134,16 @@ Page({
           savedImages.push(tempPath);
         }
       }
-      
+
       const data = {
         ...this.data.formData,
         images: savedImages,
         price: parseFloat(this.data.formData.price),
         originalPrice: this.data.formData.originalPrice ? parseFloat(this.data.formData.originalPrice) : null
       };
-      
+
       const result = dataService.publishMarketItem(data);
-      
+
       if (result) {
         await util.showSuccess('发布成功');
         // 跳转到二手市场列表页

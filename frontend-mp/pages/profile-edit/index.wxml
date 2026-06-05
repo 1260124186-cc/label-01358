@@ -1,4 +1,5 @@
-<view class="page">
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
   <!-- 头像 -->
   <view class="avatar-section">
     <button class="avatar-btn" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
@@ -17,8 +18,8 @@
     <view class="form-card">
       <view class="form-item">
         <text class="form-label">昵称</text>
-        <input 
-          class="form-input" 
+        <input
+          class="form-input"
           type="nickname"
           placeholder="请输入昵称"
           value="{{formData.nickName}}"
@@ -28,13 +29,13 @@
           maxlength="20"
         />
       </view>
-      
+
       <view class="form-item">
         <text class="form-label">性别</text>
-        <picker 
+        <picker
           class="form-picker-wrap"
-          mode="selector" 
-          range="{{genderOptions}}" 
+          mode="selector"
+          range="{{genderOptions}}"
           value="{{genderIndex}}"
           bindchange="onGenderChange"
         >
@@ -47,9 +48,9 @@
 
       <view class="form-item">
         <text class="form-label">出生日期</text>
-        <picker 
+        <picker
           class="form-picker-wrap"
-          mode="date" 
+          mode="date"
           value="{{formData.birthday}}"
           start="1950-01-01"
           end="{{today}}"
@@ -64,9 +65,9 @@
 
       <view class="form-item">
         <text class="form-label">所在地区</text>
-        <picker 
+        <picker
           class="form-picker-wrap"
-          mode="region" 
+          mode="region"
           value="{{formData.region}}"
           bindchange="onRegionChange"
         >
@@ -79,8 +80,8 @@
 
       <view class="form-item no-border">
         <text class="form-label">个性签名</text>
-        <input 
-          class="form-input" 
+        <input
+          class="form-input"
           placeholder="一句话介绍自己"
           value="{{formData.signature}}"
           bindinput="onInputChange"

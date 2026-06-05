@@ -1,8 +1,10 @@
 const config = require('../../config/index');
 const fileUtil = require('../../utils/file');
+const { mixPage } = require('../../utils/withTheme');
 
-Page({
+mixPage({
   data: {
+    darkMode: false,
     sceneryList: [],
     currentIndex: 0
   },
@@ -16,7 +18,7 @@ Page({
       ...item,
       image: item.image || '/assets/images/default-scenery.png'
     }));
-    
+
     this.setData({ sceneryList });
   },
 

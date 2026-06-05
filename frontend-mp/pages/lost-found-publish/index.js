@@ -2,9 +2,11 @@ const dataService = require('../../services/data');
 const config = require('../../config/index');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
+const { mixPage } = require('../../utils/withTheme');
 
-Page({
+mixPage({
   data: {
+    darkMode: false,
     formData: {
       type: 'lost',
       title: '',
@@ -98,59 +100,59 @@ Page({
 
   validateForm() {
     const { formData } = this.data;
-    
+
     if (!formData.title.trim()) {
       util.showToast('请输入标题');
       return false;
     }
-    
+
     if (!formData.itemType) {
       util.showToast('请选择物品类型');
       return false;
     }
-    
+
     if (!formData.location) {
       util.showToast('请选择地点');
       return false;
     }
-    
+
     if (!formData.date) {
       util.showToast('请选择日期');
       return false;
     }
-    
+
     if (!formData.description.trim()) {
       util.showToast('请输入详细描述');
       return false;
     }
-    
+
     if (!formData.contact.trim()) {
       util.showToast('请输入联系人');
       return false;
     }
-    
+
     if (!formData.phone.trim()) {
       util.showToast('请输入联系电话');
       return false;
     }
-    
+
     if (!util.isValidPhone(formData.phone)) {
       util.showToast('请输入正确的手机号');
       return false;
     }
-    
+
     return true;
   },
 
   async onSubmit() {
     if (!this.validateForm()) return;
-    
+
     this.setData({ submitting: true });
-    
+
     try {
       // 模拟网络请求延迟
       await new Promise(resolve => setTimeout(resolve, 800));
-      
+
       // 保存图片到本地
       const savedImages = [];
       for (const tempPath of this.data.formData.images) {
@@ -162,14 +164,14 @@ Page({
           savedImages.push(tempPath);
         }
       }
-      
+
       const data = {
         ...this.data.formData,
         images: savedImages
       };
-      
+
       const result = dataService.publishLostFound(data);
-      
+
       if (result) {
         await util.showSuccess('发布成功');
         // 跳转到失物招领列表页

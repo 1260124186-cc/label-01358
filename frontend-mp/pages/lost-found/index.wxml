@@ -1,18 +1,19 @@
-<view class="page">
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
   <!-- 顶部筛选 -->
   <view class="filter-section">
     <view class="filter-tabs">
-      <view 
+      <view
         class="filter-tab {{currentType === '' ? 'active' : ''}}"
         bindtap="onTypeChange"
         data-type=""
       >全部</view>
-      <view 
+      <view
         class="filter-tab {{currentType === 'lost' ? 'active' : ''}}"
         bindtap="onTypeChange"
         data-type="lost"
       >寻物启事</view>
-      <view 
+      <view
         class="filter-tab {{currentType === 'found' ? 'active' : ''}}"
         bindtap="onTypeChange"
         data-type="found"
@@ -25,7 +26,7 @@
   </view>
 
   <!-- 列表 -->
-  <scroll-view 
+  <scroll-view
     class="list-scroll"
     scroll-y="{{true}}"
     refresher-enabled="{{true}}"
@@ -34,7 +35,7 @@
     bindscrolltolower="onLoadMore"
   >
     <view class="list-container" wx:if="{{list.length > 0}}">
-      <view 
+      <view
         class="item-card"
         wx:for="{{list}}"
         wx:key="id"
@@ -57,18 +58,18 @@
               <text class="item-tag">{{item.locationText}}</text>
             </view>
           </view>
-          <image 
-            wx:if="{{item.images && item.images.length > 0}}" 
-            class="item-image" 
-            src="{{item.images[0]}}" 
-            mode="aspectFill" 
+          <image
+            wx:if="{{item.images && item.images.length > 0}}"
+            class="item-image"
+            src="{{item.images[0]}}"
+            mode="aspectFill"
           />
         </view>
       </view>
     </view>
 
-    <empty 
-      wx:if="{{!loading && list.length === 0}}" 
+    <empty
+      wx:if="{{!loading && list.length === 0}}"
       text="暂无失物招领信息"
       showAction="{{true}}"
       actionText="发布信息"
@@ -89,12 +90,12 @@
         <text class="picker-close" bindtap="onHideItemTypePicker">×</text>
       </view>
       <view class="picker-options">
-        <view 
+        <view
           class="picker-option {{currentItemType === '' ? 'active' : ''}}"
           bindtap="onItemTypeSelect"
           data-value=""
         >全部类型</view>
-        <view 
+        <view
           class="picker-option {{currentItemType === item.value ? 'active' : ''}}"
           wx:for="{{itemTypes}}"
           wx:key="value"
