@@ -4,6 +4,8 @@
 
 const storage = require('../utils/storage');
 const util = require('../utils/util');
+const constants = require('../config/constants');
+const mockData = require('../config/mock-data');
 const { STORAGE_KEYS } = storage;
 
 function filterByKeyword(list, keyword, fields) {
@@ -329,8 +331,6 @@ function globalSearch(filters) {
     sort
   } = filters;
 
-  const config = require('../config/index');
-
   let lostList = [];
   let marketList = [];
   let newsList = [];
@@ -345,10 +345,10 @@ function globalSearch(filters) {
       ...item,
       _type: 'lost',
       timeText: util.relativeTime(item.createTime),
-      itemTypeText: config.getLabelByValue(config.ITEM_TYPES, item.itemType),
-      locationText: config.getLabelByValue(config.LOCATIONS, item.location)
+      itemTypeText: constants.getLabelByValue(constants.ITEM_TYPES, item.itemType),
+      locationText: constants.getLabelByValue(constants.LOCATIONS, item.location)
     }));
-    lostList = sortByField(lostList, sort, config.SORT_OPTIONS);
+    lostList = sortByField(lostList, sort, constants.SORT_OPTIONS);
   }
 
   if (tab === 'all' || tab === 'market') {
@@ -364,14 +364,14 @@ function globalSearch(filters) {
       _type: 'market',
       priceText: util.formatPrice(item.price),
       timeText: util.relativeTime(item.createTime),
-      statusText: config.getLabelByValue(config.MARKET_STATUS, item.status),
-      categoryText: config.getLabelByValue(config.MARKET_CATEGORIES, item.category)
+      statusText: constants.getLabelByValue(constants.MARKET_STATUS, item.status),
+      categoryText: constants.getLabelByValue(constants.MARKET_CATEGORIES, item.category)
     }));
-    marketList = sortByField(marketList, sort, config.SORT_OPTIONS);
+    marketList = sortByField(marketList, sort, constants.SORT_OPTIONS);
   }
 
   if (tab === 'all' || tab === 'news') {
-    newsList = config.CAMPUS_NEWS.slice();
+    newsList = mockData.CAMPUS_NEWS.slice();
     if (timeRange) {
       const timeThreshold = getTimeRangeMs(timeRange);
       if (timeThreshold) {
@@ -384,7 +384,7 @@ function globalSearch(filters) {
       _type: 'news',
       timeText: util.relativeTime(item.createTime)
     }));
-    newsList = sortByField(newsList, sort, config.SORT_OPTIONS);
+    newsList = sortByField(newsList, sort, constants.SORT_OPTIONS);
   }
 
   return { lostList, marketList, newsList };

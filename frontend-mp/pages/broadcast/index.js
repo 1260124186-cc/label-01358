@@ -1,4 +1,4 @@
-const config = require('../../config/index');
+const mockData = require('../../config/mock-data');
 const util = require('../../utils/util');
 
 Page({
@@ -100,7 +100,7 @@ Page({
   },
 
   loadData() {
-    const broadcastList = config.BROADCAST_LIST.map(item => ({
+    const broadcastList = mockData.BROADCAST_LIST.map(item => ({
       ...item,
       cover: item.cover || '/assets/images/default-broadcast.png'
     }));

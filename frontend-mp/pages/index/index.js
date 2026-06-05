@@ -1,4 +1,4 @@
-const config = require('../../config/index');
+const mockData = require('../../config/mock-data');
 const util = require('../../utils/util');
 
 Page({
@@ -69,13 +69,13 @@ Page({
   loadData() {
     return new Promise((resolve) => {
       // 加载公告
-      const announcements = config.ANNOUNCEMENTS.map(item => ({
+      const announcements = mockData.ANNOUNCEMENTS.map(item => ({
         ...item,
         image: item.image || '/assets/images/default-banner.png'
       }));
 
       // 加载动态
-      const newsList = config.CAMPUS_NEWS.map(item => ({
+      const newsList = mockData.CAMPUS_NEWS.map(item => ({
         ...item,
         timeText: util.relativeTime(item.createTime),
         image: item.image || '/assets/images/default-news.png'

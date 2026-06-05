@@ -1,5 +1,5 @@
 const dataService = require('../../services/data');
-const config = require('../../config/index');
+const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
 const { mixPage } = require('../../utils/withTheme');
@@ -17,7 +17,7 @@ mixPage({
       contact: '',
       phone: ''
     },
-    categories: config.MARKET_CATEGORIES,
+    categories: constants.MARKET_CATEGORIES,
     categoryIndex: -1,
     categoryText: '',
     submitting: false

@@ -1,4 +1,4 @@
-const config = require('../../config/index');
+const mockData = require('../../config/mock-data');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
 
@@ -15,7 +15,7 @@ mixPage({
   },
 
   loadDetail(id) {
-    const detail = config.ANNOUNCEMENTS.find(item => item.id === id);
+    const detail = mockData.ANNOUNCEMENTS.find(item => item.id === id);
 
     if (detail) {
       this.setData({

@@ -1,4 +1,4 @@
-const config = require('../../config/index');
+const mockData = require('../../config/mock-data');
 const fileUtil = require('../../utils/file');
 const { mixPage } = require('../../utils/withTheme');
 
@@ -14,7 +14,7 @@ mixPage({
   },
 
   loadData() {
-    const sceneryList = config.SCENERY_LIST.map(item => ({
+    const sceneryList = mockData.SCENERY_LIST.map(item => ({
       ...item,
       image: item.image || '/assets/images/default-scenery.png'
     }));

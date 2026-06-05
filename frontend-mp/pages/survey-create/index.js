@@ -1,5 +1,5 @@
 const dataService = require('../../services/data');
-const config = require('../../config/index');
+const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
 
@@ -11,7 +11,7 @@ mixPage({
       description: '',
       questions: []
     },
-    questionTypes: config.SURVEY_QUESTION_TYPES,
+    questionTypes: constants.SURVEY_QUESTION_TYPES,
     submitting: false,
     showTypePicker: false,
     addQuestionIndex: -1,

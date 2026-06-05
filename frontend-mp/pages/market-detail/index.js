@@ -1,5 +1,5 @@
 const dataService = require('../../services/data');
-const config = require('../../config/index');
+const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
 const { mixPage } = require('../../utils/withTheme');
@@ -35,8 +35,8 @@ mixPage({
         priceText: util.formatPrice(detail.price),
         originalPriceText: detail.originalPrice ? util.formatPrice(detail.originalPrice) : '',
         timeText: util.relativeTime(detail.createTime),
-        categoryText: config.getLabelByValue(config.MARKET_CATEGORIES, detail.category),
-        statusText: config.getLabelByValue(config.MARKET_STATUS, detail.status)
+        categoryText: constants.getLabelByValue(constants.MARKET_CATEGORIES, detail.category),
+        statusText: constants.getLabelByValue(constants.MARKET_STATUS, detail.status)
       };
 
       this.setData({ detail: formattedDetail });

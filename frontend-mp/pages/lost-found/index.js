@@ -1,5 +1,5 @@
 const dataService = require('../../services/data');
-const config = require('../../config/index');
+const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
 
@@ -12,7 +12,7 @@ mixPage({
     currentType: '',
     currentItemType: '',
     currentItemTypeText: '',
-    itemTypes: config.ITEM_TYPES,
+    itemTypes: constants.ITEM_TYPES,
     showItemTypePicker: false
   },
 
@@ -49,8 +49,8 @@ mixPage({
       const formattedList = list.map(item => ({
         ...item,
         timeText: util.relativeTime(item.createTime),
-        itemTypeText: config.getLabelByValue(config.ITEM_TYPES, item.itemType),
-        locationText: config.getLabelByValue(config.LOCATIONS, item.location)
+        itemTypeText: constants.getLabelByValue(constants.ITEM_TYPES, item.itemType),
+        locationText: constants.getLabelByValue(constants.LOCATIONS, item.location)
       }));
 
       this.setData({

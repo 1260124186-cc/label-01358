@@ -1,5 +1,5 @@
 const dataService = require('../../services/data');
-const config = require('../../config/index');
+const constants = require('../../config/constants');
 const storage = require('../../utils/storage');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
@@ -9,7 +9,7 @@ mixPage({
     darkMode: false,
     keyword: '',
     currentTab: 'all',
-    tabs: config.SEARCH_TABS,
+    tabs: constants.SEARCH_TABS,
     searchHistory: [],
     showHistory: true,
     showResults: false,
@@ -17,11 +17,11 @@ mixPage({
     lostList: [],
     marketList: [],
     newsList: [],
-    sortOptions: config.SORT_OPTIONS,
-    timeRanges: config.TIME_RANGES,
-    priceRanges: config.PRICE_RANGES,
-    marketCategories: config.MARKET_CATEGORIES,
-    lostItemTypes: config.ITEM_TYPES,
+    sortOptions: constants.SORT_OPTIONS,
+    timeRanges: constants.TIME_RANGES,
+    priceRanges: constants.PRICE_RANGES,
+    marketCategories: constants.MARKET_CATEGORIES,
+    lostItemTypes: constants.ITEM_TYPES,
     currentSort: 'latest',
     currentSortText: '最新',
     currentTimeRange: '',

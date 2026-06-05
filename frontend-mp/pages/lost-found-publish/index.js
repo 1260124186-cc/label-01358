@@ -1,5 +1,5 @@
 const dataService = require('../../services/data');
-const config = require('../../config/index');
+const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
 const { mixPage } = require('../../utils/withTheme');
@@ -18,8 +18,8 @@ mixPage({
       contact: '',
       phone: ''
     },
-    itemTypes: config.ITEM_TYPES,
-    locations: config.LOCATIONS,
+    itemTypes: constants.ITEM_TYPES,
+    locations: constants.LOCATIONS,
     itemTypeIndex: -1,
     locationIndex: -1,
     itemTypeText: '',

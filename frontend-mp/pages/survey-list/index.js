@@ -1,5 +1,5 @@
 const dataService = require('../../services/data');
-const config = require('../../config/index');
+const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
 
@@ -50,7 +50,7 @@ mixPage({
         return {
           ...item,
           timeText: util.relativeTime(item.createTime),
-          statusText: config.getLabelByValue(config.SURVEY_STATUS, item.status),
+          statusText: constants.getLabelByValue(constants.SURVEY_STATUS, item.status),
           questionCount,
           hasResponded,
           isOwner: item.creator === userId

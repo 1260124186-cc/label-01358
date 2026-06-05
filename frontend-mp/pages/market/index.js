@@ -1,5 +1,5 @@
 const dataService = require('../../services/data');
-const config = require('../../config/index');
+const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
 
@@ -9,8 +9,8 @@ mixPage({
     list: [],
     loading: false,
     refreshing: false,
-    categories: config.MARKET_CATEGORIES,
-    priceRanges: config.PRICE_RANGES,
+    categories: constants.MARKET_CATEGORIES,
+    priceRanges: constants.PRICE_RANGES,
     currentCategory: '',
     currentPriceRange: '',
     currentPriceText: '',
@@ -56,7 +56,7 @@ mixPage({
       const formattedList = list.map(item => ({
         ...item,
         priceText: util.formatPrice(item.price),
-        statusText: config.getLabelByValue(config.MARKET_STATUS, item.status)
+        statusText: constants.getLabelByValue(constants.MARKET_STATUS, item.status)
       }));
 
       this.setData({
