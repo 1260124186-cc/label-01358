@@ -1,7 +1,7 @@
-<view class="page">
+<view class="page {{darkMode ? 'dark' : ''}}">
   <!-- 公告轮播 -->
   <view class="banner-section">
-    <swiper 
+    <swiper
       class="banner-swiper"
       indicator-dots="{{true}}"
       indicator-color="rgba(255,255,255,0.4)"
@@ -12,8 +12,8 @@
       circular="{{true}}"
       easing-function="easeInOutCubic"
     >
-      <swiper-item 
-        wx:for="{{announcements}}" 
+      <swiper-item
+        wx:for="{{announcements}}"
         wx:key="id"
         bindtap="onAnnouncementTap"
         data-item="{{item}}"
@@ -33,9 +33,9 @@
   <!-- 功能分类导航 -->
   <view class="nav-section">
     <view class="nav-grid">
-      <view 
-        class="nav-item" 
-        wx:for="{{navItems}}" 
+      <view
+        class="nav-item"
+        wx:for="{{navItems}}"
         wx:key="id"
         bindtap="onNavTap"
         data-item="{{item}}"
@@ -86,18 +86,18 @@
         <text class="more-arrow">›</text>
       </view>
     </view>
-    
+
     <view class="news-card">
-      <scroll-view 
-        class="news-scroll" 
-        scroll-y="{{true}}" 
-        enhanced="{{true}}" 
+      <scroll-view
+        class="news-scroll"
+        scroll-y="{{true}}"
+        enhanced="{{true}}"
         show-scrollbar="{{false}}"
         refresher-enabled="{{true}}"
         refresher-triggered="{{refreshing}}"
         bindrefresherrefresh="onRefresh"
       >
-        <view 
+        <view
           class="news-item"
           wx:for="{{newsList}}"
           wx:key="id"

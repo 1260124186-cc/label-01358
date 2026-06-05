@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{darkMode ? 'dark' : ''}}">
   <!-- 当前播放 -->
   <view class="player-section" wx:if="{{currentAudio}}">
     <view class="player-card">
@@ -6,10 +6,10 @@
       <view class="player-info">
         <text class="player-title">{{currentAudio.title}}</text>
         <text class="player-desc">{{currentAudio.description}}</text>
-        
+
         <!-- 进度条 -->
         <view class="progress-wrap">
-          <slider 
+          <slider
             class="progress-slider"
             min="0"
             max="{{duration}}"
@@ -25,7 +25,7 @@
             <text>{{durationText}}</text>
           </view>
         </view>
-        
+
         <!-- 控制按钮 -->
         <view class="player-controls">
           <view class="control-btn" bindtap="onPrev">
@@ -52,7 +52,7 @@
       <text class="section-count">共{{broadcastList.length}}个节目</text>
     </view>
     <view class="broadcast-list">
-      <view 
+      <view
         class="broadcast-item {{currentAudio && currentAudio.id === item.id ? 'active' : ''}}"
         wx:for="{{broadcastList}}"
         wx:key="id"

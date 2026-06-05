@@ -7,7 +7,8 @@ const STORAGE_KEYS = {
   LOST_FOUND_LIST: 'lostFoundList',
   MARKET_LIST: 'marketList',
   FAVORITES: 'favorites',
-  HISTORY: 'history'
+  HISTORY: 'history',
+  THEME_SETTINGS: 'theme_settings'
 };
 
 /**

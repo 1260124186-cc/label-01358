@@ -1,15 +1,20 @@
+const theme = require('./utils/theme');
+
 App({
   globalData: {
     userInfo: null,
     systemInfo: null,
     statusBarHeight: 0,
-    navBarHeight: 44
+    navBarHeight: 44,
+    themeMode: 'system',
+    isDark: false
   },
 
   onLaunch() {
     this.initSystemInfo();
     this.loadUserInfo();
     this.initTestAccount();
+    this.initTheme();
   },
 
   // 初始化测试账号
@@ -39,6 +44,28 @@ App({
       this.globalData.statusBarHeight = systemInfo.statusBarHeight || 20;
     } catch (e) {
       console.error('获取系统信息失败:', e);
+    }
+  },
+
+  initTheme() {
+    try {
+      const result = theme.init();
+      this.globalData.themeMode = result.mode;
+      this.globalData.isDark = result.isDark;
+    } catch (e) {
+      console.error('初始化主题失败:', e);
+    }
+  },
+
+  setThemeMode(mode) {
+    try {
+      const result = theme.setMode(mode);
+      this.globalData.themeMode = result.mode;
+      this.globalData.isDark = result.isDark;
+      return result;
+    } catch (e) {
+      console.error('设置主题失败:', e);
+      return { mode, resolved: mode, isDark: false };
     }
   },
 

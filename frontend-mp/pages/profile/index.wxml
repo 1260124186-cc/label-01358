@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{darkMode ? 'dark' : ''}}">
   <!-- 用户信息 -->
   <view class="user-section">
     <view class="user-card">
@@ -26,7 +26,7 @@
         <text class="menu-count" wx:if="{{favoritesCount > 0}}">{{favoritesCount}}</text>
         <text class="menu-arrow">›</text>
       </view>
-      
+
       <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="history">
         <view class="menu-icon-wrap" style="background-color: #DBEAFE;">
           <text class="menu-icon">🕐</text>
@@ -49,13 +49,45 @@
         <text class="menu-text">失物招领</text>
         <text class="menu-arrow">›</text>
       </view>
-      
+
       <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="myMarket">
         <view class="menu-icon-wrap" style="background-color: #D1FAE5;">
           <text class="menu-icon">🛒</text>
         </view>
         <text class="menu-text">二手商品</text>
         <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 主题设置 -->
+  <view class="menu-section">
+    <view class="section-title">外观设置</view>
+    <view class="menu-card">
+      <view class="theme-switch" bindtap="onThemeToggle">
+        <view class="theme-switch-label">
+          <view class="theme-switch-icon" style="background-color: {{darkMode ? '#1E1B4B' : '#FEF3C7'}};">
+            <text class="menu-icon">{{darkMode ? '🌙' : '☀️'}}</text>
+          </view>
+          <view>
+            <text class="theme-switch-text">深色模式</text>
+            <text class="theme-switch-desc">{{themeMode === 'system' ? '跟随系统' : (darkMode ? '已开启' : '已关闭')}}</text>
+          </view>
+        </view>
+        <view class="switch-track {{darkMode ? 'active' : ''}}">
+          <view class="switch-thumb"></view>
+        </view>
+      </view>
+    </view>
+    <view class="theme-mode-group">
+      <view class="theme-mode-item {{themeMode === 'light' ? 'active' : ''}}" bindtap="onThemeModeChange" data-mode="light">
+        ☀️ 浅色
+      </view>
+      <view class="theme-mode-item {{themeMode === 'dark' ? 'active' : ''}}" bindtap="onThemeModeChange" data-mode="dark">
+        🌙 深色
+      </view>
+      <view class="theme-mode-item {{themeMode === 'system' ? 'active' : ''}}" bindtap="onThemeModeChange" data-mode="system">
+        🔄 跟随系统
       </view>
     </view>
   </view>
@@ -71,7 +103,7 @@
         <text class="menu-text">清除缓存</text>
         <text class="menu-arrow">›</text>
       </view>
-      
+
       <view class="menu-item" hover-class="menu-item-hover" bindtap="onAbout">
         <view class="menu-icon-wrap" style="background-color: #F3F4F6;">
           <text class="menu-icon">ℹ</text>
@@ -79,7 +111,7 @@
         <text class="menu-text">关于我们</text>
         <text class="menu-arrow">›</text>
       </view>
-      
+
       <view class="menu-item" hover-class="menu-item-hover" bindtap="onLogout" wx:if="{{userInfo.nickName}}">
         <view class="menu-icon-wrap" style="background-color: #FEE2E2;">
           <text class="menu-icon">🚪</text>

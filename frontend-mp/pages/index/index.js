@@ -35,7 +35,8 @@ Page({
       }
     ],
     newsList: [],
-    refreshing: false
+    refreshing: false,
+    darkMode: false
   },
 
   onLoad() {
@@ -43,7 +44,13 @@ Page({
   },
 
   onShow() {
-    // 每次显示时刷新数据
+    this.loadThemeState();
+  },
+
+  loadThemeState() {
+    const app = getApp();
+    const { isDark } = app.globalData;
+    this.setData({ darkMode: isDark || false });
   },
 
   onPullDownRefresh() {
@@ -109,12 +116,12 @@ Page({
 
   onQuickPublish(e) {
     const { type } = e.currentTarget.dataset;
-    
+
     // 检查登录状态
     if (!util.checkLogin()) {
       return;
     }
-    
+
     if (type === 'lost') {
       util.navigateTo('/pages/lost-found-publish/index');
     } else if (type === 'market') {

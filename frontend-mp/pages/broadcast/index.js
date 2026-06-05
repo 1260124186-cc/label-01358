@@ -9,7 +9,8 @@ Page({
     currentTime: 0,
     duration: 0,
     currentTimeText: '00:00',
-    durationText: '00:00'
+    durationText: '00:00',
+    darkMode: false
   },
 
   // 使用 InnerAudioContext 实现音频播放
@@ -18,6 +19,16 @@ Page({
   onLoad() {
     this.initAudioContext();
     this.loadData();
+  },
+
+  onShow() {
+    this.loadThemeState();
+  },
+
+  loadThemeState() {
+    const app = getApp();
+    const { isDark } = app.globalData;
+    this.setData({ darkMode: isDark || false });
   },
 
   onUnload() {
@@ -32,12 +43,12 @@ Page({
   // 初始化 InnerAudioContext
   initAudioContext() {
     this.innerAudioContext = wx.createInnerAudioContext();
-    
+
     // 播放事件
     this.innerAudioContext.onPlay(() => {
       this.setData({ isPlaying: true });
     });
-    
+
     // 暂停事件
     this.innerAudioContext.onPause(() => {
       this.setData({ isPlaying: false });
@@ -45,24 +56,24 @@ Page({
 
     // 停止事件
     this.innerAudioContext.onStop(() => {
-      this.setData({ 
-        isPlaying: false, 
-        currentTime: 0, 
-        currentTimeText: '00:00' 
+      this.setData({
+        isPlaying: false,
+        currentTime: 0,
+        currentTimeText: '00:00'
       });
     });
-    
+
     // 播放结束事件
     this.innerAudioContext.onEnded(() => {
       this.setData({ isPlaying: false });
       this.onNext();
     });
-    
+
     // 时间更新事件
     this.innerAudioContext.onTimeUpdate(() => {
       const currentTime = Math.floor(this.innerAudioContext.currentTime || 0);
       const duration = Math.floor(this.innerAudioContext.duration || 0);
-      
+
       this.setData({
         currentTime,
         duration,
@@ -70,7 +81,7 @@ Page({
         durationText: this.formatDuration(duration)
       });
     });
-    
+
     // 可以播放事件（获取音频时长）
     this.innerAudioContext.onCanplay(() => {
       const duration = Math.floor(this.innerAudioContext.duration || 0);
@@ -79,7 +90,7 @@ Page({
         durationText: this.formatDuration(duration)
       });
     });
-    
+
     // 错误事件
     this.innerAudioContext.onError((err) => {
       console.error('音频播放错误:', err);
@@ -95,8 +106,8 @@ Page({
     }));
 
     const firstAudio = broadcastList[0] || null;
-    
-    this.setData({ 
+
+    this.setData({
       broadcastList,
       currentAudio: firstAudio
     });
@@ -115,7 +126,7 @@ Page({
       util.showToast('暂无音频资源');
       return;
     }
-    
+
     // 设置音频源并播放
     this.innerAudioContext.src = audio.audioUrl;
     this.innerAudioContext.play();
@@ -124,13 +135,13 @@ Page({
   // 选择音频
   onSelectAudio(e) {
     const { item } = e.currentTarget.dataset;
-    
+
     if (this.data.currentAudio && this.data.currentAudio.id === item.id) {
       // 点击当前播放的音频，切换播放/暂停
       this.onPlayPause();
     } else {
       // 切换到新音频
-      this.setData({ 
+      this.setData({
         currentAudio: item,
         currentTime: 0,
         currentTimeText: '00:00'
@@ -145,7 +156,7 @@ Page({
       util.showToast('请选择节目');
       return;
     }
-    
+
     if (this.data.isPlaying) {
       this.innerAudioContext.pause();
     } else {
@@ -162,12 +173,12 @@ Page({
   onPrev() {
     const { broadcastList, currentAudio } = this.data;
     if (!currentAudio || broadcastList.length === 0) return;
-    
+
     const currentIndex = broadcastList.findIndex(item => item.id === currentAudio.id);
     const prevIndex = currentIndex <= 0 ? broadcastList.length - 1 : currentIndex - 1;
     const prevAudio = broadcastList[prevIndex];
-    
-    this.setData({ 
+
+    this.setData({
       currentAudio: prevAudio,
       currentTime: 0,
       currentTimeText: '00:00'
@@ -179,12 +190,12 @@ Page({
   onNext() {
     const { broadcastList, currentAudio } = this.data;
     if (!currentAudio || broadcastList.length === 0) return;
-    
+
     const currentIndex = broadcastList.findIndex(item => item.id === currentAudio.id);
     const nextIndex = currentIndex >= broadcastList.length - 1 ? 0 : currentIndex + 1;
     const nextAudio = broadcastList[nextIndex];
-    
-    this.setData({ 
+
+    this.setData({
       currentAudio: nextAudio,
       currentTime: 0,
       currentTimeText: '00:00'

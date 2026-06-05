@@ -1,21 +1,58 @@
 const app = getApp();
 const dataService = require('../../services/data');
 const util = require('../../utils/util');
+const themeUtil = require('../../utils/theme');
 
 Page({
   data: {
     userInfo: {},
     favoritesCount: 0,
-    historyCount: 0
+    historyCount: 0,
+    darkMode: false,
+    themeMode: 'system'
   },
 
   onLoad() {
     this.loadUserInfo();
+    this.loadThemeState();
   },
 
   onShow() {
     this.loadUserInfo();
     this.loadCounts();
+    this.loadThemeState();
+  },
+
+  loadThemeState() {
+    const { themeMode, isDark } = app.globalData;
+    this.setData({
+      themeMode: themeMode || 'system',
+      darkMode: isDark || false
+    });
+  },
+
+  onThemeToggle() {
+    const currentMode = this.data.themeMode;
+    let newMode;
+    if (currentMode === 'system') {
+      newMode = themeUtil.getSystemTheme() === 'dark' ? 'light' : 'dark';
+    } else {
+      newMode = currentMode === 'light' ? 'dark' : 'light';
+    }
+    const result = app.setThemeMode(newMode);
+    this.setData({
+      themeMode: result.mode,
+      darkMode: result.isDark
+    });
+  },
+
+  onThemeModeChange(e) {
+    const { mode } = e.currentTarget.dataset;
+    const result = app.setThemeMode(mode);
+    this.setData({
+      themeMode: result.mode,
+      darkMode: result.isDark
+    });
   },
 
   loadUserInfo() {
@@ -26,7 +63,7 @@ Page({
   loadCounts() {
     const favorites = dataService.getFavorites();
     const history = dataService.getHistory();
-    
+
     this.setData({
       favoritesCount: favorites.length,
       historyCount: history.length
@@ -44,14 +81,14 @@ Page({
 
   onMenuTap(e) {
     const { type } = e.currentTarget.dataset;
-    
+
     // 这些功能需要登录
     if (['favorites', 'history', 'myLostFound', 'myMarket'].includes(type)) {
       if (!util.checkLogin()) {
         return;
       }
     }
-    
+
     switch (type) {
       case 'favorites':
         util.navigateTo('/pages/favorites/index');
@@ -70,7 +107,7 @@ Page({
 
   async onClearCache() {
     const confirm = await util.showConfirm('确定要清除所有缓存数据吗？这将清除您的浏览历史。');
-    
+
     if (confirm) {
       dataService.clearHistory();
       this.loadCounts();
@@ -89,17 +126,17 @@ Page({
 
   async onLogout() {
     const confirm = await util.showConfirm('确定要退出登录吗？');
-    
+
     if (confirm) {
       // 清除用户信息
       app.globalData.userInfo = {};
       wx.removeStorageSync('userInfo');
-      
+
       // 清除收藏和浏览历史
       dataService.clearFavorites();
       dataService.clearHistory();
-      
-      this.setData({ 
+
+      this.setData({
         userInfo: {},
         favoritesCount: 0,
         historyCount: 0
