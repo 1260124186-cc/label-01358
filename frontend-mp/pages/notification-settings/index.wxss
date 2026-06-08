@@ -1,0 +1,121 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+}
+
+.content {
+  padding: 24rpx;
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin: 16rpx 8rpx;
+}
+
+.settings-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 24rpx;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 24rpx;
+  transition: all var(--transition-fast);
+}
+
+.setting-item:not(:last-child) {
+  border-bottom: 1rpx solid var(--color-border-light);
+}
+
+.setting-item:active {
+  background-color: var(--color-bg-page);
+}
+
+.setting-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.setting-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.setting-label {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 6rpx;
+}
+
+.setting-desc {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+.setting-switch {
+  flex-shrink: 0;
+  transform: scale(0.9);
+}
+
+.setting-arrow {
+  font-size: 32rpx;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+}
+
+.tip-card {
+  margin-top: 32rpx;
+  padding: 28rpx 24rpx;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FEE2E2 100%);
+  border-radius: var(--radius-2xl);
+}
+
+.dark .tip-card {
+  background: linear-gradient(135deg, #4A3F20 0%, #4A2020 100%);
+}
+
+.tip-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #92400E;
+  margin-bottom: 12rpx;
+}
+
+.dark .tip-title {
+  color: #FCD34D;
+}
+
+.tip-content {
+  font-size: 26rpx;
+  color: #78350F;
+  line-height: 1.6;
+}
+
+.dark .tip-content {
+  color: #FDE68A;
+}

@@ -19,6 +19,15 @@
   <!-- 功能菜单 -->
   <view class="menu-section">
     <view class="menu-card">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="notifications">
+        <view class="menu-icon-wrap" style="background-color: #FEE2E2;">
+          <text class="menu-icon">🔔</text>
+        </view>
+        <text class="menu-text">消息通知</text>
+        <text class="menu-count" wx:if="{{unreadCount > 0}}">{{unreadCount > 99 ? '99+' : unreadCount}}</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
       <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="favorites">
         <view class="menu-icon-wrap" style="background-color: #FEF3C7;">
           <text class="menu-icon">★</text>

@@ -14,6 +14,8 @@
     "pages/profile-edit/index",
     "pages/favorites/index",
     "pages/history/index",
+    "pages/notifications/index",
+    "pages/notification-settings/index",
     "pages/announcement-detail/index",
     "pages/login/index",
     "pages/survey-list/index",

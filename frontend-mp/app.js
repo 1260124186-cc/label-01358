@@ -1,4 +1,6 @@
 const theme = require('./utils/theme');
+const storage = require('./utils/storage');
+const mockData = require('./config/mock-data');
 
 App({
   globalData: {
@@ -15,6 +17,38 @@ App({
     this.loadUserInfo();
     this.initTestAccount();
     this.initTheme();
+    this.initMockData();
+  },
+
+  initMockData() {
+    try {
+      const { STORAGE_KEYS } = storage;
+      
+      const notifications = storage.get(STORAGE_KEYS.NOTIFICATIONS);
+      if (!notifications || notifications.length === 0) {
+        const now = Date.now();
+        const mockNotifications = mockData.NOTIFICATIONS.map((item, index) => ({
+          id: 'mock_' + index + '_' + now,
+          ...item,
+          read: index >= 5,
+          createTime: now - (index + 1) * 3600000
+        }));
+        storage.set(STORAGE_KEYS.NOTIFICATIONS, mockNotifications);
+      }
+
+      const settings = storage.get(STORAGE_KEYS.NOTIFICATION_SETTINGS);
+      if (!settings) {
+        storage.set(STORAGE_KEYS.NOTIFICATION_SETTINGS, {
+          system: true,
+          interaction: true,
+          transaction: true,
+          activity: true,
+          survey: true
+        });
+      }
+    } catch (e) {
+      console.error('初始化mock数据失败:', e);
+    }
   },
 
   // 初始化测试账号

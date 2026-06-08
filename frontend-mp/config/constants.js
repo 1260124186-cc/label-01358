@@ -81,6 +81,40 @@ const SURVEY_STATUS = [
   { value: 'closed', label: '已结束' }
 ];
 
+const NOTIFICATION_TYPES = [
+  { value: 'system', label: '系统公告', icon: '📢', color: '#FEF3C7', iconColor: '#F59E0B' },
+  { value: 'interaction', label: '互动消息', icon: '💬', color: '#DBEAFE', iconColor: '#3B82F6' },
+  { value: 'transaction', label: '交易提醒', icon: '🛒', color: '#D1FAE5', iconColor: '#10B981' },
+  { value: 'activity', label: '活动提醒', icon: '🎉', color: '#FEE2E2', iconColor: '#EF4444' },
+  { value: 'survey', label: '问卷邀请', icon: '📋', color: '#E9D5FF', iconColor: '#8B5CF6' }
+];
+
+const NOTIFICATION_SUB_TYPES = {
+  system: [
+    { value: 'announcement', label: '系统公告' },
+    { value: 'maintenance', label: '维护通知' }
+  ],
+  interaction: [
+    { value: 'comment', label: '评论' },
+    { value: 'reply', label: '回复' },
+    { value: 'like', label: '点赞' }
+  ],
+  transaction: [
+    { value: 'favorite', label: '被收藏' },
+    { value: 'contact', label: '有人联系' },
+    { value: 'order', label: '订单提醒' }
+  ],
+  activity: [
+    { value: 'start', label: '活动开始' },
+    { value: 'reminder', label: '活动提醒' },
+    { value: 'result', label: '活动结果' }
+  ],
+  survey: [
+    { value: 'invite', label: '问卷邀请' },
+    { value: 'reminder', label: '填写提醒' }
+  ]
+};
+
 function getLabelByValue(list, value) {
   const item = list.find(i => i.value === value);
   return item ? item.label : value;
@@ -98,5 +132,7 @@ module.exports = {
   MARKET_STATUS,
   SURVEY_QUESTION_TYPES,
   SURVEY_STATUS,
+  NOTIFICATION_TYPES,
+  NOTIFICATION_SUB_TYPES,
   getLabelByValue
 };

@@ -1,0 +1,51 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="content">
+    <view class="section-title">推送通知</view>
+    <view class="settings-card">
+      <view 
+        class="setting-item" 
+        wx:for="{{settingItems}}" 
+        wx:key="value"
+      >
+        <view class="setting-left">
+          <view class="setting-icon" style="background-color: {{item.color}}; color: {{item.iconColor}};">
+            {{item.icon}}
+          </view>
+          <view class="setting-info">
+            <text class="setting-label">{{item.label}}</text>
+            <text class="setting-desc">接收{{item.label}}相关推送</text>
+          </view>
+        </view>
+        <switch 
+          class="setting-switch"
+          checked="{{item.enabled}}" 
+          color="#FF6B6B"
+          bindchange="onToggleSetting"
+          data-type="{{item.value}}"
+        />
+      </view>
+    </view>
+
+    <view class="section-title">其他设置</view>
+    <view class="settings-card">
+      <view class="setting-item" bindtap="onClearAll">
+        <view class="setting-left">
+          <view class="setting-icon" style="background-color: #FEE2E2; color: #EF4444;">
+            🗑
+          </view>
+          <view class="setting-info">
+            <text class="setting-label">清空所有消息</text>
+            <text class="setting-desc">清除历史通知记录</text>
+          </view>
+        </view>
+        <text class="setting-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="tip-card">
+      <text class="tip-title">💡 温馨提示</text>
+      <text class="tip-content">关闭推送后，您将不再接收对应类型的消息通知。您可以随时在此页面重新开启。</text>
+    </view>
+  </view>
+</view>

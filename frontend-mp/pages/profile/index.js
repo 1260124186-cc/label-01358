@@ -8,6 +8,7 @@ Page({
     userInfo: {},
     favoritesCount: 0,
     historyCount: 0,
+    unreadCount: 0,
     darkMode: false,
     themeMode: 'system'
   },
@@ -63,10 +64,12 @@ Page({
   loadCounts() {
     const favorites = dataService.getFavorites();
     const history = dataService.getHistory();
+    const unreadCount = dataService.getUnreadCount();
 
     this.setData({
       favoritesCount: favorites.length,
-      historyCount: history.length
+      historyCount: history.length,
+      unreadCount
     });
   },
 
@@ -90,6 +93,9 @@ Page({
     }
 
     switch (type) {
+      case 'notifications':
+        util.navigateTo('/pages/notifications/index');
+        break;
       case 'favorites':
         util.navigateTo('/pages/favorites/index');
         break;

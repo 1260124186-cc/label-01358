@@ -1,0 +1,77 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 头部操作栏 -->
+  <view class="header">
+    <view class="header-actions">
+      <view class="header-action" bindtap="onMarkAllRead">
+        <text class="action-icon">✓</text>
+        <text class="action-text">全部已读</text>
+      </view>
+      <view class="header-action" bindtap="onSettings">
+        <text class="action-icon">⚙</text>
+        <text class="action-text">设置</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分类标签 -->
+  <scroll-view class="tabs-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="tabs">
+      <view 
+        class="tab-item {{activeTab === item.value ? 'active' : ''}}" 
+        wx:for="{{tabs}}" 
+        wx:key="value"
+        bindtap="onTabChange"
+        data-value="{{item.value}}"
+      >
+        <text class="tab-icon" wx:if="{{item.icon}}">{{item.icon}}</text>
+        <text class="tab-text">{{item.label}}</text>
+        <view class="tab-badge" wx:if="{{item.value !== 'all' && unreadCountByType[item.value] > 0}}">
+          {{unreadCountByType[item.value] > 99 ? '99+' : unreadCountByType[item.value]}}
+        </view>
+        <view class="tab-badge" wx:if="{{item.value === 'all' && unreadCount > 0}}">
+          {{unreadCount > 99 ? '99+' : unreadCount}}
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 通知列表 -->
+  <view class="content">
+    <block wx:if="{{filteredNotifications.length > 0}}">
+      <view 
+        class="notification-item {{item.read ? 'read' : ''}}" 
+        wx:for="{{filteredNotifications}}" 
+        wx:key="id"
+        bindtap="onNotificationTap"
+        data-id="{{item.id}}"
+        data-type="{{item.type}}"
+        data-extra="{{item.extra}}"
+      >
+        <view class="notification-unread-dot" wx:if="{{!item.read}}"></view>
+        <view class="notification-icon" style="background-color: {{item.typeColor}}; color: {{item.typeIconColor}};">
+          {{item.typeIcon}}
+        </view>
+        <view class="notification-content">
+          <view class="notification-header">
+            <text class="notification-title">{{item.title}}</text>
+            <text class="notification-time">{{item.timeText}}</text>
+          </view>
+          <text class="notification-desc">{{item.content}}</text>
+          <view class="notification-footer" wx:if="{{item.extra && item.extra.preview}}">
+            <text class="notification-preview">{{item.extra.preview}}</text>
+          </view>
+        </view>
+        <view class="notification-delete" catchtap="onDelete" data-id="{{item.id}}">
+          <text class="delete-icon">×</text>
+        </view>
+      </view>
+    </block>
+
+    <view class="empty-state" wx:else>
+      <image class="empty-icon" src="/assets/images/empty.png" mode="aspectFit" />
+      <text class="empty-text">暂无消息</text>
+      <text class="empty-desc">有新消息时会在这里显示</text>
+    </view>
+  </view>
+</view>

@@ -592,6 +592,112 @@ function getSurveyStatistics(surveyId) {
   };
 }
 
+// ==================== 消息通知 ====================
+
+const DEFAULT_NOTIFICATION_SETTINGS = {
+  system: true,
+  interaction: true,
+  transaction: true,
+  activity: true,
+  survey: true
+};
+
+function getNotificationSettings() {
+  const settings = storage.get(STORAGE_KEYS.NOTIFICATION_SETTINGS);
+  return { ...DEFAULT_NOTIFICATION_SETTINGS, ...(settings || {}) };
+}
+
+function updateNotificationSettings(type, enabled) {
+  const settings = getNotificationSettings();
+  settings[type] = enabled;
+  return storage.set(STORAGE_KEYS.NOTIFICATION_SETTINGS, settings);
+}
+
+function getNotificationList(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.NOTIFICATIONS);
+
+  if (filters.type) {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  if (filters.read !== undefined) {
+    list = list.filter(item => item.read === filters.read);
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getNotificationDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.NOTIFICATIONS);
+  return list.find(item => item.id === id) || null;
+}
+
+function createNotification(data) {
+  const settings = getNotificationSettings();
+  if (settings[data.type] === false) {
+    return null;
+  }
+
+  const item = {
+    id: util.generateId(),
+    ...data,
+    read: false,
+    createTime: Date.now()
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.NOTIFICATIONS, item);
+  return success ? item : null;
+}
+
+function markNotificationRead(id) {
+  return storage.updateInList(STORAGE_KEYS.NOTIFICATIONS, id, { read: true });
+}
+
+function markAllNotificationsRead(type = '') {
+  const list = storage.getList(STORAGE_KEYS.NOTIFICATIONS);
+  const updatedList = list.map(item => {
+    if (type && item.type !== type) return item;
+    return { ...item, read: true };
+  });
+  return storage.set(STORAGE_KEYS.NOTIFICATIONS, updatedList);
+}
+
+function getUnreadCount(type = '') {
+  const list = storage.getList(STORAGE_KEYS.NOTIFICATIONS);
+  const unread = list.filter(item => {
+    if (type && item.type !== type) return false;
+    return !item.read;
+  });
+  return unread.length;
+}
+
+function getUnreadCountByType() {
+  const list = storage.getList(STORAGE_KEYS.NOTIFICATIONS);
+  const counts = {};
+  constants.NOTIFICATION_TYPES.forEach(type => {
+    counts[type.value] = 0;
+  });
+  list.forEach(item => {
+    if (!item.read && counts[item.type] !== undefined) {
+      counts[item.type]++;
+    }
+  });
+  return counts;
+}
+
+function deleteNotification(id) {
+  return storage.removeFromList(STORAGE_KEYS.NOTIFICATIONS, id);
+}
+
+function clearNotifications(type = '') {
+  if (type) {
+    const list = storage.getList(STORAGE_KEYS.NOTIFICATIONS);
+    const newList = list.filter(item => item.type !== type);
+    return storage.set(STORAGE_KEYS.NOTIFICATIONS, newList);
+  }
+  return storage.clearList(STORAGE_KEYS.NOTIFICATIONS);
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -628,5 +734,17 @@ module.exports = {
   hasUserResponded,
   submitSurveyResponse,
   getSurveyResponses,
-  getSurveyStatistics
+  getSurveyStatistics,
+
+  getNotificationSettings,
+  updateNotificationSettings,
+  getNotificationList,
+  getNotificationDetail,
+  createNotification,
+  markNotificationRead,
+  markAllNotificationsRead,
+  getUnreadCount,
+  getUnreadCountByType,
+  deleteNotification,
+  clearNotifications
 };

@@ -130,9 +130,122 @@ const BROADCAST_LIST = [
   }
 ];
 
+const NOTIFICATIONS = [
+  {
+    type: 'system',
+    subType: 'announcement',
+    title: '系统公告',
+    content: '关于2026年春季学期开学注册的通知，请同学们按时返校注册。',
+    extra: {
+      announcementId: '1',
+      preview: '注册时间：2月15日-16日'
+    },
+    createTime: Date.now() - 3600000
+  },
+  {
+    type: 'system',
+    subType: 'maintenance',
+    title: '系统维护通知',
+    content: '校园一卡通充值系统将于本周末进行升级维护，升级期间线上充值服务暂停。',
+    extra: {
+      preview: '维护时间：周六 00:00-06:00'
+    },
+    createTime: Date.now() - 7200000
+  },
+  {
+    type: 'interaction',
+    subType: 'comment',
+    title: '新的评论',
+    content: '用户「小明同学」评论了你的失物招领：「请问这个钱包我好像见过」',
+    extra: {
+      lostFoundId: '1',
+      preview: '请问这个钱包我好像见过...'
+    },
+    createTime: Date.now() - 1800000
+  },
+  {
+    type: 'interaction',
+    subType: 'reply',
+    title: '收到回复',
+    content: '你发布的二手商品「iPhone 13 Pro」收到了新的回复：「请问能便宜点吗？」',
+    extra: {
+      marketId: '1',
+      preview: '请问能便宜点吗？'
+    },
+    createTime: Date.now() - 5400000
+  },
+  {
+    type: 'transaction',
+    subType: 'favorite',
+    title: '有人收藏了你的商品',
+    content: '你的二手商品「高等数学教材」被3位用户收藏了，快去看看吧！',
+    extra: {
+      marketId: '2',
+      preview: '高等数学教材'
+    },
+    createTime: Date.now() - 10800000
+  },
+  {
+    type: 'transaction',
+    subType: 'contact',
+    title: '有人想联系你',
+    content: '用户「学姐」对你发布的失物招领很感兴趣，想要联系你。',
+    extra: {
+      lostFoundId: '2',
+      preview: '我可能捡到了你的钥匙'
+    },
+    createTime: Date.now() - 14400000
+  },
+  {
+    type: 'activity',
+    subType: 'reminder',
+    title: '活动提醒',
+    content: '你报名的「校园樱花节摄影大赛」明天就要开始了，记得准时参加！',
+    extra: {
+      url: '/pages/broadcast/index',
+      preview: '活动时间：3月15日 14:00'
+    },
+    createTime: Date.now() - 86400000
+  },
+  {
+    type: 'activity',
+    subType: 'start',
+    title: '活动开始',
+    content: '「2026春季校园招聘会」今天正式开始，超过200家企业参会，快来看看吧！',
+    extra: {
+      url: '/pages/index/index',
+      preview: '招聘会地点：体育馆'
+    },
+    createTime: Date.now() - 172800000
+  },
+  {
+    type: 'survey',
+    subType: 'invite',
+    title: '问卷邀请',
+    content: '诚邀您参与「校园生活服务满意度调研」，完成问卷可获得积分奖励。',
+    extra: {
+      surveyId: '1',
+      preview: '预计耗时：3分钟'
+    },
+    createTime: Date.now() - 259200000
+  },
+  {
+    type: 'survey',
+    subType: 'reminder',
+    title: '问卷填写提醒',
+    content: '你还有未完成的问卷「校园餐饮服务质量调研」，请在3天内完成。',
+    extra: {
+      surveyId: '2',
+      preview: '截止日期：3月20日'
+    },
+    createTime: Date.now() - 345600000
+  }
+];
+
 module.exports = {
   ANNOUNCEMENTS,
   CAMPUS_NEWS,
   SCENERY_LIST,
-  BROADCAST_LIST
+  BROADCAST_LIST,
+  NOTIFICATIONS
 };

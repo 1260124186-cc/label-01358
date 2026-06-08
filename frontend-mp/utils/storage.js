@@ -11,7 +11,9 @@ const STORAGE_KEYS = {
   THEME_SETTINGS: 'theme_settings',
   SEARCH_HISTORY: 'searchHistory',
   SURVEY_LIST: 'surveyList',
-  SURVEY_RESPONSES: 'surveyResponses'
+  SURVEY_RESPONSES: 'surveyResponses',
+  NOTIFICATIONS: 'notifications',
+  NOTIFICATION_SETTINGS: 'notificationSettings'
 };
 
 /**
