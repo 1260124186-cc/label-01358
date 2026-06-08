@@ -23,16 +23,79 @@ App({
   initMockData() {
     try {
       const { STORAGE_KEYS } = storage;
-      
+      const now = Date.now();
+
+      let lostFoundList = storage.get(STORAGE_KEYS.LOST_FOUND_LIST);
+      if (!lostFoundList || lostFoundList.length === 0) {
+        lostFoundList = mockData.MOCK_LOST_FOUND.map((item, index) => ({
+          id: 'mock_lf_' + index + '_' + now,
+          ...item,
+          userId: 'test_user',
+          createTime: now - (index + 10) * 86400000,
+          updateTime: now - (index + 10) * 86400000,
+          status: 'active',
+          views: Math.floor(Math.random() * 100) + 10
+        }));
+        storage.set(STORAGE_KEYS.LOST_FOUND_LIST, lostFoundList);
+      }
+
+      let marketList = storage.get(STORAGE_KEYS.MARKET_LIST);
+      if (!marketList || marketList.length === 0) {
+        marketList = mockData.MOCK_MARKET_ITEMS.map((item, index) => ({
+          id: 'mock_mk_' + index + '_' + now,
+          ...item,
+          userId: 'test_user',
+          createTime: now - (index + 10) * 86400000,
+          updateTime: now - (index + 10) * 86400000,
+          status: 'selling',
+          views: Math.floor(Math.random() * 200) + 50
+        }));
+        storage.set(STORAGE_KEYS.MARKET_LIST, marketList);
+      }
+
+      let surveyList = storage.get(STORAGE_KEYS.SURVEY_LIST);
+      if (!surveyList || surveyList.length === 0) {
+        surveyList = mockData.MOCK_SURVEYS.map((item, index) => ({
+          id: 'mock_sv_' + index + '_' + now,
+          ...item,
+          userId: 'admin',
+          createTime: now - (index + 5) * 86400000,
+          updateTime: now - (index + 5) * 86400000,
+          status: 'active',
+          responseCount: Math.floor(Math.random() * 50) + 10
+        }));
+        storage.set(STORAGE_KEYS.SURVEY_LIST, surveyList);
+      }
+
       const notifications = storage.get(STORAGE_KEYS.NOTIFICATIONS);
       if (!notifications || notifications.length === 0) {
-        const now = Date.now();
-        const mockNotifications = mockData.NOTIFICATIONS.map((item, index) => ({
-          id: 'mock_' + index + '_' + now,
-          ...item,
-          read: index >= 5,
-          createTime: now - (index + 1) * 3600000
-        }));
+        const mockNotifications = mockData.NOTIFICATION_TEMPLATES.map((template, index) => {
+          const extra = { ...template.extra };
+
+          if (extra.lostFoundIndex !== undefined && lostFoundList[extra.lostFoundIndex]) {
+            extra.lostFoundId = lostFoundList[extra.lostFoundIndex].id;
+            delete extra.lostFoundIndex;
+          }
+          if (extra.marketIndex !== undefined && marketList[extra.marketIndex]) {
+            extra.marketId = marketList[extra.marketIndex].id;
+            delete extra.marketIndex;
+          }
+          if (extra.surveyIndex !== undefined && surveyList[extra.surveyIndex]) {
+            extra.surveyId = surveyList[extra.surveyIndex].id;
+            delete extra.surveyIndex;
+          }
+
+          return {
+            id: 'mock_notif_' + index + '_' + now,
+            type: template.type,
+            subType: template.subType,
+            title: template.title,
+            content: template.content,
+            extra,
+            read: index >= 5,
+            createTime: now - template.timeOffset
+          };
+        });
         storage.set(STORAGE_KEYS.NOTIFICATIONS, mockNotifications);
       }
 

@@ -90,20 +90,47 @@ Page({
       util.navigateTo(`/pages/announcement-detail/index?id=${extra.announcementId}`);
     } else if (type === 'interaction' && extra) {
       if (extra.lostFoundId) {
+        const detail = dataService.getLostFoundDetail(extra.lostFoundId);
+        if (!detail) {
+          util.showToast('该内容已不存在');
+          return;
+        }
         util.navigateTo(`/pages/lost-found-detail/index?id=${extra.lostFoundId}`);
       } else if (extra.marketId) {
+        const detail = dataService.getMarketDetail(extra.marketId);
+        if (!detail) {
+          util.showToast('该商品已不存在');
+          return;
+        }
         util.navigateTo(`/pages/market-detail/index?id=${extra.marketId}`);
       }
     } else if (type === 'transaction' && extra) {
       if (extra.lostFoundId) {
+        const detail = dataService.getLostFoundDetail(extra.lostFoundId);
+        if (!detail) {
+          util.showToast('该内容已不存在');
+          return;
+        }
         util.navigateTo(`/pages/lost-found-detail/index?id=${extra.lostFoundId}`);
       } else if (extra.marketId) {
+        const detail = dataService.getMarketDetail(extra.marketId);
+        if (!detail) {
+          util.showToast('该商品已不存在');
+          return;
+        }
         util.navigateTo(`/pages/market-detail/index?id=${extra.marketId}`);
       }
     } else if (type === 'survey' && extra && extra.surveyId) {
+      const detail = dataService.getSurveyDetail(extra.surveyId);
+      if (!detail) {
+        util.showToast('该问卷已不存在');
+        return;
+      }
       util.navigateTo(`/pages/survey-fill/index?id=${extra.surveyId}`);
     } else if (type === 'activity' && extra && extra.url) {
       util.navigateTo(extra.url);
+    } else {
+      util.showToast('暂无详情');
     }
   },
 

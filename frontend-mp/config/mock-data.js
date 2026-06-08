@@ -130,7 +130,115 @@ const BROADCAST_LIST = [
   }
 ];
 
-const NOTIFICATIONS = [
+const MOCK_LOST_FOUND = [
+  {
+    type: 'lost',
+    title: '黑色钱包丢失',
+    description: '昨天在图书馆三楼自习室丢失黑色钱包一个，内有身份证、校园卡和部分现金。望好心人拾到后联系，万分感谢！',
+    itemType: 'card',
+    location: 'library',
+    contact: '13800138001',
+    images: ['https://picsum.photos/seed/wallet/600/600'],
+    reward: '500元酬金'
+  },
+  {
+    type: 'found',
+    title: '捡到一串钥匙',
+    description: '在食堂门口捡到一串钥匙，上面有一个小熊挂件。失主请联系我认领。',
+    itemType: 'other',
+    location: 'canteen',
+    contact: '13800138002',
+    images: ['https://picsum.photos/seed/keys/600/600']
+  },
+  {
+    type: 'lost',
+    title: '寻找银色笔记本电脑',
+    description: '在教学楼A栋302教室丢失银色MacBook Pro一台，电脑上有蓝色贴纸。资料非常重要，恳请归还！',
+    itemType: 'electronics',
+    location: 'classroom',
+    contact: '13800138003',
+    images: ['https://picsum.photos/seed/laptop/600/600'],
+    reward: '1000元酬金'
+  }
+];
+
+const MOCK_MARKET_ITEMS = [
+  {
+    title: 'iPhone 13 Pro 256G',
+    description: '自用iPhone 13 Pro，256G远峰蓝色，九成新，无磕碰，电池健康度92%。配件齐全，包装盒都在。',
+    category: 'electronics',
+    price: 4500,
+    images: ['https://picsum.photos/seed/iphone/600/600'],
+    contact: '13800138004'
+  },
+  {
+    title: '高等数学教材 第七版',
+    description: '同济大学高等数学教材上下册，九成新，有少量笔记。考研复习必备。',
+    category: 'book',
+    price: 35,
+    images: ['https://picsum.photos/seed/mathbook/600/600'],
+    contact: '13800138005'
+  },
+  {
+    title: '小米空气净化器2S',
+    description: '毕业出小米空气净化器2S，使用两年，功能正常，滤芯刚换过。适合宿舍使用。',
+    category: 'daily',
+    price: 300,
+    images: ['https://picsum.photos/seed/purifier/600/600'],
+    contact: '13800138006'
+  }
+];
+
+const MOCK_SURVEYS = [
+  {
+    title: '校园生活服务满意度调研',
+    description: '为了提升校园生活服务质量，诚邀您参与本次调研。您的意见对我们非常重要！',
+    questions: [
+      {
+        id: 'q1',
+        type: 'single',
+        title: '您对校园整体服务满意度如何？',
+        options: ['非常满意', '满意', '一般', '不满意', '非常不满意']
+      },
+      {
+        id: 'q2',
+        type: 'multiple',
+        title: '您最常使用哪些校园服务？（可多选）',
+        options: ['失物招领', '二手市场', '校园广播', '问卷调研', '其他']
+      },
+      {
+        id: 'q3',
+        type: 'fill',
+        title: '您对校园服务有什么建议或意见？'
+      }
+    ]
+  },
+  {
+    title: '校园餐饮服务质量调研',
+    description: '了解同学们对学校食堂的满意度，以便改进餐饮服务质量。',
+    questions: [
+      {
+        id: 'q1',
+        type: 'single',
+        title: '您对食堂饭菜口味如何评价？',
+        options: ['非常好', '好', '一般', '差', '非常差']
+      },
+      {
+        id: 'q2',
+        type: 'single',
+        title: '您认为食堂饭菜价格如何？',
+        options: ['很便宜', '比较便宜', '适中', '偏贵', '很贵']
+      },
+      {
+        id: 'q3',
+        type: 'fill',
+        title: '您希望食堂增加哪些菜品？'
+      }
+    ]
+  }
+];
+
+const NOTIFICATION_TEMPLATES = [
   {
     type: 'system',
     subType: 'announcement',
@@ -140,7 +248,7 @@ const NOTIFICATIONS = [
       announcementId: '1',
       preview: '注册时间：2月15日-16日'
     },
-    createTime: Date.now() - 3600000
+    timeOffset: 3600000
   },
   {
     type: 'system',
@@ -150,7 +258,7 @@ const NOTIFICATIONS = [
     extra: {
       preview: '维护时间：周六 00:00-06:00'
     },
-    createTime: Date.now() - 7200000
+    timeOffset: 7200000
   },
   {
     type: 'interaction',
@@ -158,10 +266,10 @@ const NOTIFICATIONS = [
     title: '新的评论',
     content: '用户「小明同学」评论了你的失物招领：「请问这个钱包我好像见过」',
     extra: {
-      lostFoundId: '1',
+      lostFoundIndex: 0,
       preview: '请问这个钱包我好像见过...'
     },
-    createTime: Date.now() - 1800000
+    timeOffset: 1800000
   },
   {
     type: 'interaction',
@@ -169,10 +277,10 @@ const NOTIFICATIONS = [
     title: '收到回复',
     content: '你发布的二手商品「iPhone 13 Pro」收到了新的回复：「请问能便宜点吗？」',
     extra: {
-      marketId: '1',
+      marketIndex: 0,
       preview: '请问能便宜点吗？'
     },
-    createTime: Date.now() - 5400000
+    timeOffset: 5400000
   },
   {
     type: 'transaction',
@@ -180,10 +288,10 @@ const NOTIFICATIONS = [
     title: '有人收藏了你的商品',
     content: '你的二手商品「高等数学教材」被3位用户收藏了，快去看看吧！',
     extra: {
-      marketId: '2',
+      marketIndex: 1,
       preview: '高等数学教材'
     },
-    createTime: Date.now() - 10800000
+    timeOffset: 10800000
   },
   {
     type: 'transaction',
@@ -191,10 +299,10 @@ const NOTIFICATIONS = [
     title: '有人想联系你',
     content: '用户「学姐」对你发布的失物招领很感兴趣，想要联系你。',
     extra: {
-      lostFoundId: '2',
+      lostFoundIndex: 1,
       preview: '我可能捡到了你的钥匙'
     },
-    createTime: Date.now() - 14400000
+    timeOffset: 14400000
   },
   {
     type: 'activity',
@@ -205,7 +313,7 @@ const NOTIFICATIONS = [
       url: '/pages/broadcast/index',
       preview: '活动时间：3月15日 14:00'
     },
-    createTime: Date.now() - 86400000
+    timeOffset: 86400000
   },
   {
     type: 'activity',
@@ -216,7 +324,7 @@ const NOTIFICATIONS = [
       url: '/pages/index/index',
       preview: '招聘会地点：体育馆'
     },
-    createTime: Date.now() - 172800000
+    timeOffset: 172800000
   },
   {
     type: 'survey',
@@ -224,10 +332,10 @@ const NOTIFICATIONS = [
     title: '问卷邀请',
     content: '诚邀您参与「校园生活服务满意度调研」，完成问卷可获得积分奖励。',
     extra: {
-      surveyId: '1',
+      surveyIndex: 0,
       preview: '预计耗时：3分钟'
     },
-    createTime: Date.now() - 259200000
+    timeOffset: 259200000
   },
   {
     type: 'survey',
@@ -235,10 +343,10 @@ const NOTIFICATIONS = [
     title: '问卷填写提醒',
     content: '你还有未完成的问卷「校园餐饮服务质量调研」，请在3天内完成。',
     extra: {
-      surveyId: '2',
+      surveyIndex: 1,
       preview: '截止日期：3月20日'
     },
-    createTime: Date.now() - 345600000
+    timeOffset: 345600000
   }
 ];
 
@@ -247,5 +355,8 @@ module.exports = {
   CAMPUS_NEWS,
   SCENERY_LIST,
   BROADCAST_LIST,
-  NOTIFICATIONS
+  MOCK_LOST_FOUND,
+  MOCK_MARKET_ITEMS,
+  MOCK_SURVEYS,
+  NOTIFICATION_TEMPLATES
 };

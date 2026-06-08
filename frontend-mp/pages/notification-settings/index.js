@@ -57,5 +57,31 @@ Page({
       dataService.clearNotifications();
       util.showSuccess('已清空所有消息');
     }
+  },
+
+  async onResetMockData() {
+    const confirm = await util.showConfirm('确定要重新初始化所有测试数据吗？这将清除所有旧数据并重新生成。');
+    
+    if (confirm) {
+      try {
+        const storage = require('../../utils/storage');
+        const { STORAGE_KEYS } = storage;
+        
+        storage.remove(STORAGE_KEYS.LOST_FOUND_LIST);
+        storage.remove(STORAGE_KEYS.MARKET_LIST);
+        storage.remove(STORAGE_KEYS.SURVEY_LIST);
+        storage.remove(STORAGE_KEYS.NOTIFICATIONS);
+        storage.remove(STORAGE_KEYS.FAVORITES);
+        storage.remove(STORAGE_KEYS.HISTORY);
+        
+        const app = getApp();
+        app.initMockData();
+        
+        util.showSuccess('数据已重置');
+      } catch (e) {
+        console.error('重置数据失败:', e);
+        util.showError('重置失败');
+      }
+    }
   }
 });
