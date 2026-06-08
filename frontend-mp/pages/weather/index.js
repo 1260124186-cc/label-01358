@@ -1,5 +1,6 @@
 const mockData = require('../../config/mock-data');
 const util = require('../../utils/util');
+const dataService = require('../../services/data');
 
 Page({
   data: {
@@ -46,6 +47,9 @@ Page({
         const forecastMinTemp = Math.min(...temps.mins);
         const forecastMaxTemp = Math.max(...temps.maxs);
         const forecastTempRange = forecastMaxTemp - forecastMinTemp || 1;
+
+        // 同步天气预警到消息中心
+        dataService.syncWeatherAlertsToNotifications();
 
         this.setData({
           weatherData,

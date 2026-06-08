@@ -47,12 +47,28 @@ Page({
     
     const filteredNotifications = notifications.map(item => {
       const typeConfig = constants.NOTIFICATION_TYPES.find(t => t.value === item.type);
+      let typeIcon = typeConfig ? typeConfig.icon : '📩';
+      let typeColor = typeConfig ? typeConfig.color : '#F3F4F6';
+      let typeIconColor = typeConfig ? typeConfig.iconColor : '#6B7280';
+
+      if (item.subType === 'weather_alert' && item.extra) {
+        if (item.extra.icon) {
+          typeIcon = item.extra.icon;
+        }
+        if (item.extra.typeColor) {
+          typeColor = item.extra.typeColor;
+        }
+        if (item.extra.typeIconColor) {
+          typeIconColor = item.extra.typeIconColor;
+        }
+      }
+
       return {
         ...item,
         typeLabel: typeConfig ? typeConfig.label : '',
-        typeIcon: typeConfig ? typeConfig.icon : '📩',
-        typeColor: typeConfig ? typeConfig.color : '#F3F4F6',
-        typeIconColor: typeConfig ? typeConfig.iconColor : '#6B7280',
+        typeIcon,
+        typeColor,
+        typeIconColor,
         timeText: util.relativeTime(item.createTime)
       };
     });
@@ -80,13 +96,19 @@ Page({
   },
 
   onNotificationTap(e) {
-    const { id, type, extra } = e.currentTarget.dataset;
+    const { id, type, extra, subtype } = e.currentTarget.dataset;
     
     dataService.markNotificationRead(id);
     this.loadNotifications();
     this.loadUnreadCount();
 
-    if (type === 'system' && extra && extra.announcementId) {
+    if (subtype === 'weather_alert' && extra) {
+      if (extra.announcementId) {
+        util.navigateTo(`/pages/announcement-detail/index?id=${extra.announcementId}`);
+      } else {
+        util.navigateTo('/pages/weather/index');
+      }
+    } else if (type === 'system' && extra && extra.announcementId) {
       util.navigateTo(`/pages/announcement-detail/index?id=${extra.announcementId}`);
     } else if (type === 'interaction' && extra) {
       if (extra.lostFoundId) {

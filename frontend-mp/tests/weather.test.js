@@ -5,7 +5,8 @@ const createMockUtil = () => ({
   switchTab: jest.fn(),
   showToast: jest.fn(),
   relativeTime: jest.fn((time) => '1小时前'),
-  checkLogin: jest.fn(() => true)
+  checkLogin: jest.fn(() => true),
+  generateId: jest.fn(() => 'test-id-' + Math.random().toString(36).substring(2, 11))
 });
 
 let mockUtil;
@@ -167,6 +168,7 @@ describe('首页天气入口功能', () => {
     jest.resetModules();
     mockUtil = createMockUtil();
     jest.doMock('../utils/util', () => mockUtil);
+    jest.doMock('../config/mock-data', () => mockData);
     global.Page.mockClear();
   });
 
@@ -236,6 +238,7 @@ describe('天气详情页面功能', () => {
     jest.resetModules();
     mockUtil = createMockUtil();
     jest.doMock('../utils/util', () => mockUtil);
+    jest.doMock('../config/mock-data', () => mockData);
     global.Page.mockClear();
     wx.showModal.mockClear();
     wx.stopPullDownRefresh.mockClear();

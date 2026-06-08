@@ -1,5 +1,6 @@
 const mockData = require('../../config/mock-data');
 const util = require('../../utils/util');
+const dataService = require('../../services/data');
 
 Page({
   data: {
@@ -84,6 +85,9 @@ Page({
 
       // 加载天气数据
       const weatherData = mockData.WEATHER_DATA;
+
+      // 同步天气预警到消息中心
+      dataService.syncWeatherAlertsToNotifications();
 
       this.setData({
         announcements,

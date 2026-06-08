@@ -698,6 +698,71 @@ function clearNotifications(type = '') {
   return storage.clearList(STORAGE_KEYS.NOTIFICATIONS);
 }
 
+function convertWeatherAlertToNotification(alert) {
+  const iconMap = {
+    rainstorm: '⛈️',
+    heat: '🌡️',
+    other: '📢'
+  };
+
+  const levelColorMap = {
+    danger: { color: '#FEE2E2', iconColor: '#EF4444' },
+    warning: { color: '#FEF3C7', iconColor: '#F59E0B' },
+    info: { color: '#DBEAFE', iconColor: '#3B82F6' }
+  };
+
+  const levelStyle = levelColorMap[alert.level] || levelColorMap.info;
+
+  return {
+    type: 'system',
+    subType: 'weather_alert',
+    title: alert.title,
+    content: alert.content,
+    extra: {
+      alertId: alert.id,
+      alertType: alert.type,
+      level: alert.level,
+      announcementId: alert.announcementId,
+      preview: `有效期至 ${alert.validUntil}`,
+      icon: iconMap[alert.type] || iconMap.other,
+      typeColor: levelStyle.color,
+      typeIconColor: levelStyle.iconColor
+    },
+    createTime: new Date(alert.publishTime).getTime()
+  };
+}
+
+function syncWeatherAlertsToNotifications() {
+  const weatherData = mockData.WEATHER_DATA;
+  if (!weatherData || !weatherData.campusAlerts) {
+    return [];
+  }
+
+  const existingNotifications = getNotificationList();
+  const existingAlertIds = existingNotifications
+    .filter(n => n.subType === 'weather_alert' && n.extra && n.extra.alertId)
+    .map(n => n.extra.alertId);
+
+  const createdNotifications = [];
+
+  weatherData.campusAlerts.forEach(alert => {
+    if (!existingAlertIds.includes(alert.id)) {
+      const notificationData = convertWeatherAlertToNotification(alert);
+      const created = createNotification(notificationData);
+      if (created) {
+        createdNotifications.push(created);
+      }
+    }
+  });
+
+  return createdNotifications;
+}
+
+function getWeatherAlertNotifications() {
+  return getNotificationList({ type: 'system' })
+    .filter(n => n.subType === 'weather_alert');
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -746,5 +811,8 @@ module.exports = {
   getUnreadCount,
   getUnreadCountByType,
   deleteNotification,
-  clearNotifications
+  clearNotifications,
+  convertWeatherAlertToNotification,
+  syncWeatherAlertsToNotifications,
+  getWeatherAlertNotifications
 };

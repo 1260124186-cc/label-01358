@@ -46,6 +46,7 @@
         bindtap="onNotificationTap"
         data-id="{{item.id}}"
         data-type="{{item.type}}"
+        data-subtype="{{item.subType}}"
         data-extra="{{item.extra}}"
       >
         <view class="notification-unread-dot" wx:if="{{!item.read}}"></view>

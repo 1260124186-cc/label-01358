@@ -92,7 +92,8 @@ const NOTIFICATION_TYPES = [
 const NOTIFICATION_SUB_TYPES = {
   system: [
     { value: 'announcement', label: '系统公告' },
-    { value: 'maintenance', label: '维护通知' }
+    { value: 'maintenance', label: '维护通知' },
+    { value: 'weather_alert', label: '天气预警' }
   ],
   interaction: [
     { value: 'comment', label: '评论' },
