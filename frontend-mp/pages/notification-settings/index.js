@@ -74,10 +74,16 @@ Page({
         storage.remove(STORAGE_KEYS.FAVORITES);
         storage.remove(STORAGE_KEYS.HISTORY);
         
+        wx.removeStorageSync('mock_data_version');
+        
         const app = getApp();
         app.initMockData();
         
         util.showSuccess('数据已重置');
+        
+        setTimeout(() => {
+          wx.navigateBack();
+        }, 1000);
       } catch (e) {
         console.error('重置数据失败:', e);
         util.showError('重置失败');

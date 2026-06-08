@@ -23,10 +23,18 @@ App({
   initMockData() {
     try {
       const { STORAGE_KEYS } = storage;
+      const MOCK_DATA_VERSION = 'v2';
       const now = Date.now();
 
+      const storedVersion = wx.getStorageSync('mock_data_version');
+      const needsReset = storedVersion !== MOCK_DATA_VERSION;
+
+      const lostFoundIds = {};
+      const marketIds = {};
+      const surveyIds = {};
+
       let lostFoundList = storage.get(STORAGE_KEYS.LOST_FOUND_LIST);
-      if (!lostFoundList || lostFoundList.length === 0) {
+      if (needsReset || !lostFoundList || lostFoundList.length === 0) {
         lostFoundList = mockData.MOCK_LOST_FOUND.map((item, index) => ({
           id: 'mock_lf_' + index + '_' + now,
           ...item,
@@ -38,9 +46,12 @@ App({
         }));
         storage.set(STORAGE_KEYS.LOST_FOUND_LIST, lostFoundList);
       }
+      lostFoundList.forEach((item, index) => {
+        lostFoundIds[index] = item.id;
+      });
 
       let marketList = storage.get(STORAGE_KEYS.MARKET_LIST);
-      if (!marketList || marketList.length === 0) {
+      if (needsReset || !marketList || marketList.length === 0) {
         marketList = mockData.MOCK_MARKET_ITEMS.map((item, index) => ({
           id: 'mock_mk_' + index + '_' + now,
           ...item,
@@ -52,9 +63,12 @@ App({
         }));
         storage.set(STORAGE_KEYS.MARKET_LIST, marketList);
       }
+      marketList.forEach((item, index) => {
+        marketIds[index] = item.id;
+      });
 
       let surveyList = storage.get(STORAGE_KEYS.SURVEY_LIST);
-      if (!surveyList || surveyList.length === 0) {
+      if (needsReset || !surveyList || surveyList.length === 0) {
         surveyList = mockData.MOCK_SURVEYS.map((item, index) => ({
           id: 'mock_sv_' + index + '_' + now,
           ...item,
@@ -66,22 +80,41 @@ App({
         }));
         storage.set(STORAGE_KEYS.SURVEY_LIST, surveyList);
       }
+      surveyList.forEach((item, index) => {
+        surveyIds[index] = item.id;
+      });
 
-      const notifications = storage.get(STORAGE_KEYS.NOTIFICATIONS);
-      if (!notifications || notifications.length === 0) {
+      let notifications = storage.get(STORAGE_KEYS.NOTIFICATIONS);
+
+      const hasInvalidNotifications = notifications && notifications.some(n => {
+        if (n.extra) {
+          if (n.extra.lostFoundId && !lostFoundList.find(l => l.id === n.extra.lostFoundId)) {
+            return true;
+          }
+          if (n.extra.marketId && !marketList.find(m => m.id === n.extra.marketId)) {
+            return true;
+          }
+          if (n.extra.surveyId && !surveyList.find(s => s.id === n.extra.surveyId)) {
+            return true;
+          }
+        }
+        return false;
+      });
+
+      if (needsReset || !notifications || notifications.length === 0 || hasInvalidNotifications) {
         const mockNotifications = mockData.NOTIFICATION_TEMPLATES.map((template, index) => {
           const extra = { ...template.extra };
 
-          if (extra.lostFoundIndex !== undefined && lostFoundList[extra.lostFoundIndex]) {
-            extra.lostFoundId = lostFoundList[extra.lostFoundIndex].id;
+          if (extra.lostFoundIndex !== undefined && lostFoundIds[extra.lostFoundIndex]) {
+            extra.lostFoundId = lostFoundIds[extra.lostFoundIndex];
             delete extra.lostFoundIndex;
           }
-          if (extra.marketIndex !== undefined && marketList[extra.marketIndex]) {
-            extra.marketId = marketList[extra.marketIndex].id;
+          if (extra.marketIndex !== undefined && marketIds[extra.marketIndex]) {
+            extra.marketId = marketIds[extra.marketIndex];
             delete extra.marketIndex;
           }
-          if (extra.surveyIndex !== undefined && surveyList[extra.surveyIndex]) {
-            extra.surveyId = surveyList[extra.surveyIndex].id;
+          if (extra.surveyIndex !== undefined && surveyIds[extra.surveyIndex]) {
+            extra.surveyId = surveyIds[extra.surveyIndex];
             delete extra.surveyIndex;
           }
 
@@ -109,6 +142,8 @@ App({
           survey: true
         });
       }
+
+      wx.setStorageSync('mock_data_version', MOCK_DATA_VERSION);
     } catch (e) {
       console.error('初始化mock数据失败:', e);
     }
