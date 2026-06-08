@@ -14,6 +14,13 @@ Page({
         url: '/pages/weather/index'
       },
       {
+        id: 'phonebook',
+        name: '校园黄页',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)',
+        url: '/pages/campus-phonebook/index'
+      },
+      {
         id: 'lost-found',
         name: '失物招领',
         icon: '/assets/icons/nav-lost.png',

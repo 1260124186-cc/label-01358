@@ -8,7 +8,7 @@
       </view>
       <input
         class="search-input"
-        placeholder="搜索失物招领、二手市场、校园动态..."
+        placeholder="搜索失物招领、二手市场、校园动态、电话簿..."
         placeholder-class="search-placeholder"
         value="{{keyword}}"
         bindinput="onInputChange"
@@ -279,8 +279,45 @@
         </view>
       </view>
 
+      <!-- 电话簿结果 -->
+      <view class="result-group" wx:if="{{(currentTab === 'all' || currentTab === 'phonebook') && phonebookList.length > 0}}">
+        <view class="result-group-header" wx:if="{{currentTab === 'all'}}">
+          <view class="result-group-icon phonebook-icon"></view>
+          <text class="result-group-title">电话簿</text>
+          <text class="result-group-count">{{phonebookList.length}}条</text>
+        </view>
+        <view
+          class="result-card phonebook-card"
+          wx:for="{{phonebookList}}"
+          wx:key="id"
+          hover-class="hover-opacity"
+        >
+          <view class="phonebook-card-left">
+            <view class="phonebook-icon-wrapper" style="background-color: {{item.categoryColor || '#F0F9EB'}};">
+              <text class="phonebook-emoji">{{item.categoryIcon || '📞'}}</text>
+            </view>
+            <view class="phonebook-card-body">
+              <view class="result-card-top">
+                <view class="tag tag-info" wx:if="{{item.categoryName}}">{{item.categoryName}}</view>
+              </view>
+              <text class="result-card-title">{{item.name}}</text>
+              <text class="phonebook-number">{{item.phone}}</text>
+              <text class="meta-location" wx:if="{{item.address}}">📍 {{item.address}}</text>
+            </view>
+          </view>
+          <view
+            class="phonebook-call-btn"
+            bindtap="onPhonebookCall"
+            data-phone="{{item.phone}}"
+            catchtap="onPhonebookCall"
+          >
+            <text class="call-icon">📞</text>
+          </view>
+        </view>
+      </view>
+
       <!-- 空结果 -->
-      <view class="empty-result" wx:if="{{showResults && lostList.length === 0 && marketList.length === 0 && newsList.length === 0}}">
+      <view class="empty-result" wx:if="{{showResults && lostList.length === 0 && marketList.length === 0 && newsList.length === 0 && phonebookList.length === 0}}">
         <view class="empty-icon">🔍</view>
         <text class="empty-text">未找到相关结果</text>
         <text class="empty-hint">换个关键词试试吧</text>

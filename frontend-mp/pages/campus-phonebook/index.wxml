@@ -1,0 +1,150 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 搜索框 -->
+  <view class="search-section">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索部门名、电话"
+        placeholder-class="search-placeholder"
+        value="{{keyword}}"
+        bindinput="onInputChange"
+        bindconfirm="onSearch"
+        confirm-type="search"
+      />
+      <text
+        wx:if="{{keyword}}"
+        class="search-clear"
+        bindtap="onClearInput"
+      >×</text>
+    </view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <!-- 紧急电话 -->
+    <view class="section" wx:if="{{!showSearchResults}}">
+      <view class="section-header">
+        <text class="section-title emergency">📞 紧急电话</text>
+        <text class="section-desc">24小时服务</text>
+      </view>
+      <view class="emergency-list">
+        <view
+          class="emergency-item"
+          wx:for="{{emergencyPhones}}"
+          wx:key="id"
+          bindtap="onEmergencyCall"
+          data-phone="{{item.phone}}"
+          hover-class="emergency-item-hover"
+        >
+          <view class="emergency-icon-wrapper emergency-{{index}}">
+            <text class="emergency-icon">{{item.icon}}</text>
+          </view>
+          <view class="emergency-info">
+            <text class="emergency-name">{{item.name}}</text>
+            <text class="emergency-desc">{{item.description}}</text>
+          </view>
+          <view class="emergency-call-btn">
+            <text class="call-icon">📞</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分类标签 -->
+    <view class="section" wx:if="{{!showSearchResults}}">
+      <view class="section-header">
+        <text class="section-title">📋 分类通讯录</text>
+      </view>
+      <view class="category-tabs">
+        <view
+          class="category-tab {{currentTab === 'all' ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabChange"
+          data-value="{{item.value}}"
+        >
+          <text class="tab-text">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 电话列表 -->
+    <view class="section">
+      <view class="section-header" wx:if="{{showSearchResults}}">
+        <text class="section-title">🔍 搜索结果</text>
+        <text class="result-count">{{filteredList.length}} 条结果</text>
+      </view>
+
+      <view class="phone-list" wx:if="{{filteredList.length > 0}}">
+        <view
+          class="phone-card"
+          wx:for="{{filteredList}}"
+          wx:key="id"
+          hover-class="phone-card-hover"
+        >
+          <view class="phone-left">
+            <view class="phone-icon-wrapper" style="background-color: {{item.categoryColor || '#F0F9EB'}};">
+              <text class="phone-icon">{{item.categoryIcon || '📞'}}</text>
+            </view>
+            <view class="phone-info">
+              <text class="phone-name">{{item.name}}</text>
+              <text class="phone-tag" wx:if="{{item.categoryName && !showSearchResults}}">{{item.categoryName}}</text>
+              <text class="phone-number">{{item.phone}}</text>
+              <text class="phone-address" wx:if="{{item.address}}">📍 {{item.address}}</text>
+              <text class="phone-worktime" wx:if="{{item.workTime}}">⏰ {{item.workTime}}</text>
+            </view>
+          </view>
+          <view class="phone-right">
+            <view
+              class="call-btn"
+              bindtap="onCallPhone"
+              data-phone="{{item.phone}}"
+              catchtap="onCallPhone"
+            >
+              <text class="call-btn-icon">📞</text>
+              <text class="call-btn-text">拨号</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <empty
+        wx:if="{{showSearchResults && filteredList.length === 0}}"
+        text="没有找到相关电话"
+      />
+    </view>
+
+    <!-- 办事指南 -->
+    <view class="section" wx:if="{{!showSearchResults}}">
+      <view class="section-header">
+        <text class="section-title">📖 办事指南</text>
+        <text class="section-more" bindtap="onMoreGuide">更多</text>
+      </view>
+      <view class="guide-grid">
+        <view
+          class="guide-item"
+          wx:for="{{serviceGuides}}"
+          wx:key="id"
+          bindtap="onGuideTap"
+          data-item="{{item}}"
+          hover-class="guide-item-hover"
+        >
+          <view class="guide-icon-wrapper">
+            <text class="guide-icon">{{item.icon}}</text>
+          </view>
+          <text class="guide-title">{{item.title}}</text>
+          <text class="guide-desc">{{item.description}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>

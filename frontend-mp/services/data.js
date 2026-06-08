@@ -334,6 +334,7 @@ function globalSearch(filters) {
   let lostList = [];
   let marketList = [];
   let newsList = [];
+  let phonebookList = [];
 
   if (tab === 'all' || tab === 'lost') {
     lostList = getLostFoundList({
@@ -387,7 +388,21 @@ function globalSearch(filters) {
     newsList = sortByField(newsList, sort, constants.SORT_OPTIONS);
   }
 
-  return { lostList, marketList, newsList };
+  if (tab === 'all' || tab === 'phonebook') {
+    if (keyword) {
+      phonebookList = searchPhonebook(keyword);
+    } else if (category) {
+      phonebookList = getPhonebookItemsByCategory(category);
+    } else {
+      phonebookList = getPhonebookAllItems();
+    }
+    phonebookList = phonebookList.map(item => ({
+      ...item,
+      _type: 'phonebook'
+    }));
+  }
+
+  return { lostList, marketList, newsList, phonebookList };
 }
 
 // ==================== 问卷调研 ====================
@@ -763,6 +778,79 @@ function getWeatherAlertNotifications() {
     .filter(n => n.subType === 'weather_alert');
 }
 
+// ==================== 校园黄页 ====================
+
+function getEmergencyPhones() {
+  return mockData.EMERGENCY_PHONES || [];
+}
+
+function getPhonebookCategories() {
+  return mockData.PHONEBOOK_CATEGORIES || [];
+}
+
+function getPhonebookAllItems() {
+  const categories = getPhonebookCategories();
+  const allItems = [];
+  categories.forEach(category => {
+    (category.items || []).forEach(item => {
+      allItems.push({
+        ...item,
+        categoryId: category.id,
+        categoryName: category.name,
+        categoryIcon: category.icon,
+        categoryColor: category.color,
+        categoryIconColor: category.iconColor
+      });
+    });
+  });
+  return allItems;
+}
+
+function getPhonebookItemsByCategory(categoryValue) {
+  const categoryMap = {
+    'department': 'c1',
+    'logistics': 'c2',
+    'medical': 'c3',
+    'security': 'c4',
+    'express': 'c5'
+  };
+  const categoryId = categoryMap[categoryValue];
+  if (!categoryId) return [];
+
+  const categories = getPhonebookCategories();
+  const category = categories.find(c => c.id === categoryId);
+  if (!category) return [];
+
+  return (category.items || []).map(item => ({
+    ...item,
+    categoryId: category.id,
+    categoryName: category.name,
+    categoryIcon: category.icon,
+    categoryColor: category.color,
+    categoryIconColor: category.iconColor
+  }));
+}
+
+function searchPhonebook(keyword) {
+  if (!keyword) return [];
+  const allItems = getPhonebookAllItems();
+  return filterByKeyword(allItems, keyword, ['name', 'phone', 'address']);
+}
+
+function getServiceGuides() {
+  return mockData.SERVICE_GUIDES || [];
+}
+
+function makePhoneCall(phoneNumber) {
+  return new Promise((resolve, reject) => {
+    wx.makePhoneCall({
+      phoneNumber,
+      success: resolve,
+      fail: reject
+    });
+  });
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -814,5 +902,13 @@ module.exports = {
   clearNotifications,
   convertWeatherAlertToNotification,
   syncWeatherAlertsToNotifications,
-  getWeatherAlertNotifications
+  getWeatherAlertNotifications,
+
+  getEmergencyPhones,
+  getPhonebookCategories,
+  getPhonebookAllItems,
+  getPhonebookItemsByCategory,
+  searchPhonebook,
+  getServiceGuides,
+  makePhoneCall
 };

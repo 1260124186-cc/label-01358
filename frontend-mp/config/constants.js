@@ -61,7 +61,17 @@ const SEARCH_TABS = [
   { value: 'all', label: '全部' },
   { value: 'lost', label: '失物招领' },
   { value: 'market', label: '二手市场' },
-  { value: 'news', label: '校园动态' }
+  { value: 'news', label: '校园动态' },
+  { value: 'phonebook', label: '电话簿' }
+];
+
+const PHONEBOOK_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'department', label: '院系办公' },
+  { value: 'logistics', label: '后勤服务' },
+  { value: 'medical', label: '医疗服务' },
+  { value: 'security', label: '保卫安全' },
+  { value: 'express', label: '快递中心' }
 ];
 
 const MARKET_STATUS = [
@@ -130,6 +140,7 @@ module.exports = {
   SORT_OPTIONS,
   TIME_RANGES,
   SEARCH_TABS,
+  PHONEBOOK_TABS,
   MARKET_STATUS,
   SURVEY_QUESTION_TYPES,
   SURVEY_STATUS,

@@ -395,6 +395,329 @@ const WEATHER_DATA = {
   ]
 };
 
+const EMERGENCY_PHONES = [
+  {
+    id: 'e1',
+    name: '校园报警',
+    phone: '110',
+    icon: '🚔',
+    description: '24小时校园报警电话',
+    isEmergency: true
+  },
+  {
+    id: 'e2',
+    name: '火警',
+    phone: '119',
+    icon: '🚒',
+    description: '火警报警电话',
+    isEmergency: true
+  },
+  {
+    id: 'e3',
+    name: '校医院急诊',
+    phone: '010-12345678',
+    icon: '🏥',
+    description: '24小时急诊服务',
+    isEmergency: true
+  }
+];
+
+const PHONEBOOK_CATEGORIES = [
+  {
+    id: 'c1',
+    name: '院系办公室',
+    icon: '🏛️',
+    color: '#E3F2FD',
+    iconColor: '#1976D2',
+    items: [
+      {
+        id: 'd1',
+        name: '校长办公室',
+        phone: '010-12345001',
+        address: '行政楼301室',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 'd2',
+        name: '教务处',
+        phone: '010-12345002',
+        address: '行政楼201室',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 'd3',
+        name: '学生处',
+        phone: '010-12345003',
+        address: '行政楼205室',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 'd4',
+        name: '研究生院',
+        phone: '010-12345004',
+        address: '行政楼401室',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 'd5',
+        name: '计算机学院',
+        phone: '010-12345101',
+        address: '信息楼101室',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 'd6',
+        name: '电子工程学院',
+        phone: '010-12345102',
+        address: '信息楼201室',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 'd7',
+        name: '经济管理学院',
+        phone: '010-12345201',
+        address: '经管楼301室',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 'd8',
+        name: '外国语学院',
+        phone: '010-12345301',
+        address: '外语楼101室',
+        workTime: '周一至周五 8:00-17:00'
+      }
+    ]
+  },
+  {
+    id: 'c2',
+    name: '后勤服务',
+    icon: '🔧',
+    color: '#FFF3E0',
+    iconColor: '#F57C00',
+    items: [
+      {
+        id: 'l1',
+        name: '后勤服务中心',
+        phone: '010-12345401',
+        address: '后勤楼101室',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 'l2',
+        name: '宿舍管理中心',
+        phone: '010-12345402',
+        address: '1号宿舍楼101室',
+        workTime: '24小时值班'
+      },
+      {
+        id: 'l3',
+        name: '水电维修',
+        phone: '010-12345403',
+        address: '后勤楼201室',
+        workTime: '24小时值班'
+      },
+      {
+        id: 'l4',
+        name: '食堂服务热线',
+        phone: '010-12345404',
+        address: '第一食堂办公室',
+        workTime: '6:30-20:00'
+      },
+      {
+        id: 'l5',
+        name: '物业报修',
+        phone: '010-12345405',
+        address: '后勤楼105室',
+        workTime: '8:00-20:00'
+      },
+      {
+        id: 'l6',
+        name: '校园绿化',
+        phone: '010-12345406',
+        address: '后勤楼301室',
+        workTime: '周一至周五 8:00-17:00'
+      }
+    ]
+  },
+  {
+    id: 'c3',
+    name: '医疗服务',
+    icon: '💊',
+    color: '#E8F5E9',
+    iconColor: '#388E3C',
+    items: [
+      {
+        id: 'm1',
+        name: '校医院',
+        phone: '010-12345678',
+        address: '校园东南角校医院',
+        workTime: '门诊: 8:00-17:00, 急诊: 24小时'
+      },
+      {
+        id: 'm2',
+        name: '校医院药房',
+        phone: '010-12345679',
+        address: '校医院1楼',
+        workTime: '8:00-18:00'
+      },
+      {
+        id: 'm3',
+        name: '心理咨询中心',
+        phone: '010-12345680',
+        address: '大学生活动中心3楼',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 'm4',
+        name: '医保办公室',
+        phone: '010-12345681',
+        address: '校医院2楼',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 'm5',
+        name: '体检中心',
+        phone: '010-12345682',
+        address: '校医院3楼',
+        workTime: '周一至周五 8:00-11:30'
+      }
+    ]
+  },
+  {
+    id: 'c4',
+    name: '保卫安全',
+    icon: '🛡️',
+    color: '#FFEBEE',
+    iconColor: '#D32F2F',
+    items: [
+      {
+        id: 's1',
+        name: '保卫处',
+        phone: '010-12345701',
+        address: '北门保卫处大楼',
+        workTime: '24小时值班'
+      },
+      {
+        id: 's2',
+        name: '校园巡逻',
+        phone: '010-12345702',
+        address: '保卫处1楼',
+        workTime: '24小时'
+      },
+      {
+        id: 's3',
+        name: '户籍管理',
+        phone: '010-12345703',
+        address: '保卫处2楼',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 's4',
+        name: '交通管理',
+        phone: '010-12345704',
+        address: '保卫处1楼',
+        workTime: '周一至周五 8:00-17:00'
+      },
+      {
+        id: 's5',
+        name: '消防管理',
+        phone: '010-12345705',
+        address: '保卫处1楼',
+        workTime: '24小时'
+      }
+    ]
+  },
+  {
+    id: 'c5',
+    name: '快递中心',
+    icon: '📦',
+    color: '#F3E5F5',
+    iconColor: '#7B1FA2',
+    items: [
+      {
+        id: 'ex1',
+        name: '校园快递中心',
+        phone: '010-12345801',
+        address: '生活服务中心1楼',
+        workTime: '8:00-20:00'
+      },
+      {
+        id: 'ex2',
+        name: '顺丰快递点',
+        phone: '010-12345802',
+        address: '生活服务中心101室',
+        workTime: '9:00-19:00'
+      },
+      {
+        id: 'ex3',
+        name: '京东快递点',
+        phone: '010-12345803',
+        address: '生活服务中心102室',
+        workTime: '9:00-19:00'
+      },
+      {
+        id: 'ex4',
+        name: '菜鸟驿站',
+        phone: '010-12345804',
+        address: '生活服务中心103室',
+        workTime: '8:30-21:00'
+      },
+      {
+        id: 'ex5',
+        name: '邮政服务',
+        phone: '010-12345805',
+        address: '生活服务中心105室',
+        workTime: '周一至周六 8:30-17:00'
+      }
+    ]
+  }
+];
+
+const SERVICE_GUIDES = [
+  {
+    id: 'g1',
+    title: '如何办理学生证',
+    icon: '🎫',
+    url: '/pages/guide-detail/index?type=student-card',
+    description: '学生证办理、补办流程说明'
+  },
+  {
+    id: 'g2',
+    title: '校园卡使用指南',
+    icon: '💳',
+    url: '/pages/guide-detail/index?type=campus-card',
+    description: '充值、挂失、补办全攻略'
+  },
+  {
+    id: 'g3',
+    title: '宿舍报修流程',
+    icon: '🔨',
+    url: '/pages/guide-detail/index?type=repair',
+    description: '水电设施报修指引'
+  },
+  {
+    id: 'g4',
+    title: '图书馆借阅规则',
+    icon: '📚',
+    url: '/pages/guide-detail/index?type=library',
+    description: '借书、续借、预约详解'
+  },
+  {
+    id: 'g5',
+    title: '成绩单办理',
+    icon: '📄',
+    url: '/pages/guide-detail/index?type=transcript',
+    description: '中英文成绩单申请流程'
+  },
+  {
+    id: 'g6',
+    title: '就业创业服务',
+    icon: '💼',
+    url: '/pages/guide-detail/index?type=career',
+    description: '招聘会、创业扶持政策'
+  }
+];
+
 const NOTIFICATION_TEMPLATES = [
   {
     type: 'system',
@@ -516,5 +839,8 @@ module.exports = {
   MOCK_MARKET_ITEMS,
   MOCK_SURVEYS,
   NOTIFICATION_TEMPLATES,
-  WEATHER_DATA
+  WEATHER_DATA,
+  EMERGENCY_PHONES,
+  PHONEBOOK_CATEGORIES,
+  SERVICE_GUIDES
 };

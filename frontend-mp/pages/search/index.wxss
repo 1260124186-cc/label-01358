@@ -499,6 +499,74 @@
   height: 100%;
 }
 
+/* ==================== 电话簿结果 ==================== */
+.result-group-icon.phonebook-icon {
+  background: linear-gradient(180deg, #8B5CF6 0%, #A78BFA 100%);
+}
+
+.phonebook-card {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+}
+
+.phonebook-card-left {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.phonebook-icon-wrapper {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 16rpx;
+}
+
+.phonebook-emoji {
+  font-size: 32rpx;
+}
+
+.phonebook-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.phonebook-number {
+  display: block;
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 8rpx;
+}
+
+.phonebook-call-btn {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
+  transition: all var(--transition-fast);
+}
+
+.phonebook-call-btn:active {
+  transform: scale(0.92);
+  box-shadow: 0 2rpx 8rpx rgba(255, 107, 107, 0.2);
+}
+
+.call-icon {
+  font-size: 32rpx;
+}
+
 /* ==================== 空结果 ==================== */
 .empty-result {
   display: flex;

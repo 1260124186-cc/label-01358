@@ -17,6 +17,7 @@ mixPage({
     lostList: [],
     marketList: [],
     newsList: [],
+    phonebookList: [],
     sortOptions: constants.SORT_OPTIONS,
     timeRanges: constants.TIME_RANGES,
     priceRanges: constants.PRICE_RANGES,
@@ -57,7 +58,8 @@ mixPage({
       showHistory: true,
       lostList: [],
       marketList: [],
-      newsList: []
+      newsList: [],
+      phonebookList: []
     });
   },
 
@@ -88,6 +90,7 @@ mixPage({
       lostList: results.lostList,
       marketList: results.marketList,
       newsList: results.newsList,
+      phonebookList: results.phonebookList || [],
       showResults: true,
       showHistory: false,
       searchHistory
@@ -226,6 +229,19 @@ mixPage({
   onNewsItemTap(e) {
     const item = e.currentTarget.dataset.item;
     util.showToast('动态详情开发中');
+  },
+
+  onPhonebookCall(e) {
+    const { phone } = e.currentTarget.dataset;
+    if (!phone) {
+      util.showToast('电话号码无效');
+      return;
+    }
+    dataService.makePhoneCall(phone).catch((err) => {
+      if (err && err.errMsg && !err.errMsg.includes('cancel')) {
+        util.showToast('拨号失败，请重试');
+      }
+    });
   },
 
   onGoBack() {
