@@ -16,7 +16,8 @@ const STORAGE_KEYS = {
   NOTIFICATION_SETTINGS: 'notificationSettings',
   STUDY_MATERIALS_LIST: 'studyMaterialsList',
   STUDY_REWARDS_LIST: 'studyRewardsList',
-  USER_POINTS: 'userPoints'
+  USER_POINTS: 'userPoints',
+  POINT_TRANSACTIONS: 'pointTransactions'
 };
 
 /**

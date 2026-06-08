@@ -1010,10 +1010,20 @@ function adoptRewardResponse(rewardId, responseId) {
 }
 
 function closeStudyReward(rewardId) {
-  return storage.updateInList(STORAGE_KEYS.STUDY_REWARDS_LIST, rewardId, {
+  const reward = getStudyRewardDetail(rewardId);
+  if (!reward) return false;
+
+  const success = storage.updateInList(STORAGE_KEYS.STUDY_REWARDS_LIST, rewardId, {
     status: 'closed',
     updateTime: Date.now()
   });
+
+  if (success && reward.status === 'open') {
+    updateUserPoints(reward.rewardPoints);
+    return { success: true, refunded: reward.rewardPoints };
+  }
+
+  return success ? { success: true, refunded: 0 } : false;
 }
 
 function increaseStudyRewardViews(id) {
@@ -1038,6 +1048,27 @@ function updateUserPoints(amount) {
   const newPoints = Math.max(0, current + amount);
   storage.set(STORAGE_KEYS.USER_POINTS, newPoints);
   return newPoints;
+}
+
+function grantRewardPoints(responderId, points) {
+  const app = getApp();
+  const currentUser = app.globalData.userInfo || {};
+
+  if (responderId === currentUser.id || responderId === 'test_user') {
+    updateUserPoints(points);
+    return true;
+  }
+
+  const transactions = storage.get(STORAGE_KEYS.POINT_TRANSACTIONS) || [];
+  transactions.unshift({
+    id: 'txn_' + Date.now(),
+    type: 'reward_grant',
+    responderId,
+    points,
+    createTime: Date.now()
+  });
+  storage.set(STORAGE_KEYS.POINT_TRANSACTIONS, transactions.slice(0, 100));
+  return true;
 }
 
 // ==================== 校园黄页 ====================
@@ -1188,6 +1219,7 @@ module.exports = {
 
   getUserPoints,
   updateUserPoints,
+  grantRewardPoints,
 
   getEmergencyPhones,
   getPhonebookCategories,

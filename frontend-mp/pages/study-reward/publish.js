@@ -123,7 +123,8 @@ mixPage({
       const result = dataService.publishStudyReward(data);
 
       if (result) {
-        await util.showSuccess('发布成功');
+        dataService.updateUserPoints(this.data.formData.rewardPoints * -1);
+        await util.showSuccess(`发布成功，已冻结 ${this.data.formData.rewardPoints} 积分`);
         wx.navigateBack({
           delta: 1,
           fail: () => {

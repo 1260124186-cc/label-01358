@@ -142,9 +142,9 @@ mixPage({
       if (success) {
         const response = (this.data.detail.responses || []).find(r => r.id === responseId);
         if (response) {
-          dataService.updateUserPoints(this.data.detail.rewardPoints * -1);
+          dataService.grantRewardPoints(response.responderId, this.data.detail.rewardPoints);
         }
-        await util.showSuccess('采纳成功');
+        await util.showSuccess(`采纳成功，${this.data.detail.rewardPoints} 积分已发放给 ${response ? response.responderName : '回复者'}`);
         this.loadDetail();
         this.loadUserPoints();
       } else {
@@ -169,10 +169,15 @@ mixPage({
     util.showLoading('处理中...');
 
     try {
-      const success = dataService.closeStudyReward(this.data.id);
-      if (success) {
-        await util.showSuccess('已关闭悬赏');
+      const result = dataService.closeStudyReward(this.data.id);
+      if (result && result.success) {
+        if (result.refunded > 0) {
+          await util.showSuccess(`已关闭悬赏，${result.refunded} 积分已退还`);
+        } else {
+          await util.showSuccess('已关闭悬赏');
+        }
         this.loadDetail();
+        this.loadUserPoints();
       } else {
         util.showError('操作失败，请重试');
       }
