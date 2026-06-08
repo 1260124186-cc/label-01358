@@ -61,6 +61,7 @@ const SEARCH_TABS = [
   { value: 'all', label: '全部' },
   { value: 'lost', label: '失物招领' },
   { value: 'market', label: '二手市场' },
+  { value: 'study', label: '学习资料' },
   { value: 'news', label: '校园动态' },
   { value: 'phonebook', label: '电话簿' }
 ];
@@ -126,6 +127,43 @@ const NOTIFICATION_SUB_TYPES = {
   ]
 };
 
+const STUDY_MATERIAL_CATEGORIES = [
+  { value: 'course', label: '课程', color: '#4ECDC4', icon: '📚' },
+  { value: 'postgraduate', label: '考研', color: '#FF6B6B', icon: '🎓' },
+  { value: 'civil', label: '考公', color: '#45B7D1', icon: '🏛️' },
+  { value: 'cet', label: '四六级', color: '#96CEB4', icon: '📝' },
+  { value: 'competition', label: '竞赛', color: '#FFEAA7', icon: '🏆' }
+];
+
+const STUDY_REWARD_STATUS = [
+  { value: 'open', label: '进行中', color: '#10B981' },
+  { value: 'adopted', label: '已采纳', color: '#3B82F6' },
+  { value: 'closed', label: '已关闭', color: '#6B7280' }
+];
+
+const SEMESTER_OPTIONS = [
+  { value: '2025-2026-2', label: '2025-2026学年第二学期' },
+  { value: '2025-2026-1', label: '2025-2026学年第一学期' },
+  { value: '2024-2025-2', label: '2024-2025学年第二学期' },
+  { value: '2024-2025-1', label: '2024-2025学年第一学期' },
+  { value: '2023-2024-2', label: '2023-2024学年第二学期' },
+  { value: '2023-2024-1', label: '2023-2024学年第一学期' }
+];
+
+const REWARD_POINTS_OPTIONS = [10, 20, 50, 100, 200, 500];
+
+const FILE_TYPE_OPTIONS = [
+  { value: 'image', label: '图片', icon: '🖼️' },
+  { value: 'pdf', label: 'PDF', icon: '📄' },
+  { value: 'doc', label: '文档', icon: '📝' },
+  { value: 'other', label: '其他', icon: '📁' }
+];
+
+const STUDY_TABS = [
+  { value: 'materials', label: '资料分享' },
+  { value: 'rewards', label: '悬赏求助' }
+];
+
 function getLabelByValue(list, value) {
   const item = list.find(i => i.value === value);
   return item ? item.label : value;
@@ -146,5 +184,11 @@ module.exports = {
   SURVEY_STATUS,
   NOTIFICATION_TYPES,
   NOTIFICATION_SUB_TYPES,
+  STUDY_MATERIAL_CATEGORIES,
+  STUDY_REWARD_STATUS,
+  SEMESTER_OPTIONS,
+  REWARD_POINTS_OPTIONS,
+  FILE_TYPE_OPTIONS,
+  STUDY_TABS,
   getLabelByValue
 };

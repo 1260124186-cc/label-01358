@@ -75,9 +75,81 @@
   color: var(--color-text-muted);
 }
 
+/* ==================== 学习资料入口 ==================== */
+.study-entry-banner {
+  margin: 20rpx 24rpx;
+  padding: 24rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.35);
+}
+
+.study-entry-banner:active {
+  transform: scale(0.98);
+  transition: transform var(--transition-fast);
+}
+
+.study-entry-content {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex: 1;
+}
+
+.study-entry-icon {
+  font-size: 48rpx;
+  flex-shrink: 0;
+}
+
+.study-entry-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.study-entry-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #fff;
+}
+
+.study-entry-desc {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.study-entry-action {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10rpx 20rpx;
+  border-radius: var(--radius-full);
+}
+
+.entry-btn-text {
+  font-size: 24rpx;
+  color: #fff;
+  font-weight: 600;
+}
+
+.entry-arrow {
+  font-size: 28rpx;
+  color: #fff;
+  font-weight: 300;
+}
+
 /* ==================== 列表区域 ==================== */
 .list-scroll {
   height: calc(100vh - 100rpx);
+}
+
+.page.dark .study-entry-banner {
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.25);
 }
 
 .list-container {

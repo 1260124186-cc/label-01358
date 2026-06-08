@@ -992,6 +992,141 @@ const SERVICE_GUIDE_DETAILS = {
   }
 };
 
+const MOCK_STUDY_MATERIALS = [
+  {
+    title: '高等数学期末复习笔记',
+    category: 'course',
+    courseName: '高等数学',
+    teacher: '张教授',
+    semester: '2025-2026-1',
+    description: '整理了整学期的重点笔记，包含例题解析和公式总结，适合期末复习使用',
+    fileType: 'image',
+    images: ['https://picsum.photos/seed/math1/800/1000'],
+    files: [],
+    uploaderName: '学霸小明',
+    downloads: 156,
+    favorites: 89
+  },
+  {
+    title: '考研英语历年真题解析',
+    category: 'postgraduate',
+    description: '2018-2025年考研英语一真题及详细解析，包含阅读、翻译、作文答题技巧',
+    fileType: 'pdf',
+    images: ['https://picsum.photos/seed/english1/800/600'],
+    files: [],
+    uploaderName: '考研上岸学姐',
+    downloads: 423,
+    favorites: 256
+  },
+  {
+    title: '考公行测解题技巧',
+    category: 'civil',
+    description: '行测五大模块解题技巧汇总，言语理解、判断推理、数量关系、资料分析、常识判断',
+    fileType: 'doc',
+    images: ['https://picsum.photos/seed/gov1/800/600'],
+    files: [],
+    uploaderName: '公考达人',
+    downloads: 312,
+    favorites: 178
+  },
+  {
+    title: '四六级核心词汇手册',
+    category: 'cet',
+    description: '四六级高频核心词汇，按考试频率排序，附带例句和记忆方法',
+    fileType: 'pdf',
+    images: ['https://picsum.photos/seed/cet1/800/600'],
+    files: [],
+    uploaderName: '英语小王子',
+    downloads: 567,
+    favorites: 321
+  },
+  {
+    title: '数学建模竞赛获奖论文',
+    category: 'competition',
+    description: '2024年全国大学生数学建模竞赛一等奖论文，包含完整解题思路和代码',
+    fileType: 'pdf',
+    images: ['https://picsum.photos/seed/model1/800/600'],
+    files: [],
+    uploaderName: '建模大神',
+    downloads: 234,
+    favorites: 145
+  },
+  {
+    title: '数据结构期末试卷',
+    category: 'course',
+    courseName: '数据结构',
+    teacher: '李教授',
+    semester: '2024-2025-2',
+    description: '去年数据结构期末试卷及参考答案，包含选择题、简答题和编程题',
+    fileType: 'image',
+    images: ['https://picsum.photos/seed/ds1/800/1000', 'https://picsum.photos/seed/ds2/800/1000'],
+    files: [],
+    uploaderName: '计科学长',
+    downloads: 289,
+    favorites: 167
+  }
+];
+
+const MOCK_STUDY_REWARDS = [
+  {
+    title: '求数据结构期末试卷',
+    category: 'course',
+    courseName: '数据结构',
+    teacher: '李教授',
+    semester: '2024-2025-2',
+    description: '求去年数据结构期末试卷，最好有答案，马上要考试了，万分感谢！',
+    rewardPoints: 50,
+    publisherName: '着急的小周',
+    status: 'open',
+    views: 128,
+    responses: [
+      {
+        id: 'r1',
+        responderName: '热心学长',
+        content: '我有去年的试卷，已经私发给你了，查收一下',
+        isAdopted: false,
+        createTime: Date.now() - 86400000
+      }
+    ]
+  },
+  {
+    title: '求考研政治肖四肖八',
+    category: 'postgraduate',
+    description: '求2026考研政治肖四肖八电子版，感激不尽！可有偿',
+    rewardPoints: 100,
+    publisherName: '考研er',
+    status: 'open',
+    views: 256,
+    responses: []
+  },
+  {
+    title: '求四级作文模板',
+    category: 'cet',
+    description: '马上要考四级了，求高分作文模板，最好是万能句型',
+    rewardPoints: 30,
+    publisherName: '英语渣渣',
+    status: 'adopted',
+    views: 89,
+    responses: [
+      {
+        id: 'r1',
+        responderName: '英语达人',
+        content: '给你分享我整理的模板，包含图表作文、议论文、应用文等多种类型，已发你链接',
+        isAdopted: true,
+        createTime: Date.now() - 172800000
+      },
+      {
+        id: 'r2',
+        responderName: '过儿',
+        content: '我也有一份，可以参考一下',
+        isAdopted: false,
+        createTime: Date.now() - 150000000
+      }
+    ],
+    adoptedResponseId: 'r1'
+  }
+];
+
 const NOTIFICATION_TEMPLATES = [
   {
     type: 'system',
@@ -1112,6 +1247,8 @@ module.exports = {
   MOCK_LOST_FOUND,
   MOCK_MARKET_ITEMS,
   MOCK_SURVEYS,
+  MOCK_STUDY_MATERIALS,
+  MOCK_STUDY_REWARDS,
   NOTIFICATION_TEMPLATES,
   WEATHER_DATA,
   EMERGENCY_PHONES,

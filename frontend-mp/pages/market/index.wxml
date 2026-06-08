@@ -24,6 +24,21 @@
     </view>
   </view>
 
+  <!-- 学习资料入口 - 图书分类互补 -->
+  <view wx:if="{{currentCategory === 'book' || currentCategory === ''}}" class="study-entry-banner" bindtap="onStudyEntry">
+    <view class="study-entry-content">
+      <view class="study-entry-icon">📚</view>
+      <view class="study-entry-info">
+        <view class="study-entry-title">学习资料专区</view>
+        <view class="study-entry-desc">免费下载笔记、课件、试卷 · 考研考证互助</view>
+      </view>
+    </view>
+    <view class="study-entry-action">
+      <text class="entry-btn-text">立即进入</text>
+      <text class="entry-arrow">›</text>
+    </view>
+  </view>
+
   <!-- 商品列表 -->
   <scroll-view
     class="list-scroll"

@@ -189,6 +189,63 @@ function getFileExt(filePath) {
   return parts.length > 1 ? parts.pop().toLowerCase() : '';
 }
 
+function chooseMessageFile(count = 5) {
+  return new Promise((resolve, reject) => {
+    wx.chooseMessageFile({
+      count,
+      type: 'all',
+      success: (res) => {
+        const files = res.tempFiles.map(f => ({
+          path: f.path,
+          name: f.name,
+          size: f.size,
+          type: f.type
+        }));
+        resolve(files);
+      },
+      fail: (err) => {
+        if (err.errMsg && err.errMsg.includes('cancel')) {
+          resolve([]);
+        } else {
+          reject(err);
+        }
+      }
+    });
+  });
+}
+
+function downloadFile(url) {
+  return new Promise((resolve, reject) => {
+    wx.downloadFile({
+      url,
+      success: (res) => {
+        if (res.statusCode === 200) {
+          resolve(res.tempFilePath);
+        } else {
+          reject(new Error('下载失败'));
+        }
+      },
+      fail: reject
+    });
+  });
+}
+
+function saveFileToAlbum(filePath) {
+  return new Promise((resolve, reject) => {
+    const ext = getFileExt(filePath);
+    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext)) {
+      saveImageToAlbum(filePath).then(resolve).catch(reject);
+    } else {
+      wx.openDocument({
+        filePath,
+        showMenu: true,
+        success: () => resolve(true),
+        fail: reject
+      });
+    }
+  });
+}
+
 module.exports = {
   getUserDir,
   ensureDir,
@@ -199,8 +256,11 @@ module.exports = {
   deleteFile,
   fileExists,
   chooseImage,
+  chooseMessageFile,
+  downloadFile,
   previewImage,
   saveImageToAlbum,
+  saveFileToAlbum,
   generateFileName,
   getFileExt
 };

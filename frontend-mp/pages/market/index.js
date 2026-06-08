@@ -118,5 +118,9 @@ mixPage({
 
   stopPropagation() {
     // 阻止事件冒泡
+  },
+
+  onStudyEntry() {
+    util.navigateTo('/pages/study-materials/index');
   }
 });

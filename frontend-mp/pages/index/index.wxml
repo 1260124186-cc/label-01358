@@ -106,6 +106,16 @@
         </view>
         <text class="quick-arrow">›</text>
       </view>
+      <view class="quick-item" hover-class="hover-scale" bindtap="onQuickStudyEntry">
+        <view class="quick-icon" style="background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%);">
+          <text>📚</text>
+        </view>
+        <view class="quick-info">
+          <text class="quick-title">学习资料</text>
+          <text class="quick-desc">笔记课件下载</text>
+        </view>
+        <text class="quick-arrow">›</text>
+      </view>
     </view>
   </view>
 

@@ -47,6 +47,13 @@ Page({
         icon: '/assets/icons/nav-broadcast.png',
         bgColor: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
         url: '/pages/broadcast/index'
+      },
+      {
+        id: 'study',
+        name: '学习资料',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%)',
+        url: '/pages/study-materials/index'
       }
     ],
     weatherData: null,
@@ -157,5 +164,9 @@ Page({
 
   onWeatherTap() {
     util.navigateTo('/pages/weather/index');
+  },
+
+  onQuickStudyEntry() {
+    util.navigateTo('/pages/study-materials/index');
   }
 });

@@ -1,0 +1,162 @@
+<view class="publish-page {{darkMode ? 'dark' : ''}}">
+  <view class="points-header">
+    <view class="points-info">
+      <text class="points-label">当前积分</text>
+      <text class="points-value">⭐ {{userPoints}}</text>
+    </view>
+    <view class="reward-tip">
+      <text class="tip-text">采纳答案后将扣除悬赏积分</text>
+    </view>
+  </view>
+
+  <scroll-view class="form-scroll" scroll-y>
+    <view class="form-section">
+      <view class="form-item">
+        <view class="form-label required">悬赏标题</view>
+        <input
+          class="form-input"
+          placeholder="请输入悬赏标题，如：求数据结构期末试卷"
+          placeholder-class="input-placeholder"
+          value="{{formData.title}}"
+          data-field="title"
+          bindinput="onInputChange"
+          maxlength="50"
+        />
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">资料分类</view>
+        <picker
+          mode="selector"
+          range="{{categories}}"
+          range-key="label"
+          value="{{categoryIndex}}"
+          bindchange="onCategoryChange"
+        >
+          <view class="picker-view">
+            <text wx:if="{{categoryIndex >= 0}}" class="picker-value">
+              {{categories[categoryIndex].icon}} {{categories[categoryIndex].label}}
+            </text>
+            <text wx:else class="picker-placeholder">请选择分类</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">课程名称</view>
+        <input
+          class="form-input"
+          placeholder="请输入课程名称，如：数据结构"
+          placeholder-class="input-placeholder"
+          value="{{formData.courseName}}"
+          data-field="courseName"
+          bindinput="onInputChange"
+          maxlength="30"
+        />
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">授课老师</view>
+        <input
+          class="form-input"
+          placeholder="请输入授课老师姓名"
+          placeholder-class="input-placeholder"
+          value="{{formData.teacher}}"
+          data-field="teacher"
+          bindinput="onInputChange"
+          maxlength="20"
+        />
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">学期</view>
+        <picker
+          mode="selector"
+          range="{{semesters}}"
+          range-key="label"
+          value="{{semesterIndex}}"
+          bindchange="onSemesterChange"
+        >
+          <view class="picker-view">
+            <text wx:if="{{semesterIndex >= 0}}" class="picker-value">
+              {{semesters[semesterIndex].label}}
+            </text>
+            <text wx:else class="picker-placeholder">请选择学期</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">悬赏积分</view>
+        <view class="points-quick-select">
+          <view
+            wx:for="{{pointsOptions}}"
+            wx:key="*this"
+            class="points-option {{formData.rewardPoints === item ? 'active' : ''}}"
+            data-points="{{item}}"
+            bindtap="onPointsQuickSelect"
+          >
+            {{item}}
+          </view>
+        </view>
+        <picker
+          mode="selector"
+          range="{{pointsOptions}}"
+          value="{{pointsIndex}}"
+          bindchange="onPointsChange"
+        >
+          <view class="picker-view points-picker">
+            <text class="picker-value">悬赏 {{formData.rewardPoints}} 积分</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+        <view class="points-warning" wx:if="{{formData.rewardPoints > userPoints}}">
+          <text class="warning-icon">⚠️</text>
+          <text class="warning-text">积分不足，当前积分：{{userPoints}}</text>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">需求描述</view>
+        <textarea
+          class="form-textarea"
+          placeholder="请详细描述你需要的资料内容，包括资料类型、具体要求等"
+          placeholder-class="input-placeholder"
+          value="{{formData.description}}"
+          data-field="description"
+          bindinput="onInputChange"
+          maxlength="500"
+          auto-height
+        />
+        <view class="char-count">{{formData.description.length}}/500</view>
+      </view>
+    </view>
+
+    <view class="rules-notice">
+      <view class="notice-header">
+        <text class="notice-icon">📜</text>
+        <text class="notice-title">悬赏规则</text>
+      </view>
+      <view class="notice-content">
+        1. 悬赏积分在采纳最佳答案时自动扣除，不予退还\n
+        2. 请详细描述需求，以便其他用户准确提供资料\n
+        3. 请在7天内及时采纳最佳答案，逾期将自动关闭\n
+        4. 严禁发布违规内容，违者将被封禁账号
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="submit-bar">
+    <button
+      class="submit-btn {{submitting || formData.rewardPoints > userPoints ? 'disabled' : ''}}"
+      bindtap="onSubmit"
+      disabled="{{submitting || formData.rewardPoints > userPoints}}"
+    >
+      {{submitting ? '发布中...' : '发布悬赏'}}
+    </button>
+  </view>
+</view>

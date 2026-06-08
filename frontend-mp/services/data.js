@@ -6,6 +6,42 @@ const storage = require('../utils/storage');
 const util = require('../utils/util');
 const constants = require('../config/constants');
 const mockData = require('../config/mock-data');
+
+let studyMaterialsInitialized = false;
+let studyRewardsInitialized = false;
+
+function initStudyMaterials() {
+  if (studyMaterialsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.STUDY_MATERIALS_LIST);
+  if (!existing || existing.length === 0) {
+    const materials = mockData.MOCK_STUDY_MATERIALS.map((item, index) => ({
+      id: util.generateId(),
+      ...item,
+      uploaderId: 'user_' + index,
+      views: Math.floor(Math.random() * 500),
+      createTime: Date.now() - index * 86400000,
+      updateTime: Date.now() - index * 86400000
+    }));
+    storage.set(STORAGE_KEYS.STUDY_MATERIALS_LIST, materials);
+  }
+  studyMaterialsInitialized = true;
+}
+
+function initStudyRewards() {
+  if (studyRewardsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.STUDY_REWARDS_LIST);
+  if (!existing || existing.length === 0) {
+    const rewards = mockData.MOCK_STUDY_REWARDS.map((item, index) => ({
+      id: util.generateId(),
+      ...item,
+      publisherId: 'user_' + (index + 10),
+      createTime: Date.now() - (index + 1) * 86400000,
+      updateTime: Date.now() - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.STUDY_REWARDS_LIST, rewards);
+  }
+  studyRewardsInitialized = true;
+}
 const { STORAGE_KEYS } = storage;
 
 function filterByKeyword(list, keyword, fields) {
@@ -778,6 +814,232 @@ function getWeatherAlertNotifications() {
     .filter(n => n.subType === 'weather_alert');
 }
 
+// ==================== 学习资料 ====================
+
+function getStudyMaterialsList(filters = {}) {
+  initStudyMaterials();
+  let list = storage.getList(STORAGE_KEYS.STUDY_MATERIALS_LIST);
+
+  if (filters.category) {
+    list = list.filter(item => item.category === filters.category);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'description', 'courseName', 'teacher', 'semester']);
+  }
+
+  if (filters.courseName) {
+    list = list.filter(item => item.courseName && item.courseName.includes(filters.courseName));
+  }
+
+  if (filters.teacher) {
+    list = list.filter(item => item.teacher && item.teacher.includes(filters.teacher));
+  }
+
+  if (filters.semester) {
+    list = list.filter(item => item.semester === filters.semester);
+  }
+
+  if (filters.timeRange) {
+    const timeThreshold = getTimeRangeMs(filters.timeRange);
+    if (timeThreshold) {
+      list = list.filter(item => item.createTime >= timeThreshold);
+    }
+  }
+
+  return sortByField(list, filters.sort || 'latest', constants.SORT_OPTIONS);
+}
+
+function getStudyMaterialDetail(id) {
+  initStudyMaterials();
+  const list = storage.getList(STORAGE_KEYS.STUDY_MATERIALS_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function publishStudyMaterial(data) {
+  initStudyMaterials();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const item = {
+    id: util.generateId(),
+    ...data,
+    uploaderId: userInfo.id || 'anonymous',
+    uploaderName: userInfo.nickName || '匿名用户',
+    uploaderAvatar: userInfo.avatarUrl || '',
+    downloads: 0,
+    favorites: 0,
+    views: 0,
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.STUDY_MATERIALS_LIST, item);
+  return success ? item : null;
+}
+
+function increaseStudyMaterialDownloads(id) {
+  const item = getStudyMaterialDetail(id);
+  if (item) {
+    return storage.updateInList(STORAGE_KEYS.STUDY_MATERIALS_LIST, id, {
+      downloads: (item.downloads || 0) + 1
+    });
+  }
+  return false;
+}
+
+function increaseStudyMaterialFavorites(id, increment = 1) {
+  const item = getStudyMaterialDetail(id);
+  if (item) {
+    return storage.updateInList(STORAGE_KEYS.STUDY_MATERIALS_LIST, id, {
+      favorites: Math.max(0, (item.favorites || 0) + increment)
+    });
+  }
+  return false;
+}
+
+function increaseStudyMaterialViews(id) {
+  const item = getStudyMaterialDetail(id);
+  if (item) {
+    return storage.updateInList(STORAGE_KEYS.STUDY_MATERIALS_LIST, id, {
+      views: (item.views || 0) + 1
+    });
+  }
+  return false;
+}
+
+// ==================== 悬赏求助 ====================
+
+function getStudyRewardsList(filters = {}) {
+  initStudyRewards();
+  let list = storage.getList(STORAGE_KEYS.STUDY_REWARDS_LIST);
+
+  if (filters.category) {
+    list = list.filter(item => item.category === filters.category);
+  }
+
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'description', 'courseName', 'teacher', 'semester']);
+  }
+
+  if (filters.timeRange) {
+    const timeThreshold = getTimeRangeMs(filters.timeRange);
+    if (timeThreshold) {
+      list = list.filter(item => item.createTime >= timeThreshold);
+    }
+  }
+
+  return sortByField(list, filters.sort || 'latest', constants.SORT_OPTIONS);
+}
+
+function getStudyRewardDetail(id) {
+  initStudyRewards();
+  const list = storage.getList(STORAGE_KEYS.STUDY_REWARDS_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function publishStudyReward(data) {
+  initStudyRewards();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const item = {
+    id: util.generateId(),
+    ...data,
+    publisherId: userInfo.id || 'anonymous',
+    publisherName: userInfo.nickName || '匿名用户',
+    publisherAvatar: userInfo.avatarUrl || '',
+    status: 'open',
+    responses: [],
+    views: 0,
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.STUDY_REWARDS_LIST, item);
+  return success ? item : null;
+}
+
+function addRewardResponse(rewardId, content, fileLinks = []) {
+  const reward = getStudyRewardDetail(rewardId);
+  if (!reward) return null;
+
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const response = {
+    id: util.generateId(),
+    rewardId,
+    responderId: userInfo.id || 'anonymous',
+    responderName: userInfo.nickName || '匿名用户',
+    responderAvatar: userInfo.avatarUrl || '',
+    content,
+    fileLinks,
+    isAdopted: false,
+    createTime: Date.now()
+  };
+
+  const responses = [...(reward.responses || []), response];
+  const success = storage.updateInList(STORAGE_KEYS.STUDY_REWARDS_LIST, rewardId, {
+    responses,
+    updateTime: Date.now()
+  });
+
+  return success ? response : null;
+}
+
+function adoptRewardResponse(rewardId, responseId) {
+  const reward = getStudyRewardDetail(rewardId);
+  if (!reward) return false;
+
+  const responses = (reward.responses || []).map(r => ({
+    ...r,
+    isAdopted: r.id === responseId
+  }));
+
+  return storage.updateInList(STORAGE_KEYS.STUDY_REWARDS_LIST, rewardId, {
+    responses,
+    status: 'adopted',
+    adoptedResponseId: responseId,
+    updateTime: Date.now()
+  });
+}
+
+function closeStudyReward(rewardId) {
+  return storage.updateInList(STORAGE_KEYS.STUDY_REWARDS_LIST, rewardId, {
+    status: 'closed',
+    updateTime: Date.now()
+  });
+}
+
+function increaseStudyRewardViews(id) {
+  const item = getStudyRewardDetail(id);
+  if (item) {
+    return storage.updateInList(STORAGE_KEYS.STUDY_REWARDS_LIST, id, {
+      views: (item.views || 0) + 1
+    });
+  }
+  return false;
+}
+
+// ==================== 用户积分 ====================
+
+function getUserPoints() {
+  const points = storage.get(STORAGE_KEYS.USER_POINTS);
+  return typeof points === 'number' ? points : 100;
+}
+
+function updateUserPoints(amount) {
+  const current = getUserPoints();
+  const newPoints = Math.max(0, current + amount);
+  storage.set(STORAGE_KEYS.USER_POINTS, newPoints);
+  return newPoints;
+}
+
 // ==================== 校园黄页 ====================
 
 function getEmergencyPhones() {
@@ -908,6 +1170,24 @@ module.exports = {
   convertWeatherAlertToNotification,
   syncWeatherAlertsToNotifications,
   getWeatherAlertNotifications,
+
+  getStudyMaterialsList,
+  getStudyMaterialDetail,
+  publishStudyMaterial,
+  increaseStudyMaterialDownloads,
+  increaseStudyMaterialFavorites,
+  increaseStudyMaterialViews,
+
+  getStudyRewardsList,
+  getStudyRewardDetail,
+  publishStudyReward,
+  addRewardResponse,
+  adoptRewardResponse,
+  closeStudyReward,
+  increaseStudyRewardViews,
+
+  getUserPoints,
+  updateUserPoints,
 
   getEmergencyPhones,
   getPhonebookCategories,

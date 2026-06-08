@@ -32,6 +32,8 @@ App({
       const lostFoundIds = {};
       const marketIds = {};
       const surveyIds = {};
+      const studyIds = {};
+      const rewardIds = {};
 
       let lostFoundList = storage.get(STORAGE_KEYS.LOST_FOUND_LIST);
       if (needsReset || !lostFoundList || lostFoundList.length === 0) {
@@ -83,6 +85,52 @@ App({
       surveyList.forEach((item, index) => {
         surveyIds[index] = item.id;
       });
+
+      let studyMaterialsList = storage.get(STORAGE_KEYS.STUDY_MATERIALS_LIST);
+      if (needsReset || !studyMaterialsList || studyMaterialsList.length === 0) {
+        studyMaterialsList = mockData.MOCK_STUDY_MATERIALS.map((item, index) => ({
+          id: 'mock_study_' + index + '_' + now,
+          ...item,
+          publisherId: 'test_user',
+          createTime: now - (index + 10) * 86400000,
+          updateTime: now - (index + 10) * 86400000,
+          downloads: Math.floor(Math.random() * 500) + 10,
+          favorites: Math.floor(Math.random() * 100) + 5,
+          views: Math.floor(Math.random() * 1000) + 50
+        }));
+        storage.set(STORAGE_KEYS.STUDY_MATERIALS_LIST, studyMaterialsList);
+      }
+      studyMaterialsList.forEach((item, index) => {
+        studyIds[index] = item.id;
+      });
+
+      let studyRewardsList = storage.get(STORAGE_KEYS.STUDY_REWARDS_LIST);
+      if (needsReset || !studyRewardsList || studyRewardsList.length === 0) {
+        studyRewardsList = mockData.MOCK_STUDY_REWARDS.map((item, index) => ({
+          id: 'mock_reward_' + index + '_' + now,
+          ...item,
+          publisherId: index === 0 ? 'test_user' : 'other_user',
+          createTime: now - (index + 5) * 86400000,
+          updateTime: now - (index + 5) * 86400000,
+          views: Math.floor(Math.random() * 200) + 20,
+          responses: (item.responses || []).map((resp, respIndex) => ({
+            ...resp,
+            id: 'resp_' + index + '_' + respIndex + '_' + now,
+            responderId: 'resp_user_' + respIndex,
+            responderName: resp.responderName || ('同学' + (respIndex + 1)),
+            createTime: now - (respIndex + 1) * 3600000
+          }))
+        }));
+        storage.set(STORAGE_KEYS.STUDY_REWARDS_LIST, studyRewardsList);
+      }
+      studyRewardsList.forEach((item, index) => {
+        rewardIds[index] = item.id;
+      });
+
+      let userPoints = storage.get(STORAGE_KEYS.USER_POINTS);
+      if (userPoints === null || userPoints === undefined) {
+        storage.set(STORAGE_KEYS.USER_POINTS, 500);
+      }
 
       let notifications = storage.get(STORAGE_KEYS.NOTIFICATIONS);
 

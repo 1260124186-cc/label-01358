@@ -1,0 +1,147 @@
+<view class="study-page {{darkMode ? 'dark' : ''}}">
+  <view class="search-section">
+    <view class="search-box">
+      <input
+        class="search-input"
+        placeholder="搜索课程名、老师、学期..."
+        placeholder-class="search-placeholder"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearchConfirm"
+        confirm-type="search"
+      />
+      <text class="search-icon">🔍</text>
+    </view>
+    <view class="points-badge" catchtap="stopPropagation">
+      <text class="points-icon">⭐</text>
+      <text class="points-text">{{userPoints}}</text>
+    </view>
+  </view>
+
+  <view class="tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="value"
+      class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+      data-tab="{{item.value}}"
+      bindtap="onTabChange"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <scroll-view class="category-scroll" scroll-x enable-flex>
+    <view
+      wx:for="{{categories}}"
+      wx:key="value"
+      class="category-item {{currentCategory === item.value ? 'active' : ''}}"
+      style="border-color: {{currentCategory === item.value ? item.color : 'transparent'}}; background: {{currentCategory === item.value ? item.color + '20' : 'transparent'}}"
+      data-category="{{item.value}}"
+      bindtap="onCategoryChange"
+    >
+      <text class="category-icon">{{item.icon}}</text>
+      <text class="category-label" style="color: {{currentCategory === item.value ? item.color : '#666'}}">{{item.label}}</text>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{currentTab === 'materials'}}" class="content-section">
+    <view wx:if="{{materialsList.length === 0 && !loading}}" class="empty-state">
+      <text class="empty-icon">📚</text>
+      <text class="empty-text">暂无学习资料</text>
+      <text class="empty-desc">点击右下角按钮上传第一份资料吧</text>
+    </view>
+
+    <view wx:else class="materials-grid">
+      <view
+        wx:for="{{materialsList}}"
+        wx:key="id"
+        class="material-card"
+        data-item="{{item}}"
+        bindtap="onMaterialTap"
+      >
+        <view class="card-cover">
+          <image wx:if="{{item.images && item.images.length > 0}}" class="cover-image" src="{{item.images[0]}}" mode="aspectFill"/>
+          <view wx:else class="cover-placeholder">
+            <text class="placeholder-icon">📄</text>
+          </view>
+          <view class="file-type-badge">{{item.fileTypeText}}</view>
+        </view>
+        <view class="card-content">
+          <view class="card-title">{{item.title}}</view>
+          <view class="card-meta">
+            <view class="meta-tag" style="background: {{item.categoryColor}}20; color: {{item.categoryColor}}">
+              {{item.categoryIcon}} {{item.categoryText}}
+            </view>
+          </view>
+          <view class="card-course" wx:if="{{item.courseName}}">
+            <text class="course-label">📖 {{item.courseName}}</text>
+          </view>
+          <view class="card-footer">
+            <view class="uploader">
+              <text class="uploader-name">{{item.uploaderName}}</text>
+            </view>
+            <view class="stats">
+              <text class="stat-item">⬇️ {{item.downloads}}</text>
+              <text class="stat-item">⭐ {{item.favorites}}</text>
+            </view>
+          </view>
+          <view class="card-time">{{item.timeText}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{currentTab === 'rewards'}}" class="content-section">
+    <view wx:if="{{rewardsList.length === 0 && !loading}}" class="empty-state">
+      <text class="empty-icon">🎯</text>
+      <text class="empty-text">暂无悬赏求助</text>
+      <text class="empty-desc">点击右下角按钮发布第一个悬赏吧</text>
+    </view>
+
+    <view wx:else class="rewards-list">
+      <view
+        wx:for="{{rewardsList}}"
+        wx:key="id"
+        class="reward-card"
+        data-item="{{item}}"
+        bindtap="onRewardTap"
+      >
+        <view class="reward-header">
+          <view class="reward-title">{{item.title}}</view>
+          <view class="reward-points">
+            <text class="points-icon">💰</text>
+            <text class="points-value">{{item.rewardPoints}}</text>
+          </view>
+        </view>
+        <view class="reward-content">{{item.description}}</view>
+        <view class="reward-meta">
+          <view class="meta-tag" style="background: {{item.categoryColor}}20; color: {{item.categoryColor}}">
+            {{item.categoryIcon}} {{item.categoryText}}
+          </view>
+          <view class="meta-tag status-tag" style="background: {{item.statusColor}}20; color: {{item.statusColor}}">
+            {{item.statusText}}
+          </view>
+        </view>
+        <view class="reward-footer">
+          <view class="publisher">
+            <text class="publisher-name">{{item.publisherName}}</text>
+          </view>
+          <view class="reward-stats">
+            <text class="stat-item">💬 {{item.responseCount}} 回复</text>
+            <text class="stat-item">👁️ {{item.views}}</text>
+          </view>
+        </view>
+        <view class="reward-time">{{item.timeText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="publish-btn" bindtap="onPublish">
+    <text class="publish-icon">+</text>
+  </view>
+
+  <view class="copyright-tip">
+    <text class="tip-icon">⚠️</text>
+    <text class="tip-text">资料仅供学习交流，请勿商用</text>
+  </view>
+</view>

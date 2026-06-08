@@ -1,0 +1,201 @@
+<view class="upload-page {{darkMode ? 'dark' : ''}}">
+  <view class="points-header">
+    <view class="points-info">
+      <text class="points-label">当前积分</text>
+      <text class="points-value">⭐ {{userPoints}}</text>
+    </view>
+    <view class="reward-tip">
+      <text class="tip-text">发布资料可获得 +10 积分</text>
+    </view>
+  </view>
+
+  <scroll-view class="form-scroll" scroll-y>
+    <view class="form-section">
+      <view class="form-item">
+        <view class="form-label required">资料标题</view>
+        <input
+          class="form-input"
+          placeholder="请输入资料标题，如：高等数学期末复习笔记"
+          placeholder-class="input-placeholder"
+          value="{{formData.title}}"
+          data-field="title"
+          bindinput="onInputChange"
+          maxlength="50"
+        />
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">资料分类</view>
+        <picker
+          mode="selector"
+          range="{{categories}}"
+          range-key="label"
+          value="{{categoryIndex}}"
+          bindchange="onCategoryChange"
+        >
+          <view class="picker-view">
+            <text wx:if="{{categoryIndex >= 0}}" class="picker-value">
+              {{categories[categoryIndex].icon}} {{categories[categoryIndex].label}}
+            </text>
+            <text wx:else class="picker-placeholder">请选择分类</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">课程名称</view>
+        <input
+          class="form-input"
+          placeholder="请输入课程名称，如：高等数学"
+          placeholder-class="input-placeholder"
+          value="{{formData.courseName}}"
+          data-field="courseName"
+          bindinput="onInputChange"
+          maxlength="30"
+        />
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">授课老师</view>
+        <input
+          class="form-input"
+          placeholder="请输入授课老师姓名"
+          placeholder-class="input-placeholder"
+          value="{{formData.teacher}}"
+          data-field="teacher"
+          bindinput="onInputChange"
+          maxlength="20"
+        />
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">学期</view>
+        <picker
+          mode="selector"
+          range="{{semesters}}"
+          range-key="label"
+          value="{{semesterIndex}}"
+          bindchange="onSemesterChange"
+        >
+          <view class="picker-view">
+            <text wx:if="{{semesterIndex >= 0}}" class="picker-value">
+              {{semesters[semesterIndex].label}}
+            </text>
+            <text wx:else class="picker-placeholder">请选择学期</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">文件类型</view>
+        <picker
+          mode="selector"
+          range="{{fileTypes}}"
+          range-key="label"
+          value="{{fileTypeIndex}}"
+          bindchange="onFileTypeChange"
+        >
+          <view class="picker-view">
+            <text class="picker-value">
+              {{fileTypes[fileTypeIndex].icon}} {{fileTypes[fileTypeIndex].label}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">资料描述</view>
+        <textarea
+          class="form-textarea"
+          placeholder="请输入资料的详细描述，包括内容概要、适用人群等"
+          placeholder-class="input-placeholder"
+          value="{{formData.description}}"
+          data-field="description"
+          bindinput="onInputChange"
+          maxlength="500"
+          auto-height
+        />
+        <view class="char-count">{{formData.description.length}}/500</view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">上传图片</view>
+        <view class="upload-grid">
+          <view
+            wx:for="{{formData.images}}"
+            wx:key="*this"
+            class="upload-item"
+          >
+            <image class="upload-preview" src="{{item}}" mode="aspectFill"/>
+            <view class="delete-btn" data-index="{{index}}" catchtap="onDeleteImage">
+              <text class="delete-icon">×</text>
+            </view>
+          </view>
+          <view
+            wx:if="{{formData.images.length < 9}}"
+            class="upload-btn"
+            bindtap="onChooseImage"
+          >
+            <text class="upload-icon">+</text>
+            <text class="upload-text">添加图片</text>
+          </view>
+        </view>
+        <view class="upload-tip">支持上传笔记、试卷、课件等图片，最多9张</view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">上传文件</view>
+        <view class="file-list">
+          <view
+            wx:for="{{formData.files}}"
+            wx:key="path"
+            class="file-item"
+          >
+            <view class="file-icon">📄</view>
+            <view class="file-info">
+              <text class="file-name">{{item.name}}</text>
+              <text class="file-size">{{(item.size / 1024).toFixed(1)}} KB</text>
+            </view>
+            <view class="delete-btn" data-index="{{index}}" catchtap="onDeleteFile">
+              <text class="delete-icon">×</text>
+            </view>
+          </view>
+          <view
+            wx:if="{{formData.files.length < 5}}"
+            class="file-upload-btn"
+            bindtap="onChooseFile"
+          >
+            <text class="upload-icon">📎</text>
+            <text class="upload-text">从聊天选择文件</text>
+          </view>
+        </view>
+        <view class="upload-tip">支持PDF、Word、Excel等文件，最多5个</view>
+      </view>
+    </view>
+
+    <view class="copyright-notice">
+      <view class="notice-header">
+        <text class="notice-icon">⚠️</text>
+        <text class="notice-title">版权声明</text>
+      </view>
+      <view class="notice-content">
+        本平台仅供学习交流使用，上传的资料不得侵犯他人知识产权。如有侵权行为，由上传者承担全部责任。平台有权删除侵权内容并保留追究责任的权利。
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="submit-bar">
+    <button
+      class="submit-btn {{submitting ? 'disabled' : ''}}"
+      bindtap="onSubmit"
+      disabled="{{submitting}}"
+    >
+      {{submitting ? '发布中...' : '发布资料'}}
+    </button>
+  </view>
+</view>

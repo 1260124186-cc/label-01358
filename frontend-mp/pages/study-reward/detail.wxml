@@ -1,0 +1,146 @@
+<view class="reward-detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
+  <scroll-view class="detail-scroll" scroll-y>
+    <view class="reward-header">
+      <view class="reward-title-section">
+        <view class="reward-title">{{detail.title}}</view>
+        <view class="reward-points-badge">
+          <text class="points-icon">💰</text>
+          <text class="points-value">{{detail.rewardPoints}}</text>
+        </view>
+      </view>
+      <view class="reward-tags">
+        <view class="tag" style="background: {{detail.categoryColor}}20; color: {{detail.categoryColor}}">
+          {{detail.categoryIcon}} {{detail.categoryText}}
+        </view>
+        <view class="tag status-tag" style="background: {{detail.statusColor}}20; color: {{detail.statusColor}}">
+          {{detail.statusText}}
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-content">
+      <view class="info-section" wx:if="{{detail.courseName || detail.teacher || detail.semesterText}}">
+        <view class="info-row" wx:if="{{detail.courseName}}">
+          <text class="info-label">📖 课程名称</text>
+          <text class="info-value">{{detail.courseName}}</text>
+        </view>
+        <view class="info-row" wx:if="{{detail.teacher}}">
+          <text class="info-label">👨‍🏫 授课老师</text>
+          <text class="info-value">{{detail.teacher}}</text>
+        </view>
+        <view class="info-row" wx:if="{{detail.semesterText}}">
+          <text class="info-label">📅 学期</text>
+          <text class="info-value">{{detail.semesterText}}</text>
+        </view>
+      </view>
+
+      <view class="description-section">
+        <view class="section-title">需求描述</view>
+        <view class="description-text">{{detail.description}}</view>
+      </view>
+
+      <view class="publisher-section">
+        <view class="publisher-info">
+          <view class="publisher-avatar">
+            <text class="avatar-text">{{detail.publisherName[0]}}</text>
+          </view>
+          <view class="publisher-detail">
+            <view class="publisher-name-row">
+              <text class="publisher-name">{{detail.publisherName}}</text>
+              <text wx:if="{{isPublisher}}" class="publisher-badge">发布者</text>
+            </view>
+            <text class="publish-time">{{detail.timeText}}发布</text>
+          </view>
+        </view>
+        <view class="stats-row">
+          <text class="stat-item">👁️ {{detail.views}} 浏览</text>
+          <text class="stat-item">💬 {{detail.responseCount}} 回复</text>
+        </view>
+      </view>
+
+      <view class="responses-section">
+        <view class="section-title-row">
+          <view class="section-title">全部回复 ({{detail.responseCount}})</view>
+        </view>
+
+        <view wx:if="{{detail.responses.length === 0}}" class="no-responses">
+          <text class="no-responses-icon">💬</text>
+          <text class="no-responses-text">暂无回复</text>
+          <text class="no-responses-desc">快来抢沙发，成为第一个回复的人吧</text>
+        </view>
+
+        <view wx:else class="responses-list">
+          <view
+            wx:for="{{detail.responses}}"
+            wx:key="id"
+            class="response-card {{item.isAdopted ? 'adopted' : ''}}"
+          >
+            <view wx:if="{{item.isAdopted}}" class="adopted-badge">
+              <text class="adopted-icon">✅</text>
+              <text class="adopted-text">已采纳</text>
+            </view>
+            <view class="response-header">
+              <view class="responder-avatar">
+                <text class="avatar-text-sm">{{item.responderName[0]}}</text>
+              </view>
+              <view class="responder-info">
+                <text class="responder-name">{{item.responderName}}</text>
+                <text class="response-time">{{item.timeText}}</text>
+              </view>
+              <view
+                wx:if="{{isPublisher && detail.status === 'open' && !detail.adoptedResponseId}}"
+                class="adopt-btn"
+                data-response-id="{{item.id}}"
+                catchtap="onAdoptResponse"
+              >
+                采纳
+              </view>
+            </view>
+            <view class="response-content">{{item.content}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="reply-bar" wx:if="{{detail.status === 'open'}}">
+    <view class="reply-input-wrapper">
+      <input
+        class="reply-input"
+        placeholder="输入你的回复..."
+        placeholder-class="input-placeholder"
+        value="{{replyContent}}"
+        bindfocus="onReplyInputFocus"
+        bindblur="onReplyInputBlur"
+        bindinput="onReplyInputChange"
+        confirm-type="send"
+        bindconfirm="onSubmitReply"
+      />
+    </view>
+    <view class="send-btn {{replyContent.trim() ? 'active' : ''}}" bindtap="onSubmitReply">
+      发送
+    </view>
+    <button
+      wx:if="{{isPublisher && !detail.adoptedResponseId}}"
+      class="close-btn"
+      bindtap="onCloseReward"
+    >
+      关闭悬赏
+    </button>
+  </view>
+
+  <view wx:else class="closed-bar">
+    <text class="closed-text">该悬赏已{{detail.statusText}}</text>
+  </view>
+
+  <view class="copyright-bar">
+    <text class="copyright-icon">⚠️</text>
+    <text class="copyright-text">本平台仅供学习交流使用，严禁发布违规内容。</text>
+  </view>
+</view>
+
+<view wx:else class="loading-state">
+  <text class="loading-text">加载中...</text>
+</view>

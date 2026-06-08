@@ -1,0 +1,122 @@
+<view class="detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
+  <scroll-view class="detail-scroll" scroll-y>
+    <view class="swiper-section" wx:if="{{detail.images && detail.images.length > 0}}">
+      <swiper
+        class="image-swiper"
+        indicator-dots="{{detail.images.length > 1}}"
+        indicator-color="rgba(255,255,255,0.5)"
+        indicator-active-color="#fff"
+        autoplay="{{false}}"
+        circular
+        current="{{currentImageIndex}}"
+        bindchange="onSwiperChange"
+      >
+        <swiper-item wx:for="{{detail.images}}" wx:key="*this" data-index="{{index}}" bindtap="onPreviewImage">
+          <image class="swiper-image" src="{{item}}" mode="aspectFill"/>
+        </swiper-item>
+      </swiper>
+      <view class="file-type-badge">
+        <text class="badge-icon">{{detail.fileTypeIcon}}</text>
+        <text class="badge-text">{{detail.fileTypeText}}</text>
+      </view>
+      <view class="image-counter" wx:if="{{detail.images.length > 1}}">
+        {{currentImageIndex + 1}}/{{detail.images.length}}
+      </view>
+    </view>
+
+    <view class="no-image-placeholder" wx:else>
+      <text class="placeholder-icon">{{detail.fileTypeIcon}}</text>
+      <text class="placeholder-text">{{detail.fileTypeText}}文件</text>
+    </view>
+
+    <view class="detail-content">
+      <view class="title-section">
+        <view class="detail-title">{{detail.title}}</view>
+        <view class="detail-tags">
+          <view class="tag" style="background: {{detail.categoryColor}}20; color: {{detail.categoryColor}}">
+            {{detail.categoryIcon}} {{detail.categoryText}}
+          </view>
+        </view>
+      </view>
+
+      <view class="info-section">
+        <view class="info-row" wx:if="{{detail.courseName}}">
+          <text class="info-label">📖 课程名称</text>
+          <text class="info-value">{{detail.courseName}}</text>
+        </view>
+        <view class="info-row" wx:if="{{detail.teacher}}">
+          <text class="info-label">👨‍🏫 授课老师</text>
+          <text class="info-value">{{detail.teacher}}</text>
+        </view>
+        <view class="info-row" wx:if="{{detail.semesterText}}">
+          <text class="info-label">📅 学期</text>
+          <text class="info-value">{{detail.semesterText}}</text>
+        </view>
+      </view>
+
+      <view class="stats-section">
+        <view class="stat-item">
+          <text class="stat-value">{{detail.downloads}}</text>
+          <text class="stat-label">下载</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{detail.favorites}}</text>
+          <text class="stat-label">收藏</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{detail.views}}</text>
+          <text class="stat-label">浏览</text>
+        </view>
+      </view>
+
+      <view class="description-section">
+        <view class="section-title">资料描述</view>
+        <view class="description-text">{{detail.description}}</view>
+      </view>
+
+      <view class="uploader-section">
+        <view class="uploader-info">
+          <view class="uploader-avatar">
+            <text class="avatar-text">{{detail.uploaderName[0]}}</text>
+          </view>
+          <view class="uploader-detail">
+            <text class="uploader-name">{{detail.uploaderName}}</text>
+            <text class="upload-time">{{detail.timeText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="action-bar">
+    <view class="action-left">
+      <view class="action-btn favorite-btn {{isFavorite ? 'active' : ''}}" bindtap="onToggleFavorite">
+        <text class="action-icon">{{isFavorite ? '⭐' : '☆'}}</text>
+        <text class="action-text">{{isFavorite ? '已收藏' : '收藏'}}</text>
+      </view>
+      <button class="action-btn share-btn" open-type="share">
+        <text class="action-icon">📤</text>
+        <text class="action-text">分享</text>
+      </button>
+    </view>
+    <view class="action-right">
+      <view class="download-btn {{downloading ? 'disabled' : ''}}" bindtap="onDownload">
+        <text class="download-icon">⬇️</text>
+        <text class="download-text">{{downloading ? '下载中...' : '下载资料'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="copyright-bar">
+    <text class="copyright-icon">⚠️</text>
+    <text class="copyright-text">本资料仅供学习交流使用，请勿用于商业用途。如有侵权请联系删除。</text>
+  </view>
+</view>
+
+<view wx:else class="loading-state">
+  <text class="loading-text">加载中...</text>
+</view>

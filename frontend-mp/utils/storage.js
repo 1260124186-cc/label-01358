@@ -13,7 +13,10 @@ const STORAGE_KEYS = {
   SURVEY_LIST: 'surveyList',
   SURVEY_RESPONSES: 'surveyResponses',
   NOTIFICATIONS: 'notifications',
-  NOTIFICATION_SETTINGS: 'notificationSettings'
+  NOTIFICATION_SETTINGS: 'notificationSettings',
+  STUDY_MATERIALS_LIST: 'studyMaterialsList',
+  STUDY_REWARDS_LIST: 'studyRewardsList',
+  USER_POINTS: 'userPoints'
 };
 
 /**
