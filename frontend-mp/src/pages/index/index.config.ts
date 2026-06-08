@@ -1,3 +1,5 @@
 export default definePageConfig({
-  navigationBarTitleText: '首页',
+  navigationBarTitleText: '校园天气',
+  enablePullDownRefresh: true,
+  backgroundTextStyle: 'dark',
 });

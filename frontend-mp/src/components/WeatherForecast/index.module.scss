@@ -1,0 +1,154 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  width: 100%;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.headerIcon {
+  font-size: $font-size-lg;
+  margin-right: $spacing-xs;
+}
+
+.headerTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.forecastScroll {
+  @include scroll-x-container;
+  width: 100%;
+  margin: 0 -$spacing-lg;
+  padding: 0 $spacing-lg;
+}
+
+.forecastList {
+  display: inline-flex;
+  gap: $spacing-md;
+  padding-right: $spacing-lg;
+}
+
+.forecastItem {
+  @include scroll-x-item(200rpx);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  background: $color-bg-page;
+  border-radius: $radius-md;
+  padding: $spacing-md $spacing-sm;
+}
+
+.weekday {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+  margin-bottom: 4rpx;
+}
+
+.date {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: $spacing-md;
+}
+
+.weatherIcons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: $spacing-md;
+  width: 100%;
+}
+
+.weatherIconWrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.weatherIcon {
+  font-size: 48rpx;
+  line-height: 1;
+  margin-bottom: 4rpx;
+}
+
+.weatherLabel {
+  font-size: $font-size-xs;
+  color: $color-text-secondary;
+  @include text-ellipsis;
+  max-width: 100%;
+}
+
+.arrow {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin: 4rpx 0;
+}
+
+.tempBarContainer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: $spacing-md;
+}
+
+.tempMax {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: $color-error;
+  width: 60rpx;
+  text-align: right;
+  margin-right: $spacing-xs;
+}
+
+.tempBar {
+  flex: 1;
+  height: 8rpx;
+  background: rgba(22, 93, 255, 0.1);
+  border-radius: $radius-round;
+  position: relative;
+  overflow: hidden;
+}
+
+.tempBarFill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #4080ff 0%, #ff7d00 100%);
+  border-radius: $radius-round;
+}
+
+.tempMin {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: $color-info;
+  width: 60rpx;
+  text-align: left;
+  margin-left: $spacing-xs;
+}
+
+.windInfo {
+  display: flex;
+  align-items: center;
+}
+
+.windIcon {
+  font-size: $font-size-xs;
+  margin-right: 4rpx;
+}
+
+.windText {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  @include text-ellipsis;
+  max-width: 140rpx;
+}

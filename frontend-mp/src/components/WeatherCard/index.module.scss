@@ -1,0 +1,153 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  width: 100%;
+  background: linear-gradient(135deg, #4080ff 0%, #165dff 100%);
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: 0 8rpx 32rpx rgba(22, 93, 255, 0.25);
+  transition: all $transition-base;
+
+  &:active {
+    transform: scale(0.99);
+    opacity: 0.95;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: $spacing-lg;
+}
+
+.location {
+  display: flex;
+  align-items: center;
+}
+
+.locationIcon {
+  font-size: $font-size-md;
+  margin-right: $spacing-xs;
+}
+
+.locationText {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-white;
+}
+
+.updateTime {
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.main {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.leftSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: $spacing-xl;
+}
+
+.weatherIcon {
+  font-size: 120rpx;
+  line-height: 1;
+  margin-bottom: $spacing-sm;
+  filter: drop-shadow(0 4rpx 8rpx rgba(0, 0, 0, 0.2));
+}
+
+.temperatureWrap {
+  display: flex;
+  align-items: flex-start;
+}
+
+.temperature {
+  font-size: 96rpx;
+  font-weight: $font-weight-bold;
+  color: $color-text-white;
+  line-height: 1;
+}
+
+.temperatureUnit {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-medium;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: $spacing-sm;
+}
+
+.rightSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.weatherText {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: $color-text-white;
+  margin-bottom: $spacing-sm;
+}
+
+.temperatureRange {
+  font-size: $font-size-md;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: $spacing-md;
+}
+
+.weatherInfo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+}
+
+.infoIcon {
+  font-size: $font-size-md;
+  margin-right: $spacing-xs;
+}
+
+.infoText {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.dressAdvice {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: $radius-md;
+  padding: $spacing-md;
+  backdrop-filter: blur(10rpx);
+}
+
+.dressHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.dressIcon {
+  font-size: $font-size-md;
+  margin-right: $spacing-xs;
+}
+
+.dressTitle {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $color-text-white;
+}
+
+.dressText {
+  font-size: $font-size-sm;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: $line-height-loose;
+}

@@ -4,8 +4,9 @@ export default defineAppConfig({
   ],
   window: {
     backgroundTextStyle: 'light',
-    navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: 'MiniApp',
-    navigationBarTextStyle: 'black'
+    navigationBarBackgroundColor: '#ffffff',
+    navigationBarTitleText: '校园天气',
+    navigationBarTextStyle: 'black',
+    backgroundColor: '#f5f6f7'
   }
 })

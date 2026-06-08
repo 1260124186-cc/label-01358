@@ -1,0 +1,175 @@
+@use '@/styles/variables.scss' as *;
+
+.card {
+  width: 100%;
+  background: $color-bg-card;
+  border-radius: $radius-lg;
+  padding: $spacing-lg;
+  box-shadow: $shadow-card;
+}
+
+.section {
+  width: 100%;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: $spacing-md;
+}
+
+.sectionIcon {
+  font-size: $font-size-lg;
+  margin-right: $spacing-xs;
+}
+
+.sectionTitle {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.aqiDisplay {
+  display: flex;
+  align-items: center;
+}
+
+.aqiCircle {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: $radius-round;
+  border: 8rpx solid $color-success;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: $spacing-xl;
+  background: rgba(0, 180, 42, 0.05);
+}
+
+.aqiValue {
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  line-height: 1.2;
+}
+
+.aqiLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+}
+
+.aqiDetails {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $spacing-md;
+}
+
+.aqiDetailItem {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.aqiDetailLabel {
+  font-size: $font-size-xs;
+  color: $color-text-tertiary;
+  margin-bottom: 4rpx;
+}
+
+.aqiDetailValue {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-text-primary;
+}
+
+.divider {
+  height: 1rpx;
+  background: $color-divider;
+  margin: $spacing-lg 0;
+}
+
+.uvDisplay {
+  width: 100%;
+}
+
+.uvBarContainer {
+  position: relative;
+  width: 100%;
+  margin-bottom: $spacing-lg;
+}
+
+.uvBar {
+  display: flex;
+  height: 16rpx;
+  border-radius: $radius-round;
+  overflow: hidden;
+}
+
+.uvBarFillLow {
+  flex: 1;
+  background: linear-gradient(90deg, #2EB67D 0%, #2EB67D 100%);
+}
+
+.uvBarFillMedium {
+  flex: 1;
+  background: linear-gradient(90deg, #E6B800 0%, #E6B800 100%);
+}
+
+.uvBarFillHigh {
+  flex: 1;
+  background: linear-gradient(90deg, #FF7D00 0%, #FF7D00 100%);
+}
+
+.uvBarFillVeryHigh {
+  flex: 1;
+  background: linear-gradient(90deg, #F53F3F 0%, #F53F3F 100%);
+}
+
+.uvBarFillExtreme {
+  flex: 1;
+  background: linear-gradient(90deg, #A855F7 0%, #A855F7 100%);
+}
+
+.uvIndicator {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 24rpx;
+  height: 24rpx;
+  background: $color-bg-card;
+  border: 4rpx solid $color-text-primary;
+  border-radius: $radius-round;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+  transition: left $transition-base;
+}
+
+.uvInfo {
+  width: 100%;
+}
+
+.uvLevel {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: $spacing-sm;
+}
+
+.uvValue {
+  font-size: 48rpx;
+  font-weight: $font-weight-bold;
+  color: $color-warning;
+  margin-right: $spacing-sm;
+  line-height: 1;
+}
+
+.uvLevelText {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $color-warning;
+}
+
+.uvAdvice {
+  font-size: $font-size-sm;
+  color: $color-text-secondary;
+  line-height: $line-height-loose;
+}
