@@ -118,7 +118,7 @@
           maxlength="500"
           auto-height
         />
-        <view class="char-count">{{formData.description.length}}/500</view>
+        <view class="char-count">{{descriptionLength}}/500</view>
       </view>
 
       <view class="form-item">
@@ -135,7 +135,7 @@
             </view>
           </view>
           <view
-            wx:if="{{formData.images.length < 9}}"
+            wx:if="{{imageCount < 9}}"
             class="upload-btn"
             bindtap="onChooseImage"
           >
@@ -150,21 +150,21 @@
         <view class="form-label">上传文件</view>
         <view class="file-list">
           <view
-            wx:for="{{formData.files}}"
+            wx:for="{{formattedFiles}}"
             wx:key="path"
             class="file-item"
           >
             <view class="file-icon">📄</view>
             <view class="file-info">
               <text class="file-name">{{item.name}}</text>
-              <text class="file-size">{{(item.size / 1024).toFixed(1)}} KB</text>
+              <text class="file-size">{{item.sizeText}}</text>
             </view>
             <view class="delete-btn" data-index="{{index}}" catchtap="onDeleteFile">
               <text class="delete-icon">×</text>
             </view>
           </view>
           <view
-            wx:if="{{formData.files.length < 5}}"
+            wx:if="{{fileCount < 5}}"
             class="file-upload-btn"
             bindtap="onChooseFile"
           >

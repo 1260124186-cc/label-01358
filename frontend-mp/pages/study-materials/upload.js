@@ -18,6 +18,10 @@ mixPage({
       images: [],
       files: []
     },
+    formattedFiles: [],
+    descriptionLength: 0,
+    imageCount: 0,
+    fileCount: 0,
     categories: constants.STUDY_MATERIAL_CATEGORIES,
     semesters: constants.SEMESTER_OPTIONS,
     fileTypes: constants.FILE_TYPE_OPTIONS,
@@ -37,9 +41,20 @@ mixPage({
   onInputChange(e) {
     const { field } = e.currentTarget.dataset;
     const { value } = e.detail;
-    this.setData({
+    const updates = {
       [`formData.${field}`]: value
-    });
+    };
+    if (field === 'description') {
+      updates.descriptionLength = value ? value.length : 0;
+    }
+    this.setData(updates);
+  },
+
+  formatFiles(files) {
+    return files.map(file => ({
+      ...file,
+      sizeText: ((file.size || 0) / 1024).toFixed(1) + ' KB'
+    }));
   },
 
   onCategoryChange(e) {
@@ -79,9 +94,10 @@ mixPage({
 
       const tempFiles = await fileUtil.chooseImage(maxCount);
       if (tempFiles.length > 0) {
-        const images = [...this.data.formData.images, ...tempFiles];
+        const images = [...this.data.formData.images, ...tempFiles].slice(0, 9);
         this.setData({
-          'formData.images': images.slice(0, 9)
+          'formData.images': images,
+          imageCount: images.length
         });
       }
     } catch (e) {
@@ -99,9 +115,11 @@ mixPage({
 
       const tempFiles = await fileUtil.chooseMessageFile(maxCount);
       if (tempFiles.length > 0) {
-        const files = [...this.data.formData.files, ...tempFiles];
+        const files = [...this.data.formData.files, ...tempFiles].slice(0, 5);
         this.setData({
-          'formData.files': files.slice(0, 5)
+          'formData.files': files,
+          formattedFiles: this.formatFiles(files),
+          fileCount: files.length
         });
       }
     } catch (e) {
@@ -114,7 +132,8 @@ mixPage({
     const images = [...this.data.formData.images];
     images.splice(index, 1);
     this.setData({
-      'formData.images': images
+      'formData.images': images,
+      imageCount: images.length
     });
   },
 
@@ -123,7 +142,9 @@ mixPage({
     const files = [...this.data.formData.files];
     files.splice(index, 1);
     this.setData({
-      'formData.files': files
+      'formData.files': files,
+      formattedFiles: this.formatFiles(files),
+      fileCount: files.length
     });
   },
 
