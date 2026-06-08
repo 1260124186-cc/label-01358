@@ -1,0 +1,801 @@
+.weather-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #F0F5FF 0%, #F5F6F7 100%);
+}
+
+.weather-page.dark {
+  background: linear-gradient(180deg, #1E293B 0%, #0F1117 100%);
+}
+
+.weather-scroll {
+  height: 100vh;
+}
+
+.weather-content {
+  padding: 32rpx;
+  padding-bottom: 120rpx;
+}
+
+.page-header {
+  margin-bottom: 32rpx;
+  padding-top: 16rpx;
+}
+
+.page-title {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #2C3E50;
+  margin-bottom: 8rpx;
+  line-height: 1.2;
+}
+
+.dark .page-title {
+  color: #E8ECF1;
+}
+
+.page-subtitle {
+  font-size: 26rpx;
+  color: #7F8C8D;
+}
+
+.dark .page-subtitle {
+  color: #94A3B8;
+}
+
+.loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #7F8C8D;
+}
+
+/* ==================== 今日天气卡片 ==================== */
+.weather-card {
+  width: 100%;
+  background: linear-gradient(135deg, #4080FF 0%, #165DFF 100%);
+  border-radius: 32rpx;
+  padding: 32rpx;
+  box-shadow: 0 8rpx 32rpx rgba(22, 93, 255, 0.25);
+  margin-bottom: 32rpx;
+  transition: all 0.2s ease;
+}
+
+.weather-card:active {
+  transform: scale(0.99);
+  opacity: 0.95;
+}
+
+.weather-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32rpx;
+}
+
+.weather-location {
+  display: flex;
+  align-items: center;
+}
+
+.location-icon {
+  font-size: 28rpx;
+  margin-right: 8rpx;
+}
+
+.location-text {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.update-time {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.weather-main {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.weather-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 48rpx;
+}
+
+.weather-icon-large {
+  font-size: 120rpx;
+  line-height: 1;
+  margin-bottom: 16rpx;
+  filter: drop-shadow(0 4rpx 8rpx rgba(0, 0, 0, 0.2));
+}
+
+.temperature-wrap {
+  display: flex;
+  align-items: flex-start;
+}
+
+.temperature {
+  font-size: 96rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.temperature-unit {
+  font-size: 36rpx;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 16rpx;
+}
+
+.weather-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.weather-text {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-bottom: 12rpx;
+}
+
+.temperature-range {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 24rpx;
+}
+
+.weather-info-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24rpx;
+}
+
+.weather-info-item {
+  display: flex;
+  align-items: center;
+}
+
+.info-icon {
+  font-size: 28rpx;
+  margin-right: 8rpx;
+}
+
+.info-text {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.dress-advice {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 24rpx;
+  padding: 24rpx;
+  backdrop-filter: blur(10rpx);
+}
+
+.dress-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.dress-icon {
+  font-size: 28rpx;
+  margin-right: 8rpx;
+}
+
+.dress-title {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.dress-text {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+}
+
+/* ==================== 环境指标卡片 ==================== */
+.env-card {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 32rpx;
+}
+
+.dark .env-card {
+  background: #1E293B;
+}
+
+.env-section {
+  width: 100%;
+}
+
+.env-section-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.env-icon {
+  font-size: 32rpx;
+  margin-right: 8rpx;
+}
+
+.env-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.dark .env-title {
+  color: #E8ECF1;
+}
+
+.aqi-display {
+  display: flex;
+  align-items: center;
+}
+
+.aqi-circle {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  border: 8rpx solid #00B42A;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 48rpx;
+  background: rgba(0, 180, 42, 0.05);
+}
+
+.aqi-value {
+  font-size: 48rpx;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #00B42A;
+}
+
+.aqi-label {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #00B42A;
+}
+
+.aqi-details {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24rpx;
+}
+
+.aqi-detail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.aqi-detail-label {
+  font-size: 22rpx;
+  color: #7F8C8D;
+  margin-bottom: 4rpx;
+}
+
+.dark .aqi-detail-label {
+  color: #94A3B8;
+}
+
+.aqi-detail-value {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.dark .aqi-detail-value {
+  color: #E8ECF1;
+}
+
+.env-divider {
+  height: 1rpx;
+  background: #E5E7EB;
+  margin: 32rpx 0;
+}
+
+.dark .env-divider {
+  background: #374151;
+}
+
+.uv-display {
+  width: 100%;
+}
+
+.uv-bar-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 32rpx;
+}
+
+.uv-bar {
+  display: flex;
+  height: 16rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.uv-bar-fill {
+  flex: 1;
+}
+
+.uv-low {
+  background: linear-gradient(90deg, #2EB67D 0%, #2EB67D 100%);
+}
+
+.uv-medium {
+  background: linear-gradient(90deg, #E6B800 0%, #E6B800 100%);
+}
+
+.uv-high {
+  background: linear-gradient(90deg, #FF7D00 0%, #FF7D00 100%);
+}
+
+.uv-very-high {
+  background: linear-gradient(90deg, #F53F3F 0%, #F53F3F 100%);
+}
+
+.uv-extreme {
+  background: linear-gradient(90deg, #A855F7 0%, #A855F7 100%);
+}
+
+.uv-indicator {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 24rpx;
+  height: 24rpx;
+  background: #FFFFFF;
+  border: 4rpx solid #2C3E50;
+  border-radius: 50%;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.2);
+  transition: left 0.3s ease;
+}
+
+.dark .uv-indicator {
+  background: #1E293B;
+  border-color: #E8ECF1;
+}
+
+.uv-info {
+  width: 100%;
+}
+
+.uv-level-row {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 12rpx;
+}
+
+.uv-value {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #FF7D00;
+  margin-right: 16rpx;
+  line-height: 1;
+}
+
+.uv-level-text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #FF7D00;
+}
+
+.uv-advice {
+  font-size: 24rpx;
+  color: #5D6D7E;
+  line-height: 1.6;
+}
+
+.dark .uv-advice {
+  color: #94A3B8;
+}
+
+/* ==================== 7天预报卡片 ==================== */
+.forecast-card {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+  margin-bottom: 32rpx;
+}
+
+.dark .forecast-card {
+  background: #1E293B;
+}
+
+.forecast-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32rpx;
+}
+
+.forecast-icon {
+  font-size: 32rpx;
+  margin-right: 8rpx;
+}
+
+.forecast-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.dark .forecast-title {
+  color: #E8ECF1;
+}
+
+.forecast-scroll {
+  width: 100%;
+  margin: 0 -32rpx;
+  padding: 0 32rpx;
+  white-space: nowrap;
+}
+
+.forecast-list {
+  display: inline-flex;
+  gap: 20rpx;
+  padding-right: 32rpx;
+}
+
+.forecast-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200rpx;
+  background: #F8F9FA;
+  border-radius: 24rpx;
+  padding: 24rpx 16rpx;
+}
+
+.dark .forecast-item {
+  background: #334155;
+}
+
+.forecast-weekday {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2C3E50;
+  margin-bottom: 4rpx;
+}
+
+.dark .forecast-weekday {
+  color: #E8ECF1;
+}
+
+.forecast-date {
+  font-size: 22rpx;
+  color: #7F8C8D;
+  margin-bottom: 24rpx;
+}
+
+.dark .forecast-date {
+  color: #94A3B8;
+}
+
+.forecast-weather {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 24rpx;
+  width: 100%;
+}
+
+.forecast-weather-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.forecast-weather-icon {
+  font-size: 48rpx;
+  line-height: 1;
+  margin-bottom: 4rpx;
+}
+
+.forecast-weather-label {
+  font-size: 22rpx;
+  color: #5D6D7E;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.dark .forecast-weather-label {
+  color: #94A3B8;
+}
+
+.forecast-arrow {
+  font-size: 22rpx;
+  color: #7F8C8D;
+  margin: 4rpx 0;
+}
+
+.dark .forecast-arrow {
+  color: #94A3B8;
+}
+
+.forecast-temp-bar-container {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 20rpx;
+}
+
+.forecast-temp-max {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #F53F3F;
+  width: 60rpx;
+  text-align: right;
+  margin-right: 8rpx;
+}
+
+.forecast-temp-bar {
+  flex: 1;
+  height: 8rpx;
+  background: rgba(22, 93, 255, 0.1);
+  border-radius: 4rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.forecast-temp-bar-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, #4080FF 0%, #FF7D00 100%);
+  border-radius: 4rpx;
+}
+
+.forecast-temp-min {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #3B82F6;
+  width: 60rpx;
+  text-align: left;
+  margin-left: 8rpx;
+}
+
+.forecast-wind {
+  display: flex;
+  align-items: center;
+}
+
+.forecast-wind-icon {
+  font-size: 22rpx;
+  margin-right: 4rpx;
+}
+
+.forecast-wind-text {
+  font-size: 22rpx;
+  color: #7F8C8D;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140rpx;
+}
+
+.dark .forecast-wind-text {
+  color: #94A3B8;
+}
+
+/* ==================== 校园特殊提醒卡片 ==================== */
+.alert-card {
+  width: 100%;
+  background: #FFFFFF;
+  border-radius: 32rpx;
+  padding: 32rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.05);
+}
+
+.dark .alert-card {
+  background: #1E293B;
+}
+
+.alert-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24rpx;
+}
+
+.alert-header-icon {
+  font-size: 32rpx;
+  margin-right: 8rpx;
+}
+
+.alert-header-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2C3E50;
+  flex: 1;
+}
+
+.dark .alert-header-title {
+  color: #E8ECF1;
+}
+
+.alert-badge {
+  min-width: 40rpx;
+  height: 40rpx;
+  background: #F53F3F;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16rpx;
+}
+
+.alert-badge-text {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.alert-item {
+  width: 100%;
+  border-radius: 24rpx;
+  padding: 24rpx;
+  transition: all 0.2s ease;
+}
+
+.alert-item:active {
+  transform: scale(0.99);
+  opacity: 0.9;
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, rgba(245, 63, 63, 0.1) 0%, rgba(245, 63, 63, 0.05) 100%);
+  border: 2rpx solid rgba(245, 63, 63, 0.3);
+}
+
+.alert-warning {
+  background: linear-gradient(135deg, rgba(255, 125, 0, 0.1) 0%, rgba(255, 125, 0, 0.05) 100%);
+  border: 2rpx solid rgba(255, 125, 0, 0.3);
+}
+
+.alert-info {
+  background: linear-gradient(135deg, rgba(22, 93, 255, 0.1) 0%, rgba(22, 93, 255, 0.05) 100%);
+  border: 2rpx solid rgba(22, 93, 255, 0.3);
+}
+
+.alert-item-header {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12rpx;
+}
+
+.alert-item-icon {
+  font-size: 40rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.alert-item-title-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-right: 16rpx;
+  min-width: 0;
+}
+
+.alert-item-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #2C3E50;
+  margin-bottom: 4rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dark .alert-item-title {
+  color: #E8ECF1;
+}
+
+.alert-item-time {
+  font-size: 22rpx;
+  color: #7F8C8D;
+}
+
+.dark .alert-item-time {
+  color: #94A3B8;
+}
+
+.alert-item-tag {
+  flex-shrink: 0;
+  height: 40rpx;
+  padding: 0 16rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alert-danger .alert-item-tag {
+  background: #F53F3F;
+}
+
+.alert-warning .alert-item-tag {
+  background: #FF7D00;
+}
+
+.alert-info .alert-item-tag {
+  background: #165DFF;
+}
+
+.alert-item-tag-text {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #FFFFFF;
+}
+
+.alert-item-content {
+  font-size: 24rpx;
+  color: #5D6D7E;
+  line-height: 1.6;
+  margin-bottom: 12rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.dark .alert-item-content {
+  color: #CBD5E1;
+}
+
+.alert-item-footer {
+  margin-bottom: 8rpx;
+}
+
+.alert-link-text {
+  font-size: 24rpx;
+  color: #165DFF;
+  font-weight: 500;
+}
+
+.alert-item-valid {
+  display: flex;
+  align-items: center;
+}
+
+.alert-valid-text {
+  font-size: 22rpx;
+  color: #7F8C8D;
+}
+
+.dark .alert-valid-text {
+  color: #94A3B8;
+}

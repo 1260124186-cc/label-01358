@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/weather/index",
     "pages/search/index",
     "pages/lost-found/index",
     "pages/lost-found-publish/index",

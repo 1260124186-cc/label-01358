@@ -1,0 +1,227 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F0F5FF'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="weather-page {{darkMode ? 'dark' : ''}}">
+  <view class="loading" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <scroll-view
+    class="weather-scroll"
+    scroll-y="{{true}}"
+    enhanced="{{true}}"
+    show-scrollbar="{{false}}"
+    wx:else
+  >
+    <view class="weather-content">
+      <view class="page-header">
+        <text class="page-title">校园天气</text>
+        <text class="page-subtitle">实时天气 · 环境指数 · 校园提醒</text>
+      </view>
+
+      <!-- 今日天气卡片 -->
+      <view class="weather-card" bindtap="onWeatherCardTap">
+        <view class="weather-header">
+          <view class="weather-location">
+            <text class="location-icon">📍</text>
+            <text class="location-text">校园</text>
+          </view>
+          <text class="update-time">更新于 {{weatherData.current.updateTime}}</text>
+        </view>
+
+        <view class="weather-main">
+          <view class="weather-left">
+            <text class="weather-icon-large">{{weatherData.current.weatherIcon}}</text>
+            <view class="temperature-wrap">
+              <text class="temperature">{{weatherData.current.temperature}}</text>
+              <text class="temperature-unit">°C</text>
+            </view>
+          </view>
+
+          <view class="weather-right">
+            <text class="weather-text">{{weatherData.current.weather}}</text>
+            <text class="temperature-range">{{weatherData.current.temperatureMin}}° / {{weatherData.current.temperatureMax}}°</text>
+            <view class="weather-info-row">
+              <view class="weather-info-item">
+                <text class="info-icon">💧</text>
+                <text class="info-text">{{weatherData.current.humidity}}%</text>
+              </view>
+              <view class="weather-info-item">
+                <text class="info-icon">🌬️</text>
+                <text class="info-text">{{weatherData.current.windDirection}} {{weatherData.current.windScale}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="dress-advice">
+          <view class="dress-header">
+            <text class="dress-icon">👕</text>
+            <text class="dress-title">穿衣建议</text>
+          </view>
+          <text class="dress-text">{{weatherData.current.dressAdvice}}</text>
+        </view>
+      </view>
+
+      <!-- 环境指标卡片 -->
+      <view class="env-card">
+        <view class="env-section">
+          <view class="env-section-header">
+            <text class="env-icon">🌬️</text>
+            <text class="env-title">空气质量</text>
+          </view>
+
+          <view class="aqi-display">
+            <view class="aqi-circle" style="border-color: {{weatherData.airQuality.aqiColor}};">
+              <text class="aqi-value" style="color: {{weatherData.airQuality.aqiColor}};">{{weatherData.airQuality.aqi}}</text>
+              <text class="aqi-label" style="color: {{weatherData.airQuality.aqiColor}};">{{weatherData.airQuality.aqiLevel}}</text>
+            </view>
+
+            <view class="aqi-details">
+              <view class="aqi-detail-item">
+                <text class="aqi-detail-label">PM2.5</text>
+                <text class="aqi-detail-value">{{weatherData.airQuality.pm25}}</text>
+              </view>
+              <view class="aqi-detail-item">
+                <text class="aqi-detail-label">PM10</text>
+                <text class="aqi-detail-value">{{weatherData.airQuality.pm10}}</text>
+              </view>
+              <view class="aqi-detail-item">
+                <text class="aqi-detail-label">O₃</text>
+                <text class="aqi-detail-value">{{weatherData.airQuality.o3}}</text>
+              </view>
+              <view class="aqi-detail-item">
+                <text class="aqi-detail-label">NO₂</text>
+                <text class="aqi-detail-value">{{weatherData.airQuality.no2}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="env-divider"></view>
+
+        <view class="env-section">
+          <view class="env-section-header">
+            <text class="env-icon">☀️</text>
+            <text class="env-title">紫外线指数</text>
+          </view>
+
+          <view class="uv-display">
+            <view class="uv-bar-container">
+              <view class="uv-bar">
+                <view class="uv-bar-fill uv-low"></view>
+                <view class="uv-bar-fill uv-medium"></view>
+                <view class="uv-bar-fill uv-high" style="opacity: {{weatherData.uvIndex.index >= 6 ? 1 : 0.3}};"></view>
+                <view class="uv-bar-fill uv-very-high" style="opacity: {{weatherData.uvIndex.index >= 8 ? 1 : 0.3}};"></view>
+                <view class="uv-bar-fill uv-extreme" style="opacity: {{weatherData.uvIndex.index >= 10 ? 1 : 0.3}};"></view>
+              </view>
+              <view class="uv-indicator" style="left: {{(weatherData.uvIndex.index / 11) * 100}}%;"></view>
+            </view>
+
+            <view class="uv-info">
+              <view class="uv-level-row">
+                <text class="uv-value">{{weatherData.uvIndex.index}}</text>
+                <text class="uv-level-text">{{weatherData.uvIndex.level}}</text>
+              </view>
+              <text class="uv-advice">{{weatherData.uvIndex.advice}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 7天预报 -->
+      <view class="forecast-card">
+        <view class="forecast-header">
+          <text class="forecast-icon">📅</text>
+          <text class="forecast-title">未来7天预报</text>
+        </view>
+
+        <scroll-view
+          class="forecast-scroll"
+          scroll-x="{{true}}"
+          enhanced="{{true}}"
+          show-scrollbar="{{false}}"
+        >
+          <view class="forecast-list">
+            <view
+              class="forecast-item"
+              wx:for="{{weatherData.forecast}}"
+              wx:key="date"
+            >
+              <text class="forecast-weekday">{{item.weekday}}</text>
+              <text class="forecast-date">{{item.date}}</text>
+
+              <view class="forecast-weather">
+                <view class="forecast-weather-col">
+                  <text class="forecast-weather-icon">{{item.weatherIconDay}}</text>
+                  <text class="forecast-weather-label">{{item.weatherDay}}</text>
+                </view>
+                <text class="forecast-arrow">↓</text>
+                <view class="forecast-weather-col">
+                  <text class="forecast-weather-icon">{{item.weatherIconNight}}</text>
+                  <text class="forecast-weather-label">{{item.weatherNight}}</text>
+                </view>
+              </view>
+
+              <view class="forecast-temp-bar-container">
+                <text class="forecast-temp-max">{{item.temperatureMax}}°</text>
+                <view class="forecast-temp-bar">
+                  <view
+                    class="forecast-temp-bar-fill"
+                    style="left: {{((item.temperatureMin - forecastMinTemp) / forecastTempRange) * 100}}%; width: {{((item.temperatureMax - item.temperatureMin) / forecastTempRange) * 100}}%;"
+                  ></view>
+                </view>
+                <text class="forecast-temp-min">{{item.temperatureMin}}°</text>
+              </view>
+
+              <view class="forecast-wind">
+                <text class="forecast-wind-icon">🌬️</text>
+                <text class="forecast-wind-text">{{item.windDirection}} {{item.windScale}}</text>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <!-- 校园特殊提醒 -->
+      <view class="alert-card" wx:if="{{weatherData.campusAlerts.length > 0}}">
+        <view class="alert-header">
+          <text class="alert-header-icon">🚨</text>
+          <text class="alert-header-title">校园特殊提醒</text>
+          <view class="alert-badge">
+            <text class="alert-badge-text">{{weatherData.campusAlerts.length}}</text>
+          </view>
+        </view>
+
+        <view class="alert-list">
+          <view
+            class="alert-item alert-{{item.level}}"
+            wx:for="{{weatherData.campusAlerts}}"
+            wx:key="id"
+            bindtap="onAlertTap"
+            data-alert="{{item}}"
+          >
+            <view class="alert-item-header">
+              <text class="alert-item-icon">{{item.type === 'rainstorm' ? '⛈️' : item.type === 'heat' ? '🌡️' : '📢'}}</text>
+              <view class="alert-item-title-wrap">
+                <text class="alert-item-title">{{item.title}}</text>
+                <text class="alert-item-time">{{item.publishTime}}</text>
+              </view>
+              <view class="alert-item-tag">
+                <text class="alert-item-tag-text">{{item.level === 'danger' ? '紧急' : item.level === 'warning' ? '重要' : '通知'}}</text>
+              </view>
+            </view>
+
+            <text class="alert-item-content">{{item.content}}</text>
+
+            <view class="alert-item-footer" wx:if="{{item.announcementId}}">
+              <text class="alert-link-text">查看关联公告 →</text>
+            </view>
+
+            <view class="alert-item-valid">
+              <text class="alert-valid-text">有效期至 {{item.validUntil}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>

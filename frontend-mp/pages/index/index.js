@@ -6,6 +6,13 @@ Page({
     announcements: [],
     navItems: [
       {
+        id: 'weather',
+        name: '今日天气',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)',
+        url: '/pages/weather/index'
+      },
+      {
         id: 'lost-found',
         name: '失物招领',
         icon: '/assets/icons/nav-lost.png',
@@ -32,15 +39,9 @@ Page({
         icon: '/assets/icons/nav-broadcast.png',
         bgColor: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
         url: '/pages/broadcast/index'
-      },
-      {
-        id: 'survey',
-        name: '问卷调研',
-        icon: '/assets/icons/nav-broadcast.png',
-        bgColor: 'linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)',
-        url: '/pages/survey-list/index'
       }
     ],
+    weatherData: null,
     newsList: [],
     refreshing: false,
     darkMode: false
@@ -81,9 +82,13 @@ Page({
         image: item.image || '/assets/images/default-news.png'
       }));
 
+      // 加载天气数据
+      const weatherData = mockData.WEATHER_DATA;
+
       this.setData({
         announcements,
         newsList,
+        weatherData,
         refreshing: false
       });
 
@@ -137,5 +142,9 @@ Page({
 
   onSearchTap() {
     util.navigateTo('/pages/search/index');
+  },
+
+  onWeatherTap() {
+    util.navigateTo('/pages/weather/index');
   }
 });

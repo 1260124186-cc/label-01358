@@ -57,6 +57,22 @@
     </view>
   </view>
 
+  <!-- 今日天气入口 -->
+  <view class="weather-entry" wx:if="{{weatherData}}" bindtap="onWeatherTap">
+    <view class="weather-entry-left">
+      <text class="weather-entry-icon">{{weatherData.current.weatherIcon}}</text>
+      <view class="weather-entry-info">
+        <text class="weather-entry-title">今日天气</text>
+        <text class="weather-entry-subtitle">{{weatherData.current.weather}} · 空气{{weatherData.airQuality.aqiLevel}}</text>
+      </view>
+    </view>
+    <view class="weather-entry-right">
+      <text class="weather-entry-temp">{{weatherData.current.temperature}}°</text>
+      <text class="weather-entry-temp-range">{{weatherData.current.temperatureMin}}° / {{weatherData.current.temperatureMax}}°</text>
+      <text class="weather-entry-arrow">›</text>
+    </view>
+  </view>
+
   <!-- 快捷入口 -->
   <view class="quick-section">
     <view class="quick-grid">
