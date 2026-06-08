@@ -841,6 +841,11 @@ function getServiceGuides() {
   return mockData.SERVICE_GUIDES || [];
 }
 
+function getServiceGuideDetail(type) {
+  const details = mockData.SERVICE_GUIDE_DETAILS || {};
+  return details[type] || null;
+}
+
 function makePhoneCall(phoneNumber) {
   return new Promise((resolve, reject) => {
     wx.makePhoneCall({
@@ -910,5 +915,6 @@ module.exports = {
   getPhonebookItemsByCategory,
   searchPhonebook,
   getServiceGuides,
+  getServiceGuideDetail,
   makePhoneCall
 };

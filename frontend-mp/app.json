@@ -4,6 +4,7 @@
     "pages/weather/index",
     "pages/search/index",
     "pages/campus-phonebook/index",
+    "pages/guide-detail/index",
     "pages/lost-found/index",
     "pages/lost-found-publish/index",
     "pages/lost-found-detail/index",

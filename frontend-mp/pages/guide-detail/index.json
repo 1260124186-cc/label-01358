@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "办事指南",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "/components/empty/index"
+  }
+}

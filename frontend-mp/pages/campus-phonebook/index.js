@@ -149,7 +149,16 @@ mixPage({
 
   onGuideTap(e) {
     const { item } = e.currentTarget.dataset;
-    util.showToast(`${item.title} - 功能开发中`);
+    if (item && item.url) {
+      wx.navigateTo({
+        url: item.url,
+        fail: () => {
+          util.showToast('页面跳转失败');
+        }
+      });
+    } else {
+      util.showToast('页面不存在');
+    }
   },
 
   onMoreGuide() {

@@ -1,0 +1,70 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{guideDetail}}">
+  <scroll-view
+    class="content-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <!-- 头部信息 -->
+    <view class="header">
+      <view class="header-bg"></view>
+      <view class="header-content">
+        <view class="icon-wrapper">
+          <text class="guide-icon">{{guideDetail.icon}}</text>
+        </view>
+        <text class="guide-title">{{guideDetail.title}}</text>
+        <text class="guide-summary">{{guideDetail.summary}}</text>
+      </view>
+    </view>
+
+    <!-- 详情内容 -->
+    <view class="content">
+      <view class="section-item" wx:for="{{guideDetail.sections}}" wx:key="title">
+        <view class="section-header">
+          <text class="section-title">{{item.title}}</text>
+        </view>
+        <view class="section-body">
+          <text class="section-content">{{item.content}}</text>
+        </view>
+      </view>
+
+      <!-- 相关电话 -->
+      <view class="section-item" wx:if="{{guideDetail.relatedPhones && guideDetail.relatedPhones.length > 0}}">
+        <view class="section-header">
+          <text class="section-title">📞 相关电话</text>
+        </view>
+        <view class="phones-list">
+          <view
+            class="phone-item"
+            wx:for="{{guideDetail.relatedPhones}}"
+            wx:key="name"
+            bindtap="onCallPhone"
+            data-phone="{{item.phone}}"
+            hover-class="phone-item-hover"
+          >
+            <view class="phone-info">
+              <text class="phone-name">{{item.name}}</text>
+              <text class="phone-number">{{item.phone}}</text>
+            </view>
+            <view class="phone-call-btn">
+              <text class="call-icon">📞</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>
+
+<empty
+  wx:if="{{!guideDetail && !loading}}"
+  text="未找到该办事指南"
+/>
+
+<view class="loading" wx:if="{{loading}}">
+  <text class="loading-text">加载中...</text>
+</view>
