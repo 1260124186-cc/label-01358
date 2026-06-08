@@ -59,16 +59,26 @@
 
   <!-- 今日天气入口 -->
   <view class="weather-entry" wx:if="{{weatherData}}" bindtap="onWeatherTap">
-    <view class="weather-entry-left">
-      <text class="weather-entry-icon">{{weatherData.current.weatherIcon}}</text>
-      <view class="weather-entry-info">
-        <text class="weather-entry-title">今日天气</text>
-        <text class="weather-entry-subtitle">{{weatherData.current.weather}} · 空气{{weatherData.airQuality.aqiLevel}}</text>
+    <view class="weather-entry-main">
+      <view class="weather-entry-left">
+        <text class="weather-entry-icon">{{weatherData.current.weatherIcon}}</text>
+        <view class="weather-entry-info">
+          <text class="weather-entry-title">今日天气</text>
+          <text class="weather-entry-subtitle">{{weatherData.current.weather}} · 空气{{weatherData.airQuality.aqiLevel}}</text>
+        </view>
+      </view>
+      <view class="weather-entry-right">
+        <text class="weather-entry-temp">{{weatherData.current.temperature}}°</text>
+        <text class="weather-entry-temp-range">{{weatherData.current.temperatureMin}}° / {{weatherData.current.temperatureMax}}°</text>
       </view>
     </view>
-    <view class="weather-entry-right">
-      <text class="weather-entry-temp">{{weatherData.current.temperature}}°</text>
-      <text class="weather-entry-temp-range">{{weatherData.current.temperatureMin}}° / {{weatherData.current.temperatureMax}}°</text>
+    <view class="weather-entry-dress">
+      <text class="weather-entry-dress-icon">👕</text>
+      <text class="weather-entry-dress-label">穿衣建议：</text>
+      <text class="weather-entry-dress-text">{{weatherData.current.dressAdvice}}</text>
+    </view>
+    <view class="weather-entry-footer">
+      <text class="weather-entry-arrow-text">查看详情</text>
       <text class="weather-entry-arrow">›</text>
     </view>
   </view>
