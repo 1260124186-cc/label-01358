@@ -31,7 +31,13 @@
     "pages/survey-fill/index",
     "pages/survey-result/index",
     "pages/campus-shop/index",
-    "pages/campus-shop/detail"
+    "pages/campus-shop/detail",
+    "pages/volunteer/index",
+    "pages/volunteer/detail",
+    "pages/volunteer/publish",
+    "pages/volunteer/certificate",
+    "pages/volunteer/leaderboard",
+    "pages/volunteer/stats"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

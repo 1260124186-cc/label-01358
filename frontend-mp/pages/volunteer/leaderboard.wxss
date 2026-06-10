@@ -1,0 +1,367 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding-bottom: calc(160rpx + env(safe-area-inset-bottom));
+}
+
+.filter-bar {
+  padding: 20rpx 24rpx;
+  background-color: var(--color-bg-card);
+  border-bottom: 1rpx solid var(--color-border-light);
+}
+
+.filter-picker {
+  display: inline-flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-full);
+}
+
+.filter-text {
+  font-size: var(--font-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-right: 8rpx;
+}
+
+.filter-arrow {
+  font-size: var(--font-xs);
+  color: var(--color-text-secondary);
+}
+
+.podium-section {
+  padding: 32rpx 24rpx 16rpx;
+  background-color: var(--color-bg-card);
+  margin-bottom: 16rpx;
+}
+
+.podium {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 24rpx;
+}
+
+.podium-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200rpx;
+}
+
+.podium-avatar-wrap {
+  position: relative;
+  margin-bottom: 12rpx;
+}
+
+.podium-crown {
+  position: absolute;
+  top: -32rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 40rpx;
+  z-index: 2;
+}
+
+.podium-medal {
+  position: absolute;
+  top: -20rpx;
+  right: -16rpx;
+  font-size: 32rpx;
+  z-index: 2;
+}
+
+.podium-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.15);
+}
+
+.avatar-letter {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.podium-first .podium-avatar {
+  width: 120rpx;
+  height: 120rpx;
+}
+
+.podium-name {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 4rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 200rpx;
+  text-align: center;
+}
+
+.podium-hours {
+  font-size: var(--font-xs);
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 12rpx;
+}
+
+.podium-bar {
+  width: 100%;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.podium-bar-1 {
+  height: 120rpx;
+  background: linear-gradient(180deg, #FFD700 0%, #FFA500 100%);
+}
+
+.podium-bar-2 {
+  height: 88rpx;
+  background: linear-gradient(180deg, #C0C0C0 0%, #A8A8A8 100%);
+}
+
+.podium-bar-3 {
+  height: 64rpx;
+  background: linear-gradient(180deg, #CD7F32 0%, #B87333 100%);
+}
+
+.dark .podium-bar-1 {
+  background: linear-gradient(180deg, #8B6914 0%, #7A5A0A 100%);
+}
+
+.dark .podium-bar-2 {
+  background: linear-gradient(180deg, #808080 0%, #606060 100%);
+}
+
+.dark .podium-bar-3 {
+  background: linear-gradient(180deg, #8B5A2B 0%, #6B4423 100%);
+}
+
+.rank-list {
+  padding: 0 24rpx;
+}
+
+.rank-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 28rpx;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  margin-bottom: 16rpx;
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-fast);
+}
+
+.rank-item:active {
+  transform: scale(0.98);
+}
+
+.rank-item-me {
+  border: 2rpx solid var(--color-primary);
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(255, 142, 142, 0.05) 100%);
+}
+
+.dark .rank-item-me {
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 142, 142, 0.05) 100%);
+}
+
+.rank-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  flex: 1;
+  min-width: 0;
+}
+
+.rank-number {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  background-color: var(--color-bg-input);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rank-num-text {
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+}
+
+.rank-medal {
+  width: 52rpx;
+  height: 52rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rank-medal-icon {
+  font-size: 36rpx;
+}
+
+.rank-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.rank-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+  min-width: 0;
+}
+
+.rank-name {
+  font-size: var(--font-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-activities {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+}
+
+.rank-right {
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+.rank-hours {
+  font-size: var(--font-xl);
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.rank-unit {
+  font-size: var(--font-xs);
+  font-weight: 500;
+  color: var(--color-text-muted);
+}
+
+.my-rank-card {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 28rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  z-index: 100;
+}
+
+.my-rank-left {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.my-rank-badge {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-rank-num {
+  font-size: var(--font-md);
+  font-weight: 800;
+  color: #FFFFFF;
+}
+
+.my-rank-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-rank-avatar .avatar-letter {
+  color: #FFFFFF;
+}
+
+.my-rank-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.my-rank-label {
+  font-size: var(--font-xs);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.my-rank-name {
+  font-size: var(--font-base);
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.my-rank-right {
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+}
+
+.my-rank-hours {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.my-rank-unit {
+  font-size: var(--font-sm);
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 0;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 16rpx;
+}
+
+.empty-text {
+  font-size: var(--font-base);
+  color: var(--color-text-muted);
+}

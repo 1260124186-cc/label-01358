@@ -1,0 +1,95 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="hero-card">
+    <view class="hero-bg-circle hero-bg-circle-1"></view>
+    <view class="hero-bg-circle hero-bg-circle-2"></view>
+    <view class="hero-stats">
+      <view class="hero-stat-main">
+        <text class="hero-stat-value">{{totalHours}}</text>
+        <text class="hero-stat-unit">小时</text>
+      </view>
+      <text class="hero-stat-label">累计志愿工时</text>
+    </view>
+    <view class="hero-stats-row">
+      <view class="hero-stat-item">
+        <text class="hero-stat-num">{{activityCount}}</text>
+        <text class="hero-stat-desc">参与活动</text>
+      </view>
+      <view class="hero-stat-divider"></view>
+      <view class="hero-stat-item">
+        <text class="hero-stat-num">{{semesterHours}}</text>
+        <text class="hero-stat-desc">本学期工时</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="picker-row">
+      <text class="picker-label">学期筛选</text>
+      <picker mode="selector" range="{{semesterOptions}}" value="{{semesterIndex}}" bindchange="onSemesterChange">
+        <view class="picker-value">
+          <text>{{semesterOptions[semesterIndex]}}</text>
+          <text class="picker-arrow">▾</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{categoryBreakdown.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">分类工时</text>
+    </view>
+    <view class="category-card">
+      <view class="category-item" wx:for="{{categoryBreakdown}}" wx:key="category">
+        <view class="category-info">
+          <text class="category-icon">{{item.icon}}</text>
+          <text class="category-label">{{item.label}}</text>
+          <text class="category-hours">{{item.hours}}h</text>
+        </view>
+        <view class="bar-track">
+          <view class="bar-fill" style="width: {{item.hours / maxCategoryHours * 100}}%; background-color: {{item.color}};"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{records.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">工时记录</text>
+      <text class="section-count">共 {{records.length}} 条</text>
+    </view>
+    <view class="record-list">
+      <view class="record-card" wx:for="{{records}}" wx:key="id">
+        <view class="record-main">
+          <text class="record-title">{{item.activityTitle}}</text>
+          <view class="record-meta">
+            <text class="record-tag" style="background-color: {{item.categoryColor}}20; color: {{item.categoryColor}};">{{item.categoryLabel}}</text>
+            <text class="record-date">{{item.dateText}}</text>
+          </view>
+        </view>
+        <view class="record-hours-badge" style="background-color: {{item.categoryColor}};">
+          <text class="record-hours-num">{{item.hours}}</text>
+          <text class="record-hours-unit">h</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{!loading && records.length === 0}}">
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">暂无工时记录</text>
+  </view>
+
+  <view class="bottom-actions">
+    <view class="action-btn action-btn-outline" hover-class="action-btn-hover" bindtap="onNavigateCertificate">
+      <text class="action-btn-icon">📜</text>
+      <text>导出证明</text>
+    </view>
+    <view class="action-btn action-btn-primary" hover-class="action-btn-hover" bindtap="onNavigateLeaderboard">
+      <text class="action-btn-icon">🏆</text>
+      <text>排行榜</text>
+    </view>
+  </view>
+
+</view>

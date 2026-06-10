@@ -188,6 +188,31 @@ const COUPON_TYPES = [
   { value: 'gift', label: '赠品', icon: '🎁' }
 ];
 
+const VOLUNTEER_STATUS = [
+  { value: 'recruiting', label: '招募中', color: '#10B981' },
+  { value: 'ongoing', label: '进行中', color: '#3B82F6' },
+  { value: 'completed', label: '已结束', color: '#6B7280' },
+  { value: 'cancelled', label: '已取消', color: '#EF4444' }
+];
+
+const VOLUNTEER_CATEGORIES = [
+  { value: 'community', label: '社区服务', icon: '🏘️', color: '#10B981' },
+  { value: 'education', label: '教育帮扶', icon: '📖', color: '#3B82F6' },
+  { value: 'environment', label: '环保公益', icon: '🌿', color: '#22C55E' },
+  { value: 'culture', label: '文化传播', icon: '🎭', color: '#8B5CF6' },
+  { value: 'health', label: '健康医疗', icon: '🏥', color: '#EF4444' },
+  { value: 'sports', label: '体育赛事', icon: '🏃', color: '#F59E0B' },
+  { value: 'charity', label: '慈善募捐', icon: '💝', color: '#EC4899' },
+  { value: 'other', label: '其他', icon: '📌', color: '#6B7280' }
+];
+
+const VOLUNTEER_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'recruiting', label: '招募中' },
+  { value: 'ongoing', label: '进行中' },
+  { value: 'completed', label: '已结束' }
+];
+
 function getLabelByValue(list, value) {
   const item = list.find(i => i.value === value);
   return item ? item.label : value;
@@ -217,5 +242,8 @@ module.exports = {
   SHOP_CATEGORIES,
   SHOP_SORT_OPTIONS,
   COUPON_TYPES,
+  VOLUNTEER_STATUS,
+  VOLUNTEER_CATEGORIES,
+  VOLUNTEER_TABS,
   getLabelByValue
 };

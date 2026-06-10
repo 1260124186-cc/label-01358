@@ -19,7 +19,11 @@ const STORAGE_KEYS = {
   USER_POINTS: 'userPoints',
   POINT_TRANSACTIONS: 'pointTransactions',
   CAMPUS_SHOP_LIST: 'campusShopList',
-  SHOP_REVIEWS: 'shopReviews'
+  SHOP_REVIEWS: 'shopReviews',
+  VOLUNTEER_ACTIVITY_LIST: 'volunteerActivityList',
+  VOLUNTEER_REGISTRATION_LIST: 'volunteerRegistrationList',
+  VOLUNTEER_CHECKIN_LIST: 'volunteerCheckinList',
+  VOLUNTEER_HOURS_RECORD_LIST: 'volunteerHoursRecordList'
 };
 
 /**

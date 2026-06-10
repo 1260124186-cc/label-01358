@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "志愿服务",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "../../components/empty/index"
+  }
+}

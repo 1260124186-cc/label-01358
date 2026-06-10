@@ -1,0 +1,85 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{activity}}">
+
+  <view class="cert-preview">
+    <view class="cert-card">
+      <view class="cert-border-outer"></view>
+      <view class="cert-border-inner"></view>
+
+      <view class="cert-header">
+        <text class="cert-title">志愿服务证明</text>
+        <text class="cert-subtitle">VOLUNTEER SERVICE CERTIFICATE</text>
+        <view class="cert-divider"></view>
+      </view>
+
+      <view class="cert-body">
+        <view class="cert-line">
+          <text class="cert-text">兹证明</text>
+          <text class="cert-name">{{userRegistration.userName || '志愿者'}}</text>
+          <text class="cert-text">同学</text>
+        </view>
+
+        <view class="cert-paragraph">
+          <text class="cert-text">于{{activity.startTimeFormatted || ''}}至{{activity.endTimeFormatted || ''}}，参加了"{{activity.title}}"志愿服务活动，属于{{categoryInfo.label || '志愿服务'}}类别，在{{activity.location || '本校'}}圆满完成志愿服务工作。</text>
+        </view>
+
+        <view class="cert-highlight-row">
+          <text class="cert-highlight-label">本次服务时长：</text>
+          <text class="cert-highlight-value">{{activity.hours}} 小时</text>
+        </view>
+
+        <view class="cert-normal-row">
+          <text class="cert-text-secondary">累计志愿服务时长：</text>
+          <text class="cert-text-emphasis">{{totalHours}} 小时</text>
+        </view>
+
+        <view class="cert-remark">
+          <text class="cert-text-muted">该同学在志愿服务中表现积极、认真负责，特此证明。</text>
+        </view>
+      </view>
+
+      <view class="cert-footer">
+        <view class="cert-stamp">
+          <text class="stamp-text">证明</text>
+        </view>
+        <view class="cert-sign">
+          <text class="cert-sign-org">XX大学团委</text>
+          <text class="cert-sign-date">{{certificateDate}}</text>
+        </view>
+      </view>
+
+      <view class="cert-no">
+        <text class="cert-no-text">编号：{{certNo}}</text>
+      </view>
+    </view>
+  </view>
+
+  <canvas
+    type="2d"
+    id="certCanvas"
+    class="cert-canvas"
+  ></canvas>
+
+  <view class="image-preview" wx:if="{{imagePath}}">
+    <image class="preview-img" src="{{imagePath}}" mode="widthFix" bindtap="onPreviewImage"></image>
+  </view>
+
+  <view class="bottom-actions">
+    <view class="action-btn action-btn-outline" hover-class="action-btn-hover" bindtap="onPreviewImage">
+      <text class="action-btn-icon">👁️</text>
+      <text>预览图片</text>
+    </view>
+    <view class="action-btn action-btn-primary" hover-class="action-btn-hover" bindtap="onGenerateImage">
+      <text class="action-btn-icon">💾</text>
+      <text>生成并保存</text>
+    </view>
+  </view>
+
+</view>
+
+<view wx:else class="empty-state">
+  <text class="empty-icon">📋</text>
+  <text class="empty-text">暂无可导出的志愿服务证明</text>
+  <text class="empty-hint">完成志愿活动签到签退后即可生成证明</text>
+</view>

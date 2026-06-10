@@ -1,0 +1,131 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+
+<view class="volunteer-detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
+  <scroll-view class="detail-scroll" scroll-y>
+    <view class="header-section">
+      <view class="category-row">
+        <view class="category-tag" style="background: {{categoryInfo.color || '#10B981'}}20; color: {{categoryInfo.color || '#10B981'}}">
+          <text class="category-icon">{{categoryInfo.icon || '📌'}}</text>
+          <text class="category-label">{{categoryInfo.label || '其他'}}</text>
+        </view>
+        <view class="status-tag" style="background: {{statusInfo.color || '#6B7280'}}15; color: {{statusInfo.color || '#6B7280'}}">
+          {{statusInfo.label || detail.status}}
+        </view>
+      </view>
+      <text class="activity-title">{{detail.title}}</text>
+    </view>
+
+    <view class="info-card card">
+      <view class="section-title">活动信息</view>
+      <view class="info-row">
+        <text class="info-icon">🕐</text>
+        <view class="info-content">
+          <text class="info-label">时间</text>
+          <text class="info-value">{{startTimeText}} - {{endTimeText}}</text>
+        </view>
+      </view>
+      <view class="info-row" wx:if="{{detail.location}}">
+        <text class="info-icon">📍</text>
+        <view class="info-content">
+          <text class="info-label">地点</text>
+          <text class="info-value">{{detail.location}}</text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-icon">⏱️</text>
+        <view class="info-content">
+          <text class="info-label">志愿时长</text>
+          <text class="info-value highlight">{{detail.hours}}小时</text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-icon">👥</text>
+        <view class="info-content">
+          <text class="info-label">招募人数</text>
+          <text class="info-value {{registeredCount >= detail.requiredCount ? 'full' : ''}}">{{registeredCount}}/{{detail.requiredCount}}</text>
+        </view>
+      </view>
+      <view class="info-row" wx:if="{{detail.contactName || detail.contactPhone}}">
+        <text class="info-icon">📞</text>
+        <view class="info-content">
+          <text class="info-label">联系人</text>
+          <view class="contact-row">
+            <text class="info-value">{{detail.contactName}}</text>
+            <text class="phone-link" wx:if="{{detail.contactPhone}}" bindtap="onCallPhone">{{detail.contactPhone}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="info-row" wx:if="{{detail.publisherName}}">
+        <text class="info-icon">🏢</text>
+        <view class="info-content">
+          <text class="info-label">发布方</text>
+          <text class="info-value">{{detail.publisherName}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="content-card card" wx:if="{{detail.description}}">
+      <view class="section-title">活动详情</view>
+      <text class="description-text">{{detail.description}}</text>
+    </view>
+
+    <view class="registration-card card" wx:if="{{formattedRegistrations.length > 0}}">
+      <view class="section-title">报名人员 ({{formattedRegistrations.length}})</view>
+      <view class="registration-list">
+        <view class="registration-item" wx:for="{{formattedRegistrations}}" wx:key="id">
+          <view class="reg-avatar">
+            <text class="avatar-letter">{{item.userName[0]}}</text>
+          </view>
+          <text class="reg-name">{{item.userName}}</text>
+          <view class="reg-status" style="background: {{item.statusColor}}15; color: {{item.statusColor}}">
+            {{item.statusLabel}}
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="action-bar">
+    <block wx:if="{{!userRegistration && detail.status === 'recruiting'}}">
+      <view class="action-btn primary" bindtap="registerVolunteerActivity">
+        立即报名
+      </view>
+    </block>
+
+    <block wx:elif="{{userRegistration && userRegistration.status === 'registered'}}">
+      <view class="action-btn outline" bindtap="cancelRegistration">
+        取消报名
+      </view>
+      <view class="action-btn primary" bindtap="onScanCheckin">
+        扫码签到
+      </view>
+    </block>
+
+    <block wx:elif="{{userRegistration && userRegistration.status === 'checked_in'}}">
+      <view class="action-btn primary full" bindtap="onCheckout">
+        签退
+      </view>
+    </block>
+
+    <block wx:elif="{{userRegistration && userRegistration.status === 'completed'}}">
+      <view class="action-btn primary full" bindtap="onViewCertificate">
+        查看证明
+      </view>
+    </block>
+
+    <block wx:elif="{{detail.status === 'completed' && !userRegistration}}">
+      <view class="action-bar-hint">活动已结束</view>
+    </block>
+
+    <block wx:elif="{{detail.status === 'cancelled'}}">
+      <view class="action-bar-hint">活动已取消</view>
+    </block>
+  </view>
+</view>
+
+<view wx:else class="empty-state">
+  <text class="empty-icon">📋</text>
+  <text class="empty-text">活动不存在或已删除</text>
+</view>

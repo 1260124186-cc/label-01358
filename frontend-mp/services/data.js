@@ -11,6 +11,35 @@ let studyMaterialsInitialized = false;
 let studyRewardsInitialized = false;
 let campusShopsInitialized = false;
 let shopReviewsInitialized = false;
+let volunteerInitialized = false;
+
+function initVolunteerData() {
+  if (volunteerInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const activities = mockData.MOCK_VOLUNTEER_ACTIVITIES.map((item, index) => ({
+      id: 'mock_vol_' + index + '_' + now,
+      ...item,
+      registrations: (item.registrations || []).map((r, rIdx) => ({
+        id: 'reg_' + index + '_' + rIdx + '_' + now,
+        ...r
+      })),
+      views: item.views || 0,
+      createTime: now - (index + 1) * 86400000,
+      updateTime: now - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST, activities);
+
+    const hoursRecords = mockData.MOCK_VOLUNTEER_HOURS_RECORDS.map((item, index) => ({
+      id: 'hours_' + index + '_' + now,
+      ...item,
+      activityId: activities[index < activities.length ? index : 0] ? activities[index < activities.length ? index : 0].id : ''
+    }));
+    storage.set(STORAGE_KEYS.VOLUNTEER_HOURS_RECORD_LIST, hoursRecords);
+  }
+  volunteerInitialized = true;
+}
 
 function initStudyMaterials() {
   if (studyMaterialsInitialized) return;
@@ -1262,6 +1291,319 @@ function addShopReview(shopId, reviewData) {
   return review;
 }
 
+// ==================== 志愿服务 ====================
+
+function getVolunteerActivityList(filters = {}) {
+  initVolunteerData();
+  let list = storage.getList(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST);
+
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  if (filters.category) {
+    list = list.filter(item => item.category === filters.category);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'description', 'location']);
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getVolunteerActivityDetail(id) {
+  initVolunteerData();
+  const list = storage.getList(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function publishVolunteerActivity(data) {
+  initVolunteerData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const item = {
+    id: util.generateId(),
+    ...data,
+    publisherId: userInfo.id || 'admin',
+    publisherName: userInfo.nickName || '管理员',
+    registrations: [],
+    views: 0,
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST, item);
+  return success ? item : null;
+}
+
+function updateVolunteerActivity(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+}
+
+function increaseVolunteerViews(id) {
+  const item = getVolunteerActivityDetail(id);
+  if (item) {
+    return storage.updateInList(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST, id, {
+      views: (item.views || 0) + 1
+    });
+  }
+  return false;
+}
+
+function registerVolunteerActivity(activityId) {
+  initVolunteerData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+  const userName = userInfo.nickName || '志愿者';
+
+  const activity = getVolunteerActivityDetail(activityId);
+  if (!activity) return { success: false, message: '活动不存在' };
+
+  if (activity.status !== 'recruiting') {
+    return { success: false, message: '活动不在招募中' };
+  }
+
+  const registrations = activity.registrations || [];
+  const alreadyRegistered = registrations.some(r => r.userId === userId);
+  if (alreadyRegistered) {
+    return { success: false, message: '您已报名该活动' };
+  }
+
+  if (registrations.length >= activity.requiredCount) {
+    return { success: false, message: '报名人数已满' };
+  }
+
+  const registration = {
+    id: util.generateId(),
+    userId,
+    userName,
+    status: 'registered',
+    registerTime: Date.now()
+  };
+
+  registrations.push(registration);
+  storage.updateInList(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST, activityId, {
+    registrations,
+    updateTime: Date.now()
+  });
+
+  return { success: true, registration };
+}
+
+function cancelVolunteerRegistration(activityId) {
+  initVolunteerData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+
+  const activity = getVolunteerActivityDetail(activityId);
+  if (!activity) return false;
+
+  const registrations = (activity.registrations || []).filter(r => r.userId !== userId);
+  return storage.updateInList(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST, activityId, {
+    registrations,
+    updateTime: Date.now()
+  });
+}
+
+function checkinVolunteer(activityId, userId) {
+  initVolunteerData();
+  const activity = getVolunteerActivityDetail(activityId);
+  if (!activity) return { success: false, message: '活动不存在' };
+
+  const registrations = activity.registrations || [];
+  const regIndex = registrations.findIndex(r => r.userId === userId);
+  if (regIndex === -1) return { success: false, message: '未报名该活动' };
+
+  if (registrations[regIndex].status === 'checked_in') {
+    return { success: false, message: '已签到' };
+  }
+
+  if (registrations[regIndex].status === 'completed') {
+    return { success: false, message: '已完成签到签退' };
+  }
+
+  registrations[regIndex] = {
+    ...registrations[regIndex],
+    status: 'checked_in',
+    checkinTime: Date.now()
+  };
+
+  storage.updateInList(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST, activityId, {
+    registrations,
+    updateTime: Date.now()
+  });
+
+  return { success: true };
+}
+
+function checkoutVolunteer(activityId, userId) {
+  initVolunteerData();
+  const activity = getVolunteerActivityDetail(activityId);
+  if (!activity) return { success: false, message: '活动不存在' };
+
+  const registrations = activity.registrations || [];
+  const regIndex = registrations.findIndex(r => r.userId === userId);
+  if (regIndex === -1) return { success: false, message: '未报名该活动' };
+
+  if (registrations[regIndex].status !== 'checked_in') {
+    return { success: false, message: '请先签到' };
+  }
+
+  registrations[regIndex] = {
+    ...registrations[regIndex],
+    status: 'completed',
+    checkoutTime: Date.now()
+  };
+
+  storage.updateInList(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST, activityId, {
+    registrations,
+    status: 'completed',
+    updateTime: Date.now()
+  });
+
+  const hoursRecord = {
+    id: util.generateId(),
+    userId,
+    userName: registrations[regIndex].userName,
+    activityId,
+    activityTitle: activity.title,
+    hours: activity.hours,
+    category: activity.category,
+    semester: getCurrentSemester(),
+    createTime: Date.now()
+  };
+  storage.addToList(STORAGE_KEYS.VOLUNTEER_HOURS_RECORD_LIST, hoursRecord);
+
+  return { success: true, hours: activity.hours };
+}
+
+function scanCheckin(activityId) {
+  initVolunteerData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+
+  const activity = getVolunteerActivityDetail(activityId);
+  if (!activity) return { success: false, message: '活动不存在' };
+
+  const registrations = activity.registrations || [];
+  const reg = registrations.find(r => r.userId === userId);
+
+  if (!reg) {
+    return registerVolunteerActivity(activityId);
+  }
+
+  if (reg.status === 'registered') {
+    return checkinVolunteer(activityId, userId);
+  }
+
+  if (reg.status === 'checked_in') {
+    return checkoutVolunteer(activityId, userId);
+  }
+
+  return { success: false, message: '已完成签到签退' };
+}
+
+function getCurrentSemester() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+  if (month >= 2 && month <= 7) {
+    return year + '-' + (year + 1) + '-2';
+  } else {
+    const y = month >= 8 ? year : year - 1;
+    return y + '-' + (y + 1) + '-1';
+  }
+}
+
+function getUserVolunteerHours(userId, semester) {
+  initVolunteerData();
+  const records = storage.getList(STORAGE_KEYS.VOLUNTEER_HOURS_RECORD_LIST);
+  let userRecords = records.filter(r => r.userId === userId);
+
+  if (semester) {
+    userRecords = userRecords.filter(r => r.semester === semester);
+  }
+
+  const totalHours = userRecords.reduce((sum, r) => sum + (r.hours || 0), 0);
+  const activityCount = userRecords.length;
+
+  return {
+    totalHours,
+    activityCount,
+    records: userRecords.sort((a, b) => b.createTime - a.createTime),
+    semester
+  };
+}
+
+function getVolunteerHoursByCategory(userId) {
+  initVolunteerData();
+  const records = storage.getList(STORAGE_KEYS.VOLUNTEER_HOURS_RECORD_LIST);
+  const userRecords = records.filter(r => r.userId === userId);
+
+  const categoryMap = {};
+  userRecords.forEach(r => {
+    if (!categoryMap[r.category]) {
+      categoryMap[r.category] = { category: r.category, hours: 0, count: 0 };
+    }
+    categoryMap[r.category].hours += r.hours || 0;
+    categoryMap[r.category].count += 1;
+  });
+
+  return Object.values(categoryMap).sort((a, b) => b.hours - a.hours);
+}
+
+function getVolunteerLeaderboard(semester) {
+  initVolunteerData();
+  const records = storage.getList(STORAGE_KEYS.VOLUNTEER_HOURS_RECORD_LIST);
+  let filteredRecords = records;
+
+  if (semester) {
+    filteredRecords = records.filter(r => r.semester === semester);
+  }
+
+  const userMap = {};
+  filteredRecords.forEach(r => {
+    if (!userMap[r.userId]) {
+      userMap[r.userId] = {
+        userId: r.userId,
+        userName: r.userName || '未知用户',
+        totalHours: 0,
+        activityCount: 0
+      };
+    }
+    userMap[r.userId].totalHours += r.hours || 0;
+    userMap[r.userId].activityCount += 1;
+  });
+
+  return Object.values(userMap).sort((a, b) => b.totalHours - a.totalHours);
+}
+
+function getUserRegistrations(userId) {
+  initVolunteerData();
+  const activities = storage.getList(STORAGE_KEYS.VOLUNTEER_ACTIVITY_LIST);
+  const result = [];
+
+  activities.forEach(activity => {
+    const reg = (activity.registrations || []).find(r => r.userId === userId);
+    if (reg) {
+      result.push({
+        ...activity,
+        userRegistration: reg
+      });
+    }
+  });
+
+  return result.sort((a, b) => b.createTime - a.createTime);
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -1347,5 +1689,21 @@ module.exports = {
   getCampusShopDetail,
   increaseShopViews,
   getShopReviews,
-  addShopReview
+  addShopReview,
+
+  getVolunteerActivityList,
+  getVolunteerActivityDetail,
+  publishVolunteerActivity,
+  updateVolunteerActivity,
+  increaseVolunteerViews,
+  registerVolunteerActivity,
+  cancelVolunteerRegistration,
+  checkinVolunteer,
+  checkoutVolunteer,
+  scanCheckin,
+  getCurrentSemester,
+  getUserVolunteerHours,
+  getVolunteerHoursByCategory,
+  getVolunteerLeaderboard,
+  getUserRegistrations
 };

@@ -1,0 +1,277 @@
+.volunteer-detail-page {
+  min-height: 100vh;
+  background: var(--color-bg-page);
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-scroll {
+  flex: 1;
+  height: calc(100vh - 140rpx);
+}
+
+.header-section {
+  padding: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  background: var(--color-bg-card);
+  border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+  box-shadow: var(--shadow-sm);
+}
+
+.category-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+}
+
+.category-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 8rpx 20rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--font-sm);
+  font-weight: 500;
+}
+
+.category-icon {
+  font-size: var(--font-md);
+}
+
+.category-label {
+  font-size: var(--font-sm);
+}
+
+.status-tag {
+  padding: 8rpx 20rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--font-sm);
+  font-weight: 600;
+}
+
+.activity-title {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+
+.card {
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: var(--spacing-lg);
+  margin: var(--spacing-lg) var(--spacing-lg) 0;
+  box-shadow: var(--shadow-card);
+}
+
+.section-title {
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 14rpx 0;
+  border-bottom: 1rpx solid var(--color-divider);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-icon {
+  width: 48rpx;
+  font-size: var(--font-lg);
+  flex-shrink: 0;
+  text-align: center;
+  padding-top: 2rpx;
+}
+
+.info-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.info-label {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+}
+
+.info-value {
+  font-size: var(--font-base);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.info-value.highlight {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.info-value.full {
+  color: var(--color-warning);
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+.phone-link {
+  font-size: var(--font-base);
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+.description-text {
+  font-size: var(--font-base);
+  color: var(--color-text-secondary);
+  line-height: 1.8;
+  white-space: pre-wrap;
+}
+
+.registration-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.registration-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: 12rpx 16rpx;
+  background: var(--color-bg-input);
+  border-radius: var(--radius-md);
+}
+
+.reg-avatar {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.volunteer-detail-page.dark .reg-avatar {
+  background: linear-gradient(135deg, #2A6E68 0%, #2D5A54 100%);
+}
+
+.avatar-letter {
+  font-size: var(--font-md);
+  font-weight: 600;
+  color: #fff;
+}
+
+.reg-name {
+  flex: 1;
+  font-size: var(--font-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.reg-status {
+  padding: 6rpx 16rpx;
+  border-radius: var(--radius-full);
+  font-size: var(--font-xs);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.bottom-spacer {
+  height: 40rpx;
+}
+
+.action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: 20rpx var(--spacing-xl);
+  padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
+  background: var(--color-bg-card);
+  border-top: 1rpx solid var(--color-border);
+  z-index: 100;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  border-radius: var(--radius-2xl);
+  font-size: var(--font-md);
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.action-btn:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.action-btn.primary {
+  flex: 1;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  color: #fff;
+  box-shadow: 0 6rpx 20rpx rgba(255, 107, 107, 0.35);
+}
+
+.action-btn.primary.full {
+  flex: 1;
+}
+
+.action-btn.outline {
+  width: 240rpx;
+  flex-shrink: 0;
+  background: var(--color-bg-card);
+  color: var(--color-text-secondary);
+  border: 2rpx solid var(--color-border);
+  box-shadow: none;
+}
+
+.volunteer-detail-page.dark .action-btn.outline {
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.action-bar-hint {
+  flex: 1;
+  text-align: center;
+  font-size: var(--font-base);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: var(--color-bg-page);
+}
+
+.empty-icon {
+  font-size: 100rpx;
+  margin-bottom: var(--spacing-lg);
+  opacity: 0.4;
+}
+
+.empty-text {
+  font-size: var(--font-base);
+  color: var(--color-text-muted);
+}

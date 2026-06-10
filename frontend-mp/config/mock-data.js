@@ -1518,6 +1518,171 @@ const MOCK_SHOP_REVIEWS = [
   }
 ];
 
+const MOCK_VOLUNTEER_ACTIVITIES = [
+  {
+    title: '校园开放日志愿者',
+    category: 'community',
+    description: '协助校园开放日的导览、咨询、秩序维护等工作，向来访家长和考生展示校园风采',
+    startTime: Date.now() + 3 * 86400000,
+    endTime: Date.now() + 3 * 86400000 + 8 * 3600000,
+    location: '学校正门集合',
+    requiredCount: 30,
+    hours: 8,
+    contactName: '张老师',
+    contactPhone: '010-12345001',
+    publisherId: 'admin',
+    publisherName: '校团委',
+    status: 'recruiting',
+    views: 256,
+    registrations: [
+      { userId: 'test_user', userName: '志愿者小明', status: 'registered', registerTime: Date.now() - 86400000 },
+      { userId: 'user_2', userName: '热心同学', status: 'checked_in', registerTime: Date.now() - 172800000 },
+      { userId: 'user_3', userName: '小红', status: 'registered', registerTime: Date.now() - 100000000 }
+    ]
+  },
+  {
+    title: '社区义教助学活动',
+    category: 'education',
+    description: '前往周边社区为留守儿童提供课业辅导和兴趣课程，传递知识与温暖',
+    startTime: Date.now() + 7 * 86400000,
+    endTime: Date.now() + 7 * 86400000 + 4 * 3600000,
+    location: '阳光社区服务中心',
+    requiredCount: 15,
+    hours: 4,
+    contactName: '李老师',
+    contactPhone: '010-12345002',
+    publisherId: 'admin',
+    publisherName: '校青协',
+    status: 'recruiting',
+    views: 189,
+    registrations: [
+      { userId: 'test_user', userName: '志愿者小明', status: 'checked_in', registerTime: Date.now() - 259200000 }
+    ]
+  },
+  {
+    title: '植树节环保行动',
+    category: 'environment',
+    description: '参与校园及周边绿化带的植树造林活动，为美丽家园添一份绿',
+    startTime: Date.now() - 5 * 86400000,
+    endTime: Date.now() - 5 * 86400000 + 6 * 3600000,
+    location: '校园东门绿化带',
+    requiredCount: 50,
+    hours: 6,
+    contactName: '王老师',
+    contactPhone: '010-12345003',
+    publisherId: 'admin',
+    publisherName: '校环保协会',
+    status: 'completed',
+    views: 432,
+    registrations: [
+      { userId: 'test_user', userName: '志愿者小明', status: 'completed', registerTime: Date.now() - 10 * 86400000, checkinTime: Date.now() - 5 * 86400000, checkoutTime: Date.now() - 5 * 86400000 + 6 * 3600000 },
+      { userId: 'user_2', userName: '热心同学', status: 'completed', registerTime: Date.now() - 9 * 86400000, checkinTime: Date.now() - 5 * 86400000, checkoutTime: Date.now() - 5 * 86400000 + 6 * 3600000 },
+      { userId: 'user_3', userName: '小红', status: 'completed', registerTime: Date.now() - 9 * 86400000, checkinTime: Date.now() - 5 * 86400000, checkoutTime: Date.now() - 5 * 86400000 + 5 * 3600000 }
+    ]
+  },
+  {
+    title: '校运会志愿服务',
+    category: 'sports',
+    description: '协助校运会的裁判、计分、器材管理、医疗保障等工作',
+    startTime: Date.now() - 15 * 86400000,
+    endTime: Date.now() - 13 * 86400000,
+    location: '校体育场',
+    requiredCount: 80,
+    hours: 16,
+    contactName: '赵老师',
+    contactPhone: '010-12345004',
+    publisherId: 'admin',
+    publisherName: '体育部',
+    status: 'completed',
+    views: 678,
+    registrations: [
+      { userId: 'test_user', userName: '志愿者小明', status: 'completed', registerTime: Date.now() - 20 * 86400000, checkinTime: Date.now() - 15 * 86400000, checkoutTime: Date.now() - 13 * 86400000 },
+      { userId: 'user_4', userName: '运动达人', status: 'completed', registerTime: Date.now() - 19 * 86400000, checkinTime: Date.now() - 15 * 86400000, checkoutTime: Date.now() - 13 * 86400000 }
+    ]
+  },
+  {
+    title: '文化遗产日讲解员',
+    category: 'culture',
+    description: '在校园博物馆担任讲解员，向参观者介绍校史和文物展品',
+    startTime: Date.now() + 10 * 86400000,
+    endTime: Date.now() + 10 * 86400000 + 5 * 3600000,
+    location: '校史馆',
+    requiredCount: 10,
+    hours: 5,
+    contactName: '陈老师',
+    contactPhone: '010-12345005',
+    publisherId: 'admin',
+    publisherName: '校史馆',
+    status: 'recruiting',
+    views: 145,
+    registrations: []
+  },
+  {
+    title: '冬季无偿献血活动',
+    category: 'health',
+    description: '协助市中心血站开展校园无偿献血活动，负责登记、引导、后勤保障等工作',
+    startTime: Date.now() + 5 * 86400000,
+    endTime: Date.now() + 5 * 86400000 + 6 * 3600000,
+    location: '学生活动中心',
+    requiredCount: 20,
+    hours: 6,
+    contactName: '刘老师',
+    contactPhone: '010-12345006',
+    publisherId: 'admin',
+    publisherName: '校红十字会',
+    status: 'recruiting',
+    views: 312,
+    registrations: [
+      { userId: 'user_5', userName: '爱心同学', status: 'registered', registerTime: Date.now() - 86400000 }
+    ]
+  },
+  {
+    title: '爱心义卖助学活动',
+    category: 'charity',
+    description: '参与校园爱心义卖活动，义卖所得善款将全部用于资助贫困学生',
+    startTime: Date.now() - 30 * 86400000,
+    endTime: Date.now() - 30 * 86400000 + 8 * 3600000,
+    location: '食堂广场',
+    requiredCount: 25,
+    hours: 8,
+    contactName: '孙老师',
+    contactPhone: '010-12345007',
+    publisherId: 'admin',
+    publisherName: '校学生会',
+    status: 'completed',
+    views: 523,
+    registrations: [
+      { userId: 'test_user', userName: '志愿者小明', status: 'completed', registerTime: Date.now() - 35 * 86400000, checkinTime: Date.now() - 30 * 86400000, checkoutTime: Date.now() - 30 * 86400000 + 8 * 3600000 }
+    ]
+  },
+  {
+    title: '迎新志愿服务',
+    category: 'other',
+    description: '协助新生报到、搬运行李、指引路线等，让新同学感受到家的温暖',
+    startTime: Date.now() + 30 * 86400000,
+    endTime: Date.now() + 32 * 86400000,
+    location: '学校各入口',
+    requiredCount: 100,
+    hours: 12,
+    contactName: '周老师',
+    contactPhone: '010-12345008',
+    publisherId: 'admin',
+    publisherName: '校团委',
+    status: 'recruiting',
+    views: 89,
+    registrations: []
+  }
+];
+
+const MOCK_VOLUNTEER_HOURS_RECORDS = [
+  { userId: 'test_user', activityId: '', activityTitle: '校园开放日志愿者', hours: 8, category: 'community', semester: '2025-2026-2', createTime: Date.now() - 90 * 86400000 },
+  { userId: 'test_user', activityId: '', activityTitle: '植树节环保行动', hours: 6, category: 'environment', semester: '2025-2026-2', createTime: Date.now() - 5 * 86400000 },
+  { userId: 'test_user', activityId: '', activityTitle: '校运会志愿服务', hours: 16, category: 'sports', semester: '2025-2026-2', createTime: Date.now() - 15 * 86400000 },
+  { userId: 'test_user', activityId: '', activityTitle: '爱心义卖助学活动', hours: 8, category: 'charity', semester: '2025-2026-2', createTime: Date.now() - 30 * 86400000 },
+  { userId: 'test_user', activityId: '', activityTitle: '社区义教助学活动', hours: 4, category: 'education', semester: '2025-2026-1', createTime: Date.now() - 120 * 86400000 },
+  { userId: 'test_user', activityId: '', activityTitle: '迎新志愿服务', hours: 12, category: 'other', semester: '2025-2026-1', createTime: Date.now() - 150 * 86400000 }
+];
+
 module.exports = {
   ANNOUNCEMENTS,
   CAMPUS_NEWS,
@@ -1531,6 +1696,8 @@ module.exports = {
   MOCK_CAMPUS_SHOPS,
   MOCK_SHOP_REVIEWS,
   NOTIFICATION_TEMPLATES,
+  MOCK_VOLUNTEER_ACTIVITIES,
+  MOCK_VOLUNTEER_HOURS_RECORDS,
   WEATHER_DATA,
   EMERGENCY_PHONES,
   PHONEBOOK_CATEGORIES,

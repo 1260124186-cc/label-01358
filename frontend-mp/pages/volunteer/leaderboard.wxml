@@ -1,0 +1,103 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="filter-bar">
+    <picker mode="selector" range="{{semesterOptions}}" value="{{semesterIndex}}" bindchange="onSemesterChange">
+      <view class="filter-picker">
+        <text class="filter-text">{{semesterOptions[semesterIndex]}}</text>
+        <text class="filter-arrow">▾</text>
+      </view>
+    </picker>
+  </view>
+
+  <view class="podium-section" wx:if="{{leaderboard.length >= 3}}">
+    <view class="podium">
+      <view class="podium-item podium-second">
+        <view class="podium-avatar-wrap">
+          <view class="podium-medal">🥈</view>
+          <view class="podium-avatar" style="background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);">
+            <text class="avatar-letter">{{leaderboard[1].userName[0]}}</text>
+          </view>
+        </view>
+        <text class="podium-name">{{leaderboard[1].userName}}</text>
+        <text class="podium-hours">{{leaderboard[1].totalHours}}h</text>
+        <view class="podium-bar podium-bar-2"></view>
+      </view>
+      <view class="podium-item podium-first">
+        <view class="podium-avatar-wrap">
+          <view class="podium-crown">👑</view>
+          <view class="podium-avatar" style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);">
+            <text class="avatar-letter">{{leaderboard[0].userName[0]}}</text>
+          </view>
+        </view>
+        <text class="podium-name">{{leaderboard[0].userName}}</text>
+        <text class="podium-hours">{{leaderboard[0].totalHours}}h</text>
+        <view class="podium-bar podium-bar-1"></view>
+      </view>
+      <view class="podium-item podium-third">
+        <view class="podium-avatar-wrap">
+          <view class="podium-medal">🥉</view>
+          <view class="podium-avatar" style="background: linear-gradient(135deg, #CD7F32 0%, #B87333 100%);">
+            <text class="avatar-letter">{{leaderboard[2].userName[0]}}</text>
+          </view>
+        </view>
+        <text class="podium-name">{{leaderboard[2].userName}}</text>
+        <text class="podium-hours">{{leaderboard[2].totalHours}}h</text>
+        <view class="podium-bar podium-bar-3"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="rank-list">
+    <view
+      class="rank-item {{item.isMe ? 'rank-item-me' : ''}}"
+      wx:for="{{leaderboard}}"
+      wx:key="userId"
+    >
+      <view class="rank-left">
+        <view class="rank-number {{item.isTop3 ? 'rank-top3' : ''}}" wx:if="{{!item.isTop3}}">
+          <text class="rank-num-text">{{item.rank}}</text>
+        </view>
+        <view class="rank-medal" wx:if="{{item.isTop3}}">
+          <text class="rank-medal-icon">{{item.medalIcon}}</text>
+        </view>
+        <view class="rank-avatar" style="background: linear-gradient(135deg, {{item.isMe ? '#FF6B6B' : '#4ECDC4'}} 0%, {{item.isMe ? '#FF8E8E' : '#44A08D'}} 100%);">
+          <text class="avatar-letter">{{item.userName[0]}}</text>
+        </view>
+        <view class="rank-info">
+          <text class="rank-name">{{item.userName}}</text>
+          <text class="rank-activities">{{item.activityCount}}次活动</text>
+        </view>
+      </view>
+      <view class="rank-right">
+        <text class="rank-hours">{{item.totalHours}}</text>
+        <text class="rank-unit">小时</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="my-rank-card" wx:if="{{currentUserRank}}">
+    <view class="my-rank-left">
+      <view class="my-rank-badge">
+        <text class="my-rank-num">{{currentUserRank.rank}}</text>
+      </view>
+      <view class="my-rank-avatar">
+        <text class="avatar-letter">{{currentUserRank.userName[0]}}</text>
+      </view>
+      <view class="my-rank-info">
+        <text class="my-rank-label">我的排名</text>
+        <text class="my-rank-name">{{currentUserRank.userName}}</text>
+      </view>
+    </view>
+    <view class="my-rank-right">
+      <text class="my-rank-hours">{{currentUserRank.totalHours}}</text>
+      <text class="my-rank-unit">小时</text>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{!loading && leaderboard.length === 0}}">
+    <text class="empty-icon">🏆</text>
+    <text class="empty-text">暂无排行数据</text>
+  </view>
+
+</view>
