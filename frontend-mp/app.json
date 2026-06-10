@@ -38,7 +38,7 @@
     "pages/volunteer/certificate",
     "pages/volunteer/leaderboard",
     "pages/volunteer/stats",
-    "pages/errand/index",
+    "pages/errand/index/index",
     "pages/errand/express-create/index",
     "pages/errand/print-create/index",
     "pages/errand/orders/index",
