@@ -1,0 +1,218 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+
+<view class="canteen-detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
+  <scroll-view class="detail-scroll" scroll-y>
+    <view class="swiper-section" wx:if="{{detail.images && detail.images.length > 0}}">
+      <swiper
+        class="image-swiper"
+        indicator-dots="{{false}}"
+        autoplay="{{false}}"
+        circular
+        current="{{currentImageIndex}}"
+        bindchange="onSwiperChange"
+      >
+        <swiper-item wx:for="{{detail.images}}" wx:key="*this" data-index="{{index}}" bindtap="onPreviewImage">
+          <image class="swiper-image" src="{{item}}" mode="aspectFill"/>
+        </swiper-item>
+      </swiper>
+      <view class="image-counter">
+        {{currentImageIndex + 1}}/{{detail.images.length}}
+      </view>
+      <view class="business-status-badge status-{{businessStatus.status}}">
+        <view class="status-dot"></view>
+        <text class="status-text">{{businessStatus.text}}</text>
+      </view>
+    </view>
+
+    <view class="no-image-placeholder" wx:else>
+      <text class="placeholder-icon">🍽️</text>
+    </view>
+
+    <view class="detail-content">
+      <view class="canteen-basic card">
+        <view class="name-row">
+          <text class="canteen-name">{{detail.name}}</text>
+          <view class="favorite-btn {{isFavorite ? 'active' : ''}}" bindtap="onToggleFavoriteCanteen">
+            <text class="favorite-icon">{{isFavorite ? '❤️' : '🤍'}}</text>
+          </view>
+        </view>
+        <view class="rating-row">
+          <view class="rating-stars">
+            <text wx:for="{{detail.ratingInfo.full}}" wx:key="*this" class="star full">★</text>
+            <text wx:if="{{detail.ratingInfo.half}}" class="star half">★</text>
+            <text wx:for="{{detail.ratingInfo.empty}}" wx:key="*this" class="star empty">★</text>
+          </view>
+          <text class="rating-num">{{detail.rating}}</text>
+          <text class="review-count">{{detail.reviewCount || 0}}条评价</text>
+        </view>
+        <view class="location-row" wx:if="{{detail.location}}">
+          <text class="location-icon">📍</text>
+          <text class="location-text">{{detail.location}}</text>
+        </view>
+      </view>
+
+      <view class="business-hours card">
+        <view class="section-title">🕐 营业时间</view>
+        <view class="hours-list">
+          <view class="hour-item">
+            <text class="meal-label">🌅 早餐</text>
+            <text class="meal-time">{{detail.breakfastHours}}</text>
+          </view>
+          <view class="hour-item">
+            <text class="meal-label">☀️ 午餐</text>
+            <text class="meal-time">{{detail.lunchHours}}</text>
+          </view>
+          <view class="hour-item">
+            <text class="meal-label">🌙 晚餐</text>
+            <text class="meal-time">{{detail.dinnerHours}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="crowd-status card" wx:if="{{detail.crowdLevel}}">
+        <view class="section-title">👥 拥挤度</view>
+        <view class="crowd-card crowd-{{detail.crowdLevel}}">
+          <view class="crowd-info">
+            <text class="crowd-level">
+              <block wx:if="{{detail.crowdLevel === 'idle'}}">空闲</block>
+              <block wx:elif="{{detail.crowdLevel === 'moderate'}}">适中</block>
+              <block wx:elif="{{detail.crowdLevel === 'crowded'}}">拥挤</block>
+              <block wx:else>未知</block>
+            </text>
+            <text class="crowd-desc" wx:if="{{detail.crowdDesc}}">{{detail.crowdDesc}}</text>
+          </view>
+          <view class="crowd-bars">
+            <view class="bar bar-1"></view>
+            <view class="bar bar-2"></view>
+            <view class="bar bar-3"></view>
+          </view>
+        </view>
+      </view>
+
+      <view class="stalls-section card" wx:if="{{detail.stalls && detail.stalls.length > 0}}">
+        <view class="section-title">🏪 档口列表</view>
+        <view class="stalls-list">
+          <view wx:for="{{detail.stalls}}" wx:key="id" class="stall-item">
+            <view class="stall-info">
+              <view class="stall-header">
+                <text class="stall-floor">{{item.floor}}F</text>
+                <text class="stall-name">{{item.name}}</text>
+              </view>
+              <view class="stall-tags" wx:if="{{item.featureTags && item.featureTags.length > 0}}">
+                <text wx:for="{{item.featureTags}}" wx:for-item="tag" wx:key="*this" class="stall-tag">
+                  {{tag}}
+                </text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="dishes-section">
+        <view class="meal-tabs card">
+          <view
+            wx:for="{{mealTabs}}"
+            wx:key="key"
+            class="tab-item {{currentMeal === item.key ? 'active' : ''}}"
+            data-meal="{{item.key}}"
+            bindtap="onMealTabChange"
+          >
+            <text class="tab-text">{{item.label}}</text>
+            <view class="tab-underline"></view>
+          </view>
+        </view>
+
+        <view class="dishes-list" wx:if="{{dishes.length > 0}}">
+          <view
+            wx:for="{{dishes}}"
+            wx:key="id"
+            class="dish-card card"
+            data-id="{{item.id}}"
+            bindtap="onDishTap"
+          >
+            <image class="dish-image" src="{{item.cover || '/assets/images/default-banner.png'}}" mode="aspectFill"/>
+            <view class="dish-info">
+              <text class="dish-name">{{item.name}}</text>
+              <view class="dish-tags" wx:if="{{item.tags && item.tags.length > 0}}">
+                <text
+                  wx:for="{{item.tags}}"
+                  wx:for-item="tag"
+                  wx:key="*this"
+                  class="dish-tag tag-{{tag}}"
+                >{{tag}}</text>
+              </view>
+              <text class="dish-desc" wx:if="{{item.description}}">{{item.description}}</text>
+              <text class="dish-price">¥{{item.priceText}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:else class="no-dishes card">
+          <text class="no-dishes-icon">🍴</text>
+          <text class="no-dishes-text">当前餐次暂无菜品</text>
+        </view>
+      </view>
+
+      <view class="reviews-section card">
+        <view class="section-title-row">
+          <text class="section-title">💬 食堂点评 ({{reviews.length}})</text>
+        </view>
+
+        <view wx:if="{{reviews.length === 0}}" class="no-reviews">
+          <text class="no-reviews-icon">📝</text>
+          <text class="no-reviews-text">暂无点评</text>
+        </view>
+
+        <view wx:else class="reviews-list">
+          <view wx:for="{{reviews}}" wx:key="id" class="review-card">
+            <view class="review-header">
+              <view class="reviewer-avatar">
+                <text class="avatar-letter">{{item.userName[0]}}</text>
+              </view>
+              <view class="reviewer-info">
+                <text class="reviewer-name">{{item.userName}}</text>
+                <view class="review-rating">
+                  <text wx:for="{{5}}" wx:key="*this" class="star {{index < item.rating ? 'filled' : 'empty'}}" wx:for-item="sIdx">★</text>
+                </view>
+              </view>
+              <text class="review-time">{{item.timeText}}</text>
+            </view>
+            <text class="review-content">{{item.content}}</text>
+            <view class="review-tags" wx:if="{{(item.recommendTags && item.recommendTags.length > 0) || (item.avoidTags && item.avoidTags.length > 0)}}">
+              <view class="tags-group" wx:if="{{item.recommendTags && item.recommendTags.length > 0}}">
+                <text class="group-label">推荐：</text>
+                <text wx:for="{{item.recommendTags}}" wx:for-item="rtag" wx:key="*this" class="review-tag recommend-tag">
+                  {{rtag}}
+                </text>
+              </view>
+              <view class="tags-group" wx:if="{{item.avoidTags && item.avoidTags.length > 0}}">
+                <text class="group-label">避雷：</text>
+                <text wx:for="{{item.avoidTags}}" wx:for-item="atag" wx:key="*this" class="review-tag avoid-tag">
+                  {{atag}}
+                </text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="action-bar">
+    <view class="call-btn" bindtap="onCallPhone" wx:if="{{detail.phone}}">
+      <text class="call-icon">📞</text>
+      <text class="call-text">联系食堂</text>
+    </view>
+    <view class="fav-action-btn {{isFavorite ? 'favorited' : ''}}" bindtap="onToggleFavoriteCanteen">
+      <text class="fav-icon">{{isFavorite ? '❤️' : '🤍'}}</text>
+      <text class="fav-text">{{isFavorite ? '已收藏' : '收藏'}}</text>
+    </view>
+  </view>
+</view>
+
+<view wx:else class="empty-state">
+  <text class="empty-icon">🍽️</text>
+  <text class="empty-text">食堂不存在或已关闭</text>
+</view>

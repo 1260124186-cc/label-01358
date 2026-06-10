@@ -70,6 +70,13 @@ Page({
         url: '/pages/campus-shop/index'
       },
       {
+        id: 'canteen',
+        name: '食堂菜谱',
+        icon: '/assets/icons/nav-market.png',
+        bgColor: 'linear-gradient(135deg, #FEF9C3 0%, #FEF08A 100%)',
+        url: '/pages/canteen/index'
+      },
+      {
         id: 'errand',
         name: '跑腿服务',
         icon: '/assets/icons/nav-market.png',

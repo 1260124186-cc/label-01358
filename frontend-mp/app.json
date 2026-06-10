@@ -50,7 +50,10 @@
     "pages/errand/address/index",
     "pages/carpool/index",
     "pages/carpool-publish/index",
-    "pages/carpool-detail/index"
+    "pages/carpool-detail/index",
+    "pages/canteen/index",
+    "pages/canteen/detail",
+    "pages/canteen/dish-detail"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

@@ -2127,6 +2127,224 @@ const MOCK_CARPOOLS = [
   }
 ];
 
+const CROWD_LEVELS = [
+  { value: 'idle', label: '空闲', color: '#52C41A', icon: '😊', desc: '无需排队，随到随吃' },
+  { value: 'moderate', label: '适中', color: '#FAAD14', icon: '🙂', desc: '稍有排队，等待5分钟' },
+  { value: 'crowded', label: '拥挤', color: '#FF4D4F', icon: '😰', desc: '排队严重，等待15分钟+' }
+];
+
+const BREAKFAST_DISHES = [
+  { id: 'breakfast1', name: '肉包子', price: 2.5, image: 'https://picsum.photos/seed/baozi/400/400', description: '猪肉大葱馅，皮薄馅大', tag: '招牌', calories: 220 },
+  { id: 'breakfast2', name: '豆浆油条', price: 4, image: 'https://picsum.photos/seed/doujiang/400/400', description: '现磨豆浆配酥脆油条', tag: '经典', calories: 350 },
+  { id: 'breakfast3', name: '茶叶蛋', price: 1.5, image: 'https://picsum.photos/seed/egg/400/400', description: '五香茶叶蛋，入味十足', tag: '', calories: 80 },
+  { id: 'breakfast4', name: '小米粥', price: 2, image: 'https://picsum.photos/seed/millet/400/400', description: '养胃小米粥，配小菜', tag: '', calories: 120 },
+  { id: 'breakfast5', name: '煎饼果子', price: 6, image: 'https://picsum.photos/seed/jianbing/400/400', description: '天津风味，薄脆酥脆', tag: '推荐', calories: 450 },
+  { id: 'breakfast6', name: '三明治', price: 8, image: 'https://picsum.photos/seed/sandwich/400/400', description: '鸡蛋火腿三明治，营养均衡', tag: '新品', calories: 380 }
+];
+
+const LUNCH_DISHES = [
+  { id: 'lunch1', name: '红烧肉盖浇饭', price: 15, image: 'https://picsum.photos/seed/hongshao/400/400', description: '肥而不腻，入口即化', tag: '招牌', calories: 650 },
+  { id: 'lunch2', name: '宫保鸡丁', price: 12, image: 'https://picsum.photos/seed/gongbao/400/400', description: '经典川菜，酸甜微辣', tag: '推荐', calories: 480 },
+  { id: 'lunch3', name: '麻婆豆腐', price: 8, image: 'https://picsum.photos/seed/mapo/400/400', description: '麻辣鲜香，下饭神器', tag: '', calories: 320 },
+  { id: 'lunch4', name: '兰州拉面', price: 14, image: 'https://picsum.photos/seed/lamian/400/400', description: '清汤牛肉，面劲道', tag: '经典', calories: 520 },
+  { id: 'lunch5', name: '黄焖鸡米饭', price: 16, image: 'https://picsum.photos/seed/huangmen/400/400', description: '鸡肉嫩滑，汤汁浓郁', tag: '新品', calories: 580 },
+  { id: 'lunch6', name: '水煮鱼', price: 22, image: 'https://picsum.photos/seed/shuizhu/400/400', description: '麻辣鲜香，鱼肉嫩滑', tag: '推荐', calories: 720 },
+  { id: 'lunch7', name: '番茄炒蛋盖饭', price: 10, image: 'https://picsum.photos/seed/tomato/400/400', description: '家常美味，营养均衡', tag: '', calories: 420 },
+  { id: 'lunch8', name: '新疆大盘鸡', price: 25, image: 'https://picsum.photos/seed/dapanji/400/400', description: '鸡肉配土豆，皮带面绝配', tag: '招牌', calories: 850 }
+];
+
+const DINNER_DISHES = [
+  { id: 'dinner1', name: '白切鸡饭', price: 18, image: 'https://picsum.photos/seed/baiqie/400/400', description: '皮爽肉滑，配姜葱酱', tag: '招牌', calories: 520 },
+  { id: 'dinner2', name: '石锅拌饭', price: 16, image: 'https://picsum.photos/seed/stone/400/400', description: '韩式风味，锅巴香脆', tag: '推荐', calories: 580 },
+  { id: 'dinner3', name: '照烧鸡饭', price: 17, image: 'https://picsum.photos/seed/zhaoshao/400/400', description: '日式照烧酱汁，鸡肉嫩滑', tag: '新品', calories: 540 },
+  { id: 'dinner4', name: '地三鲜', price: 10, image: 'https://picsum.photos/seed/disanxian/400/400', description: '茄子土豆青椒，东北名菜', tag: '', calories: 380 },
+  { id: 'dinner5', name: '豚骨拉面', price: 18, image: 'https://picsum.photos/seed/tonkotsu/400/400', description: '浓郁汤底，叉烧软糯', tag: '推荐', calories: 620 },
+  { id: 'dinner6', name: '部队火锅套餐', price: 28, image: 'https://picsum.photos/seed/budae/400/400', description: '火腿午餐肉，配方便面', tag: '新品', calories: 780 },
+  { id: 'dinner7', name: '葱爆羊肉盖饭', price: 19, image: 'https://picsum.photos/seed/congbao/400/400', description: '羊肉鲜嫩，葱香浓郁', tag: '', calories: 650 },
+  { id: 'dinner8', name: '小火锅（单人）', price: 25, image: 'https://picsum.photos/seed/hotpot/400/400', description: '一人一锅，多种锅底可选', tag: '招牌', calories: 700 }
+];
+
+const ALL_DISHES = [...BREAKFAST_DISHES, ...LUNCH_DISHES, ...DINNER_DISHES];
+
+const TODAY_RECOMMENDS = [
+  { ...LUNCH_DISHES[0], recommendReason: '本周销量冠军，日销200+份', canteenId: 'canteen1', canteenName: '第一食堂' },
+  { ...DINNER_DISHES[1], recommendReason: '韩式风味，同学推荐TOP1', canteenId: 'canteen5', canteenName: '网红餐厅' },
+  { ...LUNCH_DISHES[7], recommendReason: '新疆风味，分量超足', canteenId: 'canteen3', canteenName: '清真食堂' }
+];
+
+const NEW_DISHES = [
+  { ...DINNER_DISHES[5], newTag: '上新第1天', canteenId: 'canteen5', canteenName: '网红餐厅' },
+  { ...LUNCH_DISHES[4], newTag: '上新第3天', canteenId: 'canteen2', canteenName: '第二食堂' },
+  { ...BREAKFAST_DISHES[5], newTag: '上新第5天', canteenId: 'canteen4', canteenName: '教工食堂' },
+  { ...DINNER_DISHES[2], newTag: '上新第7天', canteenId: 'canteen5', canteenName: '网红餐厅' }
+];
+
+const CANTEEN_DISH_MAP = {
+  canteen1: { breakfast: [BREAKFAST_DISHES[0], BREAKFAST_DISHES[1], BREAKFAST_DISHES[2], BREAKFAST_DISHES[3]], lunch: [LUNCH_DISHES[0], LUNCH_DISHES[1], LUNCH_DISHES[2], LUNCH_DISHES[6]], dinner: [DINNER_DISHES[3], LUNCH_DISHES[3], LUNCH_DISHES[6], DINNER_DISHES[6]] },
+  canteen2: { breakfast: [BREAKFAST_DISHES[0], BREAKFAST_DISHES[4], BREAKFAST_DISHES[5], BREAKFAST_DISHES[2]], lunch: [LUNCH_DISHES[1], LUNCH_DISHES[2], LUNCH_DISHES[4], LUNCH_DISHES[5]], dinner: [DINNER_DISHES[0], DINNER_DISHES[3], DINNER_DISHES[6], LUNCH_DISHES[7]] },
+  canteen3: { breakfast: [BREAKFAST_DISHES[1], BREAKFAST_DISHES[2], BREAKFAST_DISHES[3]], lunch: [LUNCH_DISHES[3], LUNCH_DISHES[7], DINNER_DISHES[6]], dinner: [DINNER_DISHES[6], LUNCH_DISHES[7], DINNER_DISHES[3]] },
+  canteen4: { breakfast: [BREAKFAST_DISHES[5], BREAKFAST_DISHES[0], BREAKFAST_DISHES[1]], lunch: [LUNCH_DISHES[0], LUNCH_DISHES[1], DINNER_DISHES[0], DINNER_DISHES[2]], dinner: [DINNER_DISHES[0], DINNER_DISHES[2], LUNCH_DISHES[1]] },
+  canteen5: { breakfast: [BREAKFAST_DISHES[5], BREAKFAST_DISHES[4]], lunch: [DINNER_DISHES[1], DINNER_DISHES[2], DINNER_DISHES[4], LUNCH_DISHES[4]], dinner: [DINNER_DISHES[1], DINNER_DISHES[2], DINNER_DISHES[4], DINNER_DISHES[5], DINNER_DISHES[7]] }
+};
+
+const MOCK_CANTEEN_REVIEWS = [
+  { id: 'cr1', canteenId: 'c1', userId: 'u1', userName: '吃货小明', avatar: 'https://picsum.photos/seed/avatar1/100/100', rating: 5, content: '第一食堂的红烧肉真的绝了！肥而不腻，每次来必点，价格也很实惠。', recommendTags: ['红烧肉', '价格实惠'], avoidTags: [], images: [], createTime: Date.now() - 3600000 },
+  { id: 'cr2', canteenId: 'c1', userId: 'u2', userName: '减肥中的小红', avatar: 'https://picsum.photos/seed/avatar2/100/100', rating: 4, content: '饭菜价格便宜，就是高峰期人太多了，建议错峰就餐。', recommendTags: ['价格实惠'], avoidTags: ['高峰期拥挤'], images: [], createTime: Date.now() - 7200000 },
+  { id: 'cr3', canteenId: 'c3', userId: 'u3', userName: '四川来的小李', avatar: 'https://picsum.photos/seed/avatar3/100/100', rating: 5, content: '川菜窗口太正宗了！麻婆豆腐和水煮鱼就是家乡的味道，强烈推荐！', recommendTags: ['川菜正宗', '麻辣香锅'], avoidTags: [], images: [], createTime: Date.now() - 86400000 },
+  { id: 'cr4', canteenId: 'c5', userId: 'u4', userName: '打卡达人', avatar: 'https://picsum.photos/seed/avatar4/100/100', rating: 5, content: '韩餐窗口超棒，石锅拌饭一定要试试！锅巴香脆，辣酱超好吃。', recommendTags: ['石锅拌饭', '网红店'], avoidTags: [], images: [], createTime: Date.now() - 172800000 }
+];
+
+const MOCK_DISH_REVIEWS = [
+  { id: 'dr1', dishId: 'd1', userId: 'u1', userName: '红烧肉爱好者', avatar: 'https://picsum.photos/seed/avatar1/100/100', rating: 5, content: '这份红烧肉真的太好吃了！肥瘦相间，酱汁浓郁，配米饭我可以吃两碗！', recommend: true, images: [], likes: 36, createTime: Date.now() - 1800000 },
+  { id: 'dr2', dishId: 'd1', userId: 'u2', userName: '美食评论家', avatar: 'https://picsum.photos/seed/avatar2/100/100', rating: 4, content: '味道不错，就是有时候有点偏咸，希望师傅注意控制盐量。', recommend: true, images: [], likes: 12, createTime: Date.now() - 3600000 },
+  { id: 'dr3', dishId: 'd3', userId: 'u3', userName: '日式料理爱好者', avatar: 'https://picsum.photos/seed/avatar3/100/100', rating: 5, content: '照烧鸡排外焦里嫩，酱汁浓郁香甜，一口下去超满足！', recommend: true, images: [], likes: 45, createTime: Date.now() - 86400000 },
+  { id: 'dr4', dishId: 'd4', userId: 'u4', userName: '爱辣星人', avatar: 'https://picsum.photos/seed/avatar4/100/100', rating: 5, content: '麻辣香锅自选食材超棒，麻辣鲜香，就是对不能吃辣的要小心选辣度。', recommend: true, images: [], likes: 28, createTime: Date.now() - 172800000 },
+  { id: 'dr5', dishId: 'd4', userId: 'u5', userName: '怕辣的同学', avatar: 'https://picsum.photos/seed/avatar5/100/100', rating: 2, content: '不小心点了超辣，完全吃不下去，对不能吃辣的同学非常不友好，避雷！', recommend: false, images: [], likes: 5, createTime: Date.now() - 259200000 },
+  { id: 'dr6', dishId: 'd12', userId: 'u6', userName: '韩剧迷', avatar: 'https://picsum.photos/seed/avatar6/100/100', rating: 5, content: '看剧的时候就馋这口石锅拌饭，锅巴太香了！配的辣酱超好吃，强推！', recommend: true, images: [], likes: 52, createTime: Date.now() - 345600000 }
+];
+
+const MOCK_CANTEENS = [
+  {
+    id: 'c1',
+    name: '第一食堂',
+    cover: 'https://picsum.photos/seed/canteen1/800/400',
+    images: ['https://picsum.photos/seed/canteen1a/800/600', 'https://picsum.photos/seed/canteen1b/800/600'],
+    rating: 4.6,
+    reviewCount: 1286,
+    location: '东区教学楼旁',
+    crowdLevel: 'idle',
+    crowdDesc: '当前用餐人数较少，无需排队',
+    businessHours: { breakfast: '06:30-09:00', lunch: '11:00-13:30', dinner: '17:00-19:30' },
+    floors: 2,
+    description: '大众菜系为主，价格实惠，适合日常用餐',
+    tags: ['家常菜', '便宜实惠', '品种多'],
+    isFavorite: false,
+    views: 5623,
+    phone: '010-12345404',
+    stalls: [
+      { id: 'stall1-1', name: '家常菜窗口', floor: 1, specialty: ['红烧肉盖饭', '宫保鸡丁'], featureTags: ['招牌', '人气'] },
+      { id: 'stall1-2', name: '面食窗口', floor: 1, specialty: ['兰州拉面', '刀削面'], featureTags: ['经典'] },
+      { id: 'stall1-3', name: '快餐窗口', floor: 2, specialty: ['盖浇饭', '咖喱饭'], featureTags: ['快捷'] },
+      { id: 'stall1-4', name: '粥品窗口', floor: 2, specialty: ['皮蛋瘦肉粥', '手工豆沙包'], featureTags: ['新品'] }
+    ]
+  },
+  {
+    id: 'c2',
+    name: '第二食堂（清真）',
+    cover: 'https://picsum.photos/seed/canteen2/800/400',
+    images: ['https://picsum.photos/seed/canteen2a/800/600', 'https://picsum.photos/seed/canteen2b/800/600'],
+    rating: 4.3,
+    reviewCount: 892,
+    location: '西区宿舍楼附近',
+    crowdLevel: 'moderate',
+    crowdDesc: '用餐人数适中，稍等片刻即可',
+    businessHours: { breakfast: '06:30-09:30', lunch: '11:00-14:00', dinner: '17:00-20:00' },
+    floors: 1,
+    description: '清真风味，牛羊肉为主，特色西北面食',
+    tags: ['清真', '西北风味', '面食'],
+    isFavorite: true,
+    views: 3421,
+    phone: '010-12345412',
+    stalls: [
+      { id: 'stall2-1', name: '兰州拉面', floor: 1, specialty: ['牛肉拉面', '羊肉泡馍'], featureTags: ['招牌', '经典'] },
+      { id: 'stall2-2', name: '新疆风味', floor: 1, specialty: ['大盘鸡', '手抓饭'], featureTags: ['人气'] },
+      { id: 'stall2-3', name: '清真炒菜', floor: 1, specialty: ['葱爆羊肉', '番茄牛腩面'], featureTags: ['推荐'] }
+    ]
+  },
+  {
+    id: 'c3',
+    name: '美食广场',
+    cover: 'https://picsum.photos/seed/canteen3/800/400',
+    images: ['https://picsum.photos/seed/canteen3a/800/600', 'https://picsum.photos/seed/canteen3b/800/600'],
+    rating: 4.8,
+    reviewCount: 2567,
+    location: '学生活动中心B1层',
+    crowdLevel: 'crowded',
+    crowdDesc: '用餐高峰，建议错峰前往',
+    businessHours: { breakfast: '07:00-09:30', lunch: '11:00-14:00', dinner: '17:00-21:00' },
+    floors: 1,
+    description: '品种丰富，各地风味小吃，环境整洁',
+    tags: ['各地美食', '网红店', '环境好'],
+    isFavorite: false,
+    views: 8921,
+    phone: '010-12345413',
+    stalls: [
+      { id: 'stall3-1', name: '川菜窗口', floor: 1, specialty: ['麻辣香锅', '水煮鱼'], featureTags: ['招牌', '辣'] },
+      { id: 'stall3-2', name: '日韩料理', floor: 1, specialty: ['日式咖喱猪排饭', '照烧鸡排饭'], featureTags: ['新品', '推荐'] },
+      { id: 'stall3-3', name: '东南亚风味', floor: 1, specialty: ['泰式冬阴功汤粉'], featureTags: ['新品', '异域'] },
+      { id: 'stall3-4', name: '东北菜窗口', floor: 1, specialty: ['锅包肉', '地三鲜'], featureTags: ['人气'] },
+      { id: 'stall3-5', name: '自助餐窗口', floor: 1, specialty: ['自助午餐', '自助晚餐'], featureTags: ['划算'] }
+    ]
+  },
+  {
+    id: 'c4',
+    name: '教工食堂',
+    cover: 'https://picsum.photos/seed/canteen4/800/400',
+    images: ['https://picsum.photos/seed/canteen4a/800/600', 'https://picsum.photos/seed/canteen4b/800/600'],
+    rating: 4.5,
+    reviewCount: 634,
+    location: '行政楼后侧',
+    crowdLevel: 'idle',
+    crowdDesc: '人数较少，安静舒适',
+    businessHours: { breakfast: '06:30-08:30', lunch: '11:30-13:00', dinner: '17:30-19:00' },
+    floors: 2,
+    description: '菜品精致，环境优雅，学生也可就餐',
+    tags: ['精致小炒', '环境清幽', '学生可用'],
+    isFavorite: false,
+    views: 2134,
+    phone: '010-12345414',
+    stalls: [
+      { id: 'stall4-1', name: '精品炒菜', floor: 1, specialty: ['松鼠鳜鱼', '龙井虾仁'], featureTags: ['招牌'] },
+      { id: 'stall4-2', name: '营养套餐', floor: 1, specialty: ['商务套餐', '营养餐'], featureTags: ['健康'] },
+      { id: 'stall4-3', name: '定制窗口', floor: 2, specialty: ['芝士焗意大利面', '定制菜品'], featureTags: ['新品', '定制'] }
+    ]
+  },
+  {
+    id: 'c5',
+    name: '北区食堂',
+    cover: 'https://picsum.photos/seed/canteen5/800/400',
+    images: ['https://picsum.photos/seed/canteen5a/800/600', 'https://picsum.photos/seed/canteen5b/800/600'],
+    rating: 4.2,
+    reviewCount: 756,
+    location: '北门公寓区',
+    crowdLevel: 'moderate',
+    crowdDesc: '人不多不少，正合适',
+    businessHours: { breakfast: '06:30-09:00', lunch: '11:00-13:30', dinner: '17:00-19:30' },
+    floors: 2,
+    description: '川湘菜为主，量大实惠，辣度可选',
+    tags: ['川湘菜', '量大实惠', '辣度可选'],
+    isFavorite: false,
+    views: 2890,
+    phone: '010-12345415',
+    stalls: [
+      { id: 'stall5-1', name: '川湘菜窗口', floor: 1, specialty: ['麻辣香锅', '宫保鸡丁'], featureTags: ['招牌', '辣'] },
+      { id: 'stall5-2', name: '轻食沙拉', floor: 2, specialty: ['凯撒沙拉', '藜麦碗'], featureTags: ['健康', '新品'] },
+      { id: 'stall5-3', name: '韩餐窗口', floor: 2, specialty: ['石锅拌饭', '部队火锅'], featureTags: ['网红'] },
+      { id: 'stall5-4', name: '网红饮品', floor: 2, specialty: ['芝士奶盖', '水果茶'], featureTags: ['新品', '饮品'] }
+    ]
+  }
+];
+
+const MOCK_DISHES = [
+  { id: 'd1', name: '红烧肉盖饭', cover: 'https://picsum.photos/seed/dish1/400/300', price: 12.0, originalPrice: 15.0, canteenId: 'c1', canteenName: '第一食堂', recommendReason: '肥而不腻，入口即化，今日主厨推荐', tags: ['招牌', '推荐'], mealType: 'lunch', sales: 328, rating: 4.7, isNew: false, isRecommend: true, description: '精选五花肉，慢炖2小时，酱汁浓郁配米饭', calories: 680 },
+  { id: 'd2', name: '番茄牛腩面', cover: 'https://picsum.photos/seed/dish2/400/300', price: 14.5, originalPrice: null, canteenId: 'c2', canteenName: '第二食堂（清真）', recommendReason: '牛腩软烂入味，番茄汤底浓郁', tags: ['推荐'], mealType: 'lunch', sales: 256, rating: 4.6, isNew: false, isRecommend: true, description: '新鲜番茄慢炖牛腩，汤鲜面筋道', calories: 580 },
+  { id: 'd3', name: '照烧鸡排饭', cover: 'https://picsum.photos/seed/dish3/400/300', price: 16.0, originalPrice: 18.0, canteenId: 'c3', canteenName: '美食广场', recommendReason: '外焦里嫩，照烧酱汁浓郁香甜', tags: ['招牌', '推荐'], mealType: 'dinner', sales: 412, rating: 4.8, isNew: false, isRecommend: true, description: '日式照烧酱汁腌制鸡排，外焦里嫩', calories: 620 },
+  { id: 'd4', name: '麻辣香锅', cover: 'https://picsum.photos/seed/dish4/400/300', price: 18.0, originalPrice: null, canteenId: 'c5', canteenName: '北区食堂', recommendReason: '自选食材，麻辣鲜香，下饭神器', tags: ['辣', '推荐'], mealType: 'dinner', sales: 189, rating: 4.5, isNew: false, isRecommend: true, description: '20+种食材自选，麻辣鲜香', calories: 720 },
+  { id: 'd5', name: '日式咖喱猪排饭', cover: 'https://picsum.photos/seed/dish5/400/300', price: 19.8, originalPrice: 22.0, canteenId: 'c3', canteenName: '美食广场', recommendReason: null, tags: ['新品'], mealType: 'lunch', sales: 67, rating: 4.4, isNew: true, isRecommend: false, description: '酥脆猪排配浓郁日式咖喱', calories: 750 },
+  { id: 'd6', name: '芝士焗意大利面', cover: 'https://picsum.photos/seed/dish6/400/300', price: 22.0, originalPrice: null, canteenId: 'c4', canteenName: '教工食堂', recommendReason: null, tags: ['新品'], mealType: 'dinner', sales: 43, rating: 4.6, isNew: true, isRecommend: false, description: '马苏里拉芝士焗意面，拉丝香浓', calories: 680 },
+  { id: 'd7', name: '泰式冬阴功汤粉', cover: 'https://picsum.photos/seed/dish7/400/300', price: 17.5, originalPrice: null, canteenId: 'c3', canteenName: '美食广场', recommendReason: null, tags: ['新品', '辣'], mealType: 'lunch', sales: 52, rating: 4.3, isNew: true, isRecommend: false, description: '酸辣鲜香冬阴功汤底配越南米粉', calories: 420 },
+  { id: 'd8', name: '手工豆沙包（3个）', cover: 'https://picsum.photos/seed/dish8/400/300', price: 6.0, originalPrice: null, canteenId: 'c1', canteenName: '第一食堂', recommendReason: null, tags: ['新品'], mealType: 'breakfast', sales: 89, rating: 4.7, isNew: true, isRecommend: false, description: '手工制作红豆沙包，甜而不腻', calories: 360 },
+  { id: 'd9', name: '宫保鸡丁', cover: 'https://picsum.photos/seed/dish9/400/300', price: 10.0, originalPrice: null, canteenId: 'c1', canteenName: '第一食堂', recommendReason: null, tags: ['辣'], mealType: 'lunch', sales: 234, rating: 4.5, isNew: false, isRecommend: false, description: '经典川菜，酸甜微辣，鸡丁嫩滑', calories: 480 },
+  { id: 'd10', name: '兰州拉面', cover: 'https://picsum.photos/seed/dish10/400/300', price: 11.0, originalPrice: null, canteenId: 'c2', canteenName: '第二食堂（清真）', recommendReason: null, tags: ['招牌'], mealType: 'lunch', sales: 312, rating: 4.6, isNew: false, isRecommend: false, description: '一清二白三红四绿五黄，正宗兰州拉面', calories: 520 },
+  { id: 'd11', name: '皮蛋瘦肉粥', cover: 'https://picsum.photos/seed/zhou/400/300', price: 5.0, originalPrice: null, canteenId: 'c1', canteenName: '第一食堂', recommendReason: '暖胃早餐首选，配油条一绝', tags: ['推荐'], mealType: 'breakfast', sales: 198, rating: 4.5, isNew: false, isRecommend: true, description: '传统粤式皮蛋瘦肉粥，鲜香暖胃', calories: 280 },
+  { id: 'd12', name: '石锅拌饭', cover: 'https://picsum.photos/seed/bibimbap/400/300', price: 15.0, originalPrice: null, canteenId: 'c5', canteenName: '北区食堂', recommendReason: '锅巴香脆，配辣酱超好吃', tags: ['网红', '推荐'], mealType: 'dinner', sales: 176, rating: 4.7, isNew: false, isRecommend: true, description: '时令蔬菜配辣酱，石锅烤出锅巴', calories: 580 },
+  { id: 'd13', name: '肉包子', cover: 'https://picsum.photos/seed/baozi/400/300', price: 2.5, originalPrice: null, canteenId: 'c1', canteenName: '第一食堂', recommendReason: null, tags: ['招牌'], mealType: 'breakfast', sales: 456, rating: 4.4, isNew: false, isRecommend: false, description: '猪肉大葱馅，皮薄馅大', calories: 220 },
+  { id: 'd14', name: '豆浆油条', cover: 'https://picsum.photos/seed/doujiang/400/300', price: 4.0, originalPrice: null, canteenId: 'c1', canteenName: '第一食堂', recommendReason: null, tags: ['经典'], mealType: 'breakfast', sales: 521, rating: 4.6, isNew: false, isRecommend: false, description: '现磨豆浆配酥脆油条，经典中式早餐', calories: 350 },
+  { id: 'd15', name: '煎饼果子', cover: 'https://picsum.photos/seed/jianbing/400/300', price: 6.0, originalPrice: null, canteenId: 'c3', canteenName: '美食广场', recommendReason: null, tags: ['推荐'], mealType: 'breakfast', sales: 234, rating: 4.8, isNew: false, isRecommend: false, description: '天津风味，薄脆酥脆，酱料十足', calories: 450 },
+  { id: 'd16', name: '凯撒沙拉', cover: 'https://picsum.photos/seed/salad/400/300', price: 14.0, originalPrice: null, canteenId: 'c5', canteenName: '北区食堂', recommendReason: null, tags: ['健康', '新品'], mealType: 'lunch', sales: 78, rating: 4.2, isNew: true, isRecommend: false, description: '新鲜生菜配鸡胸肉，低脂健康', calories: 280 },
+  { id: 'd17', name: '部队火锅套餐', cover: 'https://picsum.photos/seed/budae/400/300', price: 28.0, originalPrice: null, canteenId: 'c5', canteenName: '北区食堂', recommendReason: null, tags: ['网红'], mealType: 'dinner', sales: 124, rating: 4.6, isNew: false, isRecommend: false, description: '火腿午餐肉年糕方便面，一锅端', calories: 780 }
+];
+
 module.exports = {
   ANNOUNCEMENTS,
   CAMPUS_NEWS,
@@ -2150,5 +2368,13 @@ module.exports = {
   EMERGENCY_PHONES,
   PHONEBOOK_CATEGORIES,
   SERVICE_GUIDES,
-  SERVICE_GUIDE_DETAILS
+  SERVICE_GUIDE_DETAILS,
+  MOCK_CANTEENS,
+  MOCK_DISHES,
+  CROWD_LEVELS,
+  TODAY_RECOMMENDS,
+  NEW_DISHES,
+  CANTEEN_DISH_MAP,
+  MOCK_CANTEEN_REVIEWS,
+  MOCK_DISH_REVIEWS
 };

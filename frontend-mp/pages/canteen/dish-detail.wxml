@@ -1,0 +1,178 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+
+<view class="dish-detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{dish}}">
+  <scroll-view class="detail-scroll" scroll-y>
+    <view class="dish-image-section">
+      <image class="dish-image" src="{{dish.cover || '/assets/images/default-banner.png'}}" mode="aspectFill"/>
+    </view>
+
+    <view class="detail-content">
+      <view class="dish-info-card card">
+        <view class="dish-name-row">
+          <text class="dish-name">{{dish.name}}</text>
+          <text class="dish-price">¥{{dish.priceText}}</text>
+        </view>
+
+        <view class="dish-meta-row">
+          <view class="canteen-info">
+            <text class="canteen-icon">🏫</text>
+            <text class="canteen-name">{{canteenName}}</text>
+            <text class="meal-type-tag">{{mealTypeLabel}}</text>
+          </view>
+          <view class="calories-info" wx:if="{{dish.calories}}">
+            <text class="calories-icon">🔥</text>
+            <text class="calories-text">{{dish.calories}} 千卡</text>
+          </view>
+        </view>
+
+        <view class="dish-tags" wx:if="{{dish.tags && dish.tags.length > 0}}">
+          <view wx:for="{{dish.tags}}" wx:key="*this" class="dish-tag tag-{{item}}">
+            {{item}}
+          </view>
+        </view>
+      </view>
+
+      <view class="action-section card">
+        <view class="favorite-btn {{isFavorite ? 'active' : ''}}" bindtap="onToggleFavoriteDish">
+          <text class="favorite-icon">{{isFavorite ? '❤️' : '🤍'}}</text>
+          <text class="favorite-text">{{isFavorite ? '已收藏' : '收藏'}}</text>
+        </view>
+        <view class="write-review-btn" bindtap="onShowReviewModal">
+          <text class="write-icon">✏️</text>
+          <text class="write-text">写点评</text>
+        </view>
+      </view>
+
+      <view class="description-section card">
+        <view class="section-title">菜品介绍</view>
+        <text class="description-text">{{dish.description}}</text>
+      </view>
+
+      <view class="review-stats-card card">
+        <view class="stats-row">
+          <view class="rating-section">
+            <view class="rating-score">{{avgRating}}</view>
+            <view class="rating-stars">
+              <text wx:for="{{5}}" wx:key="*this" class="star {{item < ratingFull ? 'full' : 'empty'}}">★</text>
+            </view>
+            <view class="review-count-text">{{totalReviews}} 条评价</view>
+          </view>
+          <view class="divider-line"></view>
+          <view class="recommend-section">
+            <view class="recommend-ring" style="--ring-deg: {{ringDeg}}deg;">
+              <view class="ring-inner">
+                <text class="recommend-percent">{{recommendRate}}%</text>
+                <text class="recommend-label">推荐率</text>
+              </view>
+            </view>
+            <view class="recommend-count">
+              <text class="recommend-num">{{recommendCount}}人推荐</text>
+              <text class="avoid-num">{{avoidCount}}人避雷</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="reviews-section card">
+        <view class="section-title-row">
+          <text class="section-title">用户点评 ({{reviews.length}})</text>
+        </view>
+
+        <view wx:if="{{reviews.length === 0}}" class="no-reviews">
+          <text class="no-reviews-icon">💬</text>
+          <text class="no-reviews-text">暂无点评</text>
+          <text class="no-reviews-desc">快来分享你的用餐体验吧</text>
+        </view>
+
+        <view wx:else class="reviews-list">
+          <view wx:for="{{reviews}}" wx:key="id" class="review-card">
+            <view class="review-header">
+              <view class="reviewer-avatar">
+                <text class="avatar-letter">{{item.userName[0]}}</text>
+              </view>
+              <view class="reviewer-info">
+                <text class="reviewer-name">{{item.userName}}</text>
+                <view class="review-meta">
+                  <view class="review-rating">
+                    <text wx:for="{{5}}" wx:key="*this" wx:for-item="starIdx" class="small-star {{starIdx < item.rating ? 'filled' : 'empty'}}">★</text>
+                  </view>
+                  <text class="review-time">{{item.timeText}}</text>
+                </view>
+              </view>
+            </view>
+            <view class="review-tag-row" wx:if="{{item.recommend !== null && item.recommend !== undefined}}">
+              <view class="recommend-tag tag-{{item.recommend ? 'recommend' : 'avoid'}}">
+                {{item.recommend ? '👍 推荐' : '👎 避雷'}}
+              </view>
+            </view>
+            <text class="review-content">{{item.content}}</text>
+            <view class="review-footer">
+              <view class="like-btn {{item.liked ? 'liked' : ''}}" data-id="{{item.id}}" data-index="{{index}}" bindtap="onLikeReview">
+                <text class="like-icon">{{item.liked ? '👍' : '👍'}}</text>
+                <text class="like-count">{{item.likes}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="review-modal-mask" wx:if="{{showReviewModal}}" bindtap="onCloseReviewModal"></view>
+  <view class="review-modal {{showReviewModal ? 'show' : ''}}">
+    <view class="modal-header">
+      <text class="modal-title">写点评</text>
+      <view class="modal-close" bindtap="onCloseReviewModal">✕</view>
+    </view>
+    <view class="modal-body">
+      <view class="rating-selector">
+        <text class="rating-label">评分</text>
+        <view class="rating-stars-selector">
+          <text
+            wx:for="{{5}}"
+            wx:key="*this"
+            class="selector-star {{item < reviewRating ? 'active' : ''}}"
+            data-rating="{{item + 1}}"
+            bindtap="onRatingChange"
+          >★</text>
+        </view>
+        <text class="rating-text">{{reviewRating > 0 ? reviewRating + '分' : '请评分'}}</text>
+      </view>
+
+      <textarea
+        class="review-textarea"
+        placeholder="分享你对这道菜的真实评价..."
+        placeholder-class="textarea-placeholder"
+        value="{{reviewContent}}"
+        bindinput="onReviewInput"
+        maxlength="500"
+      />
+
+      <view class="recommend-selector">
+        <text class="recommend-title">用餐体验</text>
+        <view class="recommend-options">
+          <view class="option-btn {{reviewRecommend === true ? 'option-recommend active' : ''}}" bindtap="onRecommendTap" data-value="{{true}}">
+            <text class="option-icon">👍</text>
+            <text class="option-text">推荐</text>
+          </view>
+          <view class="option-btn {{reviewRecommend === false ? 'option-avoid active' : ''}}" bindtap="onRecommendTap" data-value="{{false}}">
+            <text class="option-icon">👎</text>
+            <text class="option-text">避雷</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <view class="submit-btn {{canSubmit ? 'active' : ''}}" bindtap="onSubmitReview">
+        提交点评
+      </view>
+    </view>
+  </view>
+</view>
+
+<view wx:else class="empty-state">
+  <text class="empty-icon">🍽️</text>
+  <text class="empty-text">菜品不存在或已下架</text>
+</view>

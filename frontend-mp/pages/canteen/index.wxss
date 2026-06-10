@@ -1,0 +1,678 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+
+/* ==================== 搜索栏 ==================== */
+.search-section {
+  padding: 16rpx 24rpx 20rpx;
+  background-color: var(--color-bg-card);
+  border-bottom: 1rpx solid var(--color-border-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.search-bar:active {
+  background-color: var(--color-border);
+}
+
+.search-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  font-size: var(--font-base);
+  color: var(--color-text-primary);
+  height: 40rpx;
+  line-height: 40rpx;
+}
+
+.search-placeholder {
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
+}
+
+/* ==================== 主滚动区域 ==================== */
+.main-scroll {
+  height: calc(100vh - 120rpx);
+}
+
+/* ==================== 通用区块 ==================== */
+.section {
+  padding: 24rpx 24rpx 0;
+}
+
+.section-canteen {
+  padding-bottom: 24rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.section-title-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.section-icon {
+  width: 8rpx;
+  height: 32rpx;
+  background: linear-gradient(180deg, var(--color-primary) 0%, #FF8E8E 100%);
+  border-radius: 4rpx;
+  margin-right: 12rpx;
+}
+
+.section-icon-new {
+  background: linear-gradient(180deg, #1890FF 0%, #69C0FF 100%);
+}
+
+.section-icon-canteen {
+  background: linear-gradient(180deg, #52C41A 0%, #95DE64 100%);
+}
+
+.section-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.section-subtitle {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  margin-left: 12rpx;
+  font-weight: 500;
+}
+
+/* ==================== 今日推荐 ==================== */
+.recommend-scroll {
+  white-space: nowrap;
+  margin: 0 -24rpx;
+  padding: 0 24rpx;
+}
+
+.recommend-list {
+  display: inline-flex;
+  gap: 20rpx;
+  padding-right: 24rpx;
+}
+
+.dish-card {
+  width: 320rpx;
+  background-color: var(--color-bg-card);
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  display: inline-block;
+  vertical-align: top;
+  transition: all var(--transition-fast);
+}
+
+.dish-card-hover {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-sm);
+}
+
+.dish-cover-wrap {
+  position: relative;
+  width: 320rpx;
+  height: 200rpx;
+  overflow: hidden;
+}
+
+.dish-cover {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.dish-card-hover .dish-cover {
+  transform: scale(1.05);
+}
+
+.dish-tag-wrap {
+  position: absolute;
+  top: 12rpx;
+  left: 12rpx;
+}
+
+.dish-tag {
+  display: inline-block;
+  padding: 6rpx 14rpx;
+  border-radius: var(--radius-sm);
+  font-size: 20rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.dish-tag-recommend {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  box-shadow: 0 4rpx 10rpx rgba(255, 107, 107, 0.3);
+}
+
+.dish-info {
+  padding: 16rpx 20rpx 20rpx;
+}
+
+.dish-name {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dish-reason {
+  display: block;
+  font-size: 22rpx;
+  color: var(--color-text-secondary);
+  margin-top: 8rpx;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  white-space: normal;
+  min-height: 62rpx;
+}
+
+.dish-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12rpx;
+}
+
+.dish-price-wrap {
+  display: flex;
+  align-items: baseline;
+}
+
+.dish-price-symbol {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: #FF4D4F;
+}
+
+.dish-price {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #FF4D4F;
+  margin-left: 2rpx;
+}
+
+.dish-price-origin {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  margin-left: 8rpx;
+}
+
+.dish-canteen {
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+  max-width: 140rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==================== 新品上架 ==================== */
+.new-dishes-scroll {
+  white-space: nowrap;
+  margin: 0 -24rpx;
+  padding: 0 24rpx;
+}
+
+.new-dishes-list {
+  display: inline-flex;
+  gap: 16rpx;
+  padding-right: 24rpx;
+}
+
+.new-dish-card {
+  width: 240rpx;
+  background-color: var(--color-bg-card);
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  display: inline-block;
+  vertical-align: top;
+  transition: all var(--transition-fast);
+}
+
+.new-dish-card:hover {
+  box-shadow: var(--shadow-card);
+}
+
+.new-dish-cover-wrap {
+  position: relative;
+  width: 240rpx;
+  height: 180rpx;
+  overflow: hidden;
+}
+
+.new-dish-cover {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.dish-card-hover .new-dish-cover {
+  transform: scale(1.05);
+}
+
+.new-dish-tag {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 6rpx 14rpx;
+  background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
+  color: #FFFFFF;
+  font-size: 20rpx;
+  font-weight: 700;
+  border-bottom-left-radius: 12rpx;
+  letter-spacing: 1rpx;
+}
+
+.new-dish-info {
+  padding: 14rpx 16rpx 18rpx;
+}
+
+.new-dish-name {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.new-dish-bottom {
+  margin-top: 8rpx;
+}
+
+.new-dish-price-wrap {
+  display: flex;
+  align-items: baseline;
+}
+
+.new-dish-price-symbol {
+  font-size: 20rpx;
+  font-weight: 600;
+  color: #FF4D4F;
+}
+
+.new-dish-price {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FF4D4F;
+  margin-left: 2rpx;
+}
+
+.new-dish-canteen {
+  display: block;
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+  margin-top: 6rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==================== 食堂列表 ==================== */
+.canteen-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.canteen-card {
+  background-color: var(--color-bg-card);
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-fast);
+}
+
+.canteen-card-hover {
+  transform: scale(0.985);
+  box-shadow: var(--shadow-sm);
+}
+
+.canteen-top {
+  position: relative;
+}
+
+.canteen-cover-wrap {
+  width: 100%;
+  height: 280rpx;
+  overflow: hidden;
+}
+
+.canteen-cover {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s ease;
+}
+
+.canteen-card-hover .canteen-cover {
+  transform: scale(1.03);
+}
+
+.canteen-favorite {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  width: 64rpx;
+  height: 64rpx;
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+  transition: all var(--transition-fast);
+}
+
+.canteen-favorite:active {
+  transform: scale(0.9);
+}
+
+.favorite-icon {
+  font-size: 32rpx;
+  transition: transform 0.3s ease;
+}
+
+.favorite-icon.active {
+  animation: heartBeat 0.4s ease;
+}
+
+@keyframes heartBeat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3); }
+  50% { transform: scale(0.95); }
+  100% { transform: scale(1); }
+}
+
+/* ==================== 食堂信息 ==================== */
+.canteen-info {
+  padding: 20rpx 24rpx 24rpx;
+}
+
+.canteen-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.canteen-name {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+
+.canteen-meta {
+  display: flex;
+  align-items: center;
+  margin-top: 12rpx;
+}
+
+.canteen-rating {
+  display: flex;
+  align-items: center;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+}
+
+.star {
+  font-size: 24rpx;
+  margin-right: 2rpx;
+}
+
+.star.full {
+  color: #FAAD14;
+}
+
+.star.half {
+  color: #FAAD14;
+  opacity: 0.7;
+}
+
+.star.empty {
+  color: var(--color-text-muted);
+  opacity: 0.5;
+}
+
+.rating-num {
+  font-size: 26rpx;
+  font-weight: 700;
+  color: #FAAD14;
+  margin-left: 10rpx;
+}
+
+.review-count {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  margin-left: 16rpx;
+}
+
+/* ==================== 营业时间 ==================== */
+.canteen-hours {
+  display: flex;
+  align-items: center;
+  margin-top: 16rpx;
+  padding: 16rpx 20rpx;
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-lg);
+  gap: 12rpx;
+}
+
+.hour-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8rpx 0;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.hour-item:not(:last-child) {
+  border-right: 1rpx solid var(--color-border-light);
+  padding-right: 12rpx;
+}
+
+.hour-item:not(:first-child) {
+  padding-left: 12rpx;
+}
+
+.hour-icon {
+  font-size: 28rpx;
+  margin-bottom: 6rpx;
+}
+
+.hour-label {
+  font-size: 20rpx;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  margin-bottom: 4rpx;
+}
+
+.hour-time {
+  font-size: 22rpx;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+/* ==================== 食堂位置 ==================== */
+.canteen-footer {
+  display: flex;
+  align-items: center;
+  margin-top: 16rpx;
+}
+
+.canteen-location {
+  display: flex;
+  align-items: center;
+}
+
+.location-icon {
+  font-size: 24rpx;
+  margin-right: 8rpx;
+  flex-shrink: 0;
+}
+
+.location-text {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+/* ==================== 拥挤度 ==================== */
+.canteen-bottom {
+  display: flex;
+  align-items: center;
+  margin-top: 16rpx;
+  padding-top: 16rpx;
+  border-top: 1rpx solid var(--color-border-light);
+}
+
+.crowd-pill {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 18rpx 8rpx 12rpx;
+  border-radius: 100rpx;
+  border-width: 1rpx;
+  border-style: solid;
+  flex-shrink: 0;
+}
+
+.crowd-dot {
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  margin-right: 10rpx;
+  box-shadow: 0 0 0 4rpx currentColor;
+  opacity: 0.15;
+  position: relative;
+}
+
+.crowd-dot::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 14rpx;
+  height: 14rpx;
+  border-radius: 50%;
+  opacity: 1;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 currentColor;
+    opacity: 0.7;
+  }
+  70% {
+    box-shadow: 0 0 0 8rpx transparent;
+    opacity: 1;
+  }
+  100% {
+    box-shadow: 0 0 0 0 transparent;
+    opacity: 1;
+  }
+}
+
+.crowd-label {
+  font-size: 22rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.crowd-desc {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  margin-left: 16rpx;
+  flex: 1;
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==================== 底部提示 ==================== */
+.list-bottom {
+  padding: 40rpx 24rpx 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.list-bottom-text {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  position: relative;
+  padding: 0 24rpx;
+}
+
+.list-bottom-text::before,
+.list-bottom-text::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 60rpx;
+  height: 1rpx;
+  background-color: var(--color-border-light);
+}
+
+.list-bottom-text::before {
+  left: -40rpx;
+}
+
+.list-bottom-text::after {
+  right: -40rpx;
+}
+
+/* ==================== 暗色模式适配 ==================== */
+.page.dark .search-section {
+  border-bottom: 1rpx solid var(--color-border);
+}
+
+.page.dark .canteen-favorite {
+  background-color: rgba(30, 32, 40, 0.95);
+}
+
+.page.dark .hour-item:not(:last-child) {
+  border-right-color: var(--color-border);
+}
+
+.page.dark .crowd-dot {
+  opacity: 0.3;
+}

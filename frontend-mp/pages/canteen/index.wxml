@@ -1,0 +1,217 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 搜索栏 -->
+  <view class="search-section">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索食堂或菜品"
+        placeholder-class="search-placeholder"
+        value="{{keyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+        confirm-type="search"
+      />
+    </view>
+  </view>
+
+  <scroll-view
+    class="main-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <!-- 今日推荐 -->
+    <view class="section" wx:if="{{todayRecommends.length > 0}}">
+      <view class="section-header">
+        <view class="section-title-wrap">
+          <view class="section-icon"></view>
+          <text class="section-title">今日推荐</text>
+          <text class="section-subtitle">👨‍🍳 主厨精选</text>
+        </view>
+      </view>
+      <scroll-view
+        class="recommend-scroll"
+        scroll-x="{{true}}"
+        enhanced="{{true}}"
+        show-scrollbar="{{false}}"
+      >
+        <view class="recommend-list">
+          <view
+            class="dish-card"
+            wx:for="{{todayRecommends}}"
+            wx:key="id"
+            hover-class="dish-card-hover"
+            bindtap="onDishTap"
+            data-id="{{item.id}}"
+          >
+            <view class="dish-cover-wrap">
+              <image
+                class="dish-cover"
+                src="{{item.cover || '/assets/images/default-news.png'}}"
+                mode="aspectFill"
+              />
+              <view class="dish-tag-wrap">
+                <text class="dish-tag dish-tag-recommend">推荐</text>
+              </view>
+            </view>
+            <view class="dish-info">
+              <text class="dish-name">{{item.name}}</text>
+              <text class="dish-reason">{{item.recommendReason}}</text>
+              <view class="dish-bottom">
+                <view class="dish-price-wrap">
+                  <text class="dish-price-symbol">¥</text>
+                  <text class="dish-price">{{item.priceText}}</text>
+                  <text class="dish-price-origin" wx:if="{{item.originalPriceText}}">¥{{item.originalPriceText}}</text>
+                </view>
+                <text class="dish-canteen">{{item.canteenName}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 新品上架 -->
+    <view class="section" wx:if="{{newDishes.length > 0}}">
+      <view class="section-header">
+        <view class="section-title-wrap">
+          <view class="section-icon section-icon-new"></view>
+          <text class="section-title">新品上架</text>
+          <text class="section-subtitle">🆕 抢先尝鲜</text>
+        </view>
+      </view>
+      <scroll-view
+        class="new-dishes-scroll"
+        scroll-x="{{true}}"
+        enhanced="{{true}}"
+        show-scrollbar="{{false}}"
+      >
+        <view class="new-dishes-list">
+          <view
+            class="new-dish-card"
+            wx:for="{{newDishes}}"
+            wx:key="id"
+            hover-class="dish-card-hover"
+            bindtap="onDishTap"
+            data-id="{{item.id}}"
+          >
+            <view class="new-dish-cover-wrap">
+              <image
+                class="new-dish-cover"
+                src="{{item.cover || '/assets/images/default-news.png'}}"
+                mode="aspectFill"
+              />
+              <view class="new-dish-tag">NEW</view>
+            </view>
+            <view class="new-dish-info">
+              <text class="new-dish-name">{{item.name}}</text>
+              <view class="new-dish-bottom">
+                <view class="new-dish-price-wrap">
+                  <text class="new-dish-price-symbol">¥</text>
+                  <text class="new-dish-price">{{item.priceText}}</text>
+                </view>
+              </view>
+              <text class="new-dish-canteen">{{item.canteenName}}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 食堂列表 -->
+    <view class="section section-canteen">
+      <view class="section-header">
+        <view class="section-title-wrap">
+          <view class="section-icon section-icon-canteen"></view>
+          <text class="section-title">食堂列表</text>
+        </view>
+      </view>
+
+      <view class="canteen-list" wx:if="{{canteenList.length > 0}}">
+        <view
+          class="canteen-card"
+          wx:for="{{canteenList}}"
+          wx:key="id"
+          wx:for-index="cardIndex"
+          hover-class="canteen-card-hover"
+          bindtap="onCanteenTap"
+          data-id="{{item.id}}"
+        >
+          <view class="canteen-top">
+            <view class="canteen-cover-wrap">
+              <image
+                class="canteen-cover"
+                src="{{item.cover || '/assets/images/default-news.png'}}"
+                mode="aspectFill"
+              />
+            </view>
+            <view class="canteen-favorite" catchtap="onToggleFavoriteCanteen" data-id="{{item.id}}" data-index="{{cardIndex}}">
+              <text class="favorite-icon {{item.isFavorite ? 'active' : ''}}">{{item.isFavorite ? '❤️' : '🤍'}}</text>
+            </view>
+          </view>
+
+          <view class="canteen-info">
+            <view class="canteen-header">
+              <text class="canteen-name">{{item.name}}</text>
+            </view>
+
+            <view class="canteen-meta">
+              <view class="canteen-rating">
+                <view class="stars">
+                  <text
+                    wx:for="{{item.stars}}"
+                    wx:for-item="star"
+                    wx:key="index"
+                    class="star {{star}}"
+                  >{{star === 'full' ? '★' : star === 'half' ? '★' : '☆'}}</text>
+                </view>
+                <text class="rating-num">{{item.ratingText}}</text>
+              </view>
+              <text class="review-count">{{item.reviewCountText}}</text>
+            </view>
+
+            <view class="canteen-hours">
+              <view
+                class="hour-item"
+                wx:for="{{item.businessHoursFormatted}}"
+                wx:for-item="hour"
+                wx:key="key"
+              >
+                <text class="hour-icon">{{hour.icon}}</text>
+                <text class="hour-label">{{hour.label}}</text>
+                <text class="hour-time">{{hour.time}}</text>
+              </view>
+            </view>
+
+            <view class="canteen-footer">
+              <view class="canteen-location">
+                <text class="location-icon">📍</text>
+                <text class="location-text">{{item.location}}</text>
+              </view>
+            </view>
+
+            <view class="canteen-bottom">
+              <view class="crowd-pill" style="background-color: {{item.crowdColor}}20; border-color: {{item.crowdColor}};">
+                <view class="crowd-dot" style="background-color: {{item.crowdColor}};"></view>
+                <text class="crowd-label" style="color: {{item.crowdColor}};">{{item.crowdLabel}}</text>
+              </view>
+              <text class="crowd-desc">{{item.crowdDesc}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{canteenList.length === 0 && todayRecommends.length === 0 && newDishes.length === 0}}"
+      text="暂无食堂信息"
+    />
+
+    <view class="list-bottom" wx:if="{{canteenList.length > 0}}">
+      <text class="list-bottom-text">—— 已经到底啦 ——</text>
+    </view>
+  </scroll-view>
+</view>

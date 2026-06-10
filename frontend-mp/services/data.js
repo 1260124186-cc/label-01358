@@ -12,6 +12,9 @@ let studyRewardsInitialized = false;
 let campusShopsInitialized = false;
 let shopReviewsInitialized = false;
 let volunteerInitialized = false;
+let canteenInitialized = false;
+let canteenReviewsInitialized = false;
+let dishReviewsInitialized = false;
 
 function initVolunteerData() {
   if (volunteerInitialized) return;
@@ -2171,10 +2174,285 @@ function leaveCarpool(carpoolId) {
   });
 
   return { success: true };
+}function updateCarpoolStatus(carpoolId, status) {
+  return updateCarpool(carpoolId, { status });
 }
 
-function updateCarpoolStatus(carpoolId, status) {
-  return updateCarpool(carpoolId, { status });
+// ==================== 食堂菜谱模块 ====================
+
+const CROWD_LEVEL_VALUES = ['idle', 'moderate', 'crowded'];
+const CROWD_LEVEL_DESCS = {
+  idle: '用餐人数较少，无需排队',
+  moderate: '用餐人数适中，稍等片刻即可',
+  crowded: '用餐人数较多，建议错峰'
+};
+
+function initCanteenData() {
+  if (canteenInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.CANTEEN_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const favoriteCanteenIds = storage.getList(STORAGE_KEYS.FAVORITE_CANTEENS);
+    const canteens = mockData.MOCK_CANTEENS.map((item, index) => ({
+      id: item.id,
+      ...item,
+      isFavorite: favoriteCanteenIds.includes(item.id),
+      views: item.views || Math.floor(Math.random() * 500) + 100,
+      createTime: now - (index + 1) * 86400000,
+      updateTime: now - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.CANTEEN_LIST, canteens);
+  }
+  const existingDishes = storage.get(STORAGE_KEYS.DISH_LIST);
+  if (!existingDishes || existingDishes.length === 0) {
+    storage.set(STORAGE_KEYS.DISH_LIST, mockData.MOCK_DISHES || []);
+  }
+  if (!canteenReviewsInitialized) {
+    const existingCR = storage.get(STORAGE_KEYS.CANTEEN_REVIEWS);
+    if (!existingCR && mockData.MOCK_CANTEEN_REVIEWS) {
+      const crMap = {};
+      mockData.MOCK_CANTEEN_REVIEWS.forEach(r => {
+        if (!crMap[r.canteenId]) crMap[r.canteenId] = [];
+        crMap[r.canteenId].push(r);
+      });
+      storage.set(STORAGE_KEYS.CANTEEN_REVIEWS, crMap);
+    }
+    canteenReviewsInitialized = true;
+  }
+  if (!dishReviewsInitialized) {
+    const existingDR = storage.get(STORAGE_KEYS.DISH_REVIEWS);
+    if (!existingDR && mockData.MOCK_DISH_REVIEWS) {
+      const drMap = {};
+      mockData.MOCK_DISH_REVIEWS.forEach(r => {
+        if (!drMap[r.dishId]) drMap[r.dishId] = [];
+        drMap[r.dishId].push(r);
+      });
+      storage.set(STORAGE_KEYS.DISH_REVIEWS, drMap);
+    }
+    dishReviewsInitialized = true;
+  }
+  canteenInitialized = true;
+}
+
+function getAllDishes() {
+  initCanteenData();
+  return storage.getList(STORAGE_KEYS.DISH_LIST);
+}
+
+function getCanteenList(filters = {}) {
+  initCanteenData();
+  let list = storage.getList(STORAGE_KEYS.CANTEEN_LIST);
+
+  const favoriteCanteenIds = storage.getList(STORAGE_KEYS.FAVORITE_CANTEENS);
+
+  list = list.map(item => {
+    const levelValue = CROWD_LEVEL_VALUES[Math.floor(Math.random() * 3)];
+    return {
+      ...item,
+      crowdLevel: levelValue,
+      crowdDesc: CROWD_LEVEL_DESCS[levelValue],
+      isFavorite: favoriteCanteenIds.includes(item.id)
+    };
+  });
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'location', 'tags']);
+    const dishes = getAllDishes();
+    const matchedDishCanteenIds = filterByKeyword(dishes, filters.keyword, ['name', 'recommendReason']).map(d => d.canteenId);
+    const canteenFromDishes = list.filter(c => matchedDishCanteenIds.includes(c.id));
+    const merged = [...list];
+    canteenFromDishes.forEach(c => {
+      if (!merged.find(m => m.id === c.id)) merged.push(c);
+    });
+    list = merged;
+  }
+
+  if (filters.minRating !== undefined) {
+    list = list.filter(item => item.rating >= filters.minRating);
+  }
+
+  return list.sort((a, b) => b.rating - a.rating);
+}
+
+function getCanteenDetail(id) {
+  initCanteenData();
+  const list = storage.getList(STORAGE_KEYS.CANTEEN_LIST);
+  const canteen = list.find(item => item.id === id);
+  if (canteen) {
+    const levelValue = CROWD_LEVEL_VALUES[Math.floor(Math.random() * 3)];
+    const favoriteCanteenIds = storage.getList(STORAGE_KEYS.FAVORITE_CANTEENS);
+    return {
+      ...canteen,
+      crowdLevel: levelValue,
+      crowdDesc: CROWD_LEVEL_DESCS[levelValue],
+      isFavorite: favoriteCanteenIds.includes(canteen.id)
+    };
+  }
+  return null;
+}
+
+function getTodayRecommends() {
+  initCanteenData();
+  const allDishes = getAllDishes();
+  const recommends = allDishes.filter(d => d.isRecommend).slice(0, 4);
+  return recommends.map(d => ({
+    ...d,
+    priceText: util.formatPrice(d.price),
+    originalPriceText: d.originalPrice ? util.formatPrice(d.originalPrice) : null
+  }));
+}
+
+function getNewDishes() {
+  initCanteenData();
+  const allDishes = getAllDishes();
+  const newDishes = allDishes.filter(d => d.isNew).slice(0, 6);
+  return newDishes.map(d => ({
+    ...d,
+    priceText: util.formatPrice(d.price),
+    originalPriceText: d.originalPrice ? util.formatPrice(d.originalPrice) : null
+  }));
+}
+
+function getDishesByCanteenAndMeal(canteenId, mealType) {
+  initCanteenData();
+  const allDishes = getAllDishes();
+  let matched = allDishes.filter(d => d.canteenId === canteenId);
+  if (mealType) {
+    matched = matched.filter(d => !d.mealType || d.mealType === mealType);
+  }
+  return matched.map(d => ({
+    ...d,
+    priceText: util.formatPrice(d.price),
+    originalPriceText: d.originalPrice ? util.formatPrice(d.originalPrice) : null
+  }));
+}
+
+function getDishDetail(dishId) {
+  initCanteenData();
+  const allDishes = getAllDishes();
+  const dish = allDishes.find(item => item.id === dishId);
+  if (!dish) return null;
+  return {
+    dish: {
+      ...dish,
+      priceText: util.formatPrice(dish.price),
+      originalPriceText: dish.originalPrice ? util.formatPrice(dish.originalPrice) : null
+    },
+    canteenId: dish.canteenId,
+    canteenName: dish.canteenName,
+    mealType: dish.mealType
+  };
+}
+
+function getDishReviews(dishId) {
+  initCanteenData();
+  const reviewsMap = storage.get(STORAGE_KEYS.DISH_REVIEWS) || {};
+  return (reviewsMap[dishId] || []).sort((a, b) => b.createTime - a.createTime);
+}
+
+function addDishReview(dishIdOrReview, reviewData) {
+  initCanteenData();
+  const reviewsMap = storage.get(STORAGE_KEYS.DISH_REVIEWS) || {};
+  let dishId;
+  let newReviewData;
+  if (typeof dishIdOrReview === 'object') {
+    newReviewData = dishIdOrReview;
+    dishId = newReviewData.dishId;
+  } else {
+    dishId = dishIdOrReview;
+    newReviewData = { dishId, ...reviewData };
+  }
+  if (!reviewsMap[dishId]) {
+    reviewsMap[dishId] = [];
+  }
+
+  const newReview = {
+    id: util.generateId(),
+    ...newReviewData,
+    likes: 0,
+    createTime: Date.now()
+  };
+
+  reviewsMap[dishId].unshift(newReview);
+  storage.set(STORAGE_KEYS.DISH_REVIEWS, reviewsMap);
+  return newReview;
+}
+
+function getCanteenReviews(canteenId) {
+  initCanteenData();
+  const reviewsMap = storage.get(STORAGE_KEYS.CANTEEN_REVIEWS) || {};
+  return (reviewsMap[canteenId] || []).sort((a, b) => b.createTime - a.createTime);
+}
+
+function toggleFavoriteCanteen(canteenId) {
+  initCanteenData();
+  let favorites = storage.getList(STORAGE_KEYS.FAVORITE_CANTEENS);
+  const index = favorites.indexOf(canteenId);
+  if (index > -1) {
+    favorites.splice(index, 1);
+    storage.set(STORAGE_KEYS.FAVORITE_CANTEENS, favorites);
+    return { isFavorite: false };
+  } else {
+    favorites.unshift(canteenId);
+    storage.set(STORAGE_KEYS.FAVORITE_CANTEENS, favorites);
+    return { isFavorite: true };
+  }
+}
+
+function isFavoriteCanteen(canteenId) {
+  const favorites = storage.getList(STORAGE_KEYS.FAVORITE_CANTEENS);
+  return favorites.includes(canteenId);
+}
+
+function toggleFavoriteDish(dishId) {
+  initCanteenData();
+  let favorites = storage.getList(STORAGE_KEYS.FAVORITE_DISHES);
+  const index = favorites.indexOf(dishId);
+  if (index > -1) {
+    favorites.splice(index, 1);
+    storage.set(STORAGE_KEYS.FAVORITE_DISHES, favorites);
+    return { isFavorite: false };
+  } else {
+    favorites.unshift(dishId);
+    storage.set(STORAGE_KEYS.FAVORITE_DISHES, favorites);
+    return { isFavorite: true };
+  }
+}
+
+function isFavoriteDish(dishId) {
+  const favorites = storage.getList(STORAGE_KEYS.FAVORITE_DISHES);
+  return favorites.includes(dishId);
+}
+
+function getFavoriteCanteens() {
+  initCanteenData();
+  const favoriteIds = storage.getList(STORAGE_KEYS.FAVORITE_CANTEENS);
+  const list = storage.getList(STORAGE_KEYS.CANTEEN_LIST);
+  const favoriteCanteenIds = storage.getList(STORAGE_KEYS.FAVORITE_CANTEENS);
+  return favoriteIds.map(id => {
+    const item = list.find(c => c.id === id);
+    if (item) {
+      return { ...item, isFavorite: favoriteCanteenIds.includes(id) };
+    }
+    return null;
+  }).filter(Boolean);
+}
+
+function getFavoriteDishes() {
+  initCanteenData();
+  const favoriteIds = storage.getList(STORAGE_KEYS.FAVORITE_DISHES);
+  const allDishes = getAllDishes();
+  return favoriteIds.map(id => {
+    const d = allDishes.find(item => item.id === id);
+    if (d) {
+      return {
+        ...d,
+        priceText: util.formatPrice(d.price),
+        originalPriceText: d.originalPrice ? util.formatPrice(d.originalPrice) : null
+      };
+    }
+    return null;
+  }).filter(Boolean);
 }
 
 module.exports = {
@@ -2318,5 +2596,23 @@ module.exports = {
   joinCarpool,
   confirmCarpoolMember,
   leaveCarpool,
-  updateCarpoolStatus
+  updateCarpoolStatus,
+
+  initCanteenData,
+  getAllDishes,
+  getCanteenList,
+  getCanteenDetail,
+  getTodayRecommends,
+  getNewDishes,
+  getDishesByCanteenAndMeal,
+  getDishDetail,
+  getDishReviews,
+  addDishReview,
+  getCanteenReviews,
+  toggleFavoriteCanteen,
+  isFavoriteCanteen,
+  toggleFavoriteDish,
+  isFavoriteDish,
+  getFavoriteCanteens,
+  getFavoriteDishes
 };

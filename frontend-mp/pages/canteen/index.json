@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "食堂菜谱",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F8F9FA",
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "empty": "/components/empty/index"
+  }
+}

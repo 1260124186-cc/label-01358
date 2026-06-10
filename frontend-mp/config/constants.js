@@ -380,6 +380,27 @@ const CARPOOL_SORT_OPTIONS = [
   { value: 'seats', label: '剩余座位多', field: 'remainingSeats', order: 'desc' }
 ];
 
+const CANTEEN_CROWD_LEVELS = [
+  { value: 'idle', label: '空闲', color: '#52C41A', desc: '用餐人数较少，无需排队' },
+  { value: 'moderate', label: '适中', color: '#FAAD14', desc: '用餐人数适中，稍等片刻' },
+  { value: 'crowded', label: '拥挤', color: '#FF4D4F', desc: '用餐人数较多，建议错峰' }
+];
+
+const CANTEEN_TIME_SEGMENTS = [
+  { value: 'breakfast', label: '早餐', icon: '🌅' },
+  { value: 'lunch', label: '午餐', icon: '☀️' },
+  { value: 'dinner', label: '晚餐', icon: '🌙' }
+];
+
+const DISH_TAGS = [
+  { value: 'hot', label: '热销', color: '#FF4D4F' },
+  { value: 'new', label: '新品', color: '#1890FF' },
+  { value: 'recommend', label: '推荐', color: '#52C41A' },
+  { value: 'spicy', label: '辣', color: '#FF7A45' },
+  { value: 'sweet', label: '甜', color: '#EB2F96' },
+  { value: 'vegetarian', label: '素食', color: '#73D13D' }
+];
+
 const RENTAL_SORT_OPTIONS = [
   { value: 'latest', label: '最新发布', field: 'createTime', order: 'desc' },
   { value: 'price_asc', label: '价格低到高', field: 'rent', order: 'asc' },
@@ -444,5 +465,8 @@ module.exports = {
   CARPOOL_DESTINATIONS,
   CARPOOL_PRICE_RANGES,
   CARPOOL_SORT_OPTIONS,
+  CANTEEN_CROWD_LEVELS,
+  CANTEEN_TIME_SEGMENTS,
+  DISH_TAGS,
   getLabelByValue
 };

@@ -29,7 +29,13 @@ const STORAGE_KEYS = {
   RENTAL_LIST: 'rentalList',
   RENTAL_COMPARE_LIST: 'rentalCompareList',
   RENTAL_AGENT_REPORTS: 'rentalAgentReports',
-  CARPOOL_LIST: 'carpoolList'
+  CARPOOL_LIST: 'carpoolList',
+  CANTEEN_LIST: 'canteenList',
+  DISH_LIST: 'dishList',
+  CANTEEN_REVIEWS: 'canteenReviews',
+  DISH_REVIEWS: 'dishReviews',
+  FAVORITE_CANTEENS: 'favoriteCanteens',
+  FAVORITE_DISHES: 'favoriteDishes'
 };
 
 /**
