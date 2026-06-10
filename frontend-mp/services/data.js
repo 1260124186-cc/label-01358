@@ -1749,6 +1749,221 @@ function calculatePrintPrice(colorType, sideType, copies, pages) {
   return Math.max(0.1, colorOption.pricePerPage * sideOption.priceMultiplier * copies * pages);
 }
 
+// ==================== 租房模块 ====================
+
+let rentalInitialized = false;
+
+function initRentalData() {
+  if (rentalInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.RENTAL_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const houses = mockData.MOCK_RENTAL_HOUSES.map((item, index) => ({
+      id: 'mock_rent_' + index + '_' + now,
+      ...item,
+      views: Math.floor(Math.random() * 200) + 50,
+      createTime: now - (index + 1) * 86400000,
+      updateTime: now - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.RENTAL_LIST, houses);
+  }
+  rentalInitialized = true;
+}
+
+function getRentalList(filters = {}) {
+  initRentalData();
+  let list = storage.getList(STORAGE_KEYS.RENTAL_LIST);
+
+  if (filters.locationType) {
+    list = list.filter(item => item.locationType === filters.locationType);
+  }
+
+  if (filters.rentType && filters.rentType !== 'all') {
+    list = list.filter(item => item.rentType === filters.rentType);
+  }
+
+  if (filters.houseType) {
+    list = list.filter(item => item.houseType === filters.houseType);
+  }
+
+  if (filters.genderRequirement && filters.genderRequirement !== 'no_limit') {
+    list = list.filter(item =>
+      item.genderRequirement === 'no_limit' || item.genderRequirement === filters.genderRequirement
+    );
+  }
+
+  if (filters.publisherType) {
+    list = list.filter(item => item.publisherType === filters.publisherType);
+  }
+
+  if (filters.minRent !== undefined) {
+    list = list.filter(item => item.rent >= filters.minRent);
+  }
+  if (filters.maxRent !== undefined && filters.maxRent !== Infinity) {
+    list = list.filter(item => item.rent <= filters.maxRent);
+  }
+
+  if (filters.minDistance !== undefined) {
+    list = list.filter(item => item.distance >= filters.minDistance);
+  }
+  if (filters.maxDistance !== undefined && filters.maxDistance !== Infinity) {
+    list = list.filter(item => item.distance <= filters.maxDistance);
+  }
+
+  if (filters.timeRange) {
+    const timeThreshold = getTimeRangeMs(filters.timeRange);
+    if (timeThreshold) {
+      list = list.filter(item => item.createTime >= timeThreshold);
+    }
+  }
+
+  list = filterByKeyword(list, filters.keyword, ['title', 'description', 'address']);
+
+  if (filters.facilities && filters.facilities.length > 0) {
+    list = list.filter(item =>
+      filters.facilities.every(f => item.facilities && item.facilities.includes(f))
+    );
+  }
+
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  return sortByField(list, filters.sort || 'latest', constants.RENTAL_SORT_OPTIONS);
+}
+
+function getRentalDetail(id) {
+  initRentalData();
+  const list = storage.getList(STORAGE_KEYS.RENTAL_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function publishRentalHouse(data) {
+  initRentalData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const item = {
+    id: util.generateId(),
+    ...data,
+    publisherId: userInfo.id || 'anonymous',
+    publisherName: userInfo.nickName || '匿名用户',
+    publisherAvatar: userInfo.avatarUrl || '',
+    status: 'available',
+    views: 0,
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.RENTAL_LIST, item);
+  return success ? item : null;
+}
+
+function updateRentalHouse(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.RENTAL_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+}
+
+function deleteRentalHouse(id) {
+  return storage.removeFromList(STORAGE_KEYS.RENTAL_LIST, id);
+}
+
+function increaseRentalViews(id) {
+  const item = getRentalDetail(id);
+  if (item) {
+    return storage.updateInList(STORAGE_KEYS.RENTAL_LIST, id, {
+      views: (item.views || 0) + 1
+    });
+  }
+  return false;
+}
+
+function reportAgent(houseId, reason) {
+  const reports = storage.getList(STORAGE_KEYS.RENTAL_AGENT_REPORTS);
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const report = {
+    id: util.generateId(),
+    houseId,
+    reporterId: userInfo.id || 'anonymous',
+    reason,
+    createTime: Date.now()
+  };
+
+  reports.push(report);
+  storage.set(STORAGE_KEYS.RENTAL_AGENT_REPORTS, reports);
+
+  let publisherTypeChanged = false;
+  const reportsForHouse = reports.filter(r => r.houseId === houseId);
+  if (reportsForHouse.length >= 3) {
+    const house = getRentalDetail(houseId);
+    if (house && house.publisherType !== 'agent') {
+      updateRentalHouse(houseId, { publisherType: 'agent' });
+      publisherTypeChanged = true;
+    }
+  }
+
+  return { report, publisherTypeChanged };
+}
+
+function getAgentReports() {
+  return storage.getList(STORAGE_KEYS.RENTAL_AGENT_REPORTS);
+}
+
+function toggleFavorite(id, type, itemData) {
+  const isFav = isFavorite(id, type);
+  if (isFav) {
+    removeFavorite(id, type);
+  } else {
+    addFavorite(itemData, type);
+  }
+  return { isFavorite: !isFav };
+}
+
+function getCompareList() {
+  const list = storage.getList(STORAGE_KEYS.RENTAL_COMPARE_LIST);
+  return list.map(item => item.data ? item.data : item);
+}
+
+function addToCompare(house) {
+  const rawList = storage.getList(STORAGE_KEYS.RENTAL_COMPARE_LIST);
+  const list = rawList.map(item => item.data ? item.data : item);
+  if (list.length >= 3) {
+    return { success: false, message: '最多只能对比3套房源' };
+  }
+  if (list.some(item => item.id === house.id)) {
+    return { success: false, message: '该房源已在对比列表中' };
+  }
+  const toSave = house.data ? house : { id: house.id, data: house, addTime: Date.now() };
+  const newRawList = [...rawList, toSave];
+  storage.set(STORAGE_KEYS.RENTAL_COMPARE_LIST, newRawList);
+  return { success: true };
+}
+
+function removeFromCompare(houseId) {
+  const rawList = storage.getList(STORAGE_KEYS.RENTAL_COMPARE_LIST);
+  const newRawList = rawList.filter(item => (item.data ? item.data.id : item.id) !== houseId);
+  storage.set(STORAGE_KEYS.RENTAL_COMPARE_LIST, newRawList);
+  return getCompareList();
+}
+
+function clearCompareList() {
+  return storage.set(STORAGE_KEYS.RENTAL_COMPARE_LIST, []);
+}
+
+function isInCompareList(houseId) {
+  const list = getCompareList();
+  return list.some(item => item.id === houseId);
+}
+
+function getFacilityLabel(value) {
+  const facility = constants.RENTAL_FACILITIES.find(f => f.value === value);
+  return facility ? facility.label : value;
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -1863,5 +2078,21 @@ module.exports = {
   updateAddress,
   deleteAddress,
   getDefaultAddress,
-  calculatePrintPrice
+  calculatePrintPrice,
+
+  getRentalList,
+  getRentalDetail,
+  publishRentalHouse,
+  updateRentalHouse,
+  deleteRentalHouse,
+  increaseRentalViews,
+  reportAgent,
+  getAgentReports,
+  toggleFavorite,
+  getCompareList,
+  addToCompare,
+  removeFromCompare,
+  clearCompareList,
+  isInCompareList,
+  getFacilityLabel
 };

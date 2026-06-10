@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "校园租房",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F8F9FA",
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "empty": "/components/empty/index",
+    "card": "/components/card/index"
+  }
+}

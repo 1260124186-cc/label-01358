@@ -25,7 +25,10 @@ const STORAGE_KEYS = {
   VOLUNTEER_CHECKIN_LIST: 'volunteerCheckinList',
   VOLUNTEER_HOURS_RECORD_LIST: 'volunteerHoursRecordList',
   ERRAND_ORDER_LIST: 'errandOrderList',
-  ERRAND_ADDRESS_LIST: 'errandAddressList'
+  ERRAND_ADDRESS_LIST: 'errandAddressList',
+  RENTAL_LIST: 'rentalList',
+  RENTAL_COMPARE_LIST: 'rentalCompareList',
+  RENTAL_AGENT_REPORTS: 'rentalAgentReports'
 };
 
 /**

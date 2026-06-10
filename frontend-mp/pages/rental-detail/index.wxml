@@ -1,0 +1,235 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{house}}">
+  <view class="image-swiper-wrap">
+    <swiper
+      class="image-swiper"
+      indicator-dots="{{false}}"
+      autoplay="{{true}}"
+      circular="{{true}}"
+      bindchange="onImageSwiperChange"
+    >
+      <swiper-item wx:for="{{house.images}}" wx:key="*this">
+        <image
+          class="swiper-image"
+          src="{{item}}"
+          mode="aspectFill"
+          bindtap="onPreviewImage"
+          data-index="{{index}}"
+        />
+      </swiper-item>
+    </swiper>
+    <view class="image-counter">{{currentImageIndex + 1}}/{{house.images.length}}</view>
+    <view
+      class="publisher-badge"
+      style="background-color: {{house.publisherTypeColor}}20; color: {{house.publisherTypeColor}}"
+    >{{house.publisherTypeText}}</view>
+  </view>
+
+  <scroll-view class="detail-scroll" scroll-y="{{true}}">
+    <view class="detail-header">
+      <view class="price-row">
+        <view class="price-info">
+          <text class="price-currency">¥</text>
+          <text class="price-value">{{house.rentText}}</text>
+          <text class="price-unit">/月</text>
+        </view>
+        <view class="header-actions">
+          <view
+            class="action-btn {{isFavorite ? 'active' : ''}}"
+            bindtap="onToggleFavorite"
+          >
+            <text class="action-icon">{{isFavorite ? '❤️' : '🤍'}}</text>
+            <text class="action-text">收藏</text>
+          </view>
+          <view
+            class="action-btn {{isInCompare ? 'active' : ''}}"
+            bindtap="onToggleCompare"
+          >
+            <text class="action-icon">{{isInCompare ? '✓' : '⚖️'}}</text>
+            <text class="action-text">{{isInCompare ? '已对比' : '对比'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="house-title">{{house.title}}</view>
+
+      <view class="house-tags">
+        <view class="house-tag location-tag">{{house.locationTypeText}}</view>
+        <view class="house-tag rent-type-tag">{{house.rentTypeText}}</view>
+        <view class="house-tag gender-tag">{{house.genderText}}</view>
+        <view class="house-tag lease-tag">{{house.leaseTermText}}</view>
+        <view class="house-tag status-tag {{house.status}}" wx:if="{{house.status !== 'available'}}">{{house.statusText}}</view>
+      </view>
+
+      <view class="house-meta-row">
+        <view class="meta-item">
+          <text class="meta-value">{{house.houseTypeText}}</text>
+          <text class="meta-label">户型</text>
+        </view>
+        <view class="meta-divider"></view>
+        <view class="meta-item">
+          <text class="meta-value">{{house.area}}㎡</text>
+          <text class="meta-label">面积</text>
+        </view>
+        <view class="meta-divider"></view>
+        <view class="meta-item">
+          <text class="meta-value">{{house.distanceText}}</text>
+          <text class="meta-label">距离</text>
+        </view>
+        <view class="meta-divider"></view>
+        <view class="meta-item">
+          <text class="meta-value">{{house.depositText}}</text>
+          <text class="meta-label">押金</text>
+        </view>
+      </view>
+
+      <view class="extra-info" wx:if="{{house.floor || house.orientation}}">
+        <text class="extra-item" wx:if="{{house.floor}}">楼层：{{house.floor}}</text>
+        <text class="extra-sep" wx:if="{{house.floor && house.orientation}}">·</text>
+        <text class="extra-item" wx:if="{{house.orientation}}">朝向：{{house.orientation}}</text>
+      </view>
+    </view>
+
+    <view class="detail-section">
+      <view class="section-title">房屋设施</view>
+      <view class="facility-list">
+        <view class="facility-item" wx:for="{{house.facilityLabels}}" wx:key="label">
+          <text class="facility-icon">{{item.icon}}</text>
+          <text class="facility-name">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-section">
+      <view class="section-title">房源描述</view>
+      <view class="description-content">{{house.description}}</view>
+    </view>
+
+    <view class="detail-section">
+      <view class="section-title">位置信息</view>
+      <view class="location-card" bindtap="onOpenLocation">
+        <view class="location-map">
+          <map
+            class="map-view"
+            latitude="{{house.latitude}}"
+            longitude="{{house.longitude}}"
+            markers="{{[{id: 0, latitude: house.latitude, longitude: house.longitude, width: 30, height: 30}]}}"
+            scale="16"
+            show-location="{{false}}"
+          />
+          <view class="map-mask">
+            <text class="map-icon">📍</text>
+          </view>
+        </view>
+        <view class="location-info">
+          <text class="location-address">{{house.address}}</text>
+          <text class="location-hint">点击查看地图导航</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-section" wx:if="{{house.surrounding && house.surrounding.length > 0}}">
+      <view class="section-title">周边配套</view>
+      <view class="surrounding-list">
+        <view class="surrounding-item" wx:for="{{house.surrounding}}" wx:key="*this">
+          <text class="surrounding-dot">•</text>
+          <text class="surrounding-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-section">
+      <view class="section-title">发布信息</view>
+      <view class="publish-info">
+        <view class="info-row">
+          <text class="info-label">发布时间</text>
+          <text class="info-value">{{house.timeText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">浏览次数</text>
+          <text class="info-value">{{house.views}}次</text>
+        </view>
+        <view class="info-row" wx:if="{{reportCount > 0}}">
+          <text class="info-label">举报次数</text>
+          <text class="info-value danger">{{reportCount}}次</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-section report-section">
+      <view class="report-btn" bindtap="onShowReportModal">
+        <text class="report-icon">⚠️</text>
+        <text class="report-text">举报该房源</text>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="contact-bar">
+    <view class="contact-info">
+      <view class="contact-name">{{house.contactName}}</view>
+      <view class="contact-type" style="color: {{house.publisherTypeColor}}">{{house.publisherTypeText}}</view>
+    </view>
+    <view class="contact-actions">
+      <view class="contact-btn secondary" bindtap="onCopyWechat">
+        <text class="btn-icon">📋</text>
+        <text class="btn-text">复制号码</text>
+      </view>
+      <view class="contact-btn primary" bindtap="onCallPhone">
+        <text class="btn-icon">📞</text>
+        <text class="btn-text">立即联系</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{showReportModal ? 'show' : ''}}" bindtap="onHideReportModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">举报房源</text>
+        <text class="modal-close" bindtap="onHideReportModal">×</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-group">
+          <view class="form-label">举报原因</view>
+          <picker
+            mode="selector"
+            range="{{reportReasons}}"
+            value="{{reportReasonIndex}}"
+            bindchange="onReportReasonChange"
+          >
+            <view class="form-picker">
+              <text class="{{reportReasonIndex === -1 ? 'placeholder' : ''}}">
+                {{reportReasonIndex === -1 ? '请选择举报原因' : reportReasons[reportReasonIndex]}}
+              </text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+        <view class="form-group">
+          <view class="form-label">补充说明（选填）</view>
+          <textarea
+            class="form-textarea"
+            placeholder="请详细描述问题，以便我们更好地核实"
+            value="{{reportReason}}"
+            bindinput="onReportInput"
+            maxlength="200"
+            auto-height
+          />
+        </view>
+        <view class="report-tips">
+          <text class="tip-text">提示：被举报3次以上将自动标记为中介</text>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="onHideReportModal">取消</view>
+        <view class="modal-btn confirm" bindtap="onSubmitReport">提交举报</view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="loading-container" wx:if="{{loading}}">
+  <view class="loading-spinner"></view>
+  <text class="loading-text">加载中...</text>
+</view>

@@ -1,0 +1,267 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="search-section">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索房源、小区、地址"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearchConfirm"
+        confirm-type="search"
+      />
+    </view>
+  </view>
+
+  <view class="tab-section">
+    <scroll-view class="tab-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="tabs">
+        <view
+          class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabChange"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="filter-section">
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-row">
+        <view
+          class="filter-chip {{currentLocation === item.value ? 'active' : ''}}"
+          wx:for="{{locationTypes}}"
+          wx:key="value"
+          bindtap="onLocationChange"
+          data-location="{{item.value}}"
+        >{{item.label}}</view>
+        <view
+          class="filter-chip {{currentGender === item.value ? 'active' : ''}}"
+          wx:for="{{genderRequirements}}"
+          wx:key="value"
+          bindtap="onGenderChange"
+          data-gender="{{item.value}}"
+        >{{item.label}}</view>
+        <view class="filter-chip" bindtap="onShowPricePicker">
+          <text>{{currentPriceText || '价格'}}</text>
+          <text class="chip-arrow">▼</text>
+        </view>
+        <view class="filter-chip" bindtap="onShowDistancePicker">
+          <text>{{currentDistanceText || '距离'}}</text>
+          <text class="chip-arrow">▼</text>
+        </view>
+        <view class="filter-chip" bindtap="onShowSortPicker">
+          <text>排序</text>
+          <text class="chip-arrow">▼</text>
+        </view>
+        <view class="filter-chip" bindtap="onShowPublishTypeFilter">
+          <text>{{currentPublisherType ? (currentPublisherType === 'personal' ? '个人' : '中介') : '来源'}}</text>
+          <text class="chip-arrow">▼</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{list.length > 0}}">
+      <view
+        class="house-card"
+        wx:for="{{list}}"
+        wx:key="id"
+        hover-class="house-card-hover"
+        bindtap="onItemTap"
+        data-item="{{item}}"
+      >
+        <view class="house-image-wrap">
+          <image
+            class="house-image"
+            src="{{item.images[0] || '/assets/images/default-news.png'}}"
+            mode="aspectFill"
+          />
+          <view class="house-tags">
+            <view class="house-tag location-tag">{{item.locationTypeText}}</view>
+            <view class="house-tag rent-type-tag">{{item.rentTypeText}}</view>
+            <view
+              class="house-tag publisher-tag"
+              style="background-color: {{item.publisherTypeColor}}20; color: {{item.publisherTypeColor}}"
+            >{{item.publisherTypeText}}</view>
+          </view>
+          <view class="house-status {{item.status}}" wx:if="{{item.status !== 'available'}}">
+            {{item.statusText}}
+          </view>
+          <view
+            class="compare-btn {{item.isInCompare ? 'active' : ''}}"
+            catchtap="onToggleCompare"
+            data-item="{{item}}"
+          >
+            <text>{{item.isInCompare ? '✓ 已对比' : '对比'}}</text>
+          </view>
+        </view>
+        <view class="house-info">
+          <view class="house-title-row">
+            <text class="house-title">{{item.title}}</text>
+            <view
+              class="favorite-btn {{item.isFavorite ? 'active' : ''}}"
+              catchtap="onToggleFavorite"
+              data-item="{{item}}"
+            >
+              <text>{{item.isFavorite ? '❤️' : '🤍'}}</text>
+            </view>
+          </view>
+          <view class="house-meta">
+            <text class="house-type">{{item.houseTypeText}}</text>
+            <text class="meta-sep">·</text>
+            <text class="house-area">{{item.area}}㎡</text>
+            <text class="meta-sep">·</text>
+            <text class="house-distance">{{item.distanceText}}</text>
+          </view>
+          <view class="house-facilities">
+            <text
+              class="facility-tag"
+              wx:for="{{item.facilityLabels}}"
+              wx:for-item="facilityLabel"
+              wx:key="*this"
+            >{{facilityLabel}}</text>
+          </view>
+          <view class="house-bottom">
+            <view class="house-price">
+              <text class="price-currency">¥</text>
+              <text class="price-value">{{item.rentText}}</text>
+              <text class="price-unit">/月</text>
+            </view>
+            <view class="house-footer-info">
+              <text class="house-views">{{item.views}}浏览</text>
+              <text class="house-time">{{item.timeText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{!loading && list.length === 0}}"
+      text="暂无房源信息"
+      showAction="{{true}}"
+      actionText="发布房源"
+      bindaction="onPublish"
+    />
+  </scroll-view>
+
+  <view class="compare-bar {{showCompareBar ? 'show' : ''}}">
+    <view class="compare-info">
+      <text class="compare-count">已选择 {{compareList.length}} 套房源</text>
+      <text class="compare-hint">（最多3套）</text>
+    </view>
+    <view class="compare-actions">
+      <view class="clear-compare-btn" bindtap="onClearCompare">清空</view>
+      <view
+        class="go-compare-btn {{compareList.length >= 2 ? 'active' : ''}}"
+        bindtap="onGoCompare"
+      >开始对比</view>
+    </view>
+  </view>
+
+  <view class="publish-btn" hover-class="publish-btn-hover" bindtap="onPublish">
+    <text class="publish-icon">+</text>
+  </view>
+
+  <view class="picker-mask {{showPricePicker ? 'show' : ''}}" bindtap="onHidePricePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择价格区间</text>
+        <text class="picker-close" bindtap="onHidePricePicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentPriceRange === '' ? 'active' : ''}}"
+          bindtap="onPriceSelect"
+          data-value=""
+        >不限价格</view>
+        <view
+          class="picker-option {{currentPriceRange === item.value ? 'active' : ''}}"
+          wx:for="{{priceRanges}}"
+          wx:key="value"
+          bindtap="onPriceSelect"
+          data-value="{{item.value}}"
+          data-min="{{item.min}}"
+          data-max="{{item.max}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="picker-mask {{showDistancePicker ? 'show' : ''}}" bindtap="onHideDistancePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择距离范围</text>
+        <text class="picker-close" bindtap="onHideDistancePicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentDistanceRange === '' ? 'active' : ''}}"
+          bindtap="onDistanceSelect"
+          data-value=""
+        >不限距离</view>
+        <view
+          class="picker-option {{currentDistanceRange === item.value ? 'active' : ''}}"
+          wx:for="{{distanceRanges}}"
+          wx:key="value"
+          bindtap="onDistanceSelect"
+          data-value="{{item.value}}"
+          data-min="{{item.min}}"
+          data-max="{{item.max}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="picker-mask {{showSortPicker ? 'show' : ''}}" bindtap="onHideSortPicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择排序方式</text>
+        <text class="picker-close" bindtap="onHideSortPicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentSort === item.value ? 'active' : ''}}"
+          wx:for="{{sortOptions}}"
+          wx:key="value"
+          bindtap="onSortSelect"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="picker-mask {{showPublishTypeFilter ? 'show' : ''}}" bindtap="onHidePublishTypeFilter">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择发布者类型</text>
+        <text class="picker-close" bindtap="onHidePublishTypeFilter">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentPublisherType === '' ? 'active' : ''}}"
+          bindtap="onPublishTypeSelect"
+          data-value=""
+        >全部</view>
+        <view
+          class="picker-option {{currentPublisherType === item.value ? 'active' : ''}}"
+          wx:for="{{publishTypes}}"
+          wx:key="value"
+          bindtap="onPublishTypeSelect"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+</view>

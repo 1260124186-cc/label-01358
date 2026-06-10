@@ -35,6 +35,13 @@ Page({
         url: '/pages/market/index'
       },
       {
+        id: 'rental',
+        name: '校园租房',
+        icon: '/assets/icons/nav-market.png',
+        bgColor: 'linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%)',
+        url: '/pages/rental/index'
+      },
+      {
         id: 'scenery',
         name: '校园风光',
         icon: '/assets/icons/nav-scenery.png',

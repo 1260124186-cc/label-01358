@@ -254,6 +254,95 @@ const ERRAND_ORDER_TABS = [
   { value: 'completed', label: '已完成' }
 ];
 
+const RENTAL_LOCATION_TYPES = [
+  { value: 'campus', label: '校内' },
+  { value: 'off_campus', label: '校外' }
+];
+
+const RENTAL_HOUSE_TYPES = [
+  { value: 'studio', label: '单间' },
+  { value: 'one_bedroom', label: '一室一厅' },
+  { value: 'two_bedroom', label: '两室一厅' },
+  { value: 'three_bedroom', label: '三室一厅' },
+  { value: 'four_bedroom', label: '四室及以上' }
+];
+
+const RENTAL_RENT_TYPES = [
+  { value: 'entire', label: '整租' },
+  { value: 'shared', label: '合租' }
+];
+
+const RENTAL_GENDER_REQUIREMENTS = [
+  { value: 'no_limit', label: '不限' },
+  { value: 'male_only', label: '仅限男生' },
+  { value: 'female_only', label: '仅限女生' }
+];
+
+const RENTAL_PRICE_RANGES = [
+  { value: '0-500', label: '500元以下', min: 0, max: 500 },
+  { value: '500-1000', label: '500-1000元', min: 500, max: 1000 },
+  { value: '1000-1500', label: '1000-1500元', min: 1000, max: 1500 },
+  { value: '1500-2000', label: '1500-2000元', min: 1500, max: 2000 },
+  { value: '2000-3000', label: '2000-3000元', min: 2000, max: 3000 },
+  { value: '3000+', label: '3000元以上', min: 3000, max: Infinity }
+];
+
+const RENTAL_DISTANCE_RANGES = [
+  { value: '0-500', label: '500米内', min: 0, max: 500 },
+  { value: '500-1000', label: '500-1000米', min: 500, max: 1000 },
+  { value: '1000-2000', label: '1-2公里', min: 1000, max: 2000 },
+  { value: '2000+', label: '2公里以上', min: 2000, max: Infinity }
+];
+
+const RENTAL_FACILITIES = [
+  { value: 'wifi', label: 'WiFi', icon: '📶' },
+  { value: 'air_conditioner', label: '空调', icon: '❄️' },
+  { value: 'heater', label: '暖气', icon: '🔥' },
+  { value: 'washing_machine', label: '洗衣机', icon: '🧺' },
+  { value: 'refrigerator', label: '冰箱', icon: '🧊' },
+  { value: 'water_heater', label: '热水器', icon: '🚿' },
+  { value: 'kitchen', label: '厨房', icon: '🍳' },
+  { value: 'balcony', label: '阳台', icon: '🌿' },
+  { value: 'elevator', label: '电梯', icon: '🛗' },
+  { value: 'parking', label: '停车位', icon: '🅿️' },
+  { value: 'furniture', label: '家具', icon: '🛋️' },
+  { value: 'tv', label: '电视', icon: '📺' }
+];
+
+const RENTAL_LEASE_TERMS = [
+  { value: '1_month', label: '1个月' },
+  { value: '3_months', label: '3个月' },
+  { value: '6_months', label: '6个月' },
+  { value: '1_year', label: '1年' },
+  { value: 'long_term', label: '长期' },
+  { value: 'negotiable', label: '面议' }
+];
+
+const RENTAL_PUBLISHER_TYPES = [
+  { value: 'personal', label: '个人', color: '#10B981' },
+  { value: 'agent', label: '中介', color: '#EF4444' }
+];
+
+const RENTAL_STATUS = [
+  { value: 'available', label: '在租' },
+  { value: 'reserved', label: '已预订' },
+  { value: 'rented', label: '已出租' }
+];
+
+const RENTAL_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'entire', label: '整租' },
+  { value: 'shared', label: '合租' }
+];
+
+const RENTAL_SORT_OPTIONS = [
+  { value: 'latest', label: '最新发布', field: 'createTime', order: 'desc' },
+  { value: 'price_asc', label: '价格低到高', field: 'rent', order: 'asc' },
+  { value: 'price_desc', label: '价格高到低', field: 'rent', order: 'desc' },
+  { value: 'distance', label: '距离最近', field: 'distance', order: 'asc' },
+  { value: 'views', label: '浏览量', field: 'views', order: 'desc' }
+];
+
 function getLabelByValue(list, value) {
   const item = list.find(i => i.value === value);
   return item ? item.label : value;
@@ -292,5 +381,17 @@ module.exports = {
   PRINT_SIDE_OPTIONS,
   PRINT_PAPER_OPTIONS,
   ERRAND_ORDER_TABS,
+  RENTAL_LOCATION_TYPES,
+  RENTAL_HOUSE_TYPES,
+  RENTAL_RENT_TYPES,
+  RENTAL_GENDER_REQUIREMENTS,
+  RENTAL_PRICE_RANGES,
+  RENTAL_DISTANCE_RANGES,
+  RENTAL_FACILITIES,
+  RENTAL_LEASE_TERMS,
+  RENTAL_PUBLISHER_TYPES,
+  RENTAL_STATUS,
+  RENTAL_TABS,
+  RENTAL_SORT_OPTIONS,
   getLabelByValue
 };
