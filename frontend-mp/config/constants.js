@@ -335,6 +335,51 @@ const RENTAL_TABS = [
   { value: 'shared', label: '合租' }
 ];
 
+const CARPOOL_TYPES = [
+  { value: 'car_seeking', label: '车找人', icon: '🚗', color: '#3B82F6' },
+  { value: 'person_seeking', label: '人找车', icon: '🙋', color: '#10B981' },
+  { value: 'charter', label: '包车', icon: '🚐', color: '#8B5CF6' }
+];
+
+const CARPOOL_STATUS = [
+  { value: 'recruiting', label: '招募中', color: '#10B981' },
+  { value: 'full', label: '已满', color: '#F59E0B' },
+  { value: 'departed', label: '已出发', color: '#3B82F6' },
+  { value: 'ended', label: '已结束', color: '#6B7280' }
+];
+
+const CARPOOL_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'car_seeking', label: '车找人' },
+  { value: 'person_seeking', label: '人找车' },
+  { value: 'charter', label: '包车' }
+];
+
+const CARPOOL_DESTINATIONS = [
+  { value: 'station', label: '火车站' },
+  { value: 'airport', label: '机场' },
+  { value: 'downtown', label: '市中心' },
+  { value: 'scenic', label: '景区' },
+  { value: 'home', label: '回家' },
+  { value: 'other', label: '其他' }
+];
+
+const CARPOOL_PRICE_RANGES = [
+  { value: '0-30', label: '30元以下', min: 0, max: 30 },
+  { value: '30-50', label: '30-50元', min: 30, max: 50 },
+  { value: '50-100', label: '50-100元', min: 50, max: 100 },
+  { value: '100-200', label: '100-200元', min: 100, max: 200 },
+  { value: '200+', label: '200元以上', min: 200, max: Infinity }
+];
+
+const CARPOOL_SORT_OPTIONS = [
+  { value: 'latest', label: '最新发布', field: 'createTime', order: 'desc' },
+  { value: 'departure_asc', label: '出发时间近', field: 'departureTime', order: 'asc' },
+  { value: 'price_asc', label: '价格低到高', field: 'pricePerPerson', order: 'asc' },
+  { value: 'price_desc', label: '价格高到低', field: 'pricePerPerson', order: 'desc' },
+  { value: 'seats', label: '剩余座位多', field: 'remainingSeats', order: 'desc' }
+];
+
 const RENTAL_SORT_OPTIONS = [
   { value: 'latest', label: '最新发布', field: 'createTime', order: 'desc' },
   { value: 'price_asc', label: '价格低到高', field: 'rent', order: 'asc' },
@@ -393,5 +438,11 @@ module.exports = {
   RENTAL_STATUS,
   RENTAL_TABS,
   RENTAL_SORT_OPTIONS,
+  CARPOOL_TYPES,
+  CARPOOL_STATUS,
+  CARPOOL_TABS,
+  CARPOOL_DESTINATIONS,
+  CARPOOL_PRICE_RANGES,
+  CARPOOL_SORT_OPTIONS,
   getLabelByValue
 };

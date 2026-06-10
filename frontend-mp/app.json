@@ -47,7 +47,10 @@
     "pages/errand/print-create/index",
     "pages/errand/orders/index",
     "pages/errand/order-detail/index",
-    "pages/errand/address/index"
+    "pages/errand/address/index",
+    "pages/carpool/index",
+    "pages/carpool-publish/index",
+    "pages/carpool-detail/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

@@ -75,6 +75,13 @@ Page({
         icon: '/assets/icons/nav-market.png',
         bgColor: 'linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)',
         url: '/pages/errand/index'
+      },
+      {
+        id: 'carpool',
+        name: '拼车出行',
+        icon: '/assets/icons/nav-market.png',
+        bgColor: 'linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%)',
+        url: '/pages/carpool/index'
       }
     ],
     weatherData: null,

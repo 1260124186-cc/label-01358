@@ -28,7 +28,8 @@ const STORAGE_KEYS = {
   ERRAND_ADDRESS_LIST: 'errandAddressList',
   RENTAL_LIST: 'rentalList',
   RENTAL_COMPARE_LIST: 'rentalCompareList',
-  RENTAL_AGENT_REPORTS: 'rentalAgentReports'
+  RENTAL_AGENT_REPORTS: 'rentalAgentReports',
+  CARPOOL_LIST: 'carpoolList'
 };
 
 /**

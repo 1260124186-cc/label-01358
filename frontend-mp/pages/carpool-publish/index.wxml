@@ -1,0 +1,194 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="form-scroll" scroll-y="{{true}}">
+    <view class="form-section">
+      <view class="section-title">拼车类型</view>
+      <view class="type-selector">
+        <view
+          class="type-item {{formData.type === item.value ? 'active' : ''}}"
+          wx:for="{{carpoolTypes}}"
+          wx:key="value"
+          bindtap="onTypeChange"
+          data-value="{{item.value}}"
+        >
+          <text class="type-icon">{{item.icon}}</text>
+          <text class="type-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">行程信息</view>
+      <view class="form-group">
+        <view class="form-item required">
+          <view class="form-label">出发地</view>
+          <input
+            class="form-input"
+            placeholder="请输入出发地点"
+            value="{{formData.departure}}"
+            bindinput="onInputChange"
+            data-field="departure"
+            maxlength="30"
+          />
+        </view>
+
+        <view class="form-item required">
+          <view class="form-label">目的地</view>
+          <picker
+            mode="selector"
+            range="{{destinations}}"
+            range-key="label"
+            value="{{destinationIndex}}"
+            bindchange="onDestinationChange"
+          >
+            <view class="form-picker">
+              <text class="{{destinationIndex === -1 ? 'placeholder' : ''}}">
+                {{destinationIndex === -1 ? '请选择目的地' : destinations[destinationIndex].label}}
+              </text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item required">
+          <view class="form-label">出发时间</view>
+          <picker mode="dateTime" value="{{formData.departureTime}}" bindchange="onDepartureTimeChange">
+            <view class="form-picker">
+              <text class="{{formData.departureTime ? '' : 'placeholder'}}">
+                {{formData.departureTime || '请选择出发时间'}}
+              </text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item required" wx:if="{{formData.type !== 'person_seeking'}}">
+          <view class="form-label">座位数</view>
+          <view class="seats-selector">
+            <view
+              class="seats-item {{formData.totalSeats === item ? 'active' : ''}}"
+              wx:for="{{[2,3,4,5,6]}}"
+              wx:key="*this"
+              bindtap="onSeatsChange"
+              data-value="{{item}}"
+            >{{item}}座</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">费用信息</view>
+      <view class="form-group">
+        <view class="form-item required">
+          <view class="form-label">每人费用</view>
+          <input
+            class="form-input"
+            placeholder="请输入每人费用"
+            type="digit"
+            value="{{formData.pricePerPerson}}"
+            bindinput="onInputChange"
+            data-field="pricePerPerson"
+          />
+          <text class="input-unit">元/人</text>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">分摊方式</view>
+          <picker
+            mode="selector"
+            range="{{costSharingOptions}}"
+            value="{{costSharingIndex}}"
+            bindchange="onCostSharingChange"
+          >
+            <view class="form-picker">
+              <text>{{formData.costSharing}}</text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">备注说明</view>
+      <textarea
+        class="form-textarea"
+        placeholder="请描述行程详情、注意事项等"
+        value="{{formData.remark}}"
+        bindinput="onInputChange"
+        data-field="remark"
+        maxlength="300"
+        auto-height
+      />
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">联系方式</view>
+      <view class="form-group">
+        <view class="form-item required">
+          <view class="form-label">联系人</view>
+          <input
+            class="form-input"
+            placeholder="请输入联系人姓名"
+            value="{{formData.contactName}}"
+            bindinput="onInputChange"
+            data-field="contactName"
+          />
+        </view>
+
+        <view class="form-item required">
+          <view class="form-label">手机号</view>
+          <input
+            class="form-input"
+            placeholder="请输入手机号码"
+            type="number"
+            value="{{formData.contactPhone}}"
+            bindinput="onInputChange"
+            data-field="contactPhone"
+            maxlength="11"
+          />
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">微信号</view>
+          <input
+            class="form-input"
+            placeholder="请输入微信号（选填）"
+            value="{{formData.wechatId}}"
+            bindinput="onInputChange"
+            data-field="wechatId"
+          />
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section tips-section">
+      <view class="tips-title">⚠️ 安全提示</view>
+      <view class="tips-content">
+        <view class="tip-item">• 实名认证用户优先展示，建议完成实名认证</view>
+        <view class="tip-item">• 请核实同行人信息，注意人身和财产安全</view>
+        <view class="tip-item">• 平台仅提供信息发布服务，不承担出行安全责任</view>
+        <view class="tip-item">• 禁止发布非法营运信息，违者将封禁账号</view>
+      </view>
+    </view>
+
+    <view class="form-section disclaimer-section">
+      <view class="disclaimer-title">📋 平台免责声明</view>
+      <view class="disclaimer-content">
+        本平台仅提供拼车信息发布与匹配服务，不参与实际出行安排。用户应自行核实同行人身份信息，注意出行安全。因拼车出行产生的任何纠纷或安全事故，平台不承担任何法律责任。建议用户购买相关出行保险。
+      </view>
+    </view>
+
+    <view class="submit-section">
+      <button
+        class="submit-btn {{submitting ? 'disabled' : ''}}"
+        bindtap="onSubmit"
+        disabled="{{submitting}}"
+        loading="{{submitting}}"
+      >{{submitting ? '发布中...' : '立即发布'}}</button>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>

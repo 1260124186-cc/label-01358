@@ -1964,6 +1964,219 @@ function getFacilityLabel(value) {
   return facility ? facility.label : value;
 }
 
+// ==================== 拼车模块 ====================
+
+let carpoolInitialized = false;
+
+function initCarpoolData() {
+  if (carpoolInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.CARPOOL_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const carpools = mockData.MOCK_CARPOOLS.map((item, index) => ({
+      id: 'mock_carpool_' + index + '_' + now,
+      ...item,
+      remainingSeats: item.totalSeats - item.currentMembers,
+      views: Math.floor(Math.random() * 200) + 30,
+      createTime: now - (index + 1) * 86400000,
+      updateTime: now - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.CARPOOL_LIST, carpools);
+  }
+  carpoolInitialized = true;
+}
+
+function getCarpoolList(filters = {}) {
+  initCarpoolData();
+  let list = storage.getList(STORAGE_KEYS.CARPOOL_LIST);
+
+  if (filters.type && filters.type !== 'all') {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  if (filters.destination) {
+    list = list.filter(item => item.destination === filters.destination);
+  }
+
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  if (filters.minPrice !== undefined) {
+    list = list.filter(item => item.pricePerPerson >= filters.minPrice);
+  }
+  if (filters.maxPrice !== undefined && filters.maxPrice !== Infinity) {
+    list = list.filter(item => item.pricePerPerson <= filters.maxPrice);
+  }
+
+  if (filters.date) {
+    const filterDate = new Date(filters.date);
+    const dayStart = new Date(filterDate.getFullYear(), filterDate.getMonth(), filterDate.getDate()).getTime();
+    const dayEnd = dayStart + 86400000;
+    list = list.filter(item => item.departureTime >= dayStart && item.departureTime < dayEnd);
+  }
+
+  list = filterByKeyword(list, filters.keyword, ['departure', 'remark', 'contactName']);
+
+  return sortByField(list, filters.sort || 'latest', constants.CARPOOL_SORT_OPTIONS);
+}
+
+function getCarpoolDetail(id) {
+  initCarpoolData();
+  const list = storage.getList(STORAGE_KEYS.CARPOOL_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function publishCarpool(data) {
+  initCarpoolData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const item = {
+    id: util.generateId(),
+    ...data,
+    currentMembers: 1,
+    remainingSeats: data.totalSeats - 1,
+    publisherId: userInfo.id || 'anonymous',
+    publisherName: userInfo.nickName || '匿名用户',
+    publisherAvatar: userInfo.avatarUrl || '',
+    status: 'recruiting',
+    views: 0,
+    members: [{
+      userId: userInfo.id || 'anonymous',
+      userName: userInfo.nickName || '匿名用户',
+      confirmed: true,
+      phone: data.contactPhone || ''
+    }],
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.CARPOOL_LIST, item);
+  return success ? item : null;
+}
+
+function updateCarpool(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.CARPOOL_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+}
+
+function deleteCarpool(id) {
+  return storage.removeFromList(STORAGE_KEYS.CARPOOL_LIST, id);
+}
+
+function increaseCarpoolViews(id) {
+  const item = getCarpoolDetail(id);
+  if (item) {
+    return storage.updateInList(STORAGE_KEYS.CARPOOL_LIST, id, {
+      views: (item.views || 0) + 1
+    });
+  }
+  return false;
+}
+
+function joinCarpool(carpoolId) {
+  initCarpoolData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+  const userName = userInfo.nickName || '匿名用户';
+
+  const carpool = getCarpoolDetail(carpoolId);
+  if (!carpool) return { success: false, message: '拼车信息不存在' };
+
+  if (carpool.status !== 'recruiting') {
+    return { success: false, message: '该拼车已不在招募中' };
+  }
+
+  const members = carpool.members || [];
+  const alreadyJoined = members.some(m => m.userId === userId);
+  if (alreadyJoined) {
+    return { success: false, message: '您已加入该拼车' };
+  }
+
+  if (carpool.remainingSeats <= 0) {
+    return { success: false, message: '已无剩余座位' };
+  }
+
+  const member = {
+    userId,
+    userName,
+    confirmed: false,
+    phone: '',
+    joinTime: Date.now()
+  };
+
+  members.push(member);
+  const currentMembers = members.length;
+  const remainingSeats = carpool.totalSeats - currentMembers;
+  const newStatus = remainingSeats <= 0 ? 'full' : 'recruiting';
+
+  storage.updateInList(STORAGE_KEYS.CARPOOL_LIST, carpoolId, {
+    members,
+    currentMembers,
+    remainingSeats,
+    status: newStatus,
+    updateTime: Date.now()
+  });
+
+  return { success: true, member };
+}
+
+function confirmCarpoolMember(carpoolId, memberId) {
+  initCarpoolData();
+  const carpool = getCarpoolDetail(carpoolId);
+  if (!carpool) return { success: false, message: '拼车信息不存在' };
+
+  const members = (carpool.members || []).map(m => {
+    if (m.userId === memberId) {
+      return { ...m, confirmed: true, confirmTime: Date.now() };
+    }
+    return m;
+  });
+
+  storage.updateInList(STORAGE_KEYS.CARPOOL_LIST, carpoolId, {
+    members,
+    updateTime: Date.now()
+  });
+
+  return { success: true };
+}
+
+function leaveCarpool(carpoolId) {
+  initCarpoolData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+
+  const carpool = getCarpoolDetail(carpoolId);
+  if (!carpool) return { success: false, message: '拼车信息不存在' };
+
+  if (carpool.publisherId === userId) {
+    return { success: false, message: '发布者不能退出，请删除拼车信息' };
+  }
+
+  const members = (carpool.members || []).filter(m => m.userId !== userId);
+  const currentMembers = members.length;
+  const remainingSeats = carpool.totalSeats - currentMembers;
+
+  storage.updateInList(STORAGE_KEYS.CARPOOL_LIST, carpoolId, {
+    members,
+    currentMembers,
+    remainingSeats,
+    status: remainingSeats > 0 ? 'recruiting' : carpool.status,
+    updateTime: Date.now()
+  });
+
+  return { success: true };
+}
+
+function updateCarpoolStatus(carpoolId, status) {
+  return updateCarpool(carpoolId, { status });
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -2094,5 +2307,16 @@ module.exports = {
   removeFromCompare,
   clearCompareList,
   isInCompareList,
-  getFacilityLabel
+  getFacilityLabel,
+
+  getCarpoolList,
+  getCarpoolDetail,
+  publishCarpool,
+  updateCarpool,
+  deleteCarpool,
+  increaseCarpoolViews,
+  joinCarpool,
+  confirmCarpoolMember,
+  leaveCarpool,
+  updateCarpoolStatus
 };

@@ -1,0 +1,210 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="search-section">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索出发地、备注"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearchConfirm"
+        confirm-type="search"
+      />
+    </view>
+  </view>
+
+  <view class="tab-section">
+    <scroll-view class="tab-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="tabs">
+        <view
+          class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabChange"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="filter-section">
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-row">
+        <view
+          class="filter-chip {{currentDestination === item.value ? 'active' : ''}}"
+          wx:for="{{destinations}}"
+          wx:key="value"
+          bindtap="onDestinationChange"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+        <view class="filter-chip" bindtap="onShowPricePicker">
+          <text>{{currentPriceText || '价格'}}</text>
+          <text class="chip-arrow">▼</text>
+        </view>
+        <view class="filter-chip" bindtap="onShowDatePicker">
+          <text>{{filterDate || '日期'}}</text>
+          <text class="chip-arrow">▼</text>
+        </view>
+        <view class="filter-chip" bindtap="onShowSortPicker">
+          <text>排序</text>
+          <text class="chip-arrow">▼</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{list.length > 0}}">
+      <view
+        class="carpool-card"
+        wx:for="{{list}}"
+        wx:key="id"
+        hover-class="carpool-card-hover"
+        bindtap="onItemTap"
+        data-item="{{item}}"
+      >
+        <view class="card-header">
+          <view class="type-badge" style="background-color: {{item.typeColor}}15; color: {{item.typeColor}}">
+            <text class="type-icon">{{item.typeIcon}}</text>
+            <text class="type-text">{{item.typeText}}</text>
+          </view>
+          <view class="status-badge" style="background-color: {{item.statusColor}}15; color: {{item.statusColor}}">
+            {{item.statusText}}
+          </view>
+          <view
+            class="favorite-btn {{item.isFavorite ? 'active' : ''}}"
+            catchtap="onToggleFavorite"
+            data-item="{{item}}"
+          >
+            <text>{{item.isFavorite ? '❤️' : '🤍'}}</text>
+          </view>
+        </view>
+
+        <view class="card-route">
+          <view class="route-point">
+            <view class="route-dot from"></view>
+            <text class="route-text">{{item.departure}}</text>
+          </view>
+          <view class="route-line-wrap">
+            <view class="route-line"></view>
+            <text class="route-arrow">→</text>
+          </view>
+          <view class="route-point">
+            <view class="route-dot to"></view>
+            <text class="route-text">{{item.destinationText}}</text>
+          </view>
+        </view>
+
+        <view class="card-info">
+          <view class="info-item">
+            <text class="info-icon">🕐</text>
+            <text class="info-text">{{item.departureLabel}}</text>
+          </view>
+          <view class="info-item">
+            <text class="info-icon">👥</text>
+            <text class="info-text">余{{item.remainingSeats}}座 / 共{{item.totalSeats}}座</text>
+          </view>
+          <view class="info-item">
+            <text class="info-icon">💰</text>
+            <text class="info-text">{{item.costSharing}}</text>
+          </view>
+        </view>
+
+        <view class="card-footer">
+          <view class="price-info">
+            <text class="price-currency">¥</text>
+            <text class="price-value">{{item.pricePerPerson}}</text>
+            <text class="price-unit">/人</text>
+          </view>
+          <view class="card-meta">
+            <text wx:if="{{item.verified}}" class="verified-tag">✓ 实名</text>
+            <text class="meta-text">{{item.views}}浏览</text>
+            <text class="meta-text">{{item.timeText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{!loading && list.length === 0}}"
+      text="暂无拼车信息"
+      showAction="{{true}}"
+      actionText="发布拼车"
+      bindaction="onPublish"
+    />
+  </scroll-view>
+
+  <view class="publish-btn" hover-class="publish-btn-hover" bindtap="onPublish">
+    <text class="publish-icon">+</text>
+  </view>
+
+  <view class="picker-mask {{showPricePicker ? 'show' : ''}}" bindtap="onHidePricePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择价格区间</text>
+        <text class="picker-close" bindtap="onHidePricePicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentPriceRange === '' ? 'active' : ''}}"
+          bindtap="onPriceSelect"
+          data-value=""
+        >不限价格</view>
+        <view
+          class="picker-option {{currentPriceRange === item.value ? 'active' : ''}}"
+          wx:for="{{priceRanges}}"
+          wx:key="value"
+          bindtap="onPriceSelect"
+          data-value="{{item.value}}"
+          data-min="{{item.min}}"
+          data-max="{{item.max}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="picker-mask {{showSortPicker ? 'show' : ''}}" bindtap="onHideSortPicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择排序方式</text>
+        <text class="picker-close" bindtap="onHideSortPicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentSort === item.value ? 'active' : ''}}"
+          wx:for="{{sortOptions}}"
+          wx:key="value"
+          bindtap="onSortSelect"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="picker-mask {{showDatePicker ? 'show' : ''}}" bindtap="onHideDatePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择出发日期</text>
+        <text class="picker-close" bindtap="onHideDatePicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{filterDate === '' ? 'active' : ''}}"
+          bindtap="onClearDate"
+        >不限日期</view>
+        <picker mode="date" value="{{filterDate}}" bindchange="onDateChange">
+          <view class="picker-option date-picker-option">
+            <text>{{filterDate || '选择日期'}}</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+  </view>
+</view>

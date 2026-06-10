@@ -1977,6 +1977,156 @@ const MOCK_RENTAL_HOUSES = [
   }
 ];
 
+const MOCK_CARPOOLS = [
+  {
+    type: 'car_seeking',
+    departure: '学校北门',
+    destination: 'station',
+    destinationText: '火车站',
+    departureTime: Date.now() + 3600000 * 3,
+    totalSeats: 4,
+    currentMembers: 2,
+    pricePerPerson: 25,
+    costSharing: 'AA分摊',
+    remark: '后天上午出发，走高速，预计1.5小时到达。行李箱可以放后备箱，请提前10分钟到北门集合。',
+    contactName: '王同学',
+    contactPhone: '13800138020',
+    wechatId: 'wx_wang2026',
+    verified: true,
+    publisherId: 'user_010',
+    publisherName: '王同学',
+    publisherAvatar: '',
+    status: 'recruiting',
+    members: [
+      { userId: 'user_010', userName: '王同学', confirmed: true, phone: '13800138020' },
+      { userId: 'user_011', userName: '李同学', confirmed: true, phone: '13800138021' }
+    ]
+  },
+  {
+    type: 'person_seeking',
+    departure: '市中心万达广场',
+    destination: 'scenic',
+    destinationText: '景区',
+    departureTime: Date.now() + 86400000,
+    totalSeats: 1,
+    currentMembers: 1,
+    pricePerPerson: 30,
+    costSharing: 'AA分摊',
+    remark: '周末想去景区玩，求拼车同行。可以帮忙开车（有驾照3年），也可以分摊油费。',
+    contactName: '张同学',
+    contactPhone: '13800138022',
+    wechatId: 'wx_zhang2026',
+    verified: true,
+    publisherId: 'user_012',
+    publisherName: '张同学',
+    publisherAvatar: '',
+    status: 'recruiting',
+    members: [
+      { userId: 'user_012', userName: '张同学', confirmed: true, phone: '13800138022' }
+    ]
+  },
+  {
+    type: 'charter',
+    departure: '学校南门',
+    destination: 'airport',
+    destinationText: '机场',
+    departureTime: Date.now() + 172800000,
+    totalSeats: 6,
+    currentMembers: 3,
+    pricePerPerson: 50,
+    costSharing: '包车均摊',
+    remark: '包了一辆7座商务车去机场，还有4个空位，费用6人均摊。可以放行李，准时出发不等人。',
+    contactName: '陈同学',
+    contactPhone: '13800138023',
+    wechatId: 'wx_chen2026',
+    verified: false,
+    publisherId: 'user_013',
+    publisherName: '陈同学',
+    publisherAvatar: '',
+    status: 'recruiting',
+    members: [
+      { userId: 'user_013', userName: '陈同学', confirmed: true, phone: '13800138023' },
+      { userId: 'user_014', userName: '刘同学', confirmed: true, phone: '13800138024' },
+      { userId: 'user_015', userName: '赵同学', confirmed: true, phone: '13800138025' }
+    ]
+  },
+  {
+    type: 'car_seeking',
+    departure: '学校东门',
+    destination: 'home',
+    destinationText: '回家',
+    departureTime: Date.now() + 259200000,
+    totalSeats: 5,
+    currentMembers: 4,
+    pricePerPerson: 80,
+    costSharing: 'AA分摊',
+    remark: '端午节回家，自驾车还有1个空位。走高速约2.5小时，可在中途服务区休息。',
+    contactName: '周同学',
+    contactPhone: '13800138026',
+    wechatId: 'wx_zhou2026',
+    verified: true,
+    publisherId: 'user_016',
+    publisherName: '周同学',
+    publisherAvatar: '',
+    status: 'recruiting',
+    members: [
+      { userId: 'user_016', userName: '周同学', confirmed: true, phone: '13800138026' },
+      { userId: 'user_017', userName: '吴同学', confirmed: true, phone: '13800138027' },
+      { userId: 'user_018', userName: '郑同学', confirmed: true, phone: '13800138028' },
+      { userId: 'user_019', userName: '孙同学', confirmed: true, phone: '13800138029' }
+    ]
+  },
+  {
+    type: 'person_seeking',
+    departure: '学校西门',
+    destination: 'downtown',
+    destinationText: '市中心',
+    departureTime: Date.now() + 43200000,
+    totalSeats: 1,
+    currentMembers: 1,
+    pricePerPerson: 15,
+    costSharing: 'AA分摊',
+    remark: '下午去市中心逛街，求拼车，可分摊油费和停车费。大概晚上8点左右回学校。',
+    contactName: '林同学',
+    contactPhone: '13800138030',
+    wechatId: '',
+    verified: false,
+    publisherId: 'user_020',
+    publisherName: '林同学',
+    publisherAvatar: '',
+    status: 'recruiting',
+    members: [
+      { userId: 'user_020', userName: '林同学', confirmed: true, phone: '13800138030' }
+    ]
+  },
+  {
+    type: 'car_seeking',
+    departure: '学校北门',
+    destination: 'scenic',
+    destinationText: '景区',
+    departureTime: Date.now() - 86400000,
+    totalSeats: 4,
+    currentMembers: 4,
+    pricePerPerson: 35,
+    costSharing: 'AA分摊',
+    remark: '周末景区一日游，已满员。感谢各位同行！',
+    contactName: '何同学',
+    contactPhone: '13800138031',
+    wechatId: 'wx_he2026',
+    verified: true,
+    publisherId: 'user_021',
+    publisherName: '何同学',
+    publisherAvatar: '',
+    status: 'full',
+    members: [
+      { userId: 'user_021', userName: '何同学', confirmed: true, phone: '13800138031' },
+      { userId: 'user_022', userName: '马同学', confirmed: true, phone: '13800138032' },
+      { userId: 'user_023', userName: '杨同学', confirmed: true, phone: '13800138033' },
+      { userId: 'user_024', userName: '黄同学', confirmed: true, phone: '13800138034' }
+    ]
+  }
+];
+
 module.exports = {
   ANNOUNCEMENTS,
   CAMPUS_NEWS,
@@ -1995,6 +2145,7 @@ module.exports = {
   MOCK_ERRAND_ORDERS,
   MOCK_ERRAND_ADDRESSES,
   MOCK_RENTAL_HOUSES,
+  MOCK_CARPOOLS,
   WEATHER_DATA,
   EMERGENCY_PHONES,
   PHONEBOOK_CATEGORIES,

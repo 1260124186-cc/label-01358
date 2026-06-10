@@ -1,0 +1,228 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{carpool}}">
+  <scroll-view class="detail-scroll" scroll-y="{{true}}">
+    <view class="detail-header">
+      <view class="header-top">
+        <view class="type-badge" style="background-color: {{carpool.typeColor}}15; color: {{carpool.typeColor}}">
+          <text class="type-icon">{{carpool.typeIcon}}</text>
+          <text>{{carpool.typeText}}</text>
+        </view>
+        <view class="status-badge" style="background-color: {{carpool.statusColor}}15; color: {{carpool.statusColor}}">
+          {{carpool.statusText}}
+        </view>
+        <view
+          class="action-btn {{isFavorite ? 'active' : ''}}"
+          bindtap="onToggleFavorite"
+        >
+          <text>{{isFavorite ? '❤️' : '🤍'}}</text>
+        </view>
+      </view>
+
+      <view class="route-section">
+        <view class="route-point from-point">
+          <view class="route-dot from"></view>
+          <view class="route-info">
+            <text class="route-label">出发地</text>
+            <text class="route-value">{{carpool.departure}}</text>
+          </view>
+        </view>
+        <view class="route-connector">
+          <view class="route-line"></view>
+          <text class="route-direction">↓</text>
+        </view>
+        <view class="route-point to-point">
+          <view class="route-dot to"></view>
+          <view class="route-info">
+            <text class="route-label">目的地</text>
+            <text class="route-value">{{carpool.destinationText}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="meta-row">
+        <view class="meta-item">
+          <text class="meta-icon">🕐</text>
+          <text class="meta-value">{{carpool.departureFormatted}}</text>
+          <text class="meta-label">出发时间</text>
+        </view>
+        <view class="meta-divider"></view>
+        <view class="meta-item">
+          <text class="meta-icon">💰</text>
+          <text class="meta-value">¥{{carpool.pricePerPerson}}/人</text>
+          <text class="meta-label">{{carpool.costSharing}}</text>
+        </view>
+        <view class="meta-divider"></view>
+        <view class="meta-item">
+          <text class="meta-icon">👥</text>
+          <text class="meta-value">余{{carpool.remainingSeats}}/{{carpool.totalSeats}}座</text>
+          <text class="meta-label">座位</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-section" wx:if="{{carpool.remark}}">
+      <view class="section-title">备注说明</view>
+      <view class="remark-content">{{carpool.remark}}</view>
+    </view>
+
+    <view class="detail-section">
+      <view class="section-title">同行成员 ({{carpool.currentMembers}}人)</view>
+      <view class="members-list">
+        <view class="member-item" wx:for="{{carpool.members}}" wx:key="userId">
+          <view class="member-avatar">
+            <text>{{item.userName[0]}}</text>
+          </view>
+          <view class="member-info">
+            <view class="member-name-row">
+              <text class="member-name">{{item.userName}}</text>
+              <text class="member-badge publisher" wx:if="{{item.isPublisher}}">发布者</text>
+              <text class="member-badge confirmed" wx:if="{{item.confirmed && !item.isPublisher}}">已确认</text>
+              <text class="member-badge pending" wx:if="{{!item.confirmed && !item.isPublisher}}">待确认</text>
+            </view>
+          </view>
+          <view class="member-actions" wx:if="{{isPublisher && !item.isPublisher && !item.confirmed}}">
+            <view class="confirm-btn" bindtap="onConfirmMember" data-userid="{{item.userId}}">确认</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-section">
+      <view class="section-title">联系方式</view>
+      <view class="contact-info-card">
+        <view class="contact-row">
+          <text class="contact-label">联系人</text>
+          <text class="contact-value">{{carpool.contactName}}</text>
+        </view>
+        <view class="contact-row">
+          <text class="contact-label">手机号</text>
+          <text class="contact-value">{{carpool.contactPhone}}</text>
+        </view>
+        <view class="contact-row" wx:if="{{carpool.wechatId}}">
+          <text class="contact-label">微信号</text>
+          <text class="contact-value">{{carpool.wechatId}}</text>
+        </view>
+        <view class="contact-row">
+          <text class="contact-label">实名认证</text>
+          <text class="contact-value {{carpool.verified ? 'verified' : 'unverified'}}">{{carpool.verified ? '✓ 已认证' : '未认证'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-section">
+      <view class="section-title">发布信息</view>
+      <view class="publish-info">
+        <view class="info-row">
+          <text class="info-label">发布时间</text>
+          <text class="info-value">{{carpool.timeText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">浏览次数</text>
+          <text class="info-value">{{carpool.views}}次</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-section safety-section" bindtap="onShowSafetyModal">
+      <view class="safety-banner">
+        <text class="safety-icon">🛡️</text>
+        <text class="safety-text">查看安全提示与免责声明</text>
+        <text class="safety-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="detail-section" wx:if="{{isPublisher}}">
+      <view class="section-title">管理操作</view>
+      <view class="manage-actions">
+        <view class="manage-btn departed" wx:if="{{carpool.status === 'recruiting' || carpool.status === 'full'}}" bindtap="onUpdateStatus" data-status="departed">
+          <text>🚗 标记已出发</text>
+        </view>
+        <view class="manage-btn ended" wx:if="{{carpool.status === 'departed'}}" bindtap="onUpdateStatus" data-status="ended">
+          <text>✅ 标记已结束</text>
+        </view>
+        <view class="manage-btn recruiting" wx:if="{{carpool.status === 'full'}}" bindtap="onUpdateStatus" data-status="recruiting">
+          <text>📋 重新开放</text>
+        </view>
+        <view class="manage-btn delete" bindtap="onDeleteCarpool">
+          <text>🗑️ 删除拼车</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="bottom-bar">
+    <view class="bar-left" wx:if="{{!isPublisher}}">
+      <view class="bar-info">
+        <text class="bar-price">¥{{carpool.pricePerPerson}}</text>
+        <text class="bar-unit">/人</text>
+      </view>
+      <view class="bar-seats">余{{carpool.remainingSeats}}座</view>
+    </view>
+    <view class="bar-left" wx:if="{{isPublisher}}">
+      <view class="bar-info">
+        <text class="bar-status" style="color: {{carpool.statusColor}}">{{carpool.statusText}}</text>
+      </view>
+    </view>
+    <view class="bar-right">
+      <view class="bar-btn secondary" bindtap="onCopyWechat" wx:if="{{carpool.wechatId}}">
+        <text class="btn-icon">💬</text>
+        <text class="btn-text">微信联系</text>
+      </view>
+      <view class="bar-btn secondary" bindtap="onCallPhone">
+        <text class="btn-icon">📞</text>
+        <text class="btn-text">电话联系</text>
+      </view>
+      <view
+        class="bar-btn primary"
+        wx:if="{{!isPublisher && !isJoined && carpool.status === 'recruiting' && carpool.remainingSeats > 0}}"
+        bindtap="onJoinCarpool"
+      >申请同行</view>
+      <view
+        class="bar-btn leave-btn"
+        wx:if="{{!isPublisher && isJoined}}"
+        bindtap="onLeaveCarpool"
+      >退出拼车</view>
+      <view
+        class="bar-btn disabled-btn"
+        wx:if="{{!isPublisher && !isJoined && (carpool.status !== 'recruiting' || carpool.remainingSeats <= 0)}}"
+      >{{carpool.status === 'full' ? '已满员' : '已截止'}}</view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{showSafetyModal ? 'show' : ''}}" bindtap="onHideSafetyModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">🛡️ 安全提示与免责声明</text>
+        <text class="modal-close" bindtap="onHideSafetyModal">×</text>
+      </view>
+      <view class="modal-body">
+        <view class="safety-item">
+          <text class="safety-item-title">✅ 出行前</text>
+          <text class="safety-item-text">核实同行人身份信息，优先选择实名认证用户</text>
+        </view>
+        <view class="safety-item">
+          <text class="safety-item-title">✅ 出行中</text>
+          <text class="safety-item-text">将行程信息告知亲友，保持通讯畅通</text>
+        </view>
+        <view class="safety-item">
+          <text class="safety-item-title">⚠️ 注意事项</text>
+          <text class="safety-item-text">不要乘坐无证营运车辆，注意人身和财产安全</text>
+        </view>
+        <view class="safety-item">
+          <text class="safety-item-title">📋 免责声明</text>
+          <text class="safety-item-text">本平台仅提供信息发布与匹配服务，不参与实际出行安排。因拼车出行产生的任何纠纷或安全事故，平台不承担任何法律责任。建议购买相关出行保险。</text>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn confirm" bindtap="onHideSafetyModal">我知道了</view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="loading-container" wx:if="{{loading}}">
+  <view class="loading-spinner"></view>
+  <text class="loading-text">加载中...</text>
+</view>
