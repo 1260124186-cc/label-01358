@@ -17,7 +17,9 @@ const STORAGE_KEYS = {
   STUDY_MATERIALS_LIST: 'studyMaterialsList',
   STUDY_REWARDS_LIST: 'studyRewardsList',
   USER_POINTS: 'userPoints',
-  POINT_TRANSACTIONS: 'pointTransactions'
+  POINT_TRANSACTIONS: 'pointTransactions',
+  CAMPUS_SHOP_LIST: 'campusShopList',
+  SHOP_REVIEWS: 'shopReviews'
 };
 
 /**

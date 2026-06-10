@@ -9,6 +9,8 @@ const mockData = require('../config/mock-data');
 
 let studyMaterialsInitialized = false;
 let studyRewardsInitialized = false;
+let campusShopsInitialized = false;
+let shopReviewsInitialized = false;
 
 function initStudyMaterials() {
   if (studyMaterialsInitialized) return;
@@ -1149,6 +1151,117 @@ function makePhoneCall(phoneNumber) {
   });
 }
 
+// ==================== 校园商家 ====================
+
+function initCampusShops() {
+  if (campusShopsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.CAMPUS_SHOP_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const shops = mockData.MOCK_CAMPUS_SHOPS.map((item, index) => ({
+      id: 'mock_shop_' + index + '_' + now,
+      ...item,
+      views: Math.floor(Math.random() * 500) + 50,
+      createTime: now - (index + 1) * 86400000,
+      updateTime: now - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.CAMPUS_SHOP_LIST, shops);
+  }
+  campusShopsInitialized = true;
+}
+
+function initShopReviews() {
+  if (shopReviewsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.SHOP_REVIEWS);
+  if (!existing || Object.keys(existing).length === 0) {
+    const shops = storage.getList(STORAGE_KEYS.CAMPUS_SHOP_LIST);
+    const reviewsMap = {};
+    mockData.MOCK_SHOP_REVIEWS.forEach(mockReview => {
+      const shop = shops[mockReview.shopIndex];
+      if (shop) {
+        reviewsMap[shop.id] = mockReview.reviews.map((r, idx) => ({
+          id: 'review_' + mockReview.shopIndex + '_' + idx + '_' + Date.now(),
+          shopId: shop.id,
+          ...r
+        }));
+      }
+    });
+    storage.set(STORAGE_KEYS.SHOP_REVIEWS, reviewsMap);
+  }
+  shopReviewsInitialized = true;
+}
+
+function getCampusShopList(filters = {}) {
+  initCampusShops();
+  let list = storage.getList(STORAGE_KEYS.CAMPUS_SHOP_LIST);
+
+  if (filters.category && filters.category !== 'all') {
+    list = list.filter(item => item.category === filters.category);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'description', 'address']);
+  }
+
+  if (filters.studentDiscount) {
+    list = list.filter(item => item.studentDiscount);
+  }
+
+  return sortByField(list, filters.sort || 'default', constants.SHOP_SORT_OPTIONS);
+}
+
+function getCampusShopDetail(id) {
+  initCampusShops();
+  const list = storage.getList(STORAGE_KEYS.CAMPUS_SHOP_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function increaseShopViews(id) {
+  const item = getCampusShopDetail(id);
+  if (item) {
+    return storage.updateInList(STORAGE_KEYS.CAMPUS_SHOP_LIST, id, {
+      views: (item.views || 0) + 1
+    });
+  }
+  return false;
+}
+
+function getShopReviews(shopId) {
+  initShopReviews();
+  const reviewsMap = storage.get(STORAGE_KEYS.SHOP_REVIEWS) || {};
+  return reviewsMap[shopId] || [];
+}
+
+function addShopReview(shopId, reviewData) {
+  initShopReviews();
+  const reviewsMap = storage.get(STORAGE_KEYS.SHOP_REVIEWS) || {};
+  const reviews = reviewsMap[shopId] || [];
+
+  const review = {
+    id: util.generateId(),
+    shopId,
+    ...reviewData,
+    createTime: Date.now()
+  };
+
+  reviews.unshift(review);
+  reviewsMap[shopId] = reviews;
+  storage.set(STORAGE_KEYS.SHOP_REVIEWS, reviewsMap);
+
+  const shop = getCampusShopDetail(shopId);
+  if (shop) {
+    const totalRating = reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
+    const newRating = Math.round(totalRating / reviews.length * 10) / 10;
+    storage.updateInList(STORAGE_KEYS.CAMPUS_SHOP_LIST, shopId, {
+      rating: newRating,
+      reviewCount: reviews.length,
+      updateTime: Date.now()
+    });
+  }
+
+  return review;
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -1228,5 +1341,11 @@ module.exports = {
   searchPhonebook,
   getServiceGuides,
   getServiceGuideDetail,
-  makePhoneCall
+  makePhoneCall,
+
+  getCampusShopList,
+  getCampusShopDetail,
+  increaseShopViews,
+  getShopReviews,
+  addShopReview
 };

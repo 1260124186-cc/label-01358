@@ -1,0 +1,94 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 分类筛选栏 -->
+  <view class="category-section">
+    <scroll-view class="category-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="category-tabs">
+        <view
+          class="category-tab {{currentCategory === item.value ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="value"
+          bindtap="onCategoryTap"
+          data-category="{{item.value}}"
+        >
+          <text class="category-icon">{{item.icon}}</text>
+          <text class="category-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 搜索栏 -->
+  <view class="search-section">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索商家名称"
+        placeholder-class="search-placeholder"
+        value="{{keyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+        confirm-type="search"
+      />
+    </view>
+  </view>
+
+  <!-- 商家列表 -->
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{shopList.length > 0}}">
+      <view
+        class="shop-card"
+        wx:for="{{shopList}}"
+        wx:key="id"
+        hover-class="shop-card-hover"
+        bindtap="onShopTap"
+        data-id="{{item.id}}"
+      >
+        <view class="shop-cover-wrap">
+          <image
+            class="shop-cover"
+            src="{{item.cover || '/assets/images/default-goods.png'}}"
+            mode="aspectFill"
+          />
+          <view class="student-badge" wx:if="{{item.studentDiscount}}">
+            <text class="student-badge-icon">🎓</text>
+            <text class="student-badge-text">学生优惠</text>
+          </view>
+        </view>
+        <view class="shop-info">
+          <view class="shop-header">
+            <text class="shop-name">{{item.name}}</text>
+          </view>
+          <view class="shop-rating">
+            <view class="stars">
+              <text
+                wx:for="{{item.stars}}"
+                wx:for-item="star"
+                wx:key="index"
+                class="star {{star}}"
+              >{{star === 'full' ? '★' : star === 'half' ? '★' : '☆'}}</text>
+            </view>
+            <text class="rating-num">{{item.ratingText}}</text>
+          </view>
+          <view class="shop-tags">
+            <view class="tag tag-primary">{{item.categoryLabel}}</view>
+            <view class="tag tag-info" wx:if="{{item.studentDiscount}}">学生折扣</view>
+          </view>
+          <text class="shop-desc">{{item.description}}</text>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{shopList.length === 0}}"
+      text="暂无商家信息"
+    />
+  </scroll-view>
+</view>

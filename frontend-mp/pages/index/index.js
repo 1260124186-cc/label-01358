@@ -54,6 +54,13 @@ Page({
         icon: '/assets/icons/nav-broadcast.png',
         bgColor: 'linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%)',
         url: '/pages/study-materials/index'
+      },
+      {
+        id: 'campus-shop',
+        name: '校园商家',
+        icon: '/assets/icons/nav-market.png',
+        bgColor: 'linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%)',
+        url: '/pages/campus-shop/index'
       }
     ],
     weatherData: null,

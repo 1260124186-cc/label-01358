@@ -29,7 +29,9 @@
     "pages/survey-list/index",
     "pages/survey-create/index",
     "pages/survey-fill/index",
-    "pages/survey-result/index"
+    "pages/survey-result/index",
+    "pages/campus-shop/index",
+    "pages/campus-shop/detail"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

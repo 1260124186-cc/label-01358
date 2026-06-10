@@ -1,0 +1,253 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+
+/* ==================== 分类筛选栏 ==================== */
+.category-section {
+  padding: 16rpx 24rpx;
+  background-color: var(--color-bg-card);
+  border-bottom: 1rpx solid var(--color-border-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.category-scroll {
+  white-space: nowrap;
+}
+
+.category-tabs {
+  display: inline-flex;
+  gap: 16rpx;
+  padding-right: 16rpx;
+}
+
+.category-tab {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+  min-width: 100rpx;
+}
+
+.category-tab:active {
+  transform: scale(0.96);
+}
+
+.category-tab.active {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
+}
+
+.category-tab.active .category-icon,
+.category-tab.active .category-label {
+  color: #FFFFFF;
+}
+
+.category-icon {
+  font-size: 36rpx;
+  margin-bottom: 4rpx;
+}
+
+.category-label {
+  font-size: 22rpx;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: color var(--transition-fast);
+}
+
+/* ==================== 搜索栏 ==================== */
+.search-section {
+  padding: 16rpx 24rpx;
+  background-color: var(--color-bg-card);
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.search-bar:active {
+  background-color: var(--color-border);
+}
+
+.search-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  font-size: var(--font-base);
+  color: var(--color-text-primary);
+  height: 40rpx;
+  line-height: 40rpx;
+}
+
+.search-placeholder {
+  color: var(--color-text-muted);
+  font-size: var(--font-sm);
+}
+
+/* ==================== 列表区域 ==================== */
+.list-scroll {
+  height: calc(100vh - 280rpx);
+}
+
+.list-container {
+  padding: 16rpx 24rpx;
+}
+
+/* ==================== 商家卡片 ==================== */
+.shop-card {
+  display: flex;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 20rpx;
+  transition: all var(--transition-fast);
+}
+
+.shop-card:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-sm);
+}
+
+.shop-cover-wrap {
+  position: relative;
+  width: 240rpx;
+  height: 240rpx;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.shop-cover {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s ease;
+}
+
+.shop-card:active .shop-cover {
+  transform: scale(1.05);
+}
+
+.student-badge {
+  position: absolute;
+  top: 12rpx;
+  left: 12rpx;
+  display: flex;
+  align-items: center;
+  padding: 6rpx 14rpx;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FFE66D 100%);
+  border-radius: var(--radius-full);
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.35);
+}
+
+.student-badge-icon {
+  font-size: 20rpx;
+  margin-right: 4rpx;
+}
+
+.student-badge-text {
+  font-size: 20rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.shop-info {
+  flex: 1;
+  padding: 20rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.shop-header {
+  display: flex;
+  align-items: center;
+}
+
+.shop-name {
+  font-size: var(--font-md);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shop-rating {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+}
+
+.stars {
+  display: flex;
+  align-items: center;
+}
+
+.star {
+  font-size: 24rpx;
+  margin-right: 2rpx;
+}
+
+.star.full {
+  color: #FBBF24;
+}
+
+.star.half {
+  color: #FBBF24;
+  opacity: 0.6;
+}
+
+.star.empty {
+  color: var(--color-text-muted);
+}
+
+.rating-num {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: #FBBF24;
+  margin-left: 8rpx;
+}
+
+.shop-tags {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-top: 12rpx;
+  flex-wrap: wrap;
+}
+
+.shop-desc {
+  font-size: var(--font-sm);
+  color: var(--color-text-muted);
+  margin-top: 12rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  line-height: 1.5;
+}
+
+/* ==================== 暗色模式适配 ==================== */
+.page.dark .category-tab.active {
+  box-shadow: 0 4rpx 12rpx rgba(255, 138, 138, 0.25);
+}
+
+.page.dark .student-badge {
+  box-shadow: 0 4rpx 12rpx rgba(255, 138, 138, 0.25);
+}

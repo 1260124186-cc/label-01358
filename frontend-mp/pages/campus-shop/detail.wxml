@@ -1,0 +1,210 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+
+<view class="shop-detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
+  <scroll-view class="detail-scroll" scroll-y>
+    <view class="swiper-section" wx:if="{{detail.images && detail.images.length > 0}}">
+      <swiper
+        class="image-swiper"
+        indicator-dots="{{false}}"
+        autoplay="{{false}}"
+        circular
+        current="{{currentImageIndex}}"
+        bindchange="onSwiperChange"
+      >
+        <swiper-item wx:for="{{detail.images}}" wx:key="*this" data-index="{{index}}" bindtap="onPreviewImage">
+          <image class="swiper-image" src="{{item}}" mode="aspectFill"/>
+        </swiper-item>
+      </swiper>
+      <view class="image-counter">
+        {{currentImageIndex + 1}}/{{detail.images.length}}
+      </view>
+    </view>
+
+    <view class="no-image-placeholder" wx:else>
+      <text class="placeholder-icon">{{detail.categoryIcon}}</text>
+    </view>
+
+    <view class="detail-content">
+      <view class="shop-basic card">
+        <view class="shop-name-row">
+          <text class="shop-name">{{detail.name}}</text>
+          <view class="student-badge" wx:if="{{detail.studentDiscount}}">
+            <text class="badge-icon">🎓</text>
+            <text class="badge-text">学生优惠</text>
+          </view>
+        </view>
+        <view class="shop-rating-row">
+          <view class="rating-stars">
+            <text wx:for="{{detail.ratingInfo.full}}" wx:key="*this" class="star full">★</text>
+            <text wx:if="{{detail.ratingInfo.half}}" class="star half">★</text>
+            <text wx:for="{{detail.ratingInfo.empty}}" wx:key="*this" class="star empty">★</text>
+          </view>
+          <text class="rating-num">{{detail.rating}}</text>
+          <text class="review-count">{{detail.reviewCount}}条评价</text>
+        </view>
+        <view class="shop-tags">
+          <view class="tag category-tag">
+            {{detail.categoryIcon}} {{detail.categoryText}}
+          </view>
+        </view>
+      </view>
+
+      <view class="discount-section" wx:if="{{detail.studentDiscount && detail.discount}}">
+        <view class="discount-header">
+          <text class="discount-icon">🎓</text>
+          <text class="discount-title">学生专属优惠</text>
+        </view>
+        <text class="discount-text">{{detail.discount}}</text>
+      </view>
+
+      <view class="info-section card">
+        <view class="section-title">店铺信息</view>
+        <view class="info-row" wx:if="{{detail.businessHours}}">
+          <text class="info-label">🕐</text>
+          <text class="info-value">{{detail.businessHours}}</text>
+        </view>
+        <view class="info-row" wx:if="{{detail.address}}">
+          <text class="info-label">📍</text>
+          <text class="info-value">{{detail.address}}</text>
+        </view>
+        <view class="info-row" wx:if="{{detail.phone}}">
+          <text class="info-label">📞</text>
+          <text class="info-value phone-value" bindtap="onCallPhone">{{detail.phone}}</text>
+        </view>
+        <view class="info-row" wx:if="{{detail.location}}">
+          <text class="info-label">📍</text>
+          <text class="info-value">{{detail.location}}</text>
+        </view>
+      </view>
+
+      <view class="services-section card" wx:if="{{detail.services && detail.services.length > 0}}">
+        <view class="section-title">服务项目 & 价格</view>
+        <view class="service-table">
+          <view class="service-header">
+            <text class="service-col name-col">服务项目</text>
+            <text class="service-col price-col">原价</text>
+            <text class="service-col student-col">学生价</text>
+          </view>
+          <view
+            wx:for="{{detail.services}}"
+            wx:key="name"
+            class="service-row {{index % 2 === 1 ? 'odd' : ''}}"
+          >
+            <text class="service-col name-col">{{item.name}}</text>
+            <text class="service-col price-col original-price">{{item.price}}</text>
+            <text class="service-col student-col" wx:if="{{item.studentPrice}}">{{item.studentPrice}}</text>
+            <text class="service-col student-col no-discount" wx:else>-</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="coupons-section" wx:if="{{detail.coupons && detail.coupons.length > 0}}">
+        <view class="section-title">优惠券</view>
+        <view class="coupon-list">
+          <view
+            wx:for="{{detail.coupons}}"
+            wx:key="id"
+            class="coupon-card coupon-{{item.type}}"
+          >
+            <view class="coupon-left">
+              <text class="coupon-type-icon">{{item.typeIcon}}</text>
+              <text class="coupon-type-label">{{item.typeLabel}}</text>
+            </view>
+            <view class="coupon-divider">
+              <view class="cutout-top"></view>
+              <view class="dashed-line"></view>
+              <view class="cutout-bottom"></view>
+            </view>
+            <view class="coupon-right">
+              <text class="coupon-title">{{item.title}}</text>
+              <text class="coupon-condition">{{item.condition}}</text>
+              <text class="coupon-expire">有效期至 {{item.validUntil}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="reviews-section card">
+        <view class="section-title-row">
+          <text class="section-title">用户评价 ({{reviews.length}})</text>
+          <view class="write-review-btn" bindtap="onShowReviewModal">
+            <text>✏️ 写评价</text>
+          </view>
+        </view>
+
+        <view wx:if="{{reviews.length === 0}}" class="no-reviews">
+          <text class="no-reviews-icon">💬</text>
+          <text class="no-reviews-text">暂无评价</text>
+          <text class="no-reviews-desc">成为第一个评价的人吧</text>
+        </view>
+
+        <view wx:else class="reviews-list">
+          <view wx:for="{{reviews}}" wx:key="id" class="review-card">
+            <view class="review-header">
+              <view class="reviewer-avatar">
+                <text class="avatar-letter">{{item.userName[0]}}</text>
+              </view>
+              <view class="reviewer-info">
+                <text class="reviewer-name">{{item.userName}}</text>
+                <view class="review-rating">
+                  <text wx:for="{{5}}" wx:key="*this" class="star {{item2 < item.rating ? 'filled' : 'empty'}}" wx:for-item="item2">★</text>
+                </view>
+              </view>
+              <text class="review-time">{{item.timeText}}</text>
+            </view>
+            <text class="review-content">{{item.content}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="action-bar">
+    <view class="call-btn" bindtap="onCallPhone">
+      <text class="call-icon">📞</text>
+      <text class="call-text">拨打电话</text>
+    </view>
+  </view>
+
+  <view class="review-modal-mask" wx:if="{{showReviewModal}}" bindtap="onCloseReviewModal"></view>
+  <view class="review-modal {{showReviewModal ? 'show' : ''}}">
+    <view class="modal-header">
+      <text class="modal-title">写评价</text>
+      <view class="modal-close" bindtap="onCloseReviewModal">✕</view>
+    </view>
+    <view class="modal-body">
+      <view class="rating-selector">
+        <text class="rating-label">评分</text>
+        <view class="rating-stars-selector">
+          <text
+            wx:for="{{5}}"
+            wx:key="*this"
+            class="selector-star {{item < reviewRating ? 'active' : ''}}"
+            data-rating="{{item + 1}}"
+            bindtap="onRatingTap"
+          >★</text>
+        </view>
+      </view>
+      <textarea
+        class="review-textarea"
+        placeholder="分享你的体验..."
+        placeholder-class="textarea-placeholder"
+        value="{{reviewContent}}"
+        bindinput="onReviewInput"
+        maxlength="200"
+      />
+    </view>
+    <view class="modal-footer">
+      <view class="submit-btn {{reviewContent.trim() ? 'active' : ''}}" bindtap="onSubmitReview">
+        提交评价
+      </view>
+    </view>
+  </view>
+</view>
+
+<view wx:else class="empty-state">
+  <text class="empty-icon">🏪</text>
+  <text class="empty-text">店铺不存在或已下架</text>
+</view>

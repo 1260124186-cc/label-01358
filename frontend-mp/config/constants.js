@@ -164,6 +164,30 @@ const STUDY_TABS = [
   { value: 'rewards', label: '悬赏求助' }
 ];
 
+const SHOP_CATEGORIES = [
+  { value: 'all', label: '全部', icon: '🏪' },
+  { value: 'print', label: '打印店', icon: '🖨️' },
+  { value: 'milktea', label: '奶茶店', icon: '🧋' },
+  { value: 'stationery', label: '文具店', icon: '✏️' },
+  { value: 'barber', label: '理发店', icon: '💇' },
+  { value: 'fruit', label: '水果店', icon: '🍎' },
+  { value: 'coffee', label: '咖啡馆', icon: '☕' },
+  { value: 'repair', label: '数码维修', icon: '📱' },
+  { value: 'bookstore', label: '书店', icon: '📖' }
+];
+
+const SHOP_SORT_OPTIONS = [
+  { value: 'default', label: '默认', field: 'rating', order: 'desc' },
+  { value: 'rating', label: '评分最高', field: 'rating', order: 'desc' },
+  { value: 'reviews', label: '评价最多', field: 'reviewCount', order: 'desc' }
+];
+
+const COUPON_TYPES = [
+  { value: 'cash', label: '满减', icon: '💰' },
+  { value: 'percent', label: '折扣', icon: '🏷️' },
+  { value: 'gift', label: '赠品', icon: '🎁' }
+];
+
 function getLabelByValue(list, value) {
   const item = list.find(i => i.value === value);
   return item ? item.label : value;
@@ -190,5 +214,8 @@ module.exports = {
   REWARD_POINTS_OPTIONS,
   FILE_TYPE_OPTIONS,
   STUDY_TABS,
+  SHOP_CATEGORIES,
+  SHOP_SORT_OPTIONS,
+  COUPON_TYPES,
   getLabelByValue
 };

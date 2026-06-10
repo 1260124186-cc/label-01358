@@ -23,7 +23,7 @@ App({
   initMockData() {
     try {
       const { STORAGE_KEYS } = storage;
-      const MOCK_DATA_VERSION = 'v2';
+      const MOCK_DATA_VERSION = 'v3';
       const now = Date.now();
 
       const storedVersion = wx.getStorageSync('mock_data_version');
@@ -34,6 +34,7 @@ App({
       const surveyIds = {};
       const studyIds = {};
       const rewardIds = {};
+      const shopIds = {};
 
       let lostFoundList = storage.get(STORAGE_KEYS.LOST_FOUND_LIST);
       if (needsReset || !lostFoundList || lostFoundList.length === 0) {
@@ -126,6 +127,37 @@ App({
       studyRewardsList.forEach((item, index) => {
         rewardIds[index] = item.id;
       });
+
+      let campusShopList = storage.get(STORAGE_KEYS.CAMPUS_SHOP_LIST);
+      if (needsReset || !campusShopList || campusShopList.length === 0) {
+        campusShopList = mockData.MOCK_CAMPUS_SHOPS.map((item, index) => ({
+          id: 'mock_shop_' + index + '_' + now,
+          ...item,
+          views: Math.floor(Math.random() * 500) + 50,
+          createTime: now - (index + 1) * 86400000,
+          updateTime: now - (index + 1) * 86400000
+        }));
+        storage.set(STORAGE_KEYS.CAMPUS_SHOP_LIST, campusShopList);
+      }
+      campusShopList.forEach((item, index) => {
+        shopIds[index] = item.id;
+      });
+
+      let shopReviewsMap = storage.get(STORAGE_KEYS.SHOP_REVIEWS);
+      if (needsReset || !shopReviewsMap || Object.keys(shopReviewsMap).length === 0) {
+        shopReviewsMap = {};
+        mockData.MOCK_SHOP_REVIEWS.forEach(mockReview => {
+          const shop = campusShopList[mockReview.shopIndex];
+          if (shop) {
+            shopReviewsMap[shop.id] = mockReview.reviews.map((r, idx) => ({
+              id: 'review_' + mockReview.shopIndex + '_' + idx + '_' + now,
+              shopId: shop.id,
+              ...r
+            }));
+          }
+        });
+        storage.set(STORAGE_KEYS.SHOP_REVIEWS, shopReviewsMap);
+      }
 
       let userPoints = storage.get(STORAGE_KEYS.USER_POINTS);
       if (userPoints === null || userPoints === undefined) {

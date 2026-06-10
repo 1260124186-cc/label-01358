@@ -1239,6 +1239,285 @@ const NOTIFICATION_TEMPLATES = [
   }
 ];
 
+const MOCK_CAMPUS_SHOPS = [
+  {
+    name: '校印打印店',
+    category: 'print',
+    description: '专业文印服务，论文装订、证件照拍摄，学生首选',
+    cover: 'https://picsum.photos/seed/printshop/800/400',
+    images: ['https://picsum.photos/seed/printshop1/800/600', 'https://picsum.photos/seed/printshop2/800/600'],
+    phone: '010-12346101',
+    address: '生活服务中心1楼106室',
+    businessHours: '8:00-21:00',
+    location: '生活服务中心',
+    rating: 4.5,
+    reviewCount: 128,
+    studentDiscount: true,
+    discount: '凭学生证打印0.1元/张（A4黑白）',
+    services: [
+      { name: 'A4黑白打印', price: '0.15元/张', studentPrice: '0.10元/张' },
+      { name: 'A4彩色打印', price: '1.00元/张', studentPrice: '0.80元/张' },
+      { name: '论文装订', price: '15元/本', studentPrice: '12元/本' },
+      { name: '证件照拍摄', price: '25元/版', studentPrice: '20元/版' },
+      { name: '复印', price: '0.20元/张', studentPrice: '0.15元/张' },
+      { name: '扫描', price: '2.00元/页', studentPrice: '1.50元/页' }
+    ],
+    coupons: [
+      { id: 'cp1', title: '新用户满10减3', condition: '满10元', discount: 3, validUntil: '2026-08-31', type: 'cash' },
+      { id: 'cp2', title: '论文装订8折', condition: '装订5本以上', discount: 0.8, validUntil: '2026-07-31', type: 'percent' }
+    ]
+  },
+  {
+    name: '茶语奶茶店',
+    category: 'milktea',
+    description: '精选鲜茶鲜奶，校园里的小确幸，每日新鲜制作',
+    cover: 'https://picsum.photos/seed/milkteashop/800/400',
+    images: ['https://picsum.photos/seed/milktea1/800/600', 'https://picsum.photos/seed/milktea2/800/600'],
+    phone: '010-12346102',
+    address: '生活服务中心2楼201室',
+    businessHours: '9:00-22:00',
+    location: '生活服务中心',
+    rating: 4.7,
+    reviewCount: 356,
+    studentDiscount: true,
+    discount: '学生卡消费9折优惠',
+    services: [
+      { name: '珍珠奶茶', price: '12元', studentPrice: '10.8元' },
+      { name: '杨枝甘露', price: '16元', studentPrice: '14.4元' },
+      { name: '多肉葡萄', price: '18元', studentPrice: '16.2元' },
+      { name: '柠檬养乐多', price: '14元', studentPrice: '12.6元' },
+      { name: '抹茶拿铁', price: '15元', studentPrice: '13.5元' },
+      { name: '鲜果茶（大杯）', price: '16元', studentPrice: '14.4元' }
+    ],
+    coupons: [
+      { id: 'cp3', title: '第二杯半价', condition: '任意饮品', discount: 0.5, validUntil: '2026-07-15', type: 'percent' },
+      { id: 'cp4', title: '满30减5', condition: '满30元', discount: 5, validUntil: '2026-08-31', type: 'cash' }
+    ]
+  },
+  {
+    name: '学海文具店',
+    category: 'stationery',
+    description: '学习用品一应俱全，考试必备文具专区，价格实惠',
+    cover: 'https://picsum.photos/seed/stationeryshop/800/400',
+    images: ['https://picsum.photos/seed/stationery1/800/600', 'https://picsum.photos/seed/stationery2/800/600'],
+    phone: '010-12346103',
+    address: '生活服务中心1楼108室',
+    businessHours: '8:30-20:30',
+    location: '生活服务中心',
+    rating: 4.3,
+    reviewCount: 89,
+    studentDiscount: true,
+    discount: '学生购买全场95折',
+    services: [
+      { name: '签字笔（3支装）', price: '6元', studentPrice: '5.7元' },
+      { name: '笔记本（A5）', price: '8元', studentPrice: '7.6元' },
+      { name: '考试文具套装', price: '25元', studentPrice: '22元' },
+      { name: '荧光笔（6色）', price: '12元', studentPrice: '11.4元' },
+      { name: '计算器（考试专用）', price: '45元', studentPrice: '40元' },
+      { name: '文件夹（5个装）', price: '15元', studentPrice: '13.5元' }
+    ],
+    coupons: [
+      { id: 'cp5', title: '满50减8', condition: '满50元', discount: 8, validUntil: '2026-09-30', type: 'cash' }
+    ]
+  },
+  {
+    name: '匠心理发店',
+    category: 'barber',
+    description: '专注学生发型设计，剪染烫一站式服务，预约免等待',
+    cover: 'https://picsum.photos/seed/barbershop/800/400',
+    images: ['https://picsum.photos/seed/barber1/800/600', 'https://picsum.photos/seed/barber2/800/600'],
+    phone: '010-12346104',
+    address: '生活服务中心3楼301室',
+    businessHours: '9:00-21:00',
+    location: '生活服务中心',
+    rating: 4.6,
+    reviewCount: 215,
+    studentDiscount: true,
+    discount: '凭学生证洗剪吹20元起',
+    services: [
+      { name: '洗剪吹（男）', price: '30元', studentPrice: '20元' },
+      { name: '洗剪吹（女）', price: '50元', studentPrice: '38元' },
+      { name: '染发', price: '128元起', studentPrice: '98元起' },
+      { name: '烫发', price: '168元起', studentPrice: '128元起' },
+      { name: '护理', price: '68元', studentPrice: '48元' },
+      { name: '刘海修剪', price: '10元', studentPrice: '8元' }
+    ],
+    coupons: [
+      { id: 'cp6', title: '新客洗剪吹15元', condition: '首次到店', discount: 15, validUntil: '2026-07-31', type: 'cash' },
+      { id: 'cp7', title: '染烫8折', condition: '染烫同时消费', discount: 0.8, validUntil: '2026-08-31', type: 'percent' }
+    ]
+  },
+  {
+    name: '水果鲜生',
+    category: 'fruit',
+    description: '每日新鲜水果直供，果切拼盘现做，健康生活从水果开始',
+    cover: 'https://picsum.photos/seed/fruitshop/800/400',
+    images: ['https://picsum.photos/seed/fruit1/800/600', 'https://picsum.photos/seed/fruit2/800/600'],
+    phone: '010-12346105',
+    address: '生活服务中心1楼110室',
+    businessHours: '7:30-22:00',
+    location: '生活服务中心',
+    rating: 4.4,
+    reviewCount: 167,
+    studentDiscount: true,
+    discount: '学生卡消费9.5折',
+    services: [
+      { name: '应季水果（斤）', price: '8元起', studentPrice: '7.5元起' },
+      { name: '水果拼盘（小）', price: '15元', studentPrice: '14元' },
+      { name: '水果拼盘（大）', price: '25元', studentPrice: '23元' },
+      { name: '鲜榨果汁', price: '12元', studentPrice: '10元' },
+      { name: '酸奶水果捞', price: '18元', studentPrice: '16元' },
+      { name: '果切外卖盒', price: '20元', studentPrice: '18元' }
+    ],
+    coupons: [
+      { id: 'cp8', title: '满25减5', condition: '满25元', discount: 5, validUntil: '2026-08-31', type: 'cash' }
+    ]
+  },
+  {
+    name: '书香咖啡',
+    category: 'coffee',
+    description: '安静学习空间，精品手冲咖啡，期末复习好去处',
+    cover: 'https://picsum.photos/seed/coffeeshop/800/400',
+    images: ['https://picsum.photos/seed/coffee1/800/600', 'https://picsum.photos/seed/coffee2/800/600'],
+    phone: '010-12346106',
+    address: '图书馆1楼西侧',
+    businessHours: '8:00-22:30',
+    location: '图书馆',
+    rating: 4.8,
+    reviewCount: 289,
+    studentDiscount: true,
+    discount: '学生证全场9折',
+    services: [
+      { name: '美式咖啡', price: '15元', studentPrice: '13.5元' },
+      { name: '拿铁', price: '20元', studentPrice: '18元' },
+      { name: '卡布奇诺', price: '22元', studentPrice: '19.8元' },
+      { name: '手冲单品', price: '28元', studentPrice: '25元' },
+      { name: '抹茶拿铁', price: '22元', studentPrice: '19.8元' },
+      { name: '蛋糕切片', price: '18元', studentPrice: '16元' }
+    ],
+    coupons: [
+      { id: 'cp9', title: '买咖啡送蛋糕', condition: '任意咖啡', discount: 18, validUntil: '2026-07-31', type: 'gift' },
+      { id: 'cp10', title: '满40减8', condition: '满40元', discount: 8, validUntil: '2026-08-31', type: 'cash' }
+    ]
+  },
+  {
+    name: '快修数码',
+    category: 'repair',
+    description: '手机电脑专业维修，贴膜换屏，数据恢复，立等可取',
+    cover: 'https://picsum.photos/seed/repairshop/800/400',
+    images: ['https://picsum.photos/seed/repair1/800/600', 'https://picsum.photos/seed/repair2/800/600'],
+    phone: '010-12346107',
+    address: '生活服务中心1楼112室',
+    businessHours: '9:00-20:00',
+    location: '生活服务中心',
+    rating: 4.2,
+    reviewCount: 96,
+    studentDiscount: true,
+    discount: '学生维修9折',
+    services: [
+      { name: '手机贴膜', price: '15元起', studentPrice: '10元起' },
+      { name: '屏幕更换', price: '150元起', studentPrice: '130元起' },
+      { name: '电池更换', price: '80元起', studentPrice: '68元起' },
+      { name: '电脑清灰', price: '50元', studentPrice: '40元' },
+      { name: '系统重装', price: '60元', studentPrice: '50元' },
+      { name: '数据恢复', price: '100元起', studentPrice: '80元起' }
+    ],
+    coupons: [
+      { id: 'cp11', title: '贴膜免费体验', condition: '首次到店', discount: 15, validUntil: '2026-07-31', type: 'cash' }
+    ]
+  },
+  {
+    name: '悦读书吧',
+    category: 'bookstore',
+    description: '教辅教材、课外读物、文创产品，读书人的精神家园',
+    cover: 'https://picsum.photos/seed/bookshop/800/400',
+    images: ['https://picsum.photos/seed/bookshop1/800/600', 'https://picsum.photos/seed/bookshop2/800/600'],
+    phone: '010-12346108',
+    address: '生活服务中心2楼205室',
+    businessHours: '8:30-21:00',
+    location: '生活服务中心',
+    rating: 4.5,
+    reviewCount: 134,
+    studentDiscount: true,
+    discount: '教材8折，课外书9折',
+    services: [
+      { name: '教材书籍', price: '按定价', studentPrice: '8折' },
+      { name: '课外读物', price: '按定价', studentPrice: '9折' },
+      { name: '教辅资料', price: '按定价', studentPrice: '85折' },
+      { name: '文具礼品', price: '按标价', studentPrice: '9折' },
+      { name: '旧书回收', price: '3折收购', studentPrice: '' },
+      { name: '书籍代订', price: '按定价', studentPrice: '85折' }
+    ],
+    coupons: [
+      { id: 'cp12', title: '满100减15', condition: '满100元', discount: 15, validUntil: '2026-09-30', type: 'cash' }
+    ]
+  }
+];
+
+const MOCK_SHOP_REVIEWS = [
+  {
+    shopIndex: 0,
+    reviews: [
+      { userName: '论文党', avatar: '', rating: 5, content: '论文装订特别专业，速度快价格也便宜，学生优惠很实惠！', images: [], createTime: Date.now() - 86400000 },
+      { userName: '小王同学', avatar: '', rating: 4, content: '打印质量不错，就是期末的时候人很多，建议错峰。', images: [], createTime: Date.now() - 172800000 },
+      { userName: '大四学姐', avatar: '', rating: 5, content: '证件照拍得很好看，比外面的照相馆便宜多了。', images: [], createTime: Date.now() - 259200000 }
+    ]
+  },
+  {
+    shopIndex: 1,
+    reviews: [
+      { userName: '奶茶控', avatar: '', rating: 5, content: '杨枝甘露超好喝！用的真材实料，学生折扣也很划算。', images: [], createTime: Date.now() - 86400000 },
+      { userName: '考研er', avatar: '', rating: 4, content: '每天复习必点一杯，第二杯半价太良心了。', images: [], createTime: Date.now() - 345600000 },
+      { userName: '柠檬精', avatar: '', rating: 5, content: '柠檬养乐多酸酸甜甜的，夏天喝特别解暑！', images: [], createTime: Date.now() - 432000000 }
+    ]
+  },
+  {
+    shopIndex: 2,
+    reviews: [
+      { userName: '文具控', avatar: '', rating: 4, content: '文具种类很全，考试套装买起来特别方便。', images: [], createTime: Date.now() - 86400000 },
+      { userName: '小学妹', avatar: '', rating: 5, content: '荧光笔颜色很正，笔记本质量也好，学生折很香。', images: [], createTime: Date.now() - 259200000 }
+    ]
+  },
+  {
+    shopIndex: 3,
+    reviews: [
+      { userName: '帅气小哥哥', avatar: '', rating: 5, content: '20块钱洗剪吹还要什么自行车！发型师很专业。', images: [], createTime: Date.now() - 86400000 },
+      { userName: '长发公主', avatar: '', rating: 4, content: '染发颜色很自然，价格比外面便宜不少，推荐！', images: [], createTime: Date.now() - 432000000 },
+      { userName: '考研党', avatar: '', rating: 5, content: '期末考前来剪个头发精神多了，预约不用等。', images: [], createTime: Date.now() - 518400000 }
+    ]
+  },
+  {
+    shopIndex: 4,
+    reviews: [
+      { userName: '水果达人', avatar: '', rating: 4, content: '水果很新鲜，果切拼盘种类丰富，比食堂的水果好。', images: [], createTime: Date.now() - 86400000 },
+      { userName: '养生少女', avatar: '', rating: 5, content: '酸奶水果捞是我的最爱，每天一份不重样！', images: [], createTime: Date.now() - 345600000 }
+    ]
+  },
+  {
+    shopIndex: 5,
+    reviews: [
+      { userName: '咖啡爱好者', avatar: '', rating: 5, content: '手冲做得非常专业，环境安静适合学习，图书馆里的宝藏店！', images: [], createTime: Date.now() - 86400000 },
+      { userName: '期末战士', avatar: '', rating: 5, content: '复习周常驻这里，一杯拿铁坐一下午，太舒服了。', images: [], createTime: Date.now() - 172800000 },
+      { userName: '甜食控', avatar: '', rating: 4, content: '蛋糕很好吃，就是品种再多点就好了。', images: [], createTime: Date.now() - 432000000 }
+    ]
+  },
+  {
+    shopIndex: 6,
+    reviews: [
+      { userName: '手残党', avatar: '', rating: 4, content: '手机贴膜贴得很好，没有气泡，学生价10块钱真香。', images: [], createTime: Date.now() - 86400000 },
+      { userName: '电脑小白', avatar: '', rating: 5, content: '电脑清灰后散热好了很多，师傅很耐心。', images: [], createTime: Date.now() - 259200000 }
+    ]
+  },
+  {
+    shopIndex: 7,
+    reviews: [
+      { userName: '书虫', avatar: '', rating: 5, content: '教材8折真的省了不少钱，还可以帮忙订书很方便。', images: [], createTime: Date.now() - 86400000 },
+      { userName: '文艺青年', avatar: '', rating: 4, content: '文创产品很精致，送人特别合适，就是种类可以再多点。', images: [], createTime: Date.now() - 345600000 },
+      { userName: '书迷', avatar: '', rating: 5, content: '旧书回收很环保，换了好多书看，支持！', images: [], createTime: Date.now() - 518400000 }
+    ]
+  }
+];
+
 module.exports = {
   ANNOUNCEMENTS,
   CAMPUS_NEWS,
@@ -1249,6 +1528,8 @@ module.exports = {
   MOCK_SURVEYS,
   MOCK_STUDY_MATERIALS,
   MOCK_STUDY_REWARDS,
+  MOCK_CAMPUS_SHOPS,
+  MOCK_SHOP_REVIEWS,
   NOTIFICATION_TEMPLATES,
   WEATHER_DATA,
   EMERGENCY_PHONES,
