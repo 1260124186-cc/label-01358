@@ -1,0 +1,197 @@
+<view class="print-page {{darkMode ? 'dark' : ''}}">
+  <view class="form-section">
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">📄</text>
+        <text class="label-text">文件信息</text>
+      </view>
+      <input
+        class="form-input"
+        placeholder="请输入文件名"
+        placeholder-class="input-placeholder"
+        value="{{fileName}}"
+        bindinput="onFileNameInput"
+      />
+      <view class="form-sub-row">
+        <text class="sub-label">页数</text>
+        <input
+          class="form-input-sm"
+          placeholder="1"
+          placeholder-class="input-placeholder"
+          type="number"
+          value="{{filePages}}"
+          bindinput="onFilePagesInput"
+        />
+        <text class="sub-unit">页</text>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">🎨</text>
+        <text class="label-text">打印参数</text>
+      </view>
+      <view class="param-row">
+        <text class="param-label">颜色</text>
+        <view class="param-options">
+          <view
+            wx:for="{{colorOptions}}"
+            wx:key="value"
+            class="param-item {{colorType === item.value ? 'active' : ''}}"
+            data-value="{{item.value}}"
+            bindtap="onColorSelect"
+          >
+            {{item.label}}
+            <text class="param-price" wx:if="{{item.pricePerPage}}">{{item.pricePerPage}}元/页</text>
+          </view>
+        </view>
+      </view>
+      <view class="param-row">
+        <text class="param-label">单双面</text>
+        <view class="param-options">
+          <view
+            wx:for="{{sideOptions}}"
+            wx:key="value"
+            class="param-item {{sideType === item.value ? 'active' : ''}}"
+            data-value="{{item.value}}"
+            bindtap="onSideSelect"
+          >
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+      <view class="param-row">
+        <text class="param-label">纸张</text>
+        <view class="param-options">
+          <view
+            wx:for="{{paperOptions}}"
+            wx:key="value"
+            class="param-item {{paperSize === item.value ? 'active' : ''}}"
+            data-value="{{item.value}}"
+            bindtap="onPaperSelect"
+          >
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+      <view class="param-row">
+        <text class="param-label">份数</text>
+        <view class="copies-control">
+          <view class="copies-btn" data-action="minus" bindtap="onCopiesChange">-</view>
+          <input
+            class="copies-input"
+            type="number"
+            value="{{copies}}"
+            bindinput="onCopiesInput"
+          />
+          <view class="copies-btn" data-action="plus" bindtap="onCopiesChange">+</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="price-preview">
+        <text class="price-label">预估价格</text>
+        <text class="price-value">¥{{totalPrice}}</text>
+      </view>
+      <view class="price-detail">
+        <text class="detail-text">{{filePages}}页 × {{copies}}份 × {{colorOptions[colorType === 'bw' ? 0 : 1].pricePerPage}}元/页{{sideType === 'double' ? ' × 0.85' : ''}}</text>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">🕐</text>
+        <text class="label-text">取件时间</text>
+        <text class="label-required">*</text>
+      </view>
+      <view class="form-picker" bindtap="onShowTimePicker">
+        <text class="picker-value {{pickupTime ? '' : 'placeholder'}}">
+          {{pickupTime || '请选择取件时间'}}
+        </text>
+        <text class="picker-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">📱</text>
+        <text class="label-text">联系电话</text>
+        <text class="label-required">*</text>
+      </view>
+      <input
+        class="form-input"
+        placeholder="请输入联系电话"
+        placeholder-class="input-placeholder"
+        type="number"
+        value="{{contactPhone}}"
+        bindinput="onPhoneInput"
+      />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">🏠</text>
+        <text class="label-text">送达地址</text>
+      </view>
+      <view class="address-row">
+        <input
+          class="form-input flex-1"
+          placeholder="选填，可从地址簿选择"
+          placeholder-class="input-placeholder"
+          value="{{deliveryAddress}}"
+          bindinput="onAddressInput"
+        />
+        <view class="address-book-btn" bindtap="onSelectAddress">
+          <text class="address-book-text">地址簿</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">📝</text>
+        <text class="label-text">备注</text>
+      </view>
+      <textarea
+        class="form-textarea"
+        placeholder="如装订要求、特殊说明等"
+        placeholder-class="input-placeholder"
+        value="{{remark}}"
+        bindinput="onRemarkInput"
+        maxlength="200"
+      />
+    </view>
+  </view>
+
+  <view class="submit-bar">
+    <view class="submit-info">
+      <text class="submit-label">合计</text>
+      <text class="submit-price">¥{{totalPrice}}</text>
+    </view>
+    <view class="submit-btn" bindtap="onSubmit">
+      <text class="submit-text">提交订单</text>
+    </view>
+  </view>
+
+  <view class="picker-mask {{showTimePicker ? 'show' : ''}}" bindtap="onCloseTimePicker">
+    <view class="picker-panel {{showTimePicker ? 'show' : ''}}" catchtap="">
+      <view class="picker-header">
+        <text class="picker-title">选择取件时间</text>
+        <text class="picker-close" bindtap="onCloseTimePicker">✕</text>
+      </view>
+      <view class="picker-list">
+        <view
+          wx:for="{{pickupTimeOptions}}"
+          wx:key="*this"
+          class="picker-item {{pickupTime === item ? 'active' : ''}}"
+          data-value="{{item}}"
+          bindtap="onTimeSelect"
+        >
+          <text class="picker-item-text">{{item}}</text>
+          <text wx:if="{{pickupTime === item}}" class="picker-item-check">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

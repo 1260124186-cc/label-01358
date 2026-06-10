@@ -1,0 +1,137 @@
+<view class="detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{order}}">
+  <view class="status-banner" style="background: linear-gradient(135deg, {{order.statusColor}}20, {{order.statusColor}}05);">
+    <view class="status-main">
+      <text class="status-icon">{{order.statusIcon}}</text>
+      <view class="status-info">
+        <text class="status-text" style="color: {{order.statusColor}};">{{order.statusText}}</text>
+        <text class="status-desc" wx:if="{{order.status === 'pending'}}">等待接单中，请耐心等待</text>
+        <text class="status-desc" wx:elif="{{order.status === 'processing'}}">配送/打印中，即将完成</text>
+        <text class="status-desc" wx:elif="{{order.status === 'completed'}}">订单已完成</text>
+        <text class="status-desc" wx:elif="{{order.status === 'cancelled'}}">订单已取消</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="progress-section">
+    <view class="progress-bar">
+      <view
+        wx:for="{{statusSteps}}"
+        wx:key="value"
+        class="step-wrap"
+      >
+        <view class="step-item {{item.done ? 'done' : ''}} {{item.active ? 'active' : ''}}">
+          <view class="step-dot">
+            <text wx:if="{{item.done}}" class="step-check">✓</text>
+          </view>
+          <text class="step-label">{{item.label}}</text>
+        </view>
+        <view wx:if="{{index < statusSteps.length - 1}}" class="step-line {{item.done ? 'done' : ''}}"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="info-section">
+    <view class="info-card">
+      <view class="info-card-title">
+        <text class="card-icon">{{order.typeIcon}}</text>
+        <text class="card-text">{{order.typeText}}信息</text>
+      </view>
+      <view wx:if="{{order.type === 'express'}}" class="info-rows">
+        <view class="info-row">
+          <text class="row-label">快递点</text>
+          <text class="row-value">{{order.pickupPointText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">取件码</text>
+          <view class="row-value-wrap">
+            <text class="row-value highlight">{{order.pickupCode}}</text>
+            <view class="copy-btn" bindtap="onCopyPickupCode">复制</view>
+          </view>
+        </view>
+        <view class="info-row">
+          <text class="row-label">赏金</text>
+          <text class="row-value price">¥{{order.bounty}}</text>
+        </view>
+      </view>
+      <view wx:if="{{order.type === 'print'}}" class="info-rows">
+        <view class="info-row">
+          <text class="row-label">文件名</text>
+          <text class="row-value">{{order.fileName}}</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">页数</text>
+          <text class="row-value">{{order.filePages}}页</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">颜色</text>
+          <text class="row-value">{{order.colorTypeText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">单双面</text>
+          <text class="row-value">{{order.sideTypeText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">纸张</text>
+          <text class="row-value">{{order.paperSize}}</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">份数</text>
+          <text class="row-value">{{order.copies}}份</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">取件时间</text>
+          <text class="row-value">{{order.pickupTime}}</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">价格</text>
+          <text class="row-value price">¥{{order.totalPrice}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-card">
+      <view class="info-card-title">
+        <text class="card-icon">📍</text>
+        <text class="card-text">配送信息</text>
+      </view>
+      <view class="info-rows">
+        <view class="info-row" wx:if="{{order.deliveryAddress}}">
+          <text class="row-label">送达地址</text>
+          <text class="row-value">{{order.deliveryAddress}}</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">联系电话</text>
+          <view class="row-value-wrap">
+            <text class="row-value">{{order.contactPhone}}</text>
+            <view class="call-btn" bindtap="onCallPhone">拨打</view>
+          </view>
+        </view>
+        <view class="info-row" wx:if="{{order.remark}}">
+          <text class="row-label">备注</text>
+          <text class="row-value">{{order.remark}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-card">
+      <view class="info-card-title">
+        <text class="card-icon">📋</text>
+        <text class="card-text">订单信息</text>
+      </view>
+      <view class="info-rows">
+        <view class="info-row">
+          <text class="row-label">订单编号</text>
+          <text class="row-value order-id">{{order.id}}</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">下单时间</text>
+          <text class="row-value">{{order.timeText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-bar" wx:if="{{order.status === 'pending'}}">
+    <view class="cancel-order-btn" bindtap="onCancel">取消订单</view>
+  </view>
+</view>

@@ -1683,6 +1683,129 @@ const MOCK_VOLUNTEER_HOURS_RECORDS = [
   { userId: 'test_user', activityId: '', activityTitle: '迎新志愿服务', hours: 12, category: 'other', semester: '2025-2026-1', createTime: Date.now() - 150 * 86400000 }
 ];
 
+const MOCK_ERRAND_ORDERS = [
+  {
+    type: 'express',
+    pickupPoint: 'cainiao',
+    pickupPointText: '菜鸟驿站',
+    pickupCode: '5-8-1234',
+    bounty: 3,
+    deliveryAddress: '梅苑3栋 512室',
+    contactPhone: '13800138001',
+    remark: '稍大件，请小心轻放',
+    status: 'pending',
+    userId: 'test_user',
+    userName: '小明'
+  },
+  {
+    type: 'express',
+    pickupPoint: 'sf',
+    pickupPointText: '顺丰速运',
+    pickupCode: 'SF2026061001',
+    bounty: 5,
+    deliveryAddress: '兰苑2栋 308室',
+    contactPhone: '13900139002',
+    remark: '',
+    status: 'processing',
+    userId: 'test_user',
+    userName: '小红'
+  },
+  {
+    type: 'print',
+    fileName: '高等数学期末复习笔记.pdf',
+    filePages: 30,
+    colorType: 'bw',
+    colorTypeText: '黑白',
+    sideType: 'double',
+    sideTypeText: '双面',
+    paperSize: 'a4',
+    copies: 2,
+    totalPrice: 5.1,
+    pickupTime: '今天 18:00-19:00',
+    contactPhone: '13800138003',
+    remark: '请装订',
+    status: 'completed',
+    userId: 'test_user',
+    userName: '小刚'
+  },
+  {
+    type: 'print',
+    fileName: '毕业论文初稿.docx',
+    filePages: 45,
+    colorType: 'color',
+    colorTypeText: '彩色',
+    sideType: 'single',
+    sideTypeText: '单面',
+    paperSize: 'a4',
+    copies: 1,
+    totalPrice: 22.5,
+    pickupTime: '明天 10:00-12:00',
+    contactPhone: '13700137004',
+    remark: '彩印封面，内页黑白即可',
+    status: 'processing',
+    userId: 'other_user',
+    userName: '小李'
+  },
+  {
+    type: 'express',
+    pickupPoint: 'jd',
+    pickupPointText: '京东快递',
+    pickupCode: 'JD2026060988',
+    bounty: 2,
+    deliveryAddress: '竹苑1栋 201室',
+    contactPhone: '13600136005',
+    remark: '小件',
+    status: 'completed',
+    userId: 'test_user',
+    userName: '小华'
+  },
+  {
+    type: 'print',
+    fileName: '思政课PPT打印.pdf',
+    filePages: 12,
+    colorType: 'color',
+    colorTypeText: '彩色',
+    sideType: 'single',
+    sideTypeText: '单面',
+    paperSize: 'a4',
+    copies: 1,
+    totalPrice: 6,
+    pickupTime: '今天 16:00-17:00',
+    contactPhone: '13500135006',
+    remark: '',
+    status: 'pending',
+    userId: 'other_user',
+    userName: '小芳'
+  }
+];
+
+const MOCK_ERRAND_ADDRESSES = [
+  {
+    name: '张同学',
+    phone: '13800138001',
+    building: '梅苑3栋',
+    room: '512室',
+    area: '梅苑',
+    isDefault: true
+  },
+  {
+    name: '张同学',
+    phone: '13800138001',
+    building: '兰苑2栋',
+    room: '308室',
+    area: '兰苑',
+    isDefault: false
+  },
+  {
+    name: '李同学',
+    phone: '13900139002',
+    building: '竹苑1栋',
+    room: '201室',
+    area: '竹苑',
+    isDefault: false
+  }
+];
+
 module.exports = {
   ANNOUNCEMENTS,
   CAMPUS_NEWS,
@@ -1698,6 +1821,8 @@ module.exports = {
   NOTIFICATION_TEMPLATES,
   MOCK_VOLUNTEER_ACTIVITIES,
   MOCK_VOLUNTEER_HOURS_RECORDS,
+  MOCK_ERRAND_ORDERS,
+  MOCK_ERRAND_ADDRESSES,
   WEATHER_DATA,
   EMERGENCY_PHONES,
   PHONEBOOK_CATEGORIES,

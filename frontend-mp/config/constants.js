@@ -213,6 +213,47 @@ const VOLUNTEER_TABS = [
   { value: 'completed', label: '已结束' }
 ];
 
+const EXPRESS_PICKUP_POINTS = [
+  { value: 'cainiao', label: '菜鸟驿站', icon: '📦' },
+  { value: 'jd', label: '京东快递', icon: '🟧' },
+  { value: 'sf', label: '顺丰速运', icon: '🟢' },
+  { value: 'zt', label: '中通快递', icon: '🔵' },
+  { value: 'yt', label: '圆通快递', icon: '🔴' },
+  { value: 'sto', label: '申通快递', icon: '🟡' },
+  { value: 'ems', label: 'EMS', icon: '📮' },
+  { value: 'yunda', label: '韵达快递', icon: '🟣' },
+  { value: 'other', label: '其他快递', icon: '📋' }
+];
+
+const ERRAND_ORDER_STATUS = [
+  { value: 'pending', label: '待处理', color: '#F59E0B', icon: '⏳' },
+  { value: 'processing', label: '处理中', color: '#3B82F6', icon: '🔄' },
+  { value: 'completed', label: '已完成', color: '#10B981', icon: '✅' },
+  { value: 'cancelled', label: '已取消', color: '#6B7280', icon: '❌' }
+];
+
+const PRINT_COLOR_OPTIONS = [
+  { value: 'bw', label: '黑白', pricePerPage: 0.1 },
+  { value: 'color', label: '彩色', pricePerPage: 0.5 }
+];
+
+const PRINT_SIDE_OPTIONS = [
+  { value: 'single', label: '单面', priceMultiplier: 1 },
+  { value: 'double', label: '双面', priceMultiplier: 0.85 }
+];
+
+const PRINT_PAPER_OPTIONS = [
+  { value: 'a4', label: 'A4' },
+  { value: 'a3', label: 'A3' }
+];
+
+const ERRAND_ORDER_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '待处理' },
+  { value: 'processing', label: '处理中' },
+  { value: 'completed', label: '已完成' }
+];
+
 function getLabelByValue(list, value) {
   const item = list.find(i => i.value === value);
   return item ? item.label : value;
@@ -245,5 +286,11 @@ module.exports = {
   VOLUNTEER_STATUS,
   VOLUNTEER_CATEGORIES,
   VOLUNTEER_TABS,
+  EXPRESS_PICKUP_POINTS,
+  ERRAND_ORDER_STATUS,
+  PRINT_COLOR_OPTIONS,
+  PRINT_SIDE_OPTIONS,
+  PRINT_PAPER_OPTIONS,
+  ERRAND_ORDER_TABS,
   getLabelByValue
 };

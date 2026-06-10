@@ -1,0 +1,101 @@
+<view class="errand-page {{darkMode ? 'dark' : ''}}">
+  <view class="service-section">
+    <view class="section-title">
+      <text class="title-text">服务项目</text>
+    </view>
+    <view class="service-grid">
+      <view
+        wx:for="{{services}}"
+        wx:key="id"
+        class="service-card"
+        data-item="{{item}}"
+        bindtap="onServiceTap"
+      >
+        <view class="service-icon-wrap" style="background: {{item.gradient}};">
+          <text class="service-icon">{{item.icon}}</text>
+        </view>
+        <view class="service-info">
+          <text class="service-name">{{item.name}}</text>
+          <text class="service-desc">{{item.desc}}</text>
+        </view>
+        <text class="service-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="stats-section">
+    <view class="section-title">
+      <text class="title-text">订单概览</text>
+      <view class="title-action" bindtap="onOrdersTap">
+        <text class="action-text">全部订单</text>
+        <text class="action-arrow">›</text>
+      </view>
+    </view>
+    <view class="stats-grid">
+      <view class="stat-item" bindtap="onOrdersTap">
+        <text class="stat-value">{{orderStats.pending}}</text>
+        <text class="stat-label">待处理</text>
+      </view>
+      <view class="stat-item" bindtap="onOrdersTap">
+        <text class="stat-value">{{orderStats.processing}}</text>
+        <text class="stat-label">处理中</text>
+      </view>
+      <view class="stat-item" bindtap="onOrdersTap">
+        <text class="stat-value">{{orderStats.completed}}</text>
+        <text class="stat-label">已完成</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="recent-section">
+    <view class="section-title">
+      <text class="title-text">最近订单</text>
+      <view class="title-action" bindtap="onOrdersTap">
+        <text class="action-text">查看更多</text>
+        <text class="action-arrow">›</text>
+      </view>
+    </view>
+    <view wx:if="{{recentOrders.length === 0}}" class="empty-state">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无订单</text>
+      <text class="empty-desc">快去下单吧</text>
+    </view>
+    <view wx:else class="order-list">
+      <view
+        wx:for="{{recentOrders}}"
+        wx:key="id"
+        class="order-card"
+        data-item="{{item}}"
+        bindtap="onOrderTap"
+      >
+        <view class="order-header">
+          <view class="order-type">
+            <text class="order-type-icon">{{item.typeIcon}}</text>
+            <text class="order-type-text">{{item.typeText}}</text>
+          </view>
+          <view class="order-status" style="color: {{item.statusColor}};">
+            {{item.statusIcon}} {{item.statusText}}
+          </view>
+        </view>
+        <view class="order-body">
+          <text class="order-desc" wx:if="{{item.type === 'express'}}">
+            {{item.pickupPointText}} · 取件码 {{item.pickupCode}}
+          </text>
+          <text class="order-desc" wx:else>
+            {{item.fileName}} · {{item.colorTypeText}} {{item.sideTypeText}}
+          </text>
+        </view>
+        <view class="order-footer">
+          <text class="order-price">{{item.priceText}}</text>
+          <text class="order-time">{{item.timeText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="address-entry" bindtap="onAddressTap">
+    <text class="address-icon">🏠</text>
+    <text class="address-text">宿舍地址簿</text>
+    <text class="address-arrow">›</text>
+  </view>
+</view>

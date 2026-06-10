@@ -61,6 +61,13 @@ Page({
         icon: '/assets/icons/nav-market.png',
         bgColor: 'linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 100%)',
         url: '/pages/campus-shop/index'
+      },
+      {
+        id: 'errand',
+        name: '跑腿服务',
+        icon: '/assets/icons/nav-market.png',
+        bgColor: 'linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)',
+        url: '/pages/errand/index'
       }
     ],
     weatherData: null,

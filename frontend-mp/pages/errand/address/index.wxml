@@ -1,0 +1,109 @@
+<view class="address-page {{darkMode ? 'dark' : ''}}">
+  <view wx:if="{{!showForm}}" class="address-list">
+    <view wx:if="{{addresses.length === 0}}" class="empty-state">
+      <text class="empty-icon">🏠</text>
+      <text class="empty-text">暂无地址</text>
+      <text class="empty-desc">点击下方按钮添加常用地址</text>
+    </view>
+
+    <view wx:else class="list-content">
+      <view
+        wx:for="{{addresses}}"
+        wx:key="id"
+        class="address-card {{selectMode ? 'selectable' : ''}} {{item.isDefault ? 'default' : ''}}"
+        data-item="{{item}}"
+        bindtap="{{selectMode ? 'onSelectAddress' : ''}}"
+      >
+        <view class="card-top">
+          <view class="card-main">
+            <view class="card-name-row">
+              <text class="card-name">{{item.name}}</text>
+              <text class="card-phone">{{item.phone}}</text>
+              <view wx:if="{{item.isDefault}}" class="default-tag">默认</view>
+            </view>
+            <text class="card-address">{{item.building}} {{item.room}}</text>
+          </view>
+        </view>
+        <view class="card-actions">
+          <view wx:if="{{!item.isDefault}}" class="action-btn" data-id="{{item.id}}" catchtap="onSetDefault">
+            设为默认
+          </view>
+          <view class="action-btn edit" data-item="{{item}}" catchtap="onEditAddress">
+            编辑
+          </view>
+          <view class="action-btn delete" data-id="{{item.id}}" catchtap="onDeleteAddress">
+            删除
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="add-btn" bindtap="onAddAddress">
+      <text class="add-icon">+</text>
+      <text class="add-text">添加新地址</text>
+    </view>
+  </view>
+
+  <view wx:if="{{showForm}}" class="form-section">
+    <view class="form-group">
+      <text class="form-label">姓名</text>
+      <input
+        class="form-input"
+        placeholder="请输入姓名"
+        placeholder-class="input-placeholder"
+        value="{{formData.name}}"
+        data-field="name"
+        bindinput="onFormInput"
+      />
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">手机号</text>
+      <input
+        class="form-input"
+        placeholder="请输入手机号"
+        placeholder-class="input-placeholder"
+        type="number"
+        value="{{formData.phone}}"
+        data-field="phone"
+        bindinput="onFormInput"
+      />
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">楼栋</text>
+      <input
+        class="form-input"
+        placeholder="如：梅苑3栋"
+        placeholder-class="input-placeholder"
+        value="{{formData.building}}"
+        data-field="building"
+        bindinput="onFormInput"
+      />
+    </view>
+
+    <view class="form-group">
+      <text class="form-label">房间号</text>
+      <input
+        class="form-input"
+        placeholder="如：512室"
+        placeholder-class="input-placeholder"
+        value="{{formData.room}}"
+        data-field="room"
+        bindinput="onFormInput"
+      />
+    </view>
+
+    <view class="form-group switch-group">
+      <text class="form-label">设为默认地址</text>
+      <view class="switch-track {{formData.isDefault ? 'active' : ''}}" bindtap="onDefaultSwitch">
+        <view class="switch-thumb"></view>
+      </view>
+    </view>
+
+    <view class="form-actions">
+      <view class="form-btn cancel" bindtap="onFormCancel">取消</view>
+      <view class="form-btn confirm" bindtap="onFormSubmit">保存</view>
+    </view>
+  </view>
+</view>

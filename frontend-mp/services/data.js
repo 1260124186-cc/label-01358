@@ -1604,6 +1604,151 @@ function getUserRegistrations(userId) {
   return result.sort((a, b) => b.createTime - a.createTime);
 }
 
+let errandDataInitialized = false;
+
+function initErrandData() {
+  if (errandDataInitialized) return;
+  const existingOrders = storage.get(STORAGE_KEYS.ERRAND_ORDER_LIST);
+  if (!existingOrders || existingOrders.length === 0) {
+    const now = Date.now();
+    const orders = mockData.MOCK_ERRAND_ORDERS.map((item, index) => ({
+      id: 'mock_errand_' + index + '_' + now,
+      ...item,
+      createTime: now - (index + 1) * 3600000,
+      updateTime: now - (index + 1) * 3600000
+    }));
+    storage.set(STORAGE_KEYS.ERRAND_ORDER_LIST, orders);
+  }
+  const existingAddresses = storage.get(STORAGE_KEYS.ERRAND_ADDRESS_LIST);
+  if (!existingAddresses || existingAddresses.length === 0) {
+    const addresses = mockData.MOCK_ERRAND_ADDRESSES.map((item, index) => ({
+      id: 'mock_addr_' + index + '_' + now,
+      ...item,
+      isDefault: index === 0
+    }));
+    storage.set(STORAGE_KEYS.ERRAND_ADDRESS_LIST, addresses);
+  }
+  errandDataInitialized = true;
+}
+
+function getErrandOrderList(filters = {}) {
+  initErrandData();
+  let list = storage.getList(STORAGE_KEYS.ERRAND_ORDER_LIST);
+
+  if (filters.status && filters.status !== 'all') {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  if (filters.type) {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['pickupCode', 'deliveryAddress', 'fileName', 'orderId']);
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getErrandOrderDetail(id) {
+  initErrandData();
+  const list = storage.getList(STORAGE_KEYS.ERRAND_ORDER_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function createErrandOrder(data) {
+  initErrandData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const item = {
+    id: util.generateId(),
+    ...data,
+    userId: userInfo.id || 'test_user',
+    userName: userInfo.nickName || '匿名用户',
+    userAvatar: userInfo.avatarUrl || '',
+    status: 'pending',
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  storage.addToList(STORAGE_KEYS.ERRAND_ORDER_LIST, item);
+  return item;
+}
+
+function updateErrandOrder(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+}
+
+function cancelErrandOrder(id) {
+  const order = getErrandOrderDetail(id);
+  if (!order) return false;
+  if (order.status !== 'pending') return false;
+  return storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, id, {
+    status: 'cancelled',
+    updateTime: Date.now()
+  });
+}
+
+function getAddressList() {
+  initErrandData();
+  return storage.getList(STORAGE_KEYS.ERRAND_ADDRESS_LIST);
+}
+
+function getAddressDetail(id) {
+  initErrandData();
+  const list = storage.getList(STORAGE_KEYS.ERRAND_ADDRESS_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function addAddress(data) {
+  initErrandData();
+  const item = {
+    id: util.generateId(),
+    ...data,
+    isDefault: data.isDefault || false
+  };
+
+  if (item.isDefault) {
+    const list = storage.getList(STORAGE_KEYS.ERRAND_ADDRESS_LIST);
+    list.forEach(addr => { addr.isDefault = false; });
+    storage.set(STORAGE_KEYS.ERRAND_ADDRESS_LIST, list);
+  }
+
+  storage.addToList(STORAGE_KEYS.ERRAND_ADDRESS_LIST, item);
+  return item;
+}
+
+function updateAddress(id, updates) {
+  initErrandData();
+  if (updates.isDefault) {
+    const list = storage.getList(STORAGE_KEYS.ERRAND_ADDRESS_LIST);
+    list.forEach(addr => { addr.isDefault = false; });
+    storage.set(STORAGE_KEYS.ERRAND_ADDRESS_LIST, list);
+  }
+  return storage.updateInList(STORAGE_KEYS.ERRAND_ADDRESS_LIST, id, updates);
+}
+
+function deleteAddress(id) {
+  initErrandData();
+  return storage.removeFromList(STORAGE_KEYS.ERRAND_ADDRESS_LIST, id);
+}
+
+function getDefaultAddress() {
+  initErrandData();
+  const list = storage.getList(STORAGE_KEYS.ERRAND_ADDRESS_LIST);
+  return list.find(item => item.isDefault) || (list.length > 0 ? list[0] : null);
+}
+
+function calculatePrintPrice(colorType, sideType, copies, pages) {
+  const colorOption = constants.PRINT_COLOR_OPTIONS.find(o => o.value === colorType) || constants.PRINT_COLOR_OPTIONS[0];
+  const sideOption = constants.PRINT_SIDE_OPTIONS.find(o => o.value === sideType) || constants.PRINT_SIDE_OPTIONS[0];
+  return Math.max(0.1, colorOption.pricePerPage * sideOption.priceMultiplier * copies * pages);
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -1705,5 +1850,18 @@ module.exports = {
   getUserVolunteerHours,
   getVolunteerHoursByCategory,
   getVolunteerLeaderboard,
-  getUserRegistrations
+  getUserRegistrations,
+
+  getErrandOrderList,
+  getErrandOrderDetail,
+  createErrandOrder,
+  updateErrandOrder,
+  cancelErrandOrder,
+  getAddressList,
+  getAddressDetail,
+  addAddress,
+  updateAddress,
+  deleteAddress,
+  getDefaultAddress,
+  calculatePrintPrice
 };
