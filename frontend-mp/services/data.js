@@ -2862,6 +2862,403 @@ function getUserForumPosts(userId) {
   return list.filter(item => item.userId === userId).sort((a, b) => b.createTime - a.createTime);
 }
 
+// ==================== 社团模块 ====================
+
+let clubInitialized = false;
+
+function initClubData() {
+  if (clubInitialized) return;
+  const existingClubs = storage.get(STORAGE_KEYS.CLUB_LIST);
+  const existingActivities = storage.get(STORAGE_KEYS.CLUB_ACTIVITY_LIST);
+
+  if (!existingClubs || existingClubs.length === 0) {
+    const clubs = mockData.MOCK_CLUBS.map((item, index) => ({
+      ...item,
+      createTime: Date.now() - (index + 10) * 86400000,
+      updateTime: Date.now() - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.CLUB_LIST, clubs);
+    storage.set(STORAGE_KEYS.CLUB_MEMBER_LIST, mockData.MOCK_CLUB_MEMBERS);
+  }
+
+  if (!existingActivities || existingActivities.length === 0) {
+    const now = Date.now();
+    const activities = mockData.MOCK_CLUB_ACTIVITIES.map((item, index) => ({
+      id: item.id,
+      ...item,
+      registrations: [],
+      checkins: [],
+      views: Math.floor(Math.random() * 300) + 50,
+      createTime: now - (index + 2) * 86400000,
+      updateTime: now - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.CLUB_ACTIVITY_LIST, activities);
+  }
+
+  clubInitialized = true;
+}
+
+function getActivityStatus(activity) {
+  const now = Date.now();
+  const startTime = new Date(activity.activityTime).getTime();
+  const endTime = new Date(activity.endTime).getTime();
+
+  if (activity.status === 'cancelled') return 'cancelled';
+  if (now > endTime) return 'ended';
+  if (now >= startTime && now <= endTime) return 'ongoing';
+  return 'upcoming';
+}
+
+function getClubList(filters = {}) {
+  initClubData();
+  let list = storage.getList(STORAGE_KEYS.CLUB_LIST);
+
+  if (filters.type) {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'slogan', 'description']);
+  }
+
+  return list.sort((a, b) => (b.memberCount || 0) - (a.memberCount || 0));
+}
+
+function getClubDetail(clubId) {
+  initClubData();
+  const list = storage.getList(STORAGE_KEYS.CLUB_LIST);
+  return list.find(item => item.id === clubId) || null;
+}
+
+function getClubMembers(clubId) {
+  initClubData();
+  const memberMap = storage.get(STORAGE_KEYS.CLUB_MEMBER_LIST) || {};
+  return memberMap[clubId] || [];
+}
+
+function getClubActivities(clubId, status = '') {
+  initClubData();
+  let list = storage.getList(STORAGE_KEYS.CLUB_ACTIVITY_LIST);
+  list = list.filter(item => item.clubId === clubId);
+
+  if (status) {
+    list = list.filter(item => getActivityStatus(item) === status);
+  }
+
+  return list.sort((a, b) => new Date(b.activityTime) - new Date(a.activityTime));
+}
+
+function isClubMember(clubId, userId) {
+  initClubData();
+  const memberMap = storage.get(STORAGE_KEYS.CLUB_MEMBER_LIST) || {};
+  const members = memberMap[clubId] || [];
+  return members.some(m => m.userId === userId);
+}
+
+function joinClub(clubId, memberData) {
+  initClubData();
+  const memberMap = storage.get(STORAGE_KEYS.CLUB_MEMBER_LIST) || {};
+  const members = memberMap[clubId] || [];
+
+  if (members.some(m => m.userId === memberData.userId)) {
+    return { success: false, message: '您已是该社团成员' };
+  }
+
+  const newMember = {
+    id: util.generateId(),
+    ...memberData,
+    role: 'member',
+    joinTime: Date.now()
+  };
+  members.push(newMember);
+  memberMap[clubId] = members;
+  storage.set(STORAGE_KEYS.CLUB_MEMBER_LIST, memberMap);
+
+  const club = getClubDetail(clubId);
+  if (club) {
+    storage.updateInList(STORAGE_KEYS.CLUB_LIST, clubId, {
+      memberCount: (club.memberCount || 0) + 1,
+      updateTime: Date.now()
+    });
+  }
+
+  return { success: true, member: newMember };
+}
+
+function leaveClub(clubId, userId) {
+  initClubData();
+  const memberMap = storage.get(STORAGE_KEYS.CLUB_MEMBER_LIST) || {};
+  let members = memberMap[clubId] || [];
+
+  const member = members.find(m => m.userId === userId);
+  if (!member) {
+    return false;
+  }
+  if (member.role === 'president') {
+    return { success: false, message: '社长不能直接退出社团' };
+  }
+
+  members = members.filter(m => m.userId !== userId);
+  memberMap[clubId] = members;
+  storage.set(STORAGE_KEYS.CLUB_MEMBER_LIST, memberMap);
+
+  const club = getClubDetail(clubId);
+  if (club) {
+    storage.updateInList(STORAGE_KEYS.CLUB_LIST, clubId, {
+      memberCount: Math.max(0, (club.memberCount || 0) - 1),
+      updateTime: Date.now()
+    });
+  }
+
+  return { success: true };
+}
+
+// ==================== 社团活动模块 ====================
+
+function getClubActivityList(filters = {}) {
+  initClubData();
+  let list = storage.getList(STORAGE_KEYS.CLUB_ACTIVITY_LIST);
+
+  if (filters.status && filters.status !== 'my') {
+    list = list.filter(item => getActivityStatus(item) === filters.status);
+  }
+
+  if (filters.category) {
+    list = list.filter(item => item.category === filters.category);
+  }
+
+  if (filters.clubId) {
+    list = list.filter(item => item.clubId === filters.clubId);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'description', 'location', 'clubName']);
+  }
+
+  return list.sort((a, b) => new Date(a.activityTime) - new Date(b.activityTime));
+}
+
+function getClubActivityDetail(id) {
+  initClubData();
+  const list = storage.getList(STORAGE_KEYS.CLUB_ACTIVITY_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function publishClubActivity(data) {
+  initClubData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const item = {
+    id: util.generateId(),
+    ...data,
+    publisherId: userInfo.id || 'admin',
+    publisherName: userInfo.nickName || '管理员',
+    registrations: [],
+    checkins: [],
+    views: 0,
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.CLUB_ACTIVITY_LIST, item);
+  if (success) {
+    const club = getClubDetail(data.clubId);
+    if (club) {
+      storage.updateInList(STORAGE_KEYS.CLUB_LIST, data.clubId, {
+        activityCount: (club.activityCount || 0) + 1,
+        updateTime: Date.now()
+      });
+    }
+  }
+  return success ? item : null;
+}
+
+function updateClubActivity(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.CLUB_ACTIVITY_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+}
+
+function increaseClubActivityViews(id) {
+  const item = getClubActivityDetail(id);
+  if (item) {
+    return storage.updateInList(STORAGE_KEYS.CLUB_ACTIVITY_LIST, id, {
+      views: (item.views || 0) + 1
+    });
+  }
+  return false;
+}
+
+function registerClubActivity(activityId) {
+  initClubData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+  const userName = userInfo.nickName || '同学';
+
+  const activity = getClubActivityDetail(activityId);
+  if (!activity) return { success: false, message: '活动不存在' };
+
+  const now = Date.now();
+  const deadline = new Date(activity.deadline).getTime();
+  if (now > deadline) {
+    return { success: false, message: '报名已截止' };
+  }
+
+  const registrations = activity.registrations || [];
+  const alreadyRegistered = registrations.some(r => r.userId === userId);
+  if (alreadyRegistered) {
+    return { success: false, message: '您已报名该活动' };
+  }
+
+  if (registrations.length >= (activity.capacity || 0)) {
+    return { success: false, message: '报名人数已满' };
+  }
+
+  const registration = {
+    id: util.generateId(),
+    userId,
+    userName,
+    userAvatar: userInfo.avatarUrl || '',
+    status: 'registered',
+    registerTime: Date.now()
+  };
+
+  registrations.push(registration);
+  storage.updateInList(STORAGE_KEYS.CLUB_ACTIVITY_LIST, activityId, {
+    registrations,
+    updateTime: Date.now()
+  });
+
+  return { success: true, registration };
+}
+
+function cancelClubActivityRegistration(activityId) {
+  initClubData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+
+  const activity = getClubActivityDetail(activityId);
+  if (!activity) return { success: false, message: '活动不存在' };
+
+  const now = Date.now();
+  const startTime = new Date(activity.activityTime).getTime();
+  if (now >= startTime - 3600000) {
+    return { success: false, message: '活动开始前1小时不可取消报名' };
+  }
+
+  const registrations = (activity.registrations || []).filter(r => r.userId !== userId);
+  storage.updateInList(STORAGE_KEYS.CLUB_ACTIVITY_LIST, activityId, {
+    registrations,
+    updateTime: Date.now()
+  });
+
+  return { success: true };
+}
+
+function getUserRegisteredActivities(userId) {
+  initClubData();
+  const activities = storage.getList(STORAGE_KEYS.CLUB_ACTIVITY_LIST);
+  const result = [];
+
+  activities.forEach(activity => {
+    const reg = (activity.registrations || []).find(r => r.userId === userId);
+    if (reg) {
+      result.push({
+        ...activity,
+        userRegistration: reg,
+        activityStatus: getActivityStatus(activity)
+      });
+    }
+  });
+
+  return result.sort((a, b) => new Date(b.activityTime) - new Date(a.activityTime));
+}
+
+function checkinClubActivity(activityId, code) {
+  initClubData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+
+  const activity = getClubActivityDetail(activityId);
+  if (!activity) return { success: false, message: '活动不存在' };
+
+  const status = getActivityStatus(activity);
+  const today = new Date().toDateString();
+  const activityDate = new Date(activity.activityTime).toDateString();
+  if (today !== activityDate) {
+    return { success: false, message: '仅活动当天可签到' };
+  }
+
+  const registrations = activity.registrations || [];
+  const regIndex = registrations.findIndex(r => r.userId === userId);
+  if (regIndex === -1) return { success: false, message: '您未报名该活动' };
+
+  if (registrations[regIndex].checkedIn) {
+    return { success: false, message: '您已签到' };
+  }
+
+  if (code && activity.checkInCode && code !== activity.checkInCode) {
+    return { success: false, message: '签到码不正确' };
+  }
+
+  registrations[regIndex] = {
+    ...registrations[regIndex],
+    checkedIn: true,
+    checkinTime: Date.now()
+  };
+
+  storage.updateInList(STORAGE_KEYS.CLUB_ACTIVITY_LIST, activityId, {
+    registrations,
+    updateTime: Date.now()
+  });
+
+  return { success: true };
+}
+
+function isUserRegisteredForActivity(activityId, userId) {
+  const activity = getClubActivityDetail(activityId);
+  if (!activity) return false;
+  return (activity.registrations || []).some(r => r.userId === userId);
+}
+
+function getClubActivityRegistrations(activityId) {
+  const activity = getClubActivityDetail(activityId);
+  if (!activity) return [];
+  return activity.registrations || [];
+}
+
+function getClubActivitiesByDate(year, month) {
+  initClubData();
+  const list = storage.getList(STORAGE_KEYS.CLUB_ACTIVITY_LIST);
+  const result = {};
+
+  list.forEach(activity => {
+    const startDate = new Date(activity.activityTime);
+    const startY = startDate.getFullYear();
+    const startM = startDate.getMonth();
+
+    if (year === startY && month === startM) {
+      const day = startDate.getDate();
+      if (!result[day]) result[day] = [];
+      result[day].push({
+        id: activity.id,
+        title: activity.title,
+        clubName: activity.clubName,
+        timeStr: util.formatTime(activity.activityTime, 'HH:mm'),
+        category: activity.category,
+        status: getActivityStatus(activity)
+      });
+    }
+  });
+
+  return result;
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -3042,5 +3439,27 @@ module.exports = {
   getForumTopicStats,
   getUserForumPosts,
   checkSensitiveWords,
-  isUserBanned
+  isUserBanned,
+
+  initClubData,
+  getClubList,
+  getClubDetail,
+  getClubMembers,
+  getClubActivities,
+  isClubMember,
+  joinClub,
+  leaveClub,
+
+  getClubActivityList,
+  getClubActivityDetail,
+  publishClubActivity,
+  updateClubActivity,
+  increaseClubActivityViews,
+  registerClubActivity,
+  cancelClubActivityRegistration,
+  getUserRegisteredActivities,
+  checkinClubActivity,
+  isUserRegisteredForActivity,
+  getClubActivityRegistrations,
+  getClubActivitiesByDate
 };

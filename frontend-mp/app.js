@@ -1,6 +1,7 @@
 const theme = require('./utils/theme');
 const storage = require('./utils/storage');
 const mockData = require('./config/mock-data');
+const dataService = require('./services/data');
 
 App({
   globalData: {
@@ -221,6 +222,12 @@ App({
           activity: true,
           survey: true
         });
+      }
+
+      try {
+        dataService.initClubData();
+      } catch (e) {
+        console.error('初始化社团数据失败:', e);
       }
 
       wx.setStorageSync('mock_data_version', MOCK_DATA_VERSION);

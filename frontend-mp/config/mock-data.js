@@ -2601,3 +2601,339 @@ module.exports = {
   MOCK_DISH_REVIEWS,
   MOCK_FORUM_POSTS
 };
+
+const MOCK_CLUBS = [
+  {
+    id: 'club_001',
+    name: '计算机协会',
+    type: 'academic',
+    slogan: '探索科技，创新未来',
+    description: '计算机协会致力于推广计算机技术，定期举办技术讲座、编程比赛、黑客马拉松等活动，为同学们提供技术交流和实践的平台。我们欢迎所有对计算机技术感兴趣的同学加入！',
+    logo: 'https://picsum.photos/seed/club1/200/200',
+    cover: 'https://picsum.photos/seed/club1cover/800/400',
+    memberCount: 328,
+    activityCount: 56,
+    presidentName: '李明',
+    presidentAvatar: '',
+    contactPhone: '13800138010',
+    contactWechat: 'cs_club_2026',
+    location: '信息楼305室',
+    foundedDate: '2010-09-01',
+    tags: ['编程', 'AI', '算法', '开源']
+  },
+  {
+    id: 'club_002',
+    name: '篮球俱乐部',
+    type: 'sports',
+    slogan: '无兄弟，不篮球',
+    description: '篮球俱乐部是我校最受欢迎的体育社团之一，每周组织训练赛，每月举办校内联赛，每年春季承办校级篮球邀请赛。无论你是大神还是新手，这里都有你的位置！',
+    logo: 'https://picsum.photos/seed/club2/200/200',
+    cover: 'https://picsum.photos/seed/club2cover/800/400',
+    memberCount: 186,
+    activityCount: 92,
+    presidentName: '王强',
+    presidentAvatar: '',
+    contactPhone: '13800138011',
+    contactWechat: 'basketball_xd',
+    location: '体育馆201室',
+    foundedDate: '2008-05-15',
+    tags: ['篮球', '运动', '比赛', '健身']
+  },
+  {
+    id: 'club_003',
+    name: '话剧社',
+    type: 'arts',
+    slogan: '演绎青春，绽放光彩',
+    description: '话剧社是一个充满艺术气息的社团，我们每年排演2-3部大戏，从经典话剧到原创剧本应有尽有。社团定期举办表演培训、剧本朗读会、话剧观赏等活动。',
+    logo: 'https://picsum.photos/seed/club3/200/200',
+    cover: 'https://picsum.photos/seed/club3cover/800/400',
+    memberCount: 152,
+    activityCount: 38,
+    presidentName: '张雨薇',
+    presidentAvatar: '',
+    contactPhone: '13800138012',
+    contactWechat: 'drama_club',
+    location: '大学生活动中心4楼',
+    foundedDate: '2012-03-20',
+    tags: ['话剧', '表演', '导演', '编剧']
+  },
+  {
+    id: 'club_004',
+    name: '志愿者协会',
+    type: 'social',
+    slogan: '奉献友爱，互助进步',
+    description: '志愿者协会常年组织各类公益志愿活动，包括敬老院探访、留守儿童支教、环保宣传、大型赛事志愿服务等。加入我们，用行动温暖世界！',
+    logo: 'https://picsum.photos/seed/club4/200/200',
+    cover: 'https://picsum.photos/seed/club4cover/800/400',
+    memberCount: 520,
+    activityCount: 128,
+    presidentName: '刘思琪',
+    presidentAvatar: '',
+    contactPhone: '13800138013',
+    contactWechat: 'volunteer_love',
+    location: '行政楼B201',
+    foundedDate: '2006-09-01',
+    tags: ['志愿', '公益', '环保', '支教']
+  },
+  {
+    id: 'club_005',
+    name: '文学社',
+    type: 'literary',
+    slogan: '以文会友，以笔抒情',
+    description: '文学社汇聚了校园内所有热爱文学创作的同学，我们出版校园文学刊物《青衿》，举办读书分享会、写作工坊、诗歌朗诵会等活动。',
+    logo: 'https://picsum.photos/seed/club5/200/200',
+    cover: 'https://picsum.photos/seed/club5cover/800/400',
+    memberCount: 98,
+    activityCount: 42,
+    presidentName: '陈雅文',
+    presidentAvatar: '',
+    contactPhone: '13800138014',
+    contactWechat: 'literature_club',
+    location: '图书馆3楼会议室',
+    foundedDate: '2015-04-10',
+    tags: ['文学', '写作', '阅读', '诗歌']
+  },
+  {
+    id: 'club_006',
+    name: '舞蹈协会',
+    type: 'arts',
+    slogan: '舞动青春，释放活力',
+    description: '舞蹈协会涵盖街舞、民族舞、现代舞、拉丁舞等多种舞种，每周开设免费课程，每年举办专场晚会。零基础也可以加入哦！',
+    logo: 'https://picsum.photos/seed/club6/200/200',
+    cover: 'https://picsum.photos/seed/club6cover/800/400',
+    memberCount: 245,
+    activityCount: 78,
+    presidentName: '林小舞',
+    presidentAvatar: '',
+    contactPhone: '13800138015',
+    contactWechat: 'dance_union',
+    location: '大学生活动中心3楼舞蹈室',
+    foundedDate: '2011-10-01',
+    tags: ['舞蹈', '街舞', '爵士', '表演']
+  }
+];
+
+const MOCK_CLUB_MEMBERS = {
+  club_001: [
+    { id: 'm1', userId: 'user_001', name: '李明', role: 'president', avatar: '', joinTime: Date.now() - 720 * 86400000 },
+    { id: 'm2', userId: 'user_002', name: '张华', role: 'vice_president', avatar: '', joinTime: Date.now() - 600 * 86400000 },
+    { id: 'm3', userId: 'user_003', name: '王磊', role: 'officer', avatar: '', joinTime: Date.now() - 480 * 86400000 },
+    { id: 'm4', userId: 'user_004', name: '赵雪', role: 'member', avatar: '', joinTime: Date.now() - 360 * 86400000 },
+    { id: 'm5', userId: 'user_005', name: '孙浩', role: 'member', avatar: '', joinTime: Date.now() - 240 * 86400000 },
+    { id: 'm6', userId: 'user_006', name: '周婷', role: 'member', avatar: '', joinTime: Date.now() - 180 * 86400000 },
+    { id: 'm7', userId: 'user_007', name: '吴刚', role: 'member', avatar: '', joinTime: Date.now() - 120 * 86400000 },
+    { id: 'm8', userId: 'user_008', name: '郑悦', role: 'member', avatar: '', joinTime: Date.now() - 60 * 86400000 }
+  ],
+  club_002: [
+    { id: 'm9', userId: 'user_009', name: '王强', role: 'president', avatar: '', joinTime: Date.now() - 700 * 86400000 },
+    { id: 'm10', userId: 'user_010', name: '马超', role: 'vice_president', avatar: '', joinTime: Date.now() - 500 * 86400000 },
+    { id: 'm11', userId: 'user_011', name: '朱杰', role: 'member', avatar: '', joinTime: Date.now() - 300 * 86400000 },
+    { id: 'm12', userId: 'user_012', name: '徐健', role: 'member', avatar: '', joinTime: Date.now() - 200 * 86400000 }
+  ],
+  club_003: [
+    { id: 'm13', userId: 'user_013', name: '张雨薇', role: 'president', avatar: '', joinTime: Date.now() - 650 * 86400000 },
+    { id: 'm14', userId: 'user_014', name: '何娜', role: 'officer', avatar: '', joinTime: Date.now() - 400 * 86400000 },
+    { id: 'm15', userId: 'user_015', name: '宋佳', role: 'member', avatar: '', joinTime: Date.now() - 250 * 86400000 }
+  ]
+};
+
+function createDateString(daysOffset, hour = 14, minute = 0) {
+  const d = new Date();
+  d.setDate(d.getDate() + daysOffset);
+  d.setHours(hour, minute, 0, 0);
+  const y = d.getFullYear();
+  const m = (d.getMonth() + 1).toString().padStart(2, '0');
+  const day = d.getDate().toString().padStart(2, '0');
+  const h = d.getHours().toString().padStart(2, '0');
+  const min = d.getMinutes().toString().padStart(2, '0');
+  return `${y}-${m}-${day} ${h}:${min}`;
+}
+
+const MOCK_CLUB_ACTIVITIES = [
+  {
+    id: 'act_001',
+    clubId: 'club_001',
+    clubName: '计算机协会',
+    title: 'AI大模型技术分享会',
+    category: 'academic',
+    cover: 'https://picsum.photos/seed/act1/800/450',
+    description: '本次分享会邀请了业界资深算法工程师，深入探讨GPT系列大模型的技术原理、Fine-tuning实战、以及大模型在校园场景中的创新应用。现场将有Demo展示和问答互动环节。\n\n议程安排：\n14:00-14:10 开场致辞\n14:10-15:00 大模型技术原理与演进\n15:00-15:50 微调实战与部署\n15:50-16:10 茶歇交流\n16:10-17:00 圆桌讨论与Q&A',
+    activityTime: createDateString(3, 14, 0),
+    endTime: createDateString(3, 17, 0),
+    location: '信息楼报告厅',
+    capacity: 200,
+    deadline: createDateString(2, 18, 0),
+    fee: 0,
+    tags: ['AI', '技术', '讲座'],
+    images: ['https://picsum.photos/seed/act1_1/800/600', 'https://picsum.photos/seed/act1_2/800/600'],
+    organizerName: '李明',
+    organizerPhone: '13800138010',
+    checkInCode: 'CLUB-ACT-001-QR'
+  },
+  {
+    id: 'act_002',
+    clubId: 'club_002',
+    clubName: '篮球俱乐部',
+    title: '春季3V3篮球联赛',
+    category: 'sports',
+    cover: 'https://picsum.photos/seed/act2/800/450',
+    description: '一年一度的春季3V3篮球赛火热开赛！面向全校同学开放报名，设有本科生组、研究生组，冠军队伍将获得奖杯和丰厚奖品。\n\n比赛规则：\n• 每场比赛10分钟不停表\n• 三分线内算1分，三分线外算2分\n• 先到15分或时间结束时得分高者获胜\n• 详细赛程见后续通知',
+    activityTime: createDateString(5, 9, 0),
+    endTime: createDateString(6, 18, 0),
+    location: '校篮球场（西区）',
+    capacity: 128,
+    deadline: createDateString(3, 20, 0),
+    fee: 50,
+    tags: ['篮球', '比赛', '3V3'],
+    images: ['https://picsum.photos/seed/act2_1/800/600'],
+    organizerName: '王强',
+    organizerPhone: '13800138011',
+    checkInCode: 'CLUB-ACT-002-QR'
+  },
+  {
+    id: 'act_003',
+    clubId: 'club_003',
+    clubName: '话剧社',
+    title: '年度大戏《暗恋桃花源》公演',
+    category: 'arts',
+    cover: 'https://picsum.photos/seed/act3/800/450',
+    description: '话剧社年度巨献！经典话剧《暗恋桃花源》，历时3个月精心排演。两个看似不相关的剧组，因为剧场预约冲突被迫同台排演，上演了一出悲喜交加的好戏。\n\n演出时长：约150分钟（含15分钟中场休息）\n注意事项：\n• 请提前30分钟到场入座\n• 演出期间请关闭手机铃声\n• 禁止拍摄和录音',
+    activityTime: createDateString(8, 19, 0),
+    endTime: createDateString(8, 21, 30),
+    location: '学校大礼堂',
+    capacity: 800,
+    deadline: createDateString(7, 23, 59),
+    fee: 0,
+    tags: ['话剧', '演出', '艺术'],
+    images: ['https://picsum.photos/seed/act3_1/800/600', 'https://picsum.photos/seed/act3_2/800/600', 'https://picsum.photos/seed/act3_3/800/600'],
+    organizerName: '张雨薇',
+    organizerPhone: '13800138012',
+    checkInCode: 'CLUB-ACT-003-QR'
+  },
+  {
+    id: 'act_004',
+    clubId: 'club_004',
+    clubName: '志愿者协会',
+    title: '关爱留守儿童周末支教活动',
+    category: 'charity',
+    cover: 'https://picsum.photos/seed/act4/800/450',
+    description: '前往周边希望小学，为留守儿童带去有趣的课程和温暖的陪伴。本次支教内容包括：趣味英语、美术手工、音乐律动、课外阅读辅导。\n\n集合时间：周六早上7:30\n集合地点：学校北门\n交通：大巴统一接送\n午餐：提供简单午餐\n需要准备：可带文具、书籍等礼物（可选）',
+    activityTime: createDateString(4, 8, 0),
+    endTime: createDateString(4, 16, 0),
+    location: '阳光希望小学',
+    capacity: 30,
+    deadline: createDateString(2, 18, 0),
+    fee: 0,
+    tags: ['支教', '公益', '志愿'],
+    images: ['https://picsum.photos/seed/act4_1/800/600'],
+    organizerName: '刘思琪',
+    organizerPhone: '13800138013',
+    checkInCode: 'CLUB-ACT-004-QR'
+  },
+  {
+    id: 'act_005',
+    clubId: 'club_001',
+    clubName: '计算机协会',
+    title: '24小时黑客马拉松',
+    category: 'competition',
+    cover: 'https://picsum.photos/seed/act5/800/450',
+    description: '挑战极限，24小时创造奇迹！黑客马拉松是一场集创意、技术、合作为一体的编程挑战赛。参赛者需在24小时内完成一个从想法到原型的产品开发。\n\n奖项设置：\n🏆 一等奖（1支）：3000元奖金+实习机会\n🥈 二等奖（2支）：1500元奖金\n🥉 三等奖（3支）：800元奖金\n⭐ 最佳创意奖：500元奖金\n\n报名要求：2-4人组队，跨专业组队优先',
+    activityTime: createDateString(12, 9, 0),
+    endTime: createDateString(13, 9, 0),
+    location: '大学生活动中心创客空间',
+    capacity: 100,
+    deadline: createDateString(9, 23, 59),
+    fee: 0,
+    tags: ['编程', '比赛', '黑客松'],
+    images: ['https://picsum.photos/seed/act5_1/800/600', 'https://picsum.photos/seed/act5_2/800/600'],
+    organizerName: '李明',
+    organizerPhone: '13800138010',
+    checkInCode: 'CLUB-ACT-005-QR'
+  },
+  {
+    id: 'act_006',
+    clubId: 'club_005',
+    clubName: '文学社',
+    title: '春日诗会暨诗歌创作大赛颁奖',
+    category: 'arts',
+    cover: 'https://picsum.photos/seed/act6/800/450',
+    description: '春风送暖，诗兴盎然。文学社诚邀各位诗歌爱好者，在最美的季节相遇，以诗会友。\n\n活动流程：\n1. 诗歌朗诵环节（自由报名）\n2. 春日诗歌创作大赛颁奖\n3. 嘉宾分享：诗歌创作的灵感来源\n4. 自由交流\n\n本次活动提供精美茶点，欢迎携带自己创作的诗歌作品前来交流。',
+    activityTime: createDateString(6, 14, 30),
+    endTime: createDateString(6, 17, 0),
+    location: '湖畔咖啡厅',
+    capacity: 50,
+    deadline: createDateString(5, 18, 0),
+    fee: 20,
+    tags: ['诗歌', '文学', '分享'],
+    images: ['https://picsum.photos/seed/act6_1/800/600'],
+    organizerName: '陈雅文',
+    organizerPhone: '13800138014',
+    checkInCode: 'CLUB-ACT-006-QR'
+  },
+  {
+    id: 'act_007',
+    clubId: 'club_006',
+    clubName: '舞蹈协会',
+    title: '校园舞蹈大赛',
+    category: 'competition',
+    cover: 'https://picsum.photos/seed/act7/800/450',
+    description: '一年一度的校园舞蹈盛宴！无论你擅长街舞、民族舞、现代舞还是拉丁舞，都可以在这个舞台展现自己。\n\n比赛组别：\n• 单人组（男/女）\n• 团体组（3人以上）\n\n评分标准：\n- 技术技巧 40%\n- 艺术表现 30%\n- 创意编排 20%\n- 舞台形象 10%\n\n所有参赛者均可获得精美纪念礼品！',
+    activityTime: createDateString(15, 18, 0),
+    endTime: createDateString(15, 22, 0),
+    location: '学校大礼堂',
+    capacity: 100,
+    deadline: createDateString(10, 18, 0),
+    fee: 30,
+    tags: ['舞蹈', '比赛', '舞台'],
+    images: ['https://picsum.photos/seed/act7_1/800/600', 'https://picsum.photos/seed/act7_2/800/600'],
+    organizerName: '林小舞',
+    organizerPhone: '13800138015',
+    checkInCode: 'CLUB-ACT-007-QR'
+  },
+  {
+    id: 'act_008',
+    clubId: 'club_002',
+    clubName: '篮球俱乐部',
+    title: '篮球技巧训练营（零基础班）',
+    category: 'training',
+    cover: 'https://picsum.photos/seed/act8/800/450',
+    description: '想打篮球但不会？零基础训练营火热开启！\n\n培训内容：\n• 运球基础（高低运球、变向、胯下）\n• 投篮姿势与发力技巧\n• 传球方式与视野训练\n• 简单攻防战术入门\n• 身体素质提升\n\n教练团队由校篮球队主力队员组成，每班限20人，名额有限先到先得！',
+    activityTime: createDateString(-1, 16, 0),
+    endTime: createDateString(-1, 18, 0),
+    location: '室内篮球训练馆',
+    capacity: 20,
+    deadline: createDateString(-2, 20, 0),
+    fee: 0,
+    tags: ['篮球', '培训', '零基础'],
+    images: ['https://picsum.photos/seed/act8_1/800/600'],
+    organizerName: '王强',
+    organizerPhone: '13800138011',
+    checkInCode: 'CLUB-ACT-008-QR'
+  },
+  {
+    id: 'act_009',
+    clubId: 'club_004',
+    clubName: '志愿者协会',
+    title: '校园环保周·共享单车整理',
+    category: 'charity',
+    cover: 'https://picsum.photos/seed/act9/800/450',
+    description: '共享单车乱停乱放影响校园美观？一起来动手，让校园更整洁！\n\n活动内容：\n1. 南门、北门共享单车集中整理\n2. 违规停放单车搬运\n3. 环保宣传单向师生派发\n4. 活动总结合影\n\n提供志愿服装、手套、饮用水，可记录志愿时长。',
+    activityTime: createDateString(-5, 14, 0),
+    endTime: createDateString(-5, 17, 0),
+    location: '学校南门集合',
+    capacity: 50,
+    deadline: createDateString(-6, 20, 0),
+    fee: 0,
+    tags: ['环保', '志愿', '公益'],
+    images: ['https://picsum.photos/seed/act9_1/800/600'],
+    organizerName: '刘思琪',
+    organizerPhone: '13800138013',
+    checkInCode: 'CLUB-ACT-009-QR'
+  }
+];
+
+if (module.exports) {
+  module.exports.MOCK_CLUBS = MOCK_CLUBS;
+  module.exports.MOCK_CLUB_MEMBERS = MOCK_CLUB_MEMBERS;
+  module.exports.MOCK_CLUB_ACTIVITIES = MOCK_CLUB_ACTIVITIES;
+}

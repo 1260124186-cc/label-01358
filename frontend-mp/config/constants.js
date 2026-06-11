@@ -473,6 +473,40 @@ const FORUM_SORT_OPTIONS = [
   { value: 'hot', label: '热门', field: 'hotScore', order: 'desc' }
 ];
 
+const CLUB_ACTIVITY_STATUS = [
+  { value: 'upcoming', label: '即将开始', color: '#3B82F6' },
+  { value: 'ongoing', label: '进行中', color: '#10B981' },
+  { value: 'ended', label: '已结束', color: '#6B7280' },
+  { value: 'cancelled', label: '已取消', color: '#EF4444' }
+];
+
+const CLUB_ACTIVITY_CATEGORIES = [
+  { value: 'academic', label: '学术讲座', icon: '📚', color: '#3B82F6' },
+  { value: 'sports', label: '体育赛事', icon: '⚽', color: '#10B981' },
+  { value: 'arts', label: '文艺表演', icon: '🎭', color: '#8B5CF6' },
+  { value: 'social', label: '社交聚会', icon: '🎉', color: '#F59E0B' },
+  { value: 'charity', label: '公益志愿', icon: '❤️', color: '#EC4899' },
+  { value: 'competition', label: '竞赛比赛', icon: '🏆', color: '#14B8A6' },
+  { value: 'training', label: '培训拓展', icon: '🎯', color: '#6366F1' },
+  { value: 'other', label: '其他活动', icon: '📌', color: '#6B7280' }
+];
+
+const CLUB_ACTIVITY_TABS = [
+  { value: 'ongoing', label: '进行中' },
+  { value: 'upcoming', label: '即将开始' },
+  { value: 'ended', label: '已结束' },
+  { value: 'my', label: '我报名的' }
+];
+
+const CLUB_TYPES = [
+  { value: 'academic', label: '学术科技类', icon: '🔬', color: '#3B82F6' },
+  { value: 'sports', label: '体育运动类', icon: '🏃', color: '#10B981' },
+  { value: 'arts', label: '文化艺术类', icon: '🎨', color: '#8B5CF6' },
+  { value: 'social', label: '公益实践类', icon: '🤝', color: '#F59E0B' },
+  { value: 'literary', label: '文学创作类', icon: '📖', color: '#EC4899' },
+  { value: 'other', label: '其他社团', icon: '🏷️', color: '#6B7280' }
+];
+
 function getLabelByValue(list, value) {
   const item = list.find(i => i.value === value);
   return item ? item.label : value;
@@ -539,5 +573,9 @@ module.exports = {
   FORUM_REPORT_REASONS,
   SENSITIVE_WORDS,
   FORUM_SORT_OPTIONS,
+  CLUB_ACTIVITY_STATUS,
+  CLUB_ACTIVITY_CATEGORIES,
+  CLUB_ACTIVITY_TABS,
+  CLUB_TYPES,
   getLabelByValue
 };

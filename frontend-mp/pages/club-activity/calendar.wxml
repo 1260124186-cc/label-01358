@@ -1,0 +1,133 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="scroll-wrap" scroll-y="{{true}}">
+
+    <view class="calendar-container">
+      <view class="month-header">
+        <view class="nav-btn prev" bindtap="onPrevMonth">
+          <text class="nav-icon">‹</text>
+        </view>
+        <view class="month-info">
+          <text class="year">{{year}}年</text>
+          <text class="month">{{month + 1}}月</text>
+          <view class="month-badge">
+            <text>共 {{monthActivityCount}} 个活动</text>
+          </view>
+        </view>
+        <view class="nav-btn next" bindtap="onNextMonth">
+          <text class="nav-icon">›</text>
+        </view>
+      </view>
+
+      <view class="today-row">
+        <view class="today-btn" bindtap="onBackToday">
+          <text>📍 回到今天</text>
+        </view>
+      </view>
+
+      <view class="calendar-card">
+        <view class="weekday-row">
+          <view
+            class="weekday-item {{index === 0 || index === 6 ? 'weekend' : ''}}"
+            wx:for="{{weekDays}}"
+            wx:key="*this"
+          >
+            {{item}}
+          </view>
+        </view>
+
+        <view class="days-grid">
+          <view
+            class="day-cell {{item.isCurrentMonth ? '' : 'other-month'}} {{item.isToday ? 'today' : ''}} {{item.isSelected ? 'selected' : ''}} {{item.isWeekend ? 'weekend' : ''}} {{item.hasActivity ? 'has-activity' : ''}}"
+            wx:for="{{calendarData}}"
+            wx:key="dateStr"
+            bindtap="onDayTap"
+            data-date="{{item.dateStr}}"
+          >
+            <text class="day-num">{{item.dateNum}}</text>
+            <view class="activity-dots" wx:if="{{item.hasActivity}}">
+              <view
+                class="dot"
+                wx:for="{{item.activities}}"
+                wx:for-item="act"
+                wx:key="id"
+                wx:for-index="dotIdx"
+                wx:if="{{dotIdx < 3}}"
+                style="background-color: {{act.categoryColor}}"
+              ></view>
+            </view>
+            <view class="count-badge" wx:if="{{item.activityCount > 3}}">
+              +{{item.activityCount - 3}}
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="legend-row">
+        <view class="legend-item">
+          <view class="legend-dot" style="background-color: #10B981;"></view>
+          <text>进行中</text>
+        </view>
+        <view class="legend-item">
+          <view class="legend-dot" style="background-color: #3B82F6;"></view>
+          <text>即将开始</text>
+        </view>
+        <view class="legend-item">
+          <view class="legend-dot" style="background-color: #6B7280;"></view>
+          <text>已结束</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="activity-section">
+      <view class="section-header">
+        <view class="section-title-row">
+          <text class="section-icon">📌</text>
+          <text class="section-title">{{selectedDate}} 的活动</text>
+        </view>
+        <text class="section-count">{{selectedDayActivities.length}}个</text>
+      </view>
+
+      <view class="activity-list" wx:if="{{selectedDayActivities.length > 0}}">
+        <view
+          class="activity-item"
+          wx:for="{{selectedDayActivities}}"
+          wx:key="id"
+          hover-class="activity-hover"
+          bindtap="onNavToActivity"
+          data-id="{{item.id}}"
+        >
+          <view class="time-col">
+            <text class="time-text">{{item.activityTimeText}}</text>
+          </view>
+          <view class="item-divider"></view>
+          <view class="detail-col">
+            <view class="badge-row">
+              <view class="cat-badge" style="background-color: {{item.categoryColor}}20; color: {{item.categoryColor}}">
+                {{item.categoryIcon}} {{item.categoryLabel}}
+              </view>
+              <view class="stat-badge" style="background-color: {{item.statusColor}}15; color: {{item.statusColor}}">
+                {{item.statusLabel}}
+              </view>
+            </view>
+            <text class="item-title">{{item.title}}</text>
+            <view class="meta-row">
+              <text class="meta-text">📍 {{item.location}}</text>
+            </view>
+            <view class="meta-row">
+              <text class="meta-text">🏫 {{item.clubName}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-day" wx:else>
+        <view class="empty-icon">📭</view>
+        <text class="empty-text">当日暂无活动</text>
+        <text class="empty-desc">点击其他日期查看</text>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>

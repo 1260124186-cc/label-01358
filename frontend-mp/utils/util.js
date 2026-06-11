@@ -140,6 +140,13 @@ function showConfirm(content, title = '提示') {
 }
 
 /**
+ * 显示确认对话框（别名）
+ */
+function showModal(content, title = '确认') {
+  return showConfirm(content, title);
+}
+
+/**
  * 页面跳转
  */
 function navigateTo(url) {
@@ -269,6 +276,7 @@ module.exports = {
   showLoading,
   hideLoading,
   showConfirm,
+  showModal,
   navigateTo,
   navigateBack,
   switchTab,

@@ -1,0 +1,144 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="tab-section">
+    <scroll-view class="tab-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="tab-bar">
+        <view
+          class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabTap"
+          data-value="{{item.value}}"
+        >
+          <text class="tab-text">{{item.label}}</text>
+          <view class="tab-underline" wx:if="{{currentTab === item.value}}"></view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="category-section">
+    <scroll-view class="category-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="category-chips">
+        <view
+          class="category-chip {{currentCategory === item.value ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="value"
+          bindtap="onCategoryTap"
+          data-value="{{item.value}}"
+        >
+          <text class="chip-icon">{{item.icon}}</text>
+          <text class="chip-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{activityList.length > 0}}">
+      <view
+        class="activity-card"
+        wx:for="{{activityList}}"
+        wx:key="id"
+        hover-class="activity-card-hover"
+        bindtap="onNavToDetail"
+        data-id="{{item.id}}"
+      >
+        <view class="cover-wrap">
+          <image src="{{item.cover}}" mode="aspectFill" class="cover"/>
+          <view class="badge-wrap">
+            <view class="category-badge" style="background-color: {{item.categoryColor}}">
+              <text>{{item.categoryIcon}} {{item.categoryLabel}}</text>
+            </view>
+            <view class="status-badge" style="background-color: {{item.statusColor}}15; color: {{item.statusColor}}">
+              {{item.statusLabel}}
+            </view>
+          </view>
+          <view class="user-badge" wx:if="{{item.userStatus}}">
+            <text wx:if="{{item.userStatus === 'checkedIn'}}" class="user-status-text">✓ 已签到</text>
+            <text wx:elif="{{item.userStatus === 'registered'}}" class="user-status-text reg">已报名</text>
+          </view>
+        </view>
+
+        <view class="card-body">
+          <view class="club-row">
+            <text class="club-name">🏫 {{item.clubName}}</text>
+            <text class="views">👁 {{item.views || 0}}</text>
+          </view>
+          <text class="card-title">{{item.title}}</text>
+
+          <view class="info-grid">
+            <view class="info-item">
+              <text class="info-icon">🕐</text>
+              <text class="info-text">{{item.activityTimeText}}</text>
+            </view>
+            <view class="info-item">
+              <text class="info-icon">📍</text>
+              <text class="info-text">{{item.location}}</text>
+            </view>
+            <view class="info-item">
+              <text class="info-icon">⏰</text>
+              <text class="info-text">截止 {{item.deadlineText}}</text>
+            </view>
+            <view class="info-item" wx:if="{{item.fee > 0}}">
+              <text class="info-icon">💰</text>
+              <text class="info-text fee">{{item.fee}}元</text>
+            </view>
+          </view>
+
+          <view class="progress-wrap">
+            <view class="progress-bar">
+              <view class="progress-fill" style="width: {{item.progressPercent}}%;"></view>
+            </view>
+            <view class="progress-text">
+              <text class="joined">{{item.registrationCount}}人已报</text>
+              <text wx:if="{{item.isFull}}" class="full">已满</text>
+              <text wx:else class="remaining">剩{{item.remainingCount}}个名额</text>
+            </view>
+          </view>
+
+          <view class="tags-row" wx:if="{{item.tags && item.tags.length > 0}}">
+            <view class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">
+              #{{tag}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-wrap" wx:if="{{activityList.length === 0}}">
+      <view class="empty-icon">📭</view>
+      <view class="empty-text">暂无活动</view>
+      <view class="empty-desc">{{currentTab === 'my' ? '还没有报名任何活动，快去报名吧' : '当前分类没有活动'}}</view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="bottom-bar">
+    <view class="bottom-bar-inner">
+      <view class="bottom-btn" bindtap="onClubs">
+        <text class="bottom-btn-icon">🏫</text>
+        <text class="bottom-btn-text">社团</text>
+      </view>
+      <view class="bottom-divider"></view>
+      <view class="bottom-btn" bindtap="onCalendar">
+        <text class="bottom-btn-icon">📅</text>
+        <text class="bottom-btn-text">日历</text>
+      </view>
+      <view class="bottom-divider"></view>
+      <view class="bottom-btn bottom-btn-primary" bindtap="onPublish">
+        <text class="bottom-btn-icon">➕</text>
+        <text class="bottom-btn-text">发布活动</text>
+      </view>
+    </view>
+  </view>
+
+</view>

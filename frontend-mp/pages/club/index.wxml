@@ -1,0 +1,168 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{club}}">
+  <scroll-view class="scroll-wrap" scroll-y="{{true}}">
+
+    <view class="cover-section">
+      <image src="{{club.cover}}" mode="aspectFill" class="cover-image"/>
+      <view class="cover-mask"></view>
+      <view class="club-header">
+        <view class="club-logo">
+          <text class="logo-text">{{club.name[0]}}</text>
+        </view>
+        <view class="club-info">
+          <view class="club-name-row">
+            <text class="club-name">{{club.name}}</text>
+            <view class="club-type-badge">
+              <text>{{club.typeIcon}} {{club.typeLabel}}</text>
+            </view>
+          </view>
+          <view class="club-slogan">{{club.slogan || '加入我们，一起成长！'}}</view>
+          <view class="club-stats">
+            <view class="stat-item">
+              <text class="stat-num">{{club.memberCount || 0}}</text>
+              <text class="stat-label">成员</text>
+            </view>
+            <view class="stat-divider"></view>
+            <view class="stat-item">
+              <text class="stat-num">{{club.activityCount || 0}}</text>
+              <text class="stat-label">活动</text>
+            </view>
+            <view class="stat-divider"></view>
+            <view class="stat-item">
+              <text class="stat-num">⭐{{club.level || 1}}</text>
+              <text class="stat-label">等级</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="action-card">
+      <block wx:if="{{!isMember}}">
+        <button class="action-btn primary" bindtap="onJoinClub">
+          <text class="btn-icon">➕</text>
+          <text>加入社团</text>
+        </button>
+      </block>
+      <block wx:else>
+        <view class="member-info-row">
+          <view class="member-status">
+            <text class="status-icon">✓</text>
+            <text class="status-text">已加入 · {{memberRole === 'president' ? '社长' : memberRole === 'vicePresident' ? '副社长' : memberRole === 'director' ? '干事' : '成员'}}</text>
+          </view>
+        </view>
+        <view class="action-row">
+          <button class="action-btn secondary" bindtap="onPublishActivity">
+            <text class="btn-icon">📢</text>
+            <text>发布活动</text>
+          </button>
+          <button class="action-btn outline" bindtap="onLeaveClub" wx:if="{{memberRole !== 'president'}}">
+            <text class="btn-icon">🚪</text>
+            <text>退出社团</text>
+          </button>
+        </view>
+      </block>
+    </view>
+
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">ℹ️</text>
+        社团介绍
+      </view>
+      <view class="club-description">
+        <text>{{club.description}}</text>
+      </view>
+      <view class="club-meta">
+        <view class="meta-row-item">
+          <text class="meta-icon">📅</text>
+          <text class="meta-text">成立于 {{club.createdAtText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">👥</text>
+        社团成员
+        <text class="count-label">({{members.length}}人)</text>
+      </view>
+      <view class="member-grid">
+        <view class="member-item" wx:for="{{members}}" wx:key="userId">
+          <view class="member-avatar">
+            <image wx:if="{{item.avatar}}" src="{{item.avatar}}" mode="aspectFill" class="avatar-img"/>
+            <text wx:else class="avatar-text">{{item.avatarInitial}}</text>
+            <view class="role-badge role-{{item.role}}" wx:if="{{item.role !== 'member'}}">
+              {{item.roleLabel[0]}}
+            </view>
+          </view>
+          <text class="member-name">{{item.name}}</text>
+          <text class="member-role">{{item.roleLabel}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">🎯</text>
+        历史活动
+      </view>
+      <view class="filter-row">
+        <view
+          class="filter-chip {{activityType === 'all' ? 'active' : ''}}"
+          bindtap="onActivityTypeTap"
+          data-type="all"
+        >全部</view>
+        <view
+          class="filter-chip {{activityType === 'upcoming' ? 'active' : ''}}"
+          bindtap="onActivityTypeTap"
+          data-type="upcoming"
+        >即将开始</view>
+        <view
+          class="filter-chip {{activityType === 'ongoing' ? 'active' : ''}}"
+          bindtap="onActivityTypeTap"
+          data-type="ongoing"
+        >进行中</view>
+        <view
+          class="filter-chip {{activityType === 'ended' ? 'active' : ''}}"
+          bindtap="onActivityTypeTap"
+          data-type="ended"
+        >已结束</view>
+      </view>
+
+      <view class="activity-mini-list" wx:if="{{activityList.length > 0}}">
+        <view
+          class="activity-mini-item"
+          wx:for="{{activityList}}"
+          wx:key="id"
+          hover-class="mini-hover"
+          bindtap="onNavToActivity"
+          data-id="{{item.id}}"
+        >
+          <image src="{{item.cover}}" mode="aspectFill" class="mini-cover"/>
+          <view class="mini-content">
+            <view class="mini-title-row">
+              <view class="mini-category" style="background-color: {{item.categoryColor}}20; color: {{item.categoryColor}}">
+                {{item.categoryIcon}} {{item.categoryLabel}}
+              </view>
+              <view class="mini-status" style="background-color: {{item.statusColor}}15; color: {{item.statusColor}}">
+                {{item.statusLabel}}
+              </view>
+            </view>
+            <text class="mini-title">{{item.title}}</text>
+            <view class="mini-info">
+              <text class="mini-meta">🕐 {{item.activityTimeText}}</text>
+              <text class="mini-meta">📍 {{item.location}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-mini" wx:else>
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">暂无活动</text>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>

@@ -1,0 +1,249 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{activity}}">
+  <scroll-view class="scroll-wrap" scroll-y="{{true}}">
+
+    <view class="cover-section">
+      <image src="{{activity.cover}}" mode="aspectFill" class="cover-image"/>
+      <view class="cover-mask"></view>
+      <view class="cover-content">
+        <view class="badge-row">
+          <view class="category-badge" style="background-color: {{categoryColor}}">
+            <text>{{categoryIcon}} {{categoryLabel}}</text>
+          </view>
+          <view class="status-badge" style="background-color: {{statusColor}}20; color: {{statusColor}}">
+            {{statusLabel}}
+          </view>
+        </view>
+        <text class="activity-title">{{activity.title}}</text>
+        <view class="meta-row">
+          <view class="meta-item" bindtap="onNavToClub">
+            <text class="meta-icon">🏫</text>
+            <text class="meta-text">{{activity.clubName}}</text>
+          </view>
+          <text class="meta-divider">·</text>
+          <view class="meta-item">
+            <text class="meta-icon">👁</text>
+            <text class="meta-text">{{activity.views || 0}}次浏览</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card progress-card">
+      <view class="progress-header">
+        <text class="progress-label">报名情况</text>
+        <text class="progress-count">
+          <text class="current">{{registrationCount}}</text>
+          <text class="total"> / {{activity.capacity}}人</text>
+        </text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{progressPercent}}%"></view>
+      </view>
+      <view class="progress-footer">
+        <block wx:if="{{isFull}}">
+          <text class="status-text full">名额已满</text>
+        </block>
+        <block wx:elif="{{canRegister}}">
+          <text class="status-text ok">剩余 {{remainingCount}} 个名额</text>
+        </block>
+        <block wx:else>
+          <text class="status-text ended">报名已截止</text>
+        </block>
+        <text wx:if="{{isRegistered}}" class="reg-badge">
+          <text wx:if="{{isCheckedIn}}" class="badge-checkedin">✓ 已签到</text>
+          <text wx:else class="badge-registered">✓ 已报名</text>
+        </text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">🔔</text>
+        关键信息
+      </view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="info-icon">🕐</text>
+          <view class="info-content">
+            <text class="info-label">活动时间</text>
+            <text class="info-value">{{activity.activityTimeText}} 至 {{activity.endTimeText}}</text>
+          </view>
+        </view>
+        <view class="info-item" bindtap="onCopyLocation">
+          <text class="info-icon">📍</text>
+          <view class="info-content">
+            <text class="info-label">活动地点</text>
+            <text class="info-value copy">{{activity.location}}</text>
+          </view>
+          <text class="copy-hint">复制</text>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">⏰</text>
+          <view class="info-content">
+            <text class="info-label">报名截止</text>
+            <text class="info-value">{{activity.deadlineText}}</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">💰</text>
+          <view class="info-content">
+            <text class="info-label">活动费用</text>
+            <text class="info-value" style="color: {{activity.fee > 0 ? '#EF4444' : ''}}">{{activity.fee > 0 ? activity.fee + '元' : '免费'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">📝</text>
+        活动详情
+      </view>
+      <view class="description">
+        <text>{{activity.description}}</text>
+      </view>
+      <view class="tags-row" wx:if="{{activity.tags && activity.tags.length > 0}}">
+        <view class="tag" wx:for="{{activity.tags}}" wx:key="*this">#{{item}}</view>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">
+        <text class="title-icon">👤</text>
+        联系方式
+      </view>
+      <view class="contact-row" bindtap="onCallOrganizer">
+        <view class="contact-info">
+          <text class="contact-name">{{activity.organizerName || '活动负责人'}}</text>
+          <text class="contact-phone">{{activity.organizerPhone || '暂无电话'}}</text>
+        </view>
+        <view class="call-btn">
+          <text class="call-icon">📞</text>
+          <text class="call-text">呼叫</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{canCheckIn && isCheckInDay}}">
+      <view class="card-title">
+        <text class="title-icon">✅</text>
+        签到码
+      </view>
+      <view class="checkin-row" bindtap="onShowQr">
+        <view class="checkin-code">
+          <text class="code-label">签到码（活动当天有效）</text>
+          <text class="code-value">{{activity.checkInCode}}</text>
+        </view>
+        <view class="qr-btn">
+          <text class="qr-icon">📱</text>
+          <text class="qr-text">查看</text>
+        </view>
+      </view>
+      <view class="checkin-hint">请在活动当天出示此签到码进行签到</view>
+    </view>
+
+    <view class="card" wx:if="{{activity.images && activity.images.length > 0}}">
+      <view class="card-title">
+        <text class="title-icon">🖼</text>
+        活动图片
+      </view>
+      <view class="image-grid">
+        <image
+          class="grid-image"
+          src="{{item}}"
+          mode="aspectFill"
+          wx:for="{{activity.images}}"
+          wx:key="*this"
+        />
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="publish-info">
+        <text class="publish-text">发布于 {{activity.createdAtText}}</text>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="bottom-bar">
+    <block wx:if="{{canRegister}}">
+      <button class="action-btn register" bindtap="onRegister">
+        <text class="btn-icon">📝</text>
+        <text>立即报名</text>
+      </button>
+    </block>
+    <block wx:elif="{{canCancel}}">
+      <button class="action-btn cancel" bindtap="onCancel">
+        <text class="btn-icon">✕</text>
+        <text>取消报名</text>
+      </button>
+    </block>
+    <block wx:elif="{{canCheckIn && isCheckInDay}}">
+      <button class="action-btn checkin" bindtap="onShowCheckIn">
+        <text class="btn-icon">✅</text>
+        <text>签到</text>
+      </button>
+    </block>
+    <block wx:else>
+      <button class="action-btn disabled" disabled="{{true}}">
+        <text wx:if="{{isFull}}">名额已满</text>
+        <text wx:elif="{{isCheckedIn}}">已签到</text>
+        <text wx:elif="{{statusValue === 'ended'}}">活动已结束</text>
+        <text wx:elif="{{statusValue === 'cancelled'}}">活动已取消</text>
+        <text wx:elif="{{statusValue === 'ongoing' && isRegistered}}">活动进行中</text>
+        <text wx:else>已截止报名</text>
+      </button>
+    </block>
+  </view>
+
+  <view class="modal-mask {{showCheckInModal ? 'show' : ''}}" catchtap="onCloseCheckIn">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">活动签到</text>
+        <text class="modal-close" bindtap="onCloseCheckIn">×</text>
+      </view>
+      <view class="modal-body">
+        <text class="checkin-hint-main">请输入活动现场的签到码完成签到</text>
+        <input
+          class="checkin-input"
+          placeholder="请输入6-12位签到码"
+          value="{{checkInInput}}"
+          bindinput="onCheckInInput"
+          maxlength="20"
+          auto-focus="{{true}}"
+        />
+      </view>
+      <view class="modal-footer">
+        <button class="modal-btn cancel" bindtap="onCloseCheckIn">取消</button>
+        <button class="modal-btn confirm" bindtap="onCheckInSubmit">确认签到</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{showQrModal ? 'show' : ''}}" catchtap="onCloseQr">
+    <view class="qr-modal" catchtap="">
+      <view class="qr-header">
+        <text class="qr-title">签到码</text>
+        <text class="qr-close" bindtap="onCloseQr">×</text>
+      </view>
+      <view class="qr-body">
+        <view class="qr-code-wrap">
+          <view class="qr-code-placeholder">
+            <text class="qr-big-icon">📱</text>
+            <text class="qr-label">签到码</text>
+            <text class="qr-value-text">{{activity.checkInCode}}</text>
+            <text class="qr-desc">活动当天向工作人员出示此签到码</text>
+          </view>
+        </view>
+        <view class="qr-info">
+          <text class="qr-activity">{{activity.title}}</text>
+          <text class="qr-time">{{activity.activityTimeText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+</view>

@@ -41,7 +41,12 @@ const STORAGE_KEYS = {
   FORUM_LIKES: 'forumLikes',
   FORUM_REPORTS: 'forumReports',
   FORUM_BANNED_USERS: 'forumBannedUsers',
-  FORUM_TOPIC_STATS: 'forumTopicStats'
+  FORUM_TOPIC_STATS: 'forumTopicStats',
+  CLUB_LIST: 'clubList',
+  CLUB_MEMBER_LIST: 'clubMemberList',
+  CLUB_ACTIVITY_LIST: 'clubActivityList',
+  CLUB_ACTIVITY_REGISTRATION_LIST: 'clubActivityRegistrationList',
+  CLUB_ACTIVITY_CHECKIN_LIST: 'clubActivityCheckinList'
 };
 
 /**

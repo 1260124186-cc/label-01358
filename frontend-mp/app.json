@@ -57,7 +57,12 @@
     "pages/forum/index/index",
     "pages/forum/publish/index",
     "pages/forum/detail/index",
-    "pages/forum/topics/index"
+    "pages/forum/topics/index",
+    "pages/club/index",
+    "pages/club-activity/index",
+    "pages/club-activity/publish",
+    "pages/club-activity/detail",
+    "pages/club-activity/calendar"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",
