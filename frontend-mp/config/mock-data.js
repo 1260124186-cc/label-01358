@@ -1107,9 +1107,14 @@ const MOCK_LOST_FOUND = [
     description: '昨天在图书馆三楼自习室丢失黑色钱包一个，内有身份证、校园卡和部分现金。望好心人拾到后联系，万分感谢！',
     itemType: 'card',
     location: 'library',
-    contact: '13800138001',
+    date: '2026-06-10',
+    contact: '李明',
+    phone: '13800138001',
+    userName: '李明同学',
+    userAvatar: '',
     images: ['https://picsum.photos/seed/wallet/600/600'],
-    reward: '500元酬金'
+    reward: '500元酬金',
+    status: 'active'
   },
   {
     type: 'found',
@@ -1117,8 +1122,13 @@ const MOCK_LOST_FOUND = [
     description: '在食堂门口捡到一串钥匙，上面有一个小熊挂件。失主请联系我认领。',
     itemType: 'other',
     location: 'canteen',
-    contact: '13800138002',
-    images: ['https://picsum.photos/seed/keys/600/600']
+    date: '2026-06-09',
+    contact: '王芳',
+    phone: '13800138002',
+    userName: '热心小王',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/keys/600/600'],
+    status: 'claimed'
   },
   {
     type: 'lost',
@@ -1126,9 +1136,14 @@ const MOCK_LOST_FOUND = [
     description: '在教学楼A栋302教室丢失银色MacBook Pro一台，电脑上有蓝色贴纸。资料非常重要，恳请归还！',
     itemType: 'electronics',
     location: 'classroom',
-    contact: '13800138003',
+    date: '2026-06-08',
+    contact: '张华',
+    phone: '13800138003',
+    userName: '着急的小张',
+    userAvatar: '',
     images: ['https://picsum.photos/seed/laptop/600/600'],
-    reward: '1000元酬金'
+    reward: '1000元酬金',
+    status: 'returned'
   }
 ];
 

@@ -174,7 +174,13 @@ function getLostFoundListPaged(pagination = {}) {
  */
 function getLostFoundDetail(id) {
   const list = storage.getList(STORAGE_KEYS.LOST_FOUND_LIST);
-  return list.find(item => item.id === id) || null;
+  const item = list.find(item => item.id === id) || null;
+  if (item) {
+    item.userName = item.userName || '匿名用户';
+    item.userAvatar = item.userAvatar || '';
+    item.status = item.status || 'active';
+  }
+  return item;
 }
 
 /**

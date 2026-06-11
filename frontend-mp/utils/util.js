@@ -266,6 +266,15 @@ function checkLogin(redirect = true) {
   return false;
 }
 
+function maskPhone(phone) {
+  if (!phone || phone.length < 7) {
+    return phone;
+  }
+  const prefix = phone.substring(0, 3);
+  const suffix = phone.substring(phone.length - 4);
+  return `${prefix}****${suffix}`;
+}
+
 module.exports = {
   generateId,
   formatTime,
@@ -286,5 +295,6 @@ module.exports = {
   isValidPhone,
   isEmpty,
   isLoggedIn,
-  checkLogin
+  checkLogin,
+  maskPhone
 };

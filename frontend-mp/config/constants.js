@@ -3,6 +3,18 @@ const LOST_FOUND_TYPES = [
   { value: 'found', label: '失物招领' }
 ];
 
+const LOST_FOUND_STATUS = [
+  { value: 'active', label: '进行中', color: '#3B82F6' },
+  { value: 'claimed', label: '已认领', color: '#10B981' },
+  { value: 'returned', label: '已找回', color: '#10B981' },
+  { value: 'closed', label: '已关闭', color: '#6B7280' }
+];
+
+const LOST_FOUND_STATUS_MAP = LOST_FOUND_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
 const ITEM_TYPES = [
   { value: 'electronics', label: '电子产品' },
   { value: 'card', label: '证件卡类' },
@@ -826,6 +838,8 @@ function getLabelByValue(list, value) {
 
 module.exports = {
   LOST_FOUND_TYPES,
+  LOST_FOUND_STATUS,
+  LOST_FOUND_STATUS_MAP,
   ITEM_TYPES,
   LOCATIONS,
   MARKET_CATEGORIES,

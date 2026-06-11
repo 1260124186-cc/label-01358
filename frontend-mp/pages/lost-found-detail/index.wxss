@@ -29,8 +29,17 @@
 .info-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 16rpx;
   margin-bottom: 20rpx;
+  flex-wrap: wrap;
+}
+
+.status-badge {
+  padding: 8rpx 20rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
 }
 
 .info-type {
@@ -339,6 +348,97 @@
 
 .bottom-bar .btn {
   width: 100% !important;
+}
+
+/* ==================== 发布者信息区域 ==================== */
+.publisher-section {
+  display: flex;
+  align-items: center;
+  margin-top: 28rpx;
+  padding-top: 28rpx;
+  border-top: 1rpx solid var(--color-border-light);
+}
+
+.publisher-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background-color: var(--color-bg-input);
+  flex-shrink: 0;
+}
+
+.publisher-info {
+  flex: 1;
+  margin-left: 20rpx;
+  min-width: 0;
+}
+
+.publisher-name {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 8rpx;
+}
+
+.publisher-phone {
+  display: block;
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+}
+
+.publisher-tag {
+  padding: 8rpx 16rpx;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  color: #B45309;
+  font-size: 22rpx;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* ==================== 已关闭提示 ==================== */
+.closed-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20rpx;
+  padding: 20rpx;
+  background: #F0FDF4;
+  border-radius: var(--radius-lg);
+}
+
+.page.dark .closed-tip {
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.closed-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+}
+
+.closed-text {
+  font-size: 26rpx;
+  color: #059669;
+}
+
+.page.dark .closed-text {
+  color: #34D399;
+}
+
+/* ==================== 发布者操作按钮 ==================== */
+.publisher-actions {
+  padding: 0 24rpx;
+  margin-bottom: 20rpx;
+}
+
+/* ==================== 已关闭状态底部栏 ==================== */
+.closed-bar {
+  opacity: 0.7;
+}
+
+.closed-bar .btn {
+  opacity: 0.6;
 }
 
 /* ==================== 空状态 ==================== */

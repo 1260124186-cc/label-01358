@@ -10,7 +10,10 @@ mixPage({
     id: '',
     detail: null,
     isFavorite: false,
-    locationPOI: null
+    locationPOI: null,
+    isPublisher: false,
+    statusInfo: null,
+    maskedPhone: ''
   },
 
   onLoad(options) {
@@ -23,6 +26,16 @@ mixPage({
   onShow() {
     if (this.data.id) {
       this.checkFavorite();
+      this.checkIsPublisher();
+    }
+  },
+
+  checkIsPublisher() {
+    const app = getApp();
+    const userInfo = app.globalData.userInfo;
+    const { detail } = this.data;
+    if (detail && userInfo) {
+      this.setData({ isPublisher: detail.userId === userInfo.id });
     }
   },
 
@@ -30,14 +43,24 @@ mixPage({
     const detail = dataService.getLostFoundDetail(this.data.id);
 
     if (detail) {
+      const statusInfo = constants.LOST_FOUND_STATUS_MAP[detail.status] || constants.LOST_FOUND_STATUS_MAP.active;
+      const isClosed = detail.status === 'claimed' || detail.status === 'returned' || detail.status === 'closed';
+
       const formattedDetail = {
         ...detail,
         timeText: util.relativeTime(detail.createTime),
         itemTypeText: constants.getLabelByValue(constants.ITEM_TYPES, detail.itemType),
-        locationText: constants.getLabelByValue(constants.LOCATIONS, detail.location) || detail.location
+        locationText: constants.getLabelByValue(constants.LOCATIONS, detail.location) || detail.location,
+        isClosed
       };
 
-      this.setData({ detail: formattedDetail });
+      this.setData({
+        detail: formattedDetail,
+        statusInfo,
+        maskedPhone: util.maskPhone(detail.phone)
+      });
+
+      this.checkIsPublisher();
 
       // 加载关联的 POI 信息
       this.loadLocationPOI(detail);
@@ -163,5 +186,45 @@ mixPage({
 
     const { id } = this.data;
     util.navigateTo(`/pages/report/index?targetType=lostFound&targetId=${id}`);
+  },
+
+  onCloseLostFound() {
+    if (!util.checkLogin()) {
+      return;
+    }
+
+    const { detail, isPublisher } = this.data;
+    if (!isPublisher) {
+      util.showError('只有发布者才能关闭信息');
+      return;
+    }
+
+    const typeText = detail.type === 'lost' ? '已找回' : '已认领';
+    wx.showModal({
+      title: '确认关闭',
+      content: `确认标记为"${typeText}"并关闭此信息吗？关闭后他人将无法联系您。`,
+      confirmText: '确认关闭',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          const newStatus = detail.type === 'lost' ? 'returned' : 'claimed';
+          const success = dataService.updateLostFound(detail.id, {
+            status: newStatus
+          });
+
+          if (success) {
+            const statusInfo = constants.LOST_FOUND_STATUS_MAP[newStatus];
+            this.setData({
+              'detail.status': newStatus,
+              'detail.isClosed': true,
+              statusInfo
+            });
+            util.showSuccess(`已标记为${typeText}`);
+          } else {
+            util.showError('关闭失败，请重试');
+          }
+        }
+      }
+    });
   }
 });

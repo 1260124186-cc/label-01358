@@ -32,7 +32,7 @@ App({
   initMockData() {
     try {
       const { STORAGE_KEYS } = storage;
-      const MOCK_DATA_VERSION = 'v3';
+      const MOCK_DATA_VERSION = 'v4';
       const now = Date.now();
 
       const storedVersion = wx.getStorageSync('mock_data_version');
@@ -50,10 +50,12 @@ App({
         lostFoundList = mockData.MOCK_LOST_FOUND.map((item, index) => ({
           id: 'mock_lf_' + index + '_' + now,
           ...item,
-          userId: 'test_user',
+          userId: index === 0 ? 'test_user' : ('user_' + index),
+          userName: item.userName || '匿名用户',
+          userAvatar: item.userAvatar || '',
           createTime: now - (index + 10) * 86400000,
           updateTime: now - (index + 10) * 86400000,
-          status: 'active',
+          status: item.status || 'active',
           views: Math.floor(Math.random() * 100) + 10
         }));
         storage.set(STORAGE_KEYS.LOST_FOUND_LIST, lostFoundList);

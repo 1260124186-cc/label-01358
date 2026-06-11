@@ -25,6 +25,9 @@
       <view class="info-type {{detail.type === 'lost' ? 'type-lost' : 'type-found'}}">
         {{detail.type === 'lost' ? '寻物启事' : '失物招领'}}
       </view>
+      <view class="status-badge" style="background: {{statusInfo.color}}20; color: {{statusInfo.color}};">
+        {{statusInfo.label}}
+      </view>
       <view class="info-actions">
         <view
           class="action-btn {{isFavorite ? 'active' : ''}}"
@@ -45,6 +48,16 @@
 
     <text class="info-title">{{detail.title}}</text>
     <text class="info-time">发布于 {{detail.timeText}}</text>
+
+    <!-- 发布者信息 -->
+    <view class="publisher-section">
+      <image class="publisher-avatar" src="{{detail.userAvatar || '/assets/images/default-avatar.png'}}" mode="aspectFill" />
+      <view class="publisher-info">
+        <text class="publisher-name">{{detail.userName}}</text>
+        <text class="publisher-phone">{{maskedPhone}}</text>
+      </view>
+      <view class="publisher-tag" wx:if="{{isPublisher}}">我发布的</view>
+    </view>
   </view>
 
   <!-- 详细信息 -->
@@ -100,14 +113,30 @@
       </view>
       <view class="contact-item">
         <text class="contact-label">联系电话</text>
-        <text class="contact-value phone" bindtap="onCallPhone">{{detail.phone}}</text>
+        <text class="contact-value phone" bindtap="{{!detail.isClosed ? 'onCallPhone' : ''}}">{{maskedPhone}}</text>
       </view>
+    </view>
+    <view class="closed-tip" wx:if="{{detail.isClosed}}">
+      <text class="closed-icon">✅</text>
+      <text class="closed-text">此信息已{{statusInfo.label}}，暂不支持联系</text>
     </view>
   </view>
 
+  <!-- 发布者操作 -->
+  <view class="publisher-actions" wx:if="{{isPublisher && !detail.isClosed}}">
+    <btn type="danger" size="large" block="{{true}}" bind:click="onCloseLostFound">
+      标记为{{detail.type === 'lost' ? '已找回' : '已认领'}}
+    </btn>
+  </view>
+
   <!-- 底部操作 -->
-  <view class="bottom-bar">
+  <view class="bottom-bar" wx:if="{{!detail.isClosed}}">
     <btn type="primary" size="large" block="{{true}}" bind:click="onCallPhone">立即联系</btn>
+  </view>
+  <view class="bottom-bar closed-bar" wx:else>
+    <btn type="default" size="large" block="{{true}}" disabled="{{true}}">
+      此信息已{{statusInfo.label}}
+    </btn>
   </view>
 </view>
 
