@@ -1,80 +1,306 @@
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
-<view class="page {{darkMode ? 'dark' : ''}}">
-  <!-- 当前播放 -->
+<view class="page {{darkMode ? 'dark' : ''}}" bindtap="onClosePicker">
+  <!-- 分类切换 -->
+  <view class="category-tabs">
+    <scroll-view scroll-x class="category-scroll" enhanced show-scrollbar="{{false}}">
+      <view class="category-list">
+        <view
+          class="category-item {{currentCategory === item.id ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="id"
+          bindtap="onSwitchCategory"
+          data-id="{{item.id}}"
+          catchtap="onClosePicker"
+        >
+          <text class="category-icon">{{item.icon}}</text>
+          <text class="category-name">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 播放器区域 -->
   <view class="player-section" wx:if="{{currentAudio}}">
     <view class="player-card">
-      <image class="player-cover" src="{{currentAudio.cover}}" mode="aspectFill" />
-      <view class="player-info">
-        <text class="player-title">{{currentAudio.title}}</text>
-        <text class="player-desc">{{currentAudio.description}}</text>
-
-        <!-- 进度条 -->
-        <view class="progress-wrap">
-          <slider
-            class="progress-slider"
-            min="0"
-            max="{{duration}}"
-            value="{{currentTime}}"
-            activeColor="#FFFFFF"
-            backgroundColor="rgba(255,255,255,0.3)"
-            block-size="16"
-            block-color="#FFFFFF"
-            bindchange="onSeek"
-          />
-          <view class="progress-time">
-            <text>{{currentTimeText}}</text>
-            <text>{{durationText}}</text>
-          </view>
+      <view class="player-header">
+        <image class="player-cover" src="{{currentAudio.cover}}" mode="aspectFill" />
+        <view class="player-info">
+          <text class="player-title">{{currentAudio.title}}</text>
+          <text class="player-desc">{{currentAudio.description}}</text>
+          <text class="player-anchor">主播：{{currentAudio.anchor}}</text>
         </view>
+        <view class="favorite-btn" bindtap="onToggleFavorite" data-item="{{currentAudio}}" catchtap="onClosePicker">
+          <text class="favorite-icon {{favorites.some(f => f.id === currentAudio.id) ? 'active' : ''}}">
+            {{favorites.some(f => f.id === currentAudio.id) ? '❤️' : '🤍'}}
+          </text>
+        </view>
+      </view>
 
-        <!-- 控制按钮 -->
-        <view class="player-controls">
-          <view class="control-btn" bindtap="onPrev">
-            <text class="control-icon">⏮</text>
-          </view>
-          <view class="control-btn play-btn {{isPlaying ? 'playing' : ''}}" bindtap="onPlayPause">
-            <text class="control-icon">{{isPlaying ? '⏸' : '▶'}}</text>
-          </view>
-          <view class="control-btn" bindtap="onNext">
-            <text class="control-icon">⏭</text>
-          </view>
+      <!-- 歌词/文稿区域 -->
+      <view class="lyrics-section" wx:if="{{lyrics.length > 0}}">
+        <view class="lyrics-toggle" bindtap="onToggleLyrics" catchtap="onClosePicker">
+          <text class="lyrics-toggle-text">{{showLyrics ? '收起文稿' : '展开文稿'}}</text>
+          <text class="lyrics-toggle-icon">{{showLyrics ? '▲' : '▼'}}</text>
+        </view>
+        <view class="lyrics-container {{showLyrics ? 'expanded' : ''}}" wx:if="{{showLyrics}}">
+          <scroll-view scroll-y class="lyrics-scroll" scroll-with-animation scroll-into-view="lyric-{{currentLyricIndex}}">
+            <view class="lyrics-list">
+              <view
+                class="lyric-item {{index === currentLyricIndex ? 'active' : ''}}"
+                id="lyric-{{index}}"
+                wx:for="{{lyrics}}"
+                wx:key="time"
+              >
+                <text class="lyric-text">{{item.text}}</text>
+              </view>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
+
+      <!-- 进度条 -->
+      <view class="progress-wrap">
+        <slider
+          class="progress-slider"
+          min="0"
+          max="{{duration || 100}}"
+          value="{{currentTime}}"
+          activeColor="#FFFFFF"
+          backgroundColor="rgba(255,255,255,0.3)"
+          block-size="16"
+          block-color="#FFFFFF"
+          bindchange="onSeek"
+        />
+        <view class="progress-time">
+          <text>{{currentTimeText}}</text>
+          <text>{{durationText}}</text>
+        </view>
+      </view>
+
+      <!-- 播放控制按钮 -->
+      <view class="player-controls">
+        <view class="control-btn mode-btn" bindtap="onChangePlayMode" catchtap="onClosePicker">
+          <text class="control-icon">
+            {{playMode === 'order' ? '🔁' : playMode === 'loop' ? '🔂' : '🔀'}}
+          </text>
+        </view>
+        <view class="control-btn" bindtap="onPrev">
+          <text class="control-icon">⏮</text>
+        </view>
+        <view class="control-btn play-btn {{isPlaying ? 'playing' : ''}}" bindtap="onPlayPause">
+          <text class="control-icon">{{isPlaying ? '⏸' : '▶'}}</text>
+        </view>
+        <view class="control-btn" bindtap="onNext">
+          <text class="control-icon">⏭</text>
+        </view>
+        <view class="control-btn rate-btn" bindtap="onToggleRatePicker" catchtap="onClosePicker">
+          <text class="rate-text">{{playbackRate}}x</text>
+        </view>
+      </view>
+
+      <!-- 倍速选择 -->
+      <view class="rate-picker {{showRatePicker ? 'show' : ''}}" catchtap="">
+        <view class="picker-arrow"></view>
+        <view
+          class="rate-option {{playbackRate === rate ? 'active' : ''}}"
+          wx:for="{{[0.75, 1, 1.25, 1.5]}}"
+          wx:for-item="rate"
+          wx:key="*this"
+          bindtap="onSelectRate"
+          data-rate="{{rate}}"
+        >
+          <text>{{rate}}x</text>
+        </view>
+      </view>
+
+      <!-- 底部功能区 -->
+      <view class="bottom-tools">
+        <view class="tool-item" bindtap="onToggleSleepPicker" catchtap="onClosePicker">
+          <text class="tool-icon">⏰</text>
+          <text class="tool-text">{{sleepMinutes > 0 ? sleepTimerText : '定时关闭'}}</text>
+        </view>
+        <view class="tool-item" bindtap="onToggleLyrics" catchtap="onClosePicker">
+          <text class="tool-icon">📝</text>
+          <text class="tool-text">{{showLyrics ? '文稿' : '文稿'}}</text>
+        </view>
+      </view>
+
+      <!-- 定时关闭选择 -->
+      <view class="sleep-picker {{showSleepPicker ? 'show' : ''}}" catchtap="">
+        <view class="picker-arrow sleep-arrow"></view>
+        <view
+          class="sleep-option {{sleepMinutes === item.minutes ? 'active' : ''}}"
+          wx:for="{{[{minutes:0,label:'关闭'},{minutes:15,label:'15分钟'},{minutes:30,label:'30分钟'},{minutes:60,label:'60分钟'}]}}"
+          wx:key="minutes"
+          bindtap="onSelectSleepTime"
+          data-minutes="{{item.minutes}}"
+        >
+          <text>{{item.label}}</text>
         </view>
       </view>
     </view>
   </view>
 
+  <!-- 列表 Tab 切换 -->
+  <view class="list-tabs">
+    <view
+      class="list-tab {{showListTab === 'all' ? 'active' : ''}}"
+      bindtap="onSwitchListTab"
+      data-tab="all"
+    >
+      <text>全部节目</text>
+    </view>
+    <view
+      class="list-tab {{showListTab === 'favorites' ? 'active' : ''}}"
+      bindtap="onSwitchListTab"
+      data-tab="favorites"
+    >
+      <text>我的收藏</text>
+      <text class="tab-badge" wx:if="{{favorites.length > 0}}">{{favorites.length}}</text>
+    </view>
+    <view
+      class="list-tab {{showListTab === 'recent' ? 'active' : ''}}"
+      bindtap="onSwitchListTab"
+      data-tab="recent"
+    >
+      <text>最近播放</text>
+    </view>
+  </view>
+
   <!-- 播放列表 -->
   <view class="list-section">
-    <view class="section-header">
-      <view class="section-title-wrap">
-        <view class="section-icon"></view>
-        <text class="section-title">节目列表</text>
-      </view>
-      <text class="section-count">共{{broadcastList.length}}个节目</text>
-    </view>
-    <view class="broadcast-list">
-      <view
-        class="broadcast-item {{currentAudio && currentAudio.id === item.id ? 'active' : ''}}"
-        wx:for="{{broadcastList}}"
-        wx:key="id"
-        bindtap="onSelectAudio"
-        data-item="{{item}}"
-      >
-        <image class="broadcast-cover" src="{{item.cover}}" mode="aspectFill" />
-        <view class="broadcast-info">
-          <text class="broadcast-title">{{item.title}}</text>
-          <text class="broadcast-desc">{{item.description}}</text>
-          <text class="broadcast-duration">时长: {{item.duration}}</text>
+    <!-- 全部节目 -->
+    <block wx:if="{{showListTab === 'all'}}">
+      <view class="section-header">
+        <view class="section-title-wrap">
+          <view class="section-icon"></view>
+          <text class="section-title">节目列表</text>
         </view>
-        <view class="broadcast-status" wx:if="{{currentAudio && currentAudio.id === item.id}}">
-          <view class="playing-indicator" wx:if="{{isPlaying}}">
-            <view class="bar"></view>
-            <view class="bar"></view>
-            <view class="bar"></view>
+        <text class="section-count">共{{filteredList.length}}个节目</text>
+      </view>
+      <view class="broadcast-list" wx:if="{{filteredList.length > 0}}">
+        <view
+          class="broadcast-item {{currentAudio && currentAudio.id === item.id ? 'active' : ''}}"
+          wx:for="{{filteredList}}"
+          wx:key="id"
+          bindtap="onSelectAudio"
+          data-item="{{item}}"
+        >
+          <image class="broadcast-cover" src="{{item.cover}}" mode="aspectFill" />
+          <view class="broadcast-info">
+            <text class="broadcast-title">{{item.title}}</text>
+            <text class="broadcast-desc">{{item.description}}</text>
+            <view class="broadcast-meta">
+              <text class="meta-tag">{{item.category === 'news' ? '新闻' : item.category === 'music' ? '音乐' : '讲座'}}</text>
+              <text class="meta-duration">时长: {{item.durationText}}</text>
+            </view>
           </view>
-          <text class="status-text" wx:else>暂停</text>
+          <view class="broadcast-actions">
+            <view class="action-btn" catchtap="onToggleFavorite" data-item="{{item}}">
+              <text class="action-icon {{favorites.some(f => f.id === item.id) ? 'active' : ''}}">
+                {{favorites.some(f => f.id === item.id) ? '❤️' : '🤍'}}
+              </text>
+            </view>
+            <view class="broadcast-status" wx:if="{{currentAudio && currentAudio.id === item.id}}">
+              <view class="playing-indicator" wx:if="{{isPlaying}}">
+                <view class="bar"></view>
+                <view class="bar"></view>
+                <view class="bar"></view>
+              </view>
+              <text class="status-text" wx:else>暂停</text>
+            </view>
+          </view>
         </view>
       </view>
-    </view>
+      <view class="empty-state" wx:else>
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">暂无节目</text>
+      </view>
+    </block>
+
+    <!-- 我的收藏 -->
+    <block wx:if="{{showListTab === 'favorites'}}">
+      <view class="section-header">
+        <view class="section-title-wrap">
+          <view class="section-icon"></view>
+          <text class="section-title">收藏节目</text>
+        </view>
+        <text class="section-count">共{{favorites.length}}个</text>
+      </view>
+      <view class="broadcast-list" wx:if="{{favorites.length > 0}}">
+        <view
+          class="broadcast-item {{currentAudio && currentAudio.id === item.id ? 'active' : ''}}"
+          wx:for="{{favorites}}"
+          wx:key="id"
+          bindtap="onPlayFromFavorite"
+          data-item="{{item}}"
+        >
+          <image class="broadcast-cover" src="{{item.cover}}" mode="aspectFill" />
+          <view class="broadcast-info">
+            <text class="broadcast-title">{{item.title}}</text>
+            <text class="broadcast-desc">{{item.description}}</text>
+            <view class="broadcast-meta">
+              <text class="meta-tag">{{item.category === 'news' ? '新闻' : item.category === 'music' ? '音乐' : '讲座'}}</text>
+              <text class="meta-duration">时长: {{item.durationText}}</text>
+            </view>
+          </view>
+          <view class="broadcast-actions">
+            <view class="action-btn" catchtap="onToggleFavorite" data-item="{{item}}">
+              <text class="action-icon active">❤️</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="empty-state" wx:else>
+        <text class="empty-icon">💔</text>
+        <text class="empty-text">暂无收藏</text>
+        <text class="empty-desc">快去收藏喜欢的节目吧</text>
+      </view>
+    </block>
+
+    <!-- 最近播放 -->
+    <block wx:if="{{showListTab === 'recent'}}">
+      <view class="section-header">
+        <view class="section-title-wrap">
+          <view class="section-icon"></view>
+          <text class="section-title">最近播放</text>
+        </view>
+        <text class="section-count">共{{recentList.length}}个</text>
+      </view>
+      <view class="broadcast-list" wx:if="{{recentList.length > 0}}">
+        <view
+          class="broadcast-item {{currentAudio && currentAudio.id === item.id ? 'active' : ''}}"
+          wx:for="{{recentList}}"
+          wx:key="id"
+          bindtap="onPlayFromRecent"
+          data-item="{{item}}"
+        >
+          <image class="broadcast-cover" src="{{item.cover}}" mode="aspectFill" />
+          <view class="broadcast-info">
+            <text class="broadcast-title">{{item.title}}</text>
+            <text class="broadcast-desc">{{item.description}}</text>
+            <view class="broadcast-meta">
+              <text class="meta-tag">{{item.category === 'news' ? '新闻' : item.category === 'music' ? '音乐' : '讲座'}}</text>
+              <text class="meta-duration">时长: {{item.durationText}}</text>
+            </view>
+          </view>
+          <view class="broadcast-actions">
+            <view class="broadcast-status" wx:if="{{currentAudio && currentAudio.id === item.id}}">
+              <view class="playing-indicator" wx:if="{{isPlaying}}">
+                <view class="bar"></view>
+                <view class="bar"></view>
+                <view class="bar"></view>
+              </view>
+              <text class="status-text" wx:else>播放中</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="empty-state" wx:else>
+        <text class="empty-icon">🎵</text>
+        <text class="empty-text">暂无播放记录</text>
+        <text class="empty-desc">开始收听节目吧</text>
+      </view>
+    </block>
   </view>
 </view>

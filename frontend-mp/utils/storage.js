@@ -60,7 +60,11 @@ const STORAGE_KEYS = {
   EXAM_SCHEDULE: 'examSchedule',
   CLASSROOM_LIST: 'classroomList',
   FONT_SIZE_SETTINGS: 'font_size_settings',
-  FEEDBACK_LIST: 'feedbackList'
+  FEEDBACK_LIST: 'feedbackList',
+  BROADCAST_FAVORITES: 'broadcastFavorites',
+  BROADCAST_RECENT: 'broadcastRecent',
+  BROADCAST_PLAY_MODE: 'broadcastPlayMode',
+  BROADCAST_PLAYBACK_RATE: 'broadcastPlaybackRate'
 };
 
 /**
