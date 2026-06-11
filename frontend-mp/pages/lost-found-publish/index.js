@@ -7,6 +7,8 @@ const { mixPage } = require('../../utils/withTheme');
 mixPage({
   data: {
     darkMode: false,
+    mode: 'publish',
+    editId: '',
     formData: {
       type: 'lost',
       title: '',
@@ -54,10 +56,49 @@ mixPage({
     }
   },
 
-  onLoad() {
+  onLoad(options) {
     const now = new Date();
     const today = util.formatTime(now, 'YYYY-MM-DD');
     this.setData({ today });
+
+    if (options.mode === 'edit' && options.id) {
+      this.setData({ mode: 'edit', editId: options.id });
+      wx.setNavigationBarTitle({ title: '编辑失物招领' });
+      this.loadEditData(options.id);
+    }
+  },
+
+  loadEditData(id) {
+    const item = dataService.getLostFoundDetail(id);
+    if (!item) {
+      util.showError('信息不存在');
+      setTimeout(() => wx.navigateBack(), 1000);
+      return;
+    }
+
+    const itemTypeIndex = this.data.itemTypes.findIndex(t => t.value === item.itemType);
+    const locationIndex = this.data.locations.findIndex(l => l.value === item.location);
+    const itemTypeText = itemTypeIndex > -1 ? this.data.itemTypes[itemTypeIndex].label : '';
+    const locationText = locationIndex > -1 ? this.data.locations[locationIndex].label : (item.location || '');
+
+    this.setData({
+      formData: {
+        type: item.type || 'lost',
+        title: item.title || '',
+        itemType: item.itemType || '',
+        location: item.location || '',
+        locationPOIId: item.locationPOIId || '',
+        date: item.date || '',
+        description: item.description || '',
+        images: item.images || [],
+        contact: item.contact || '',
+        phone: item.phone || ''
+      },
+      itemTypeIndex,
+      locationIndex,
+      itemTypeText,
+      locationText
+    });
   },
 
   onTypeSelect(e) {
@@ -247,16 +288,18 @@ mixPage({
     this.setData({ submitting: true });
 
     try {
-      // 模拟网络请求延迟
       await new Promise(resolve => setTimeout(resolve, 800));
 
-      // 保存图片到本地
       const savedImages = [];
       for (const tempPath of this.data.formData.images) {
         try {
-          const fileName = fileUtil.generateFileName('jpg');
-          const savedPath = await fileUtil.copyTempFile(tempPath, fileName);
-          savedImages.push(savedPath);
+          if (tempPath.startsWith('http') || tempPath.startsWith('wxfile') || tempPath.startsWith('/')) {
+            savedImages.push(tempPath);
+          } else {
+            const fileName = fileUtil.generateFileName('jpg');
+            const savedPath = await fileUtil.copyTempFile(tempPath, fileName);
+            savedImages.push(savedPath);
+          }
         } catch (e) {
           savedImages.push(tempPath);
         }
@@ -267,11 +310,19 @@ mixPage({
         images: savedImages
       };
 
-      const result = dataService.publishLostFound(data);
+      let result;
+      let successMessage;
+
+      if (this.data.mode === 'edit') {
+        result = dataService.updateLostFound(this.data.editId, data);
+        successMessage = '保存成功';
+      } else {
+        result = dataService.publishLostFound(data);
+        successMessage = '发布成功';
+      }
 
       if (result) {
-        await util.showSuccess('发布成功');
-        // 跳转到失物招领列表页
+        await util.showSuccess(successMessage);
         wx.navigateBack({
           delta: 1,
           fail: () => {
@@ -279,10 +330,10 @@ mixPage({
           }
         });
       } else {
-        util.showError('发布失败，请重试');
+        util.showError(this.data.mode === 'edit' ? '保存失败，请重试' : '发布失败，请重试');
       }
     } catch (e) {
-      util.showError('发布失败，请重试');
+      util.showError(this.data.mode === 'edit' ? '保存失败，请重试' : '发布失败，请重试');
     } finally {
       this.setData({ submitting: false });
     }

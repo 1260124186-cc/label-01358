@@ -181,9 +181,15 @@ function getLostFoundDetail(id) {
  * 发布失物招领
  */
 function publishLostFound(data) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
   const item = {
     id: util.generateId(),
     ...data,
+    userId: userInfo.id || 'anonymous',
+    userName: userInfo.nickName || '匿名用户',
+    userAvatar: userInfo.avatarUrl || '',
     createTime: Date.now(),
     updateTime: Date.now(),
     status: 'active'
@@ -191,6 +197,18 @@ function publishLostFound(data) {
 
   const success = storage.addToList(STORAGE_KEYS.LOST_FOUND_LIST, item);
   return success ? item : null;
+}
+
+/**
+ * 获取我的失物招领列表
+ */
+function getMyLostFoundList(userId, status = '') {
+  let list = storage.getList(STORAGE_KEYS.LOST_FOUND_LIST);
+  list = list.filter(item => item.userId === userId);
+  if (status && status !== 'all') {
+    list = list.filter(item => item.status === status);
+  }
+  return list.sort((a, b) => b.createTime - a.createTime);
 }
 
 /**
@@ -207,7 +225,12 @@ function updateLostFound(id, updates) {
  * 删除失物招领
  */
 function deleteLostFound(id) {
-  return storage.removeFromList(STORAGE_KEYS.LOST_FOUND_LIST, id);
+  const success = storage.removeFromList(STORAGE_KEYS.LOST_FOUND_LIST, id);
+  if (success) {
+    removeFavorite(id, 'lostFound');
+    removeHistory(id, 'lostFound');
+  }
+  return success;
 }
 
 // ==================== 二手市场 ====================
@@ -257,9 +280,15 @@ function getMarketDetail(id) {
  * 发布二手商品
  */
 function publishMarketItem(data) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
   const item = {
     id: util.generateId(),
     ...data,
+    userId: userInfo.id || 'anonymous',
+    userName: userInfo.nickName || '匿名用户',
+    userAvatar: userInfo.avatarUrl || '',
     createTime: Date.now(),
     updateTime: Date.now(),
     status: 'selling',
@@ -268,6 +297,18 @@ function publishMarketItem(data) {
 
   const success = storage.addToList(STORAGE_KEYS.MARKET_LIST, item);
   return success ? item : null;
+}
+
+/**
+ * 获取我的二手商品列表
+ */
+function getMyMarketList(userId, status = '') {
+  let list = storage.getList(STORAGE_KEYS.MARKET_LIST);
+  list = list.filter(item => item.userId === userId);
+  if (status && status !== 'all') {
+    list = list.filter(item => item.status === status);
+  }
+  return list.sort((a, b) => b.createTime - a.createTime);
 }
 
 /**
@@ -284,7 +325,12 @@ function updateMarketItem(id, updates) {
  * 删除二手商品
  */
 function deleteMarketItem(id) {
-  return storage.removeFromList(STORAGE_KEYS.MARKET_LIST, id);
+  const success = storage.removeFromList(STORAGE_KEYS.MARKET_LIST, id);
+  if (success) {
+    removeFavorite(id, 'market');
+    removeHistory(id, 'market');
+  }
+  return success;
 }
 
 /**
@@ -4161,6 +4207,7 @@ module.exports = {
   publishLostFound,
   updateLostFound,
   deleteLostFound,
+  getMyLostFoundList,
 
   getMarketList,
   getMarketDetail,
@@ -4168,6 +4215,7 @@ module.exports = {
   updateMarketItem,
   deleteMarketItem,
   increaseMarketViews,
+  getMyMarketList,
 
   getFavorites,
   addFavorite,

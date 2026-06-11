@@ -141,7 +141,7 @@
     <!-- 提交按钮 -->
     <view class="submit-section">
       <btn type="primary" size="large" block="{{true}}" loading="{{submitting}}" bind:click="onSubmit">
-        发布商品
+        {{mode === 'edit' ? '保存修改' : '发布商品'}}
       </btn>
     </view>
   </form>

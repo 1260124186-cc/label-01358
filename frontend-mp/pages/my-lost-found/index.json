@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "我的失物招领",
+  "usingComponents": {
+    "empty": "/components/empty/index",
+    "btn": "/components/btn/index"
+  }
+}

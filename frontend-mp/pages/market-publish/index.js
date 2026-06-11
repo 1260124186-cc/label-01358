@@ -7,6 +7,8 @@ const { mixPage } = require('../../utils/withTheme');
 mixPage({
   data: {
     darkMode: false,
+    mode: 'publish',
+    editId: '',
     formData: {
       title: '',
       category: '',
@@ -23,8 +25,39 @@ mixPage({
     submitting: false
   },
 
-  onLoad() {
-    // 页面初始化
+  onLoad(options) {
+    if (options.mode === 'edit' && options.id) {
+      this.setData({ mode: 'edit', editId: options.id });
+      wx.setNavigationBarTitle({ title: '编辑二手商品' });
+      this.loadEditData(options.id);
+    }
+  },
+
+  loadEditData(id) {
+    const item = dataService.getMarketDetail(id);
+    if (!item) {
+      util.showError('商品不存在');
+      setTimeout(() => wx.navigateBack(), 1000);
+      return;
+    }
+
+    const categoryIndex = this.data.categories.findIndex(c => c.value === item.category);
+    const categoryText = categoryIndex > -1 ? this.data.categories[categoryIndex].label : '';
+
+    this.setData({
+      formData: {
+        title: item.title || '',
+        category: item.category || '',
+        price: item.price !== undefined ? String(item.price) : '',
+        originalPrice: item.originalPrice !== undefined ? String(item.originalPrice) : '',
+        description: item.description || '',
+        images: item.images || [],
+        contact: item.contact || '',
+        phone: item.phone || ''
+      },
+      categoryIndex,
+      categoryText
+    });
   },
 
   onInputChange(e) {
@@ -120,16 +153,18 @@ mixPage({
     this.setData({ submitting: true });
 
     try {
-      // 模拟网络请求延迟
       await new Promise(resolve => setTimeout(resolve, 800));
 
-      // 保存图片到本地文件系统
       const savedImages = [];
       for (const tempPath of this.data.formData.images) {
         try {
-          const fileName = fileUtil.generateFileName('jpg');
-          const savedPath = await fileUtil.copyTempFile(tempPath, fileName);
-          savedImages.push(savedPath);
+          if (tempPath.startsWith('http') || tempPath.startsWith('wxfile') || tempPath.startsWith('/')) {
+            savedImages.push(tempPath);
+          } else {
+            const fileName = fileUtil.generateFileName('jpg');
+            const savedPath = await fileUtil.copyTempFile(tempPath, fileName);
+            savedImages.push(savedPath);
+          }
         } catch (e) {
           savedImages.push(tempPath);
         }
@@ -142,11 +177,19 @@ mixPage({
         originalPrice: this.data.formData.originalPrice ? parseFloat(this.data.formData.originalPrice) : null
       };
 
-      const result = dataService.publishMarketItem(data);
+      let result;
+      let successMessage;
+
+      if (this.data.mode === 'edit') {
+        result = dataService.updateMarketItem(this.data.editId, data);
+        successMessage = '保存成功';
+      } else {
+        result = dataService.publishMarketItem(data);
+        successMessage = '发布成功';
+      }
 
       if (result) {
-        await util.showSuccess('发布成功');
-        // 跳转到二手市场列表页
+        await util.showSuccess(successMessage);
         wx.navigateBack({
           delta: 1,
           fail: () => {
@@ -154,10 +197,10 @@ mixPage({
           }
         });
       } else {
-        util.showError('发布失败，请重试');
+        util.showError(this.data.mode === 'edit' ? '保存失败，请重试' : '发布失败，请重试');
       }
     } catch (e) {
-      util.showError('发布失败，请重试');
+      util.showError(this.data.mode === 'edit' ? '保存失败，请重试' : '发布失败，请重试');
     } finally {
       this.setData({ submitting: false });
     }

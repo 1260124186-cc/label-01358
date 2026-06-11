@@ -142,10 +142,10 @@ Page({
         util.navigateTo('/pages/history/index');
         break;
       case 'myLostFound':
-        util.showToast('功能开发中');
+        util.navigateTo('/pages/my-lost-found/index');
         break;
       case 'myMarket':
-        util.showToast('功能开发中');
+        util.navigateTo('/pages/my-market/index');
         break;
       case 'feedback':
         util.navigateTo('/pages/feedback/index');
