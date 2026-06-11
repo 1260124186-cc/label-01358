@@ -47,9 +47,26 @@
         <text class="detail-label">物品类型</text>
         <text class="detail-value">{{detail.itemTypeText}}</text>
       </view>
-      <view class="detail-item">
+      <view class="detail-item location-item" bindtap="onLocateOnMap" data-location="{{detail.location}}" data-poi-id="{{detail.locationPOIId}}">
         <text class="detail-label">{{detail.type === 'lost' ? '丢失地点' : '拾取地点'}}</text>
-        <text class="detail-value">{{detail.locationText}}</text>
+        <view class="detail-value-wrap">
+          <text class="detail-value">{{detail.locationText}}</text>
+          <view class="locate-action">
+            <text class="locate-icon">🗺️</text>
+            <text class="locate-text">地图定位</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="poi-card" wx:if="{{locationPOI}}" bindtap="onViewPOIDetail" data-poi-id="{{locationPOI.id}}">
+        <view class="poi-card-icon" style="background: {{locationPOI.categoryColor}}20;">
+          <text>{{locationPOI.categoryIcon}}</text>
+        </view>
+        <view class="poi-card-info">
+          <text class="poi-card-name">{{locationPOI.name}}</text>
+          <text class="poi-card-addr">{{locationPOI.categoryLabel}} · 点击查看详情</text>
+        </view>
+        <text class="poi-card-arrow">›</text>
       </view>
       <view class="detail-item">
         <text class="detail-label">{{detail.type === 'lost' ? '丢失时间' : '拾取时间'}}</text>

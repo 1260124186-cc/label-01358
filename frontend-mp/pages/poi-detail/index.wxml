@@ -1,0 +1,130 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="poi-header" style="background: linear-gradient(135deg, {{poi.categoryColor}} 0%, {{poi.categoryColor}}CC 100%);">
+    <view class="poi-icon-wrap">
+      <text class="poi-icon">{{poi.categoryIcon}}</text>
+    </view>
+    <view class="poi-header-info">
+      <text class="poi-name">{{poi.name}}</text>
+      <view class="poi-category-tag">
+        <text>{{poi.categoryLabel}}</text>
+      </view>
+    </view>
+    <view class="poi-favorite-btn" bindtap="onToggleFavorite">
+      <text class="favorite-icon">{{isFavorite ? '❤️' : '🤍'}}</text>
+    </view>
+  </view>
+
+  <view class="poi-content">
+    <view class="info-section">
+      <view class="section-title">
+        <text class="title-icon">📍</text>
+        <text class="title-text">位置信息</text>
+      </view>
+      <view class="info-card">
+        <view class="info-item">
+          <text class="info-label">详细地址</text>
+          <text class="info-value">{{poi.address || '暂无地址信息'}}</text>
+        </view>
+        <view class="info-item" wx:if="{{poi.building}}">
+          <text class="info-label">楼栋</text>
+          <text class="info-value">{{poi.building}}</text>
+        </view>
+        <view class="info-item" wx:if="{{poi.floor}}">
+          <text class="info-label">楼层</text>
+          <text class="info-value">{{poi.floor}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section" wx:if="{{poi.openTime}}">
+      <view class="section-title">
+        <text class="title-icon">🕐</text>
+        <text class="title-text">开放时间</text>
+      </view>
+      <view class="info-card">
+        <view class="open-time-item">
+          <text class="open-time-text">{{poi.openTime}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section" wx:if="{{poi.facilities && poi.facilities.length > 0}}">
+      <view class="section-title">
+        <text class="title-icon">🏷️</text>
+        <text class="title-text">配套设施</text>
+      </view>
+      <view class="facilities-wrap">
+        <view class="facility-tag" wx:for="{{poi.facilities}}" wx:key="*this">
+          <text>{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section" wx:if="{{poi.description}}">
+      <view class="section-title">
+        <text class="title-icon">📝</text>
+        <text class="title-text">点位介绍</text>
+      </view>
+      <view class="info-card">
+        <text class="description-text">{{poi.description}}</text>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">
+        <text class="title-icon">🗺️</text>
+        <text class="title-text">地图位置</text>
+      </view>
+      <view class="map-preview" bindtap="onViewOnMap">
+        <view class="map-placeholder">
+          <text class="map-placeholder-icon">🗺️</text>
+          <text class="map-placeholder-text">点击在地图中查看</text>
+        </view>
+        <view class="map-preview-footer">
+          <text>查看位置</text>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section" wx:if="{{nearbyPOIs.length > 0}}">
+      <view class="section-title">
+        <text class="title-icon">👣</text>
+        <text class="title-text">附近点位</text>
+      </view>
+      <scroll-view class="nearby-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+        <view class="nearby-list">
+          <view 
+            class="nearby-item" 
+            wx:for="{{nearbyPOIs}}" 
+            wx:key="id"
+            bindtap="onNearbyTap"
+            data-id="{{item.id}}"
+          >
+            <view class="nearby-icon" style="background: {{item.categoryColor}}20;">
+              <text>{{item.categoryIcon}}</text>
+            </view>
+            <text class="nearby-name">{{item.name}}</text>
+            <text class="nearby-distance">{{item.distanceText}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="bottom-actions">
+    <view class="action-btn secondary" bindtap="onViewOnMap">
+      <text class="btn-icon">📍</text>
+      <text class="btn-text">查看地图</text>
+    </view>
+    <view class="action-btn secondary" bindtap="onNavigateHere">
+      <text class="btn-icon">🚶</text>
+      <text class="btn-text">导航到这里</text>
+    </view>
+    <view class="action-btn primary" bindtap="onRouteFromHere">
+      <text class="btn-icon">🧭</text>
+      <text class="btn-text">从这里出发</text>
+    </view>
+  </view>
+</view>

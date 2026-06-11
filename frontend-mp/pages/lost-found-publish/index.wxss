@@ -231,3 +231,264 @@
 .submit-section {
   padding: 40rpx 24rpx;
 }
+
+/* ==================== 地图选点 ==================== */
+.location-selector {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.location-selector .form-picker {
+  flex: 1;
+}
+
+.map-location-btn {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  padding: 16rpx 24rpx;
+  background: linear-gradient(135deg, #CFFAFE 0%, #A5F3FC 100%);
+  border-radius: 24rpx;
+  flex-shrink: 0;
+}
+
+.map-icon {
+  font-size: 28rpx;
+}
+
+.map-btn-text {
+  font-size: 24rpx;
+  color: #0891B2;
+  font-weight: 500;
+}
+
+.poi-location-card {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 20rpx;
+  background: #F0F9FF;
+  border-radius: 16rpx;
+  flex: 1;
+}
+
+.page.dark .poi-location-card {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.poi-location-icon {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.poi-location-icon text {
+  font-size: 32rpx;
+}
+
+.poi-location-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.poi-location-name {
+  font-size: 28rpx;
+  color: #0369A1;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 6rpx;
+}
+
+.page.dark .poi-location-name {
+  color: #60A5FA;
+}
+
+.poi-location-addr {
+  font-size: 24rpx;
+  color: #64748B;
+}
+
+.page.dark .poi-location-addr {
+  color: #94A3B8;
+}
+
+.poi-location-action {
+  display: flex;
+  align-items: center;
+  gap: 4rpx;
+  flex-shrink: 0;
+}
+
+.poi-location-action text {
+  font-size: 24rpx;
+  color: #3B82F6;
+}
+
+.poi-location-action .arrow {
+  font-size: 28rpx;
+}
+
+/* ==================== POI 选择器弹窗 ==================== */
+.poi-picker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+}
+
+.picker-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.picker-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #FFFFFF;
+  border-radius: 32rpx 32rpx 0 0;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.page.dark .picker-content {
+  background: #1E2230;
+}
+
+.picker-header {
+  padding: 32rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1rpx solid #F0F2F5;
+}
+
+.page.dark .picker-header {
+  border-bottom-color: #2D3142;
+}
+
+.picker-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.page.dark .picker-title {
+  color: #E8ECF1;
+}
+
+.picker-close {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.picker-close text {
+  font-size: 32rpx;
+  color: #95A5A6;
+}
+
+.picker-search {
+  padding: 24rpx 32rpx;
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: #F8F9FA;
+  margin: 24rpx 32rpx;
+  border-radius: 16rpx;
+}
+
+.page.dark .picker-search {
+  background: #2D3142;
+}
+
+.search-icon {
+  font-size: 28rpx;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #2C3E50;
+}
+
+.page.dark .search-input {
+  color: #E8ECF1;
+}
+
+.picker-list {
+  flex: 1;
+  padding: 0 32rpx 32rpx;
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx 0;
+  border-bottom: 1rpx solid #F0F2F5;
+}
+
+.page.dark .picker-item {
+  border-bottom-color: #2D3142;
+}
+
+.picker-item:last-child {
+  border-bottom: none;
+}
+
+.picker-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.picker-icon text {
+  font-size: 36rpx;
+}
+
+.picker-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.picker-name {
+  font-size: 28rpx;
+  color: #2C3E50;
+  display: block;
+  margin-bottom: 6rpx;
+}
+
+.page.dark .picker-name {
+  color: #E8ECF1;
+}
+
+.picker-category {
+  font-size: 24rpx;
+  color: #95A5A6;
+}
+
+.picker-arrow {
+  font-size: 32rpx;
+  color: #BDC3C7;
+}

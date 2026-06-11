@@ -49,6 +49,13 @@ Page({
         url: '/pages/scenery/index'
       },
       {
+        id: 'campus-map',
+        name: '校园地图',
+        icon: '/assets/icons/nav-scenery.png',
+        bgColor: 'linear-gradient(135deg, #CFFAFE 0%, #A5F3FC 100%)',
+        url: '/pages/campus-map/index'
+      },
+      {
         id: 'broadcast',
         name: '校园广播',
         icon: '/assets/icons/nav-broadcast.png',

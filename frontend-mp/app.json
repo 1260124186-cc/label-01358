@@ -62,7 +62,12 @@
     "pages/club-activity/index",
     "pages/club-activity/publish",
     "pages/club-activity/detail",
-    "pages/club-activity/calendar"
+    "pages/club-activity/calendar",
+    "pages/campus-map/index",
+    "pages/poi-detail/index",
+    "pages/route-planner/index",
+    "pages/freshman-guide/index",
+    "pages/ar-navigation/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

@@ -46,7 +46,11 @@ const STORAGE_KEYS = {
   CLUB_MEMBER_LIST: 'clubMemberList',
   CLUB_ACTIVITY_LIST: 'clubActivityList',
   CLUB_ACTIVITY_REGISTRATION_LIST: 'clubActivityRegistrationList',
-  CLUB_ACTIVITY_CHECKIN_LIST: 'clubActivityCheckinList'
+  CLUB_ACTIVITY_CHECKIN_LIST: 'clubActivityCheckinList',
+  POI_LIST: 'poiList',
+  MAP_FAVORITES: 'mapFavorites',
+  MAP_SEARCH_HISTORY: 'mapSearchHistory',
+  MAP_SETTINGS: 'mapSettings'
 };
 
 /**

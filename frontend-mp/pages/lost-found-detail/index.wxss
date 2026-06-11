@@ -212,6 +212,103 @@
   color: var(--color-primary);
 }
 
+/* ==================== 地点定位 ==================== */
+.location-item {
+  cursor: pointer;
+}
+
+.detail-value-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16rpx;
+}
+
+.detail-value-wrap .detail-value {
+  text-align: right;
+}
+
+.locate-action {
+  display: flex;
+  align-items: center;
+  gap: 6rpx;
+  padding: 8rpx 16rpx;
+  background: linear-gradient(135deg, #CFFAFE 0%, #A5F3FC 100%);
+  border-radius: 20rpx;
+  flex-shrink: 0;
+}
+
+.locate-icon {
+  font-size: 24rpx;
+}
+
+.locate-text {
+  font-size: 22rpx;
+  color: #0891B2;
+  font-weight: 500;
+}
+
+.poi-card {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx;
+  background: #F0F9FF;
+  border-radius: 16rpx;
+  margin-top: 16rpx;
+}
+
+.page.dark .poi-card {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.poi-card-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.poi-card-icon text {
+  font-size: 36rpx;
+}
+
+.poi-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.poi-card-name {
+  font-size: 28rpx;
+  color: #0369A1;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.page.dark .poi-card-name {
+  color: #60A5FA;
+}
+
+.poi-card-addr {
+  font-size: 24rpx;
+  color: #64748B;
+}
+
+.page.dark .poi-card-addr {
+  color: #94A3B8;
+}
+
+.poi-card-arrow {
+  font-size: 32rpx;
+  color: #94A3B8;
+  flex-shrink: 0;
+}
+
 /* ==================== 底部操作栏 ==================== */
 .bottom-bar {
   position: fixed;

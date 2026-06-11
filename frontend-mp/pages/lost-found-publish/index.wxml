@@ -61,19 +61,32 @@
 
         <view class="form-item">
           <text class="form-label">{{formData.type === 'lost' ? '丢失地点' : '拾取地点'}}</text>
-          <picker
-            class="form-picker-wrap"
-            mode="selector"
-            range="{{locations}}"
-            range-key="label"
-            value="{{locationIndex}}"
-            bindchange="onLocationChange"
-          >
-            <view class="form-picker">
+          <view class="location-selector">
+            <view class="form-picker" bindtap="onSelectLocation">
               <text class="picker-text {{formData.location ? '' : 'placeholder'}}">{{formData.location ? locationText : '请选择地点'}}</text>
               <text class="picker-arrow">›</text>
             </view>
-          </picker>
+            <view class="map-location-btn" bindtap="onOpenMapPicker">
+              <text class="map-icon">🗺️</text>
+              <text class="map-btn-text">地图选点</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="form-item" wx:if="{{selectedPOI}}">
+          <view class="poi-location-card" bindtap="onViewPOIOnMap">
+            <view class="poi-location-icon" style="background: {{selectedPOI.categoryColor}}20;">
+              <text>{{selectedPOI.categoryIcon}}</text>
+            </view>
+            <view class="poi-location-info">
+              <text class="poi-location-name">{{selectedPOI.name}}</text>
+              <text class="poi-location-addr">{{selectedPOI.address || '已在地图中标记位置'}}</text>
+            </view>
+            <view class="poi-location-action">
+              <text>查看</text>
+              <text class="arrow">›</text>
+            </view>
+          </view>
         </view>
 
         <view class="form-item">
@@ -173,4 +186,44 @@
       </btn>
     </view>
   </form>
+
+  <!-- POI 选择器弹窗 -->
+  <view class="poi-picker" wx:if="{{showPOIPicker}}">
+    <view class="picker-mask" bindtap="onClosePOIPicker"></view>
+    <view class="picker-content">
+      <view class="picker-header">
+        <text class="picker-title">选择地点</text>
+        <view class="picker-close" bindtap="onClosePOIPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="picker-search">
+        <text class="search-icon">🔍</text>
+        <input
+          class="search-input"
+          placeholder="搜索地点..."
+          value="{{poiSearchKeyword}}"
+          bindinput="onPOISearchInput"
+        />
+      </view>
+      <scroll-view class="picker-list" scroll-y="{{true}}">
+        <view
+          class="picker-item"
+          wx:for="{{poiList}}"
+          wx:key="id"
+          bindtap="onPOIPickerSelect"
+          data-poi="{{item}}"
+        >
+          <view class="picker-icon" style="background: {{item.categoryColor}}20;">
+            <text>{{item.categoryIcon}}</text>
+          </view>
+          <view class="picker-info">
+            <text class="picker-name">{{item.name}}</text>
+            <text class="picker-category">{{item.categoryLabel}}</text>
+          </view>
+          <text class="picker-arrow">›</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
 </view>

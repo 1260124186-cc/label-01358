@@ -9,7 +9,8 @@ mixPage({
     darkMode: false,
     id: '',
     detail: null,
-    isFavorite: false
+    isFavorite: false,
+    locationPOI: null
   },
 
   onLoad(options) {
@@ -33,16 +34,79 @@ mixPage({
         ...detail,
         timeText: util.relativeTime(detail.createTime),
         itemTypeText: constants.getLabelByValue(constants.ITEM_TYPES, detail.itemType),
-        locationText: constants.getLabelByValue(constants.LOCATIONS, detail.location)
+        locationText: constants.getLabelByValue(constants.LOCATIONS, detail.location) || detail.location
       };
 
       this.setData({ detail: formattedDetail });
+
+      // 加载关联的 POI 信息
+      this.loadLocationPOI(detail);
 
       // 添加到浏览历史
       dataService.addHistory(detail, 'lostFound');
 
       // 检查收藏状态
       this.checkFavorite();
+    }
+  },
+
+  loadLocationPOI(detail) {
+    let locationPOI = null;
+
+    // 优先根据 POI ID 查找
+    if (detail.locationPOIId) {
+      locationPOI = dataService.getPOIDetail(detail.locationPOIId);
+    }
+
+    // 如果没有 POI ID，尝试根据地点名称匹配
+    if (!locationPOI && detail.location) {
+      const allPOIs = dataService.getPOIList();
+      locationPOI = allPOIs.find(poi =>
+        poi.name === detail.location ||
+        poi.name.includes(detail.location) ||
+        detail.location.includes(poi.name)
+      );
+    }
+
+    if (locationPOI) {
+      const categoryInfo = constants.POI_CATEGORY_MAP[locationPOI.category] || {};
+      locationPOI = {
+        ...locationPOI,
+        categoryLabel: categoryInfo.label || '其他',
+        categoryIcon: categoryInfo.icon || '📍',
+        categoryColor: categoryInfo.color || '#6B7280'
+      };
+    }
+
+    this.setData({ locationPOI });
+  },
+
+  onLocateOnMap(e) {
+    const { poiId, location } = e.currentTarget.dataset;
+
+    if (poiId) {
+      util.navigateTo(`/pages/campus-map/index?poiId=${poiId}&action=focus`);
+    } else if (location) {
+      // 尝试根据地点名称查找 POI
+      const allPOIs = dataService.getPOIList();
+      const matchedPOI = allPOIs.find(poi =>
+        poi.name === location ||
+        poi.name.includes(location) ||
+        location.includes(poi.name)
+      );
+
+      if (matchedPOI) {
+        util.navigateTo(`/pages/campus-map/index?poiId=${matchedPOI.id}&action=focus`);
+      } else {
+        util.showToast('未找到对应地点');
+      }
+    }
+  },
+
+  onViewPOIDetail(e) {
+    const { poiId } = e.currentTarget.dataset;
+    if (poiId) {
+      util.navigateTo(`/pages/poi-detail/index?id=${poiId}`);
     }
   },
 

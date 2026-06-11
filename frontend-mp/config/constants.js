@@ -507,6 +507,39 @@ const CLUB_TYPES = [
   { value: 'other', label: '其他社团', icon: '🏷️', color: '#6B7280' }
 ];
 
+const MAP_TYPES = [
+  { value: 'handdrawn', label: '手绘地图', icon: '🗺️' },
+  { value: 'satellite', label: '卫星地图', icon: '🛰️' }
+];
+
+const POI_CATEGORIES = [
+  { value: 'all', label: '全部', icon: '📍', color: '#6B7280' },
+  { value: 'classroom', label: '教学楼', icon: '🏫', color: '#3B82F6' },
+  { value: 'canteen', label: '食堂', icon: '🍜', color: '#F59E0B' },
+  { value: 'dormitory', label: '宿舍', icon: '🏠', color: '#8B5CF6' },
+  { value: 'library', label: '图书馆', icon: '📚', color: '#10B981' },
+  { value: 'express', label: '快递点', icon: '📦', color: '#EC4899' },
+  { value: 'print', label: '打印店', icon: '🖨️', color: '#14B8A6' },
+  { value: 'medical', label: '医务室', icon: '🏥', color: '#EF4444' },
+  { value: 'other', label: '其他', icon: '📌', color: '#6B7280' }
+];
+
+const POI_CATEGORY_MAP = POI_CATEGORIES.reduce((acc, c) => {
+  acc[c.value] = { label: c.label, icon: c.icon, color: c.color };
+  return acc;
+}, {});
+
+const ORIENTATION_TYPES = [
+  { value: 'portrait', label: '正对', angle: 0 },
+  { value: 'right_front', label: '右前方', angle: 45 },
+  { value: 'right', label: '右侧', angle: 90 },
+  { value: 'right_back', label: '右后方', angle: 135 },
+  { value: 'back', label: '正后方', angle: 180 },
+  { value: 'left_back', label: '左后方', angle: 225 },
+  { value: 'left', label: '左侧', angle: 270 },
+  { value: 'left_front', label: '左前方', angle: 315 }
+];
+
 function getLabelByValue(list, value) {
   const item = list.find(i => i.value === value);
   return item ? item.label : value;
@@ -577,5 +610,9 @@ module.exports = {
   CLUB_ACTIVITY_CATEGORIES,
   CLUB_ACTIVITY_TABS,
   CLUB_TYPES,
+  MAP_TYPES,
+  POI_CATEGORIES,
+  POI_CATEGORY_MAP,
+  ORIENTATION_TYPES,
   getLabelByValue
 };

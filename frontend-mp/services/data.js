@@ -3259,6 +3259,232 @@ function getClubActivitiesByDate(year, month) {
   return result;
 }
 
+let mapDataInitialized = false;
+
+function initMapData() {
+  if (mapDataInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.POI_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const pois = mockData.MOCK_POI_LIST.map((item, index) => ({
+      id: 'poi_' + index + '_' + now,
+      ...item,
+      views: Math.floor(Math.random() * 200) + 10,
+      createTime: now - (index + 1) * 86400000,
+      updateTime: now - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.POI_LIST, pois);
+  }
+  mapDataInitialized = true;
+}
+
+function getPOIList(filters = {}) {
+  initMapData();
+  let list = storage.getList(STORAGE_KEYS.POI_LIST);
+
+  if (filters.category && filters.category !== 'all') {
+    list = list.filter(item => item.category === filters.category);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'description', 'address', 'buildingNumber']);
+  }
+
+  if (filters.isHighlight) {
+    list = list.filter(item => item.isHighlight === true);
+  }
+
+  return list.sort((a, b) => (b.views || 0) - (a.views || 0));
+}
+
+function getPOIDetail(id) {
+  initMapData();
+  const list = storage.getList(STORAGE_KEYS.POI_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function searchPOI(keyword) {
+  if (!keyword) return [];
+  return getPOIList({ keyword });
+}
+
+function getPOIByCategory(category) {
+  return getPOIList({ category });
+}
+
+function getHighlightPOIs() {
+  return getPOIList({ isHighlight: true });
+}
+
+function getRoutes() {
+  return mockData.MOCK_ROUTES || [];
+}
+
+function getRouteById(id) {
+  const routes = getRoutes();
+  return routes.find(r => r.id === id) || null;
+}
+
+function findRoute(startPOIId, endPOIId) {
+  const routes = getRoutes();
+  const startPOI = getPOIDetail(startPOIId);
+  const endPOI = getPOIDetail(endPOIId);
+
+  if (!startPOI || !endPOI) return null;
+
+  const matchedRoute = routes.find(r =>
+    (r.startPoint.name === startPOI.name || r.startPoint.name.includes(startPOI.name)) &&
+    (r.endPoint.name === endPOI.name || r.endPoint.name.includes(endPOI.name))
+  );
+
+  if (matchedRoute) {
+    return {
+      ...matchedRoute,
+      startPOI,
+      endPOI
+    };
+  }
+
+  const dx = endPOI.x - startPOI.x;
+  const dy = endPOI.y - startPOI.y;
+  const distance = Math.sqrt(dx * dx + dy * dy) * 10;
+  const duration = Math.ceil(distance / 70);
+
+  const midPoints = [];
+  const steps = Math.max(3, Math.abs(Math.round(dx / 10)) + Math.abs(Math.round(dy / 10)));
+  for (let i = 1; i < steps; i++) {
+    midPoints.push({
+      x: startPOI.x + (dx * i / steps),
+      y: startPOI.y + (dy * i / steps)
+    });
+  }
+
+  const path = [
+    { x: startPOI.x, y: startPOI.y },
+    ...midPoints,
+    { x: endPOI.x, y: endPOI.y }
+  ];
+
+  const instructions = [
+    { step: 1, text: `从${startPOI.name}出发`, direction: '出发', distance: 0 },
+    { step: 2, text: `向${dy < 0 ? '北' : '南'}${dx > 0 ? '东' : dx < 0 ? '西' : ''}方向直行`, direction: '直行', distance: Math.round(distance * 0.6) },
+    { step: 3, text: `到达${endPOI.name}`, direction: '到达', distance: 0 }
+  ];
+
+  return {
+    id: 'custom_' + Date.now(),
+    name: `${startPOI.name} 到 ${endPOI.name}`,
+    startPoint: { name: startPOI.name, x: startPOI.x, y: startPOI.y },
+    endPoint: { name: endPOI.name, x: endPOI.x, y: endPOI.y },
+    distance: Math.round(distance),
+    duration,
+    path,
+    instructions,
+    startPOI,
+    endPOI
+  };
+}
+
+function getOrientationGuide() {
+  const guide = mockData.ORIENTATION_GUIDE || [];
+  const pois = getPOIList();
+
+  return guide.map(item => {
+    const poi = pois.find(p => p.name === item.poiName);
+    return {
+      ...item,
+      poiId: poi ? poi.id : null
+    };
+  });
+}
+
+function getFreshmanRegistrationFlow() {
+  const flow = mockData.FRESHMAN_REGISTRATION_FLOW || [];
+  const pois = getPOIList();
+
+  return flow.map(item => {
+    const poi = pois.find(p => p.name === item.poiName);
+    return {
+      ...item,
+      poiId: poi ? poi.id : null
+    };
+  });
+}
+
+function toggleMapFavorite(poiId) {
+  const favorites = storage.getList(STORAGE_KEYS.MAP_FAVORITES);
+  const existingIndex = favorites.findIndex(f => f.poiId === poiId);
+
+  if (existingIndex > -1) {
+    favorites.splice(existingIndex, 1);
+    storage.set(STORAGE_KEYS.MAP_FAVORITES, favorites);
+    return { favorited: false };
+  } else {
+    const poi = getPOIDetail(poiId);
+    if (poi) {
+      favorites.unshift({
+        poiId,
+        name: poi.name,
+        category: poi.category,
+        addTime: Date.now()
+      });
+      storage.set(STORAGE_KEYS.MAP_FAVORITES, favorites);
+      return { favorited: true };
+    }
+    return { favorited: false };
+  }
+}
+
+function isMapFavorite(poiId) {
+  const favorites = storage.getList(STORAGE_KEYS.MAP_FAVORITES);
+  return favorites.some(f => f.poiId === poiId);
+}
+
+function getMapFavorites() {
+  const favorites = storage.getList(STORAGE_KEYS.MAP_FAVORITES);
+  return favorites.map(f => ({
+    ...f,
+    poi: getPOIDetail(f.poiId)
+  })).filter(f => f.poi);
+}
+
+function getMapSearchHistory() {
+  return storage.getList(STORAGE_KEYS.MAP_SEARCH_HISTORY);
+}
+
+function addMapSearchHistory(keyword) {
+  if (!keyword || !keyword.trim()) return false;
+  const trimmed = keyword.trim();
+  const list = storage.getList(STORAGE_KEYS.MAP_SEARCH_HISTORY);
+  const filtered = list.filter(item => item !== trimmed);
+  filtered.unshift(trimmed);
+  if (filtered.length > 10) filtered.splice(10);
+  return storage.set(STORAGE_KEYS.MAP_SEARCH_HISTORY, filtered);
+}
+
+function clearMapSearchHistory() {
+  return storage.set(STORAGE_KEYS.MAP_SEARCH_HISTORY, []);
+}
+
+function getMapSettings() {
+  const defaultSettings = {
+    mapType: 'handdrawn',
+    showLabels: true,
+    showPOIs: true,
+    showRoute: true,
+    enable3D: false
+  };
+  const settings = storage.get(STORAGE_KEYS.MAP_SETTINGS);
+  return { ...defaultSettings, ...(settings || {}) };
+}
+
+function updateMapSettings(updates) {
+  const current = getMapSettings();
+  const newSettings = { ...current, ...updates };
+  storage.set(STORAGE_KEYS.MAP_SETTINGS, newSettings);
+  return newSettings;
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -3461,5 +3687,25 @@ module.exports = {
   checkinClubActivity,
   isUserRegisteredForActivity,
   getClubActivityRegistrations,
-  getClubActivitiesByDate
+  getClubActivitiesByDate,
+
+  initMapData,
+  getPOIList,
+  getPOIDetail,
+  searchPOI,
+  getPOIByCategory,
+  getHighlightPOIs,
+  getRoutes,
+  getRouteById,
+  findRoute,
+  getOrientationGuide,
+  getFreshmanRegistrationFlow,
+  toggleMapFavorite,
+  isMapFavorite,
+  getMapFavorites,
+  getMapSearchHistory,
+  addMapSearchHistory,
+  clearMapSearchHistory,
+  getMapSettings,
+  updateMapSettings
 };

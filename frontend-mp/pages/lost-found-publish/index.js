@@ -12,6 +12,7 @@ mixPage({
       title: '',
       itemType: '',
       location: '',
+      locationPOIId: '',
       date: '',
       description: '',
       images: [],
@@ -24,8 +25,33 @@ mixPage({
     locationIndex: -1,
     itemTypeText: '',
     locationText: '',
+    selectedPOI: null,
     today: '',
-    submitting: false
+    submitting: false,
+    showPOIPicker: false,
+    poiList: [],
+    poiSearchKeyword: ''
+  },
+
+  onShow() {
+    const app = getApp();
+    const { selectedPOI } = app.globalData;
+    if (selectedPOI) {
+      const categoryInfo = constants.POI_CATEGORY_MAP[selectedPOI.category] || {};
+      const poiWithInfo = {
+        ...selectedPOI,
+        categoryLabel: categoryInfo.label || '其他',
+        categoryIcon: categoryInfo.icon || '📍',
+        categoryColor: categoryInfo.color || '#6B7280'
+      };
+      this.setData({
+        selectedPOI: poiWithInfo,
+        'formData.location': selectedPOI.name,
+        'formData.locationPOIId': selectedPOI.id,
+        locationText: selectedPOI.name
+      });
+      app.globalData.selectedPOI = null;
+    }
   },
 
   onLoad() {
@@ -59,12 +85,83 @@ mixPage({
     });
   },
 
+  onSelectLocation() {
+    this.setData({
+      showPOIPicker: true,
+      poiSearchKeyword: '',
+      poiList: this.getPOIListWithInfo()
+    });
+  },
+
+  onOpenMapPicker() {
+    util.navigateTo('/pages/campus-map/index?action=selectPOI');
+  },
+
+  getPOIListWithInfo() {
+    try {
+      const allPOIs = dataService.getPOIList();
+      return allPOIs.map(poi => {
+        const categoryInfo = constants.POI_CATEGORY_MAP[poi.category] || {};
+        return {
+          ...poi,
+          categoryLabel: categoryInfo.label || '其他',
+          categoryIcon: categoryInfo.icon || '📍',
+          categoryColor: categoryInfo.color || '#6B7280'
+        };
+      });
+    } catch (e) {
+      return [];
+    }
+  },
+
+  onPOISearchInput(e) {
+    const keyword = e.detail.value;
+    const allPOIs = this.getPOIListWithInfo();
+    const filtered = keyword
+      ? allPOIs.filter(p =>
+          p.name.includes(keyword) ||
+          p.categoryLabel.includes(keyword) ||
+          (p.address && p.address.includes(keyword))
+        )
+      : allPOIs;
+
+    this.setData({
+      poiSearchKeyword: keyword,
+      poiList: filtered
+    });
+  },
+
+  onPOIPickerSelect(e) {
+    const { poi } = e.currentTarget.dataset;
+    this.setData({
+      selectedPOI: poi,
+      'formData.location': poi.name,
+      'formData.locationPOIId': poi.id,
+      locationText: poi.name,
+      showPOIPicker: false
+    });
+    util.showToast(`已选择：${poi.name}`);
+  },
+
+  onClosePOIPicker() {
+    this.setData({ showPOIPicker: false });
+  },
+
+  onViewPOIOnMap() {
+    const { selectedPOI } = this.data;
+    if (selectedPOI) {
+      util.navigateTo(`/pages/campus-map/index?poiId=${selectedPOI.id}&action=focus`);
+    }
+  },
+
   onLocationChange(e) {
     const index = e.detail.value;
     const item = this.data.locations[index];
     this.setData({
       locationIndex: index,
       'formData.location': item.value,
+      'formData.locationPOIId': '',
+      selectedPOI: null,
       locationText: item.label
     });
   },

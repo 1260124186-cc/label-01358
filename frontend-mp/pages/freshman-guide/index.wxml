@@ -1,0 +1,141 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="welcome-banner">
+    <view class="banner-content">
+      <text class="welcome-title">🎉 欢迎新同学！</text>
+      <text class="welcome-subtitle">开启你的校园生活之旅</text>
+    </view>
+    <view class="banner-decoration">
+      <text class="deco-icon">🎓</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-icon">📋</text>
+      <text class="section-title">报到流程</text>
+    </view>
+    <view class="flow-timeline">
+      <view 
+        class="flow-step {{currentStep >= index ? 'completed' : ''}} {{currentStep === index ? 'active' : ''}}"
+        wx:for="{{registrationFlow}}" 
+        wx:key="id"
+        bindtap="onStepTap"
+        data-index="{{index}}"
+      >
+        <view class="step-indicator">
+          <view class="step-dot">
+            <text wx:if="{{currentStep > index}}">✓</text>
+            <text wx:elif="{{currentStep === index}}">{{index + 1}}</text>
+            <text wx:else>{{index + 1}}</text>
+          </view>
+          <view class="step-line" wx:if="{{index < registrationFlow.length - 1}}"></view>
+        </view>
+        <view class="step-content">
+          <view class="step-header">
+            <text class="step-title">{{item.title}}</text>
+            <text class="step-status" wx:if="{{currentStep > index}}">已完成</text>
+            <text class="step-status active" wx:elif="{{currentStep === index}}">进行中</text>
+            <text class="step-status" wx:else>待完成</text>
+          </view>
+          <text class="step-desc">{{item.description}}</text>
+          <view class="step-poi" wx:if="{{item.poiId}}" bindtap="onViewPOI" data-id="{{item.poiId}}">
+            <text class="poi-icon">📍</text>
+            <text class="poi-name">{{item.poiName}}</text>
+            <text class="poi-action">在地图中查看</text>
+          </view>
+          <view class="step-tips" wx:if="{{item.tips}}">
+            <text class="tips-icon">💡</text>
+            <text class="tips-text">{{item.tips}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-icon">🌟</text>
+      <text class="section-title">关键点位</text>
+    </view>
+    <view class="keypoints-grid">
+      <view 
+        class="keypoint-card" 
+        wx:for="{{keyPoints}}" 
+        wx:key="id"
+        bindtap="onKeyPointTap"
+        data-id="{{item.id}}"
+      >
+        <view class="keypoint-icon" style="background: {{item.categoryColor}}20;">
+          <text>{{item.categoryIcon}}</text>
+        </view>
+        <text class="keypoint-name">{{item.name}}</text>
+        <text class="keypoint-desc">{{item.categoryLabel}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-icon">📦</text>
+      <text class="section-title">必备材料</text>
+    </view>
+    <view class="materials-list">
+      <view class="material-item" wx:for="{{requiredMaterials}}" wx:key="*this">
+        <text class="material-icon">{{item.icon}}</text>
+        <text class="material-text">{{item.name}}</text>
+        <text class="material-check" wx:if="{{item.checked}}">✓</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-icon">📞</text>
+      <text class="section-title">联系我们</text>
+    </view>
+    <view class="contact-card">
+      <view class="contact-item">
+        <text class="contact-icon">🏢</text>
+        <view class="contact-info">
+          <text class="contact-title">新生报到处</text>
+          <text class="contact-desc">工作时间：8:00 - 18:00</text>
+        </view>
+        <view class="contact-btn" bindtap="onCallContact" data-phone="010-12345678">
+          <text>📞 拨打</text>
+        </view>
+      </view>
+      <view class="contact-item">
+        <text class="contact-icon">🏥</text>
+        <view class="contact-info">
+          <text class="contact-title">医务室</text>
+          <text class="contact-desc">24小时值班</text>
+        </view>
+        <view class="contact-btn" bindtap="onCallContact" data-phone="010-87654321">
+          <text>📞 拨打</text>
+        </view>
+      </view>
+      <view class="contact-item">
+        <text class="contact-icon">👮</text>
+        <view class="contact-info">
+          <text class="contact-title">校园安保</text>
+          <text class="contact-desc">24小时巡逻</text>
+        </view>
+        <view class="contact-btn" bindtap="onCallContact" data-phone="010-110110">
+          <text>📞 拨打</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-action">
+    <view class="action-btn secondary" bindtap="onViewMap">
+      <text class="btn-icon">🗺️</text>
+      <text class="btn-text">查看报到路线</text>
+    </view>
+    <view class="action-btn primary" bindtap="onNextStep">
+      <text class="btn-icon">▶</text>
+      <text class="btn-text">下一步：{{nextStepTitle}}</text>
+    </view>
+  </view>
+</view>

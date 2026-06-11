@@ -1,0 +1,128 @@
+<page-meta page-style="background-color: #000000; color: #FFFFFF"/>
+<view class="ar-page">
+  <view class="camera-view">
+    <view class="camera-placeholder">
+      <view class="camera-scan-line"></view>
+      <view class="camera-grid">
+        <view class="grid-line horizontal" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
+        <view class="grid-line vertical" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
+      </view>
+      <view class="camera-overlay">
+        <text class="overlay-text">📷 相机预览（模拟）</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="ar-overlay">
+    <view class="top-bar">
+      <view class="direction-indicator">
+        <text class="direction-icon">🧭</text>
+        <text class="direction-text">{{currentDirection}}</text>
+      </view>
+      <view class="angle-indicator">
+        <text class="angle-text">{{deviceAngle}}°</text>
+      </view>
+    </view>
+
+    <view class="poi-markers">
+      <view 
+        class="ar-poi {{item.visible ? 'visible' : ''}}"
+        wx:for="{{arPOIs}}" 
+        wx:key="id"
+        style="left: {{item.position.x}}%; top: {{item.position.y}}%;"
+        bindtap="onPOITap"
+        data-id="{{item.id}}"
+      >
+        <view class="ar-poi-arrow" style="border-color: {{item.categoryColor}} transparent transparent transparent;"></view>
+        <view class="ar-poi-card" style="border-color: {{item.categoryColor}};">
+          <view class="ar-poi-icon" style="background: {{item.categoryColor}};">
+            <text>{{item.categoryIcon}}</text>
+          </view>
+          <view class="ar-poi-info">
+            <text class="ar-poi-name">{{item.name}}</text>
+            <text class="ar-poi-distance">{{item.distance}}</text>
+          </view>
+          <view class="ar-poi-direction">
+            <text>{{item.direction}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="ar-guide" wx:if="{{targetPOI}}">
+      <view class="guide-arrow">
+        <text style="transform: rotate({{guideArrowAngle}}deg);">⬆️</text>
+      </view>
+      <view class="guide-info">
+        <text class="guide-title">前往 {{targetPOI.name}}</text>
+        <text class="guide-distance">距离 {{targetPOI.distance}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-panel">
+    <view class="panel-header">
+      <text class="panel-title">附近地标</text>
+      <view class="panel-toggle" bindtap="onTogglePanel">
+        <text>{{panelExpanded ? '收起' : '展开'}}</text>
+        <text class="toggle-arrow">{{panelExpanded ? '▼' : '▲'}}</text>
+      </view>
+    </view>
+    
+    <scroll-view class="poi-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}" wx:if="{{panelExpanded}}">
+      <view class="poi-list">
+        <view 
+          class="poi-item {{targetPOI && targetPOI.id === item.id ? 'active' : ''}}"
+          wx:for="{{nearbyPOIs}}" 
+          wx:key="id"
+          bindtap="onSelectTarget"
+          data-id="{{item.id}}"
+        >
+          <view class="poi-icon-wrap" style="background: {{item.categoryColor}}20;">
+            <text>{{item.categoryIcon}}</text>
+          </view>
+          <view class="poi-info">
+            <text class="poi-name">{{item.name}}</text>
+            <view class="poi-meta">
+              <text class="poi-distance">{{item.distance}}</text>
+              <text class="poi-direction">{{item.direction}}</text>
+            </view>
+          </view>
+          <view class="poi-action" wx:if="{{targetPOI && targetPOI.id === item.id}}">
+            <text>✓</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="action-bar">
+      <view class="action-btn" bindtap="onRotateLeft">
+        <text>⬅️</text>
+        <text>左转</text>
+      </view>
+      <view class="action-btn center" bindtap="onResetDirection">
+        <text>🧭</text>
+        <text>校准</text>
+      </view>
+      <view class="action-btn" bindtap="onRotateRight">
+        <text>➡️</text>
+        <text>右转</text>
+      </view>
+      <view class="action-btn" bindtap="onExitAR">
+        <text>🚪</text>
+        <text>退出</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="permission-tip" wx:if="{{!cameraAuthorized}}">
+    <view class="tip-content">
+      <text class="tip-icon">📷</text>
+      <text class="tip-title">需要相机权限</text>
+      <text class="tip-desc">AR 导览需要使用相机来叠加显示方向指引</text>
+      <view class="tip-btn" bindtap="onAuthorize">
+        <text>授权使用相机</text>
+      </view>
+    </view>
+  </view>
+</view>

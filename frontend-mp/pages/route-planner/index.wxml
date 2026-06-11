@@ -1,0 +1,194 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="route-header">
+    <view class="point-selector">
+      <view class="point-row">
+        <view class="point-indicator start">
+          <view class="indicator-dot"></view>
+        </view>
+        <view class="point-input" bindtap="onSelectStart" data-show="{{showStartPicker}}">
+          <text class="point-label">起点</text>
+          <text class="point-value {{startPOI ? 'has-value' : ''}}">{{startPOI ? startPOI.name : '请选择起点'}}</text>
+        </view>
+        <view class="swap-btn" bindtap="onSwapPoints">
+          <text>⇅</text>
+        </view>
+      </view>
+      <view class="point-divider"></view>
+      <view class="point-row">
+        <view class="point-indicator end">
+          <view class="indicator-dot"></view>
+        </view>
+        <view class="point-input" bindtap="onSelectEnd" data-show="{{showEndPicker}}">
+          <text class="point-label">终点</text>
+          <text class="point-value {{endPOI ? 'has-value' : ''}}">{{endPOI ? endPOI.name : '请选择终点'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="route-actions">
+    <view class="action-chip {{travelMode === 'walk' ? 'active' : ''}}" bindtap="onTravelModeChange" data-mode="walk">
+      <text class="chip-icon">🚶</text>
+      <text class="chip-text">步行</text>
+    </view>
+    <view class="action-chip {{travelMode === 'bike' ? 'active' : ''}}" bindtap="onTravelModeChange" data-mode="bike">
+      <text class="chip-icon">🚲</text>
+      <text class="chip-text">骑行</text>
+    </view>
+    <view class="action-chip {{travelMode === 'bus' ? 'active' : ''}}" bindtap="onTravelModeChange" data-mode="bus">
+      <text class="chip-icon">🚌</text>
+      <text class="chip-text">校园车</text>
+    </view>
+    <view class="search-btn" bindtap="onSearchRoute">
+      <text>🔍 规划路线</text>
+    </view>
+  </view>
+
+  <view class="quick-routes" wx:if="{{!route}}">
+    <view class="section-title">
+      <text class="title-icon">⚡</text>
+      <text class="title-text">常用路线</text>
+    </view>
+    <scroll-view class="quick-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+      <view class="quick-list">
+        <view 
+          class="quick-route-item" 
+          wx:for="{{quickRoutes}}" 
+          wx:key="id"
+          bindtap="onQuickRouteTap"
+          data-route="{{item}}"
+        >
+          <view class="quick-route-header">
+            <text class="quick-start">{{item.startName}}</text>
+            <text class="quick-arrow">→</text>
+            <text class="quick-end">{{item.endName}}</text>
+          </view>
+          <view class="quick-route-info">
+            <text class="quick-distance">{{item.distance}}</text>
+            <text class="quick-time">⏱ {{item.duration}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="route-result" wx:if="{{route}}">
+    <view class="route-summary">
+      <view class="summary-item">
+        <text class="summary-value">{{route.distance}}</text>
+        <text class="summary-label">总距离</text>
+      </view>
+      <view class="summary-divider"></view>
+      <view class="summary-item">
+        <text class="summary-value">{{route.duration}}</text>
+        <text class="summary-label">预计时间</text>
+      </view>
+      <view class="summary-divider"></view>
+      <view class="summary-item">
+        <text class="summary-value">{{route.calories || '30'}}</text>
+        <text class="summary-label">消耗卡路里</text>
+      </view>
+    </view>
+
+    <view class="route-preview">
+      <view class="preview-map">
+        <view class="route-path">
+          <view 
+            class="route-line" 
+            wx:for="{{routeLines}}" 
+            wx:key="index"
+            style="left: {{item.left}}%; top: {{item.top}}%; width: {{item.width}}%; transform: rotate({{item.angle}}deg);"
+          ></view>
+        </view>
+        <view 
+          class="preview-marker start" 
+          style="left: {{startPOI.x}}%; top: {{startPOI.y}}%;"
+        >
+          <text>🚩</text>
+        </view>
+        <view 
+          class="preview-marker end" 
+          style="left: {{endPOI.x}}%; top: {{endPOI.y}}%;"
+        >
+          <text>🏁</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="route-steps">
+      <view class="section-title">
+        <text class="title-icon">🧭</text>
+        <text class="title-text">导航步骤</text>
+      </view>
+      <view class="steps-list">
+        <view 
+          class="step-item {{item.isLast ? 'last' : ''}}" 
+          wx:for="{{route.steps}}" 
+          wx:key="index"
+        >
+          <view class="step-indicator">
+            <view class="step-dot {{index === 0 ? 'start' : ''}} {{item.isLast ? 'end' : ''}}"></view>
+            <view class="step-line" wx:if="{{!item.isLast}}"></view>
+          </view>
+          <view class="step-content">
+            <text class="step-instruction">{{item.instruction}}</text>
+            <text class="step-distance">{{item.distance}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="poi-picker" wx:if="{{showStartPicker || showEndPicker}}">
+    <view class="picker-mask" bindtap="onClosePicker"></view>
+    <view class="picker-content">
+      <view class="picker-header">
+        <text class="picker-title">选择{{showStartPicker ? '起点' : '终点'}}</text>
+        <view class="picker-close" bindtap="onClosePicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="picker-search">
+        <text class="search-icon">🔍</text>
+        <input 
+          class="search-input" 
+          placeholder="搜索地点..." 
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+        />
+      </view>
+      <scroll-view class="picker-list" scroll-y="{{true}}">
+        <view 
+          class="picker-item" 
+          wx:for="{{filteredPOIs}}" 
+          wx:key="id"
+          bindtap="onPOISelect"
+          data-poi="{{item}}"
+        >
+          <view class="picker-icon" style="background: {{item.categoryColor}}20;">
+            <text>{{item.categoryIcon}}</text>
+          </view>
+          <view class="picker-info">
+            <text class="picker-name">{{item.name}}</text>
+            <text class="picker-category">{{item.categoryLabel}}</text>
+          </view>
+          <view class="picker-check" wx:if="{{isSelectedPOI(item)}}">
+            <text>✓</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="bottom-nav" wx:if="{{route}}">
+    <view class="nav-btn secondary" bindtap="onViewOnMap">
+      <text class="btn-icon">🗺️</text>
+      <text class="btn-text">查看地图</text>
+    </view>
+    <view class="nav-btn primary" bindtap="onStartNavigation">
+      <text class="btn-icon">🧭</text>
+      <text class="btn-text">开始导航</text>
+    </view>
+  </view>
+</view>
