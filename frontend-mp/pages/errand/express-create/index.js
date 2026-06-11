@@ -115,15 +115,18 @@ mixPage({
       pickupPointText,
       pickupCode: pickupCode.trim(),
       bounty,
-      deliveryAddress: deliveryAddress.trim(),
+      pickupLocation: pickupPointText || '',
+      deliveryLocation: deliveryAddress.trim(),
       contactPhone: contactPhone.trim(),
       remark: remark.trim()
     });
 
-    if (order) {
+    if (order && !order.error) {
       util.showSuccess('下单成功').then(() => {
         wx.navigateBack();
       });
+    } else if (order && order.error) {
+      util.showToast(order.error);
     } else {
       util.showError('下单失败');
     }

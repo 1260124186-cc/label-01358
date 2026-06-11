@@ -26,6 +26,8 @@ const STORAGE_KEYS = {
   VOLUNTEER_HOURS_RECORD_LIST: 'volunteerHoursRecordList',
   ERRAND_ORDER_LIST: 'errandOrderList',
   ERRAND_ADDRESS_LIST: 'errandAddressList',
+  ERRAND_RUNNER_LIST: 'errandRunnerList',
+  ERRAND_VIOLATION_LIST: 'errandViolationList',
   RENTAL_LIST: 'rentalList',
   RENTAL_COMPARE_LIST: 'rentalCompareList',
   RENTAL_AGENT_REPORTS: 'rentalAgentReports',

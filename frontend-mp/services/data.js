@@ -1611,9 +1611,9 @@ let errandDataInitialized = false;
 
 function initErrandData() {
   if (errandDataInitialized) return;
+  const now = Date.now();
   const existingOrders = storage.get(STORAGE_KEYS.ERRAND_ORDER_LIST);
   if (!existingOrders || existingOrders.length === 0) {
-    const now = Date.now();
     const orders = mockData.MOCK_ERRAND_ORDERS.map((item, index) => ({
       id: 'mock_errand_' + index + '_' + now,
       ...item,
@@ -1631,32 +1631,118 @@ function initErrandData() {
     }));
     storage.set(STORAGE_KEYS.ERRAND_ADDRESS_LIST, addresses);
   }
+  const existingRunners = storage.get(STORAGE_KEYS.ERRAND_RUNNER_LIST);
+  if (!existingRunners || existingRunners.length === 0) {
+    storage.set(STORAGE_KEYS.ERRAND_RUNNER_LIST, mockData.MOCK_ERRAND_RUNNERS);
+  }
+  const existingViolations = storage.get(STORAGE_KEYS.ERRAND_VIOLATION_LIST);
+  if (!existingViolations || existingViolations.length === 0) {
+    storage.set(STORAGE_KEYS.ERRAND_VIOLATION_LIST, mockData.MOCK_ERRAND_VIOLATIONS);
+  }
   errandDataInitialized = true;
+}
+
+function containsSensitiveWord(text) {
+  if (!text) return false;
+  return constants.SENSITIVE_WORDS.some(word => text.includes(word));
+}
+
+function getErrandHallList(filters = {}) {
+  initErrandData();
+  let list = storage.getList(STORAGE_KEYS.ERRAND_ORDER_LIST);
+
+  if (filters.type) {
+    list = list.filter(item => item.type === filters.type);
+  }
+  if (filters.status && filters.status !== 'all') {
+    if (filters.status === 'accepted') {
+      list = list.filter(item => item.status === 'accepted' || item.status === 'in_progress');
+    } else {
+      list = list.filter(item => item.status === filters.status);
+    }
+  }
+  if (filters.bountyRange && filters.bountyRange.min !== undefined) {
+    list = list.filter(item => item.bounty >= filters.bountyRange.min && item.bounty < filters.bountyRange.max);
+  }
+  if (filters.distanceRange && filters.distanceRange.min !== undefined) {
+    list = list.filter(item => (item.distance || 0) >= filters.distanceRange.min && (item.distance || 0) < filters.distanceRange.max);
+  }
+  if (filters.keyword) {
+    const kw = filters.keyword.toLowerCase();
+    list = list.filter(item =>
+      (item.remark && item.remark.toLowerCase().includes(kw)) ||
+      (item.pickupLocation && item.pickupLocation.toLowerCase().includes(kw)) ||
+      (item.deliveryLocation && item.deliveryLocation.toLowerCase().includes(kw)) ||
+      (item.purchaseItem && item.purchaseItem.toLowerCase().includes(kw)) ||
+      (item.otherDesc && item.otherDesc.toLowerCase().includes(kw))
+    );
+  }
+
+  const sortField = filters.sortField || 'createTime';
+  const sortOrder = filters.sortOrder || 'desc';
+  list.sort((a, b) => {
+    const aVal = a[sortField] || 0;
+    const bVal = b[sortField] || 0;
+    return sortOrder === 'asc' ? aVal - bVal : bVal - aVal;
+  });
+  return list;
 }
 
 function getErrandOrderList(filters = {}) {
   initErrandData();
   let list = storage.getList(STORAGE_KEYS.ERRAND_ORDER_LIST);
-
   if (filters.status && filters.status !== 'all') {
     list = list.filter(item => item.status === filters.status);
   }
-
   if (filters.type) {
     list = list.filter(item => item.type === filters.type);
   }
-
-  if (filters.keyword) {
-    list = filterByKeyword(list, filters.keyword, ['pickupCode', 'deliveryAddress', 'fileName', 'orderId']);
+  if (filters.userId) {
+    list = list.filter(item => item.userId === filters.userId);
   }
-
+  if (filters.runnerId) {
+    list = list.filter(item => item.runnerId === filters.runnerId);
+  }
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['pickupCode', 'deliveryLocation', 'purchaseItem', 'otherDesc', 'remark']);
+  }
   return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getMyPublishedOrders(userId) {
+  initErrandData();
+  return storage.getList(STORAGE_KEYS.ERRAND_ORDER_LIST)
+    .filter(item => item.userId === userId)
+    .sort((a, b) => b.createTime - a.createTime);
+}
+
+function getMyAcceptedOrders(runnerId) {
+  initErrandData();
+  return storage.getList(STORAGE_KEYS.ERRAND_ORDER_LIST)
+    .filter(item => item.runnerId === runnerId)
+    .sort((a, b) => b.createTime - a.createTime);
 }
 
 function getErrandOrderDetail(id) {
   initErrandData();
+  return storage.getList(STORAGE_KEYS.ERRAND_ORDER_LIST).find(item => item.id === id) || null;
+}
+
+function checkTimeoutOrders() {
+  initErrandData();
   const list = storage.getList(STORAGE_KEYS.ERRAND_ORDER_LIST);
-  return list.find(item => item.id === id) || null;
+  const now = Date.now();
+  let changed = false;
+  list.forEach(item => {
+    if (item.status === 'pending' && item.deadline && now > item.deadline) {
+      item.status = 'timeout';
+      item.escrowStatus = 'refunded';
+      item.updateTime = now;
+      changed = true;
+    }
+  });
+  if (changed) storage.set(STORAGE_KEYS.ERRAND_ORDER_LIST, list);
+  return changed;
 }
 
 function createErrandOrder(data) {
@@ -1664,36 +1750,159 @@ function createErrandOrder(data) {
   const app = getApp();
   const userInfo = app.globalData.userInfo || {};
 
+  if (containsSensitiveWord(data.remark) || containsSensitiveWord(data.otherDesc) || containsSensitiveWord(data.purchaseItem)) {
+    return { error: '内容包含敏感词，请修改后重新发布' };
+  }
+
+  const taskType = constants.ERRAND_TASK_TYPES.find(t => t.value === data.type);
   const item = {
     id: util.generateId(),
     ...data,
+    typeText: taskType ? taskType.label : data.type,
     userId: userInfo.id || 'test_user',
-    userName: userInfo.nickName || '匿名用户',
+    userName: userInfo.nickName || '张同学',
     userAvatar: userInfo.avatarUrl || '',
     status: 'pending',
+    escrowStatus: data.bounty > 0 ? 'frozen' : '',
     createTime: Date.now(),
     updateTime: Date.now()
   };
-
   storage.addToList(STORAGE_KEYS.ERRAND_ORDER_LIST, item);
   return item;
 }
 
-function updateErrandOrder(id, updates) {
-  return storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, id, {
-    ...updates,
+function acceptErrandOrder(orderId) {
+  initErrandData();
+  const order = getErrandOrderDetail(orderId);
+  if (!order) return { error: '订单不存在' };
+  if (order.status !== 'pending') return { error: '该订单已被接单或已取消' };
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  if (order.userId === (userInfo.id || 'test_user')) return { error: '不能接自己发布的订单' };
+  const result = storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, orderId, {
+    status: 'accepted',
+    runnerId: userInfo.id || 'test_user',
+    runnerName: userInfo.nickName || '张同学',
+    runnerAvatar: userInfo.avatarUrl || '',
+    acceptedTime: Date.now(),
     updateTime: Date.now()
   });
+  if (result) updateRunnerStats(userInfo.id || 'test_user', 'accept');
+  return result || { error: '接单失败' };
 }
 
-function cancelErrandOrder(id) {
-  const order = getErrandOrderDetail(id);
-  if (!order) return false;
-  if (order.status !== 'pending') return false;
-  return storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, id, {
-    status: 'cancelled',
+function startErrandOrder(orderId) {
+  initErrandData();
+  const order = getErrandOrderDetail(orderId);
+  if (!order) return { error: '订单不存在' };
+  if (order.status !== 'accepted') return { error: '当前状态无法开始任务' };
+  return storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, orderId, {
+    status: 'in_progress',
+    startedTime: Date.now(),
+    updateTime: Date.now()
+  }) || { error: '操作失败' };
+}
+
+function completeErrandOrder(orderId) {
+  initErrandData();
+  const order = getErrandOrderDetail(orderId);
+  if (!order) return { error: '订单不存在' };
+  if (order.status !== 'in_progress' && order.status !== 'accepted') return { error: '当前状态无法完成任务' };
+  const result = storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, orderId, {
+    status: 'completed',
+    completedTime: Date.now(),
+    escrowStatus: 'released',
     updateTime: Date.now()
   });
+  if (result) updateRunnerStats(order.runnerId, 'complete');
+  return result || { error: '操作失败' };
+}
+
+function rateErrandOrder(orderId, ratingType, ratingData) {
+  initErrandData();
+  const order = getErrandOrderDetail(orderId);
+  if (!order) return { error: '订单不存在' };
+  if (order.status !== 'completed') return { error: '只能评价已完成的订单' };
+  const updateKey = ratingType === 'publisher' ? 'publisherRating' : 'runnerRating';
+  if (order[updateKey]) return { error: '已经评价过了' };
+  const update = { updateTime: Date.now() };
+  update[updateKey] = { score: ratingData.score, tags: ratingData.tags || [], comment: ratingData.comment || '', time: Date.now() };
+  return storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, orderId, update);
+}
+
+function cancelErrandOrder(id, reason) {
+  const order = getErrandOrderDetail(id);
+  if (!order) return { error: '订单不存在' };
+  if (order.status !== 'pending' && order.status !== 'accepted') return { error: '当前状态无法取消' };
+  const result = storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, id, {
+    status: 'cancelled',
+    escrowStatus: 'refunded',
+    cancelReason: reason || '',
+    updateTime: Date.now()
+  });
+  if (result && order.status === 'accepted' && order.runnerId) {
+    updateRunnerStats(order.runnerId, 'cancel');
+  }
+  return result || { error: '取消失败' };
+}
+
+function updateErrandOrder(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, id, { ...updates, updateTime: Date.now() });
+}
+
+function getRunnerProfile(userId) {
+  initErrandData();
+  return storage.getList(STORAGE_KEYS.ERRAND_RUNNER_LIST).find(item => item.id === userId) || null;
+}
+
+function updateRunnerStats(userId, action) {
+  initErrandData();
+  const list = storage.getList(STORAGE_KEYS.ERRAND_RUNNER_LIST);
+  const idx = list.findIndex(item => item.id === userId);
+  if (idx === -1) {
+    const app = getApp();
+    const userInfo = app.globalData.userInfo || {};
+    list.push({ id: userId, name: userInfo.nickName || '张同学', avatar: userInfo.avatarUrl || '', creditScore: 100, totalOrders: 0, completedOrders: 0, goodRate: 100, violationCount: 0, level: 'excellent' });
+    storage.set(STORAGE_KEYS.ERRAND_RUNNER_LIST, list);
+    return;
+  }
+  const runner = list[idx];
+  if (action === 'accept') runner.totalOrders = (runner.totalOrders || 0) + 1;
+  else if (action === 'complete') {
+    runner.completedOrders = (runner.completedOrders || 0) + 1;
+    const completedRate = runner.totalOrders > 0 ? Math.round((runner.completedOrders / runner.totalOrders) * 100) : 100;
+    runner.creditScore = Math.min(100, Math.max(0, completedRate));
+  } else if (action === 'cancel') {
+    runner.creditScore = Math.max(0, (runner.creditScore || 100) - 5);
+    runner.violationCount = (runner.violationCount || 0) + 1;
+  }
+  const levelInfo = constants.ERRAND_CREDIT_LEVELS.find(l => runner.creditScore >= l.min && runner.creditScore <= l.max);
+  runner.level = levelInfo ? levelInfo.label : '一般';
+  list[idx] = runner;
+  storage.set(STORAGE_KEYS.ERRAND_RUNNER_LIST, list);
+}
+
+function getRunnerCreditDetail(userId) {
+  initErrandData();
+  const runner = getRunnerProfile(userId);
+  if (!runner) return null;
+  const allOrders = storage.getList(STORAGE_KEYS.ERRAND_ORDER_LIST);
+  const runnerOrders = allOrders.filter(item => item.runnerId === userId);
+  const completedOrders = runnerOrders.filter(item => item.status === 'completed');
+  const ratedOrders = completedOrders.filter(item => item.publisherRating);
+  const goodRatings = ratedOrders.filter(item => item.publisherRating.score >= 4);
+  const goodRate = ratedOrders.length > 0 ? Math.round((goodRatings.length / ratedOrders.length) * 100) : 100;
+  const completionRate = runnerOrders.length > 0 ? Math.round((completedOrders.length / runnerOrders.length) * 100) : 0;
+  const violations = storage.getList(STORAGE_KEYS.ERRAND_VIOLATION_LIST).filter(v => v.userId === userId);
+  return { ...runner, goodRate, completionRate, totalCompleted: completedOrders.length, totalAccepted: runnerOrders.length, violations };
+}
+
+function addViolation(userId, type, typeText, orderId, desc) {
+  initErrandData();
+  storage.addToList(STORAGE_KEYS.ERRAND_VIOLATION_LIST, {
+    id: util.generateId(), userId, type, typeText, orderId, time: Date.now(), desc
+  });
+  updateRunnerStats(userId, 'violation');
 }
 
 function getAddressList() {
@@ -1703,24 +1912,17 @@ function getAddressList() {
 
 function getAddressDetail(id) {
   initErrandData();
-  const list = storage.getList(STORAGE_KEYS.ERRAND_ADDRESS_LIST);
-  return list.find(item => item.id === id) || null;
+  return storage.getList(STORAGE_KEYS.ERRAND_ADDRESS_LIST).find(item => item.id === id) || null;
 }
 
 function addAddress(data) {
   initErrandData();
-  const item = {
-    id: util.generateId(),
-    ...data,
-    isDefault: data.isDefault || false
-  };
-
+  const item = { id: util.generateId(), ...data, isDefault: data.isDefault || false };
   if (item.isDefault) {
     const list = storage.getList(STORAGE_KEYS.ERRAND_ADDRESS_LIST);
     list.forEach(addr => { addr.isDefault = false; });
     storage.set(STORAGE_KEYS.ERRAND_ADDRESS_LIST, list);
   }
-
   storage.addToList(STORAGE_KEYS.ERRAND_ADDRESS_LIST, item);
   return item;
 }
@@ -4029,10 +4231,22 @@ module.exports = {
   getUserRegistrations,
 
   getErrandOrderList,
+  getErrandHallList,
   getErrandOrderDetail,
   createErrandOrder,
   updateErrandOrder,
   cancelErrandOrder,
+  acceptErrandOrder,
+  startErrandOrder,
+  completeErrandOrder,
+  rateErrandOrder,
+  checkTimeoutOrders,
+  getMyPublishedOrders,
+  getMyAcceptedOrders,
+  getRunnerProfile,
+  getRunnerCreditDetail,
+  addViolation,
+  containsSensitiveWord,
   getAddressList,
   getAddressDetail,
   addAddress,

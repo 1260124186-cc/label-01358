@@ -1,20 +1,34 @@
 <view class="orders-page {{darkMode ? 'dark' : ''}}">
-  <view class="tabs">
+  <view class="top-tabs">
     <view
-      wx:for="{{tabs}}"
+      wx:for="{{topTabs}}"
       wx:key="value"
-      class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+      class="top-tab-item {{currentTopTab === item.value ? 'active' : ''}}"
       data-tab="{{item.value}}"
-      bindtap="onTabChange"
+      bindtap="onTopTabChange"
     >
       {{item.label}}
     </view>
   </view>
 
+  <view class="sub-tabs">
+    <scroll-view scroll-x class="sub-tabs-scroll">
+      <view
+        wx:for="{{subTabs}}"
+        wx:key="value"
+        class="sub-tab-item {{currentSubTab === item.value ? 'active' : ''}}"
+        data-tab="{{item.value}}"
+        bindtap="onSubTabChange"
+      >
+        {{item.label}}
+      </view>
+    </scroll-view>
+  </view>
+
   <view wx:if="{{orders.length === 0 && !loading}}" class="empty-state">
-    <text class="empty-icon">📋</text>
-    <text class="empty-text">暂无订单</text>
-    <text class="empty-desc">快去下单吧</text>
+    <text class="empty-icon">{{currentTopTab === 'published' ? '📝' : '🤝'}}</text>
+    <text class="empty-text">{{currentTopTab === 'published' ? '暂无发布任务' : '暂无接单任务'}}</text>
+    <text class="empty-desc">{{currentTopTab === 'published' ? '快去发布一个跑腿任务吧' : '去大厅看看有什么任务'}}</text>
   </view>
 
   <view wx:else class="order-list">
@@ -25,7 +39,9 @@
     >
       <view class="order-card-header" data-item="{{item}}" bindtap="onOrderTap">
         <view class="order-type">
-          <text class="order-type-icon">{{item.typeIcon}}</text>
+          <view class="order-type-badge" style="background: {{item.typeColor}};">
+            <text class="order-type-icon">{{item.typeIcon}}</text>
+          </view>
           <text class="order-type-text">{{item.typeText}}</text>
         </view>
         <view class="order-status" style="color: {{item.statusColor}};">
@@ -34,87 +50,52 @@
       </view>
 
       <view class="order-card-body" data-item="{{item}}" bindtap="onOrderTap">
-        <view wx:if="{{item.type === 'express'}}" class="order-detail-row">
-          <text class="detail-label">快递点</text>
-          <text class="detail-value">{{item.pickupPointText}}</text>
+        <view class="order-desc">{{item.descText}}</view>
+        <view class="order-location">
+          <text class="location-icon">📍</text>
+          <text class="location-text">{{item.locationText}}</text>
         </view>
-        <view wx:if="{{item.type === 'express'}}" class="order-detail-row">
-          <text class="detail-label">取件码</text>
-          <text class="detail-value highlight">{{item.pickupCode}}</text>
-        </view>
-        <view wx:if="{{item.type === 'print'}}" class="order-detail-row">
-          <text class="detail-label">文件</text>
-          <text class="detail-value">{{item.fileName}}</text>
-        </view>
-        <view wx:if="{{item.type === 'print'}}" class="order-detail-row">
-          <text class="detail-label">参数</text>
-          <text class="detail-value">{{item.colorTypeText}} · {{item.sideTypeText}} · {{item.copies}}份</text>
-        </view>
-        <view class="order-detail-row">
-          <text class="detail-label">送达</text>
-          <text class="detail-value">{{item.deliveryAddress || '-'}}</text>
+        <view wx:if="{{item.type === 'express' && (item.status === 'pending' || item.status === 'accepted' || item.status === 'in_progress' || item.status === 'completed')}}" class="order-progress">
+          <view class="progress-step {{item.status === 'pending' ? 'active' : 'done'}}">
+            <view class="step-dot"></view>
+            <text class="step-text">待接单</text>
+          </view>
+          <view class="progress-line {{item.status !== 'pending' ? 'done' : ''}}"></view>
+          <view class="progress-step {{item.status === 'in_progress' ? 'active' : item.status === 'completed' ? 'done' : ''}}">
+            <view class="step-dot"></view>
+            <text class="step-text">进行中</text>
+          </view>
+          <view class="progress-line {{item.status === 'completed' ? 'done' : ''}}"></view>
+          <view class="progress-step {{item.status === 'completed' ? 'done' : ''}}">
+            <view class="step-dot"></view>
+            <text class="step-text">已送达</text>
+          </view>
         </view>
       </view>
 
       <view class="order-card-footer">
-        <view class="order-time">{{item.timeText}}</view>
+        <view class="order-meta">
+          <text class="order-time">{{item.timeText}}</text>
+          <view wx:if="{{item.isCompletedUnrated}}" class="rate-indicator">
+            <text class="rate-icon">⭐</text>
+            <text class="rate-text">待评价</text>
+          </view>
+          <view wx:if="{{item.status === 'completed' && item.rating}}" class="rate-indicator rated">
+            <text class="rate-icon">⭐</text>
+            <text class="rate-text">已评价</text>
+          </view>
+        </view>
         <view class="order-actions">
-          <text class="order-price">{{item.priceText}}</text>
-          <view wx:if="{{item.status === 'pending'}}" class="cancel-btn" data-id="{{item.id}}" catchtap="onCancelOrder">
-            取消订单
+          <text class="order-bounty">{{item.bountyText}}</text>
+          <view wx:if="{{item.isCancellable}}" class="action-btn cancel-btn" data-id="{{item.id}}" catchtap="onCancelOrder">
+            取消
           </view>
-          <view class="view-btn" data-item="{{item}}" bindtap="onOrderTap">
-            查看详情
+          <view wx:if="{{item.isCompletedUnrated}}" class="action-btn rate-btn" data-id="{{item.id}}" catchtap="onRateOrder">
+            评价
           </view>
-        </view>
-      </view>
-
-      <view wx:if="{{item.type === 'express' && item.status === 'pending'}}" class="order-progress">
-        <view class="progress-step active">
-          <view class="step-dot"></view>
-          <text class="step-text">待接单</text>
-        </view>
-        <view class="progress-line"></view>
-        <view class="progress-step">
-          <view class="step-dot"></view>
-          <text class="step-text">配送中</text>
-        </view>
-        <view class="progress-line"></view>
-        <view class="progress-step">
-          <view class="step-dot"></view>
-          <text class="step-text">已送达</text>
-        </view>
-      </view>
-      <view wx:if="{{item.type === 'express' && item.status === 'processing'}}" class="order-progress">
-        <view class="progress-step done">
-          <view class="step-dot"></view>
-          <text class="step-text">待接单</text>
-        </view>
-        <view class="progress-line done"></view>
-        <view class="progress-step active">
-          <view class="step-dot"></view>
-          <text class="step-text">配送中</text>
-        </view>
-        <view class="progress-line"></view>
-        <view class="progress-step">
-          <view class="step-dot"></view>
-          <text class="step-text">已送达</text>
-        </view>
-      </view>
-      <view wx:if="{{item.type === 'express' && item.status === 'completed'}}" class="order-progress">
-        <view class="progress-step done">
-          <view class="step-dot"></view>
-          <text class="step-text">待接单</text>
-        </view>
-        <view class="progress-line done"></view>
-        <view class="progress-step done">
-          <view class="step-dot"></view>
-          <text class="step-text">配送中</text>
-        </view>
-        <view class="progress-line done"></view>
-        <view class="progress-step done">
-          <view class="step-dot"></view>
-          <text class="step-text">已送达</text>
+          <view class="action-btn view-btn" data-item="{{item}}" bindtap="onOrderTap">
+            详情
+          </view>
         </view>
       </view>
     </view>

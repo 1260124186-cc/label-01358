@@ -1,101 +1,203 @@
-<view class="errand-page {{darkMode ? 'dark' : ''}}">
-  <view class="service-section">
-    <view class="section-title">
-      <text class="title-text">服务项目</text>
-    </view>
-    <view class="service-grid">
-      <view
-        wx:for="{{services}}"
-        wx:key="id"
-        class="service-card"
-        data-item="{{item}}"
-        bindtap="onServiceTap"
-      >
-        <view class="service-icon-wrap" style="background: {{item.gradient}};">
-          <text class="service-icon">{{item.icon}}</text>
-        </view>
-        <view class="service-info">
-          <text class="service-name">{{item.name}}</text>
-          <text class="service-desc">{{item.desc}}</text>
-        </view>
-        <text class="service-arrow">›</text>
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header-section">
+    <view class="search-row">
+      <view class="search-box">
+        <text class="search-icon">🔍</text>
+        <input
+          class="search-input"
+          placeholder="搜索任务、地点"
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+          bindconfirm="onSearchConfirm"
+          confirm-type="search"
+        />
+      </view>
+      <view class="publish-text-btn" hover-class="publish-text-btn-hover" bindtap="onPublish">
+        <text class="publish-text-btn-icon">✏️</text>
+        <text class="publish-text-btn-label">发布</text>
       </view>
     </view>
   </view>
 
   <view class="stats-section">
-    <view class="section-title">
-      <text class="title-text">订单概览</text>
-      <view class="title-action" bindtap="onOrdersTap">
-        <text class="action-text">全部订单</text>
-        <text class="action-arrow">›</text>
-      </view>
-    </view>
-    <view class="stats-grid">
-      <view class="stat-item" bindtap="onOrdersTap">
+    <view class="stats-row">
+      <view class="stat-item">
         <text class="stat-value">{{orderStats.pending}}</text>
-        <text class="stat-label">待处理</text>
+        <text class="stat-label">待接单</text>
       </view>
-      <view class="stat-item" bindtap="onOrdersTap">
-        <text class="stat-value">{{orderStats.processing}}</text>
-        <text class="stat-label">处理中</text>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-value stat-value-blue">{{orderStats.processing}}</text>
+        <text class="stat-label">进行中</text>
       </view>
-      <view class="stat-item" bindtap="onOrdersTap">
-        <text class="stat-value">{{orderStats.completed}}</text>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-value stat-value-green">{{orderStats.completed}}</text>
         <text class="stat-label">已完成</text>
       </view>
     </view>
   </view>
 
-  <view class="recent-section">
-    <view class="section-title">
-      <text class="title-text">最近订单</text>
-      <view class="title-action" bindtap="onOrdersTap">
-        <text class="action-text">查看更多</text>
-        <text class="action-arrow">›</text>
+  <view class="type-section">
+    <scroll-view class="type-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="type-tabs">
+        <view
+          class="type-tab {{currentType === item.value ? 'active' : ''}}"
+          wx:for="{{taskTypes}}"
+          wx:key="value"
+          bindtap="onTypeChange"
+          data-value="{{item.value}}"
+        >
+          <text class="type-tab-icon">{{item.icon}}</text>
+          <text class="type-tab-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="filter-section">
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-row">
+        <view
+          class="filter-chip {{currentStatus === item.value ? 'active' : ''}}"
+          wx:for="{{hallStatus}}"
+          wx:key="value"
+          bindtap="onStatusChange"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+        <view class="filter-chip" bindtap="onShowBountyPicker">
+          <text>{{currentBountyText || '赏金'}}</text>
+          <text class="chip-arrow">▼</text>
+        </view>
+        <view class="filter-chip" bindtap="onShowSortPicker">
+          <text>排序</text>
+          <text class="chip-arrow">▼</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{list.length > 0}}">
+      <view
+        class="task-card"
+        wx:for="{{list}}"
+        wx:key="id"
+        hover-class="task-card-hover"
+        bindtap="onItemTap"
+        data-item="{{item}}"
+      >
+        <view class="card-header">
+          <view class="type-badge" style="background: {{item.typeGradient}}; color: #fff;">
+            <text class="type-badge-icon">{{item.typeIcon}}</text>
+            <text class="type-badge-text">{{item.typeText}}</text>
+          </view>
+          <view class="status-tag" style="background-color: {{item.statusColor}}15; color: {{item.statusColor}}">
+            <text class="status-tag-icon">{{item.statusIcon}}</text>
+            <text>{{item.statusText}}</text>
+          </view>
+          <view class="bounty-tag">
+            <text class="bounty-currency">¥</text>
+            <text class="bounty-value">{{item.bounty || 0}}</text>
+          </view>
+        </view>
+
+        <view class="card-desc" wx:if="{{item.description}}">
+          <text class="desc-text">{{item.description}}</text>
+        </view>
+
+        <view class="card-route" wx:if="{{item.pickupLocation || item.deliveryLocation}}">
+          <view class="route-point" wx:if="{{item.pickupLocation}}">
+            <view class="route-dot from"></view>
+            <text class="route-text">{{item.pickupLocation}}</text>
+          </view>
+          <view class="route-line-wrap" wx:if="{{item.pickupLocation && item.deliveryLocation}}">
+            <view class="route-line"></view>
+            <text class="route-arrow">→</text>
+          </view>
+          <view class="route-point" wx:if="{{item.deliveryLocation}}">
+            <view class="route-dot to"></view>
+            <text class="route-text">{{item.deliveryLocation}}</text>
+          </view>
+        </view>
+
+        <view class="card-footer">
+          <view class="footer-left">
+            <view class="deadline-info" wx:if="{{item.deadlineText}}">
+              <text class="footer-icon">⏰</text>
+              <text class="deadline-text {{item.deadlineText === '已截止' ? 'expired' : ''}}">{{item.deadlineText}}</text>
+            </view>
+          </view>
+          <view class="footer-right">
+            <view class="publisher-info">
+              <text class="publisher-avatar">{{item.publisherAvatar ? '' : '👤'}}</text>
+              <image wx:if="{{item.publisherAvatar}}" class="publisher-avatar-img" src="{{item.publisherAvatar}}" mode="aspectFill"/>
+              <text class="publisher-name">{{item.publisherName}}</text>
+            </view>
+            <text class="time-text">{{item.timeText}}</text>
+          </view>
+        </view>
       </view>
     </view>
-    <view wx:if="{{recentOrders.length === 0}}" class="empty-state">
-      <text class="empty-icon">📋</text>
-      <text class="empty-text">暂无订单</text>
-      <text class="empty-desc">快去下单吧</text>
-    </view>
-    <view wx:else class="order-list">
-      <view
-        wx:for="{{recentOrders}}"
-        wx:key="id"
-        class="order-card"
-        data-item="{{item}}"
-        bindtap="onOrderTap"
-      >
-        <view class="order-header">
-          <view class="order-type">
-            <text class="order-type-icon">{{item.typeIcon}}</text>
-            <text class="order-type-text">{{item.typeText}}</text>
-          </view>
-          <view class="order-status" style="color: {{item.statusColor}};">
-            {{item.statusIcon}} {{item.statusText}}
-          </view>
-        </view>
-        <view class="order-body">
-          <text class="order-desc" wx:if="{{item.type === 'express'}}">
-            {{item.pickupPointText}} · 取件码 {{item.pickupCode}}
-          </text>
-          <text class="order-desc" wx:else>
-            {{item.fileName}} · {{item.colorTypeText}} {{item.sideTypeText}}
-          </text>
-        </view>
-        <view class="order-footer">
-          <text class="order-price">{{item.priceText}}</text>
-          <text class="order-time">{{item.timeText}}</text>
-        </view>
+
+    <empty
+      wx:if="{{!loading && list.length === 0}}"
+      text="暂无跑腿任务"
+      showAction="{{true}}"
+      actionText="发布任务"
+      bindaction="onPublish"
+    />
+  </scroll-view>
+
+  <view class="fab-btn" hover-class="fab-btn-hover" bindtap="onPublish">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <view class="picker-mask {{showBountyPicker ? 'show' : ''}}" bindtap="onHideBountyPicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择赏金范围</text>
+        <text class="picker-close" bindtap="onHideBountyPicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentBountyRange === '' ? 'active' : ''}}"
+          bindtap="onBountySelect"
+          data-value=""
+        >不限赏金</view>
+        <view
+          class="picker-option {{currentBountyRange === item.value ? 'active' : ''}}"
+          wx:for="{{bountyRanges}}"
+          wx:key="value"
+          bindtap="onBountySelect"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
       </view>
     </view>
   </view>
 
-  <view class="address-entry" bindtap="onAddressTap">
-    <text class="address-icon">🏠</text>
-    <text class="address-text">宿舍地址簿</text>
-    <text class="address-arrow">›</text>
+  <view class="picker-mask {{showSortPicker ? 'show' : ''}}" bindtap="onHideSortPicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择排序方式</text>
+        <text class="picker-close" bindtap="onHideSortPicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentSort === item.value ? 'active' : ''}}"
+          wx:for="{{sortOptions}}"
+          wx:key="value"
+          bindtap="onSortSelect"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
   </view>
 </view>

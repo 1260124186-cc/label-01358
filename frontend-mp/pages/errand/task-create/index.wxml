@@ -1,0 +1,320 @@
+<view class="task-create-page {{darkMode ? 'dark' : ''}}">
+  <view class="type-selector">
+    <scroll-view scroll-x class="type-scroll">
+      <view class="type-list">
+        <view
+          wx:for="{{taskTypes}}"
+          wx:key="value"
+          class="type-card {{selectedType === item.value ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="onTypeSelect"
+        >
+          <view class="type-card-icon" style="background: {{item.gradient}}">
+            <text class="type-icon-text">{{item.icon}}</text>
+          </view>
+          <text class="type-card-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="form-section">
+    <view wx:if="{{selectedType === 'express'}}" class="type-fields">
+      <view class="form-group">
+        <view class="form-label">
+          <text class="label-icon">📍</text>
+          <text class="label-text">快递点</text>
+          <text class="label-required">*</text>
+        </view>
+        <view class="form-picker" bindtap="onShowPickupPicker">
+          <text class="picker-value {{selectedPickupPoint ? '' : 'placeholder'}}">
+            {{selectedPickupPoint ? pickupPointText : '请选择快递点'}}
+          </text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">
+          <text class="label-icon">🔑</text>
+          <text class="label-text">取件码</text>
+          <text class="label-required">*</text>
+        </view>
+        <input
+          class="form-input"
+          placeholder="请输入取件码"
+          placeholder-class="input-placeholder"
+          value="{{pickupCode}}"
+          bindinput="onPickupCodeInput"
+        />
+      </view>
+    </view>
+
+    <view wx:if="{{selectedType === 'purchase'}}" class="type-fields">
+      <view class="form-group">
+        <view class="form-label">
+          <text class="label-icon">📋</text>
+          <text class="label-text">代买类别</text>
+          <text class="label-required">*</text>
+        </view>
+        <view class="form-picker" bindtap="onShowPurchaseCategoryPicker">
+          <text class="picker-value {{selectedPurchaseCategory ? '' : 'placeholder'}}">
+            {{selectedPurchaseCategory ? purchaseCategoryText : '请选择代买类别'}}
+          </text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">
+          <text class="label-icon">🛍️</text>
+          <text class="label-text">代买物品</text>
+          <text class="label-required">*</text>
+        </view>
+        <input
+          class="form-input"
+          placeholder="请输入需要代买的物品"
+          placeholder-class="input-placeholder"
+          value="{{purchaseItem}}"
+          bindinput="onPurchaseItemInput"
+        />
+      </view>
+    </view>
+
+    <view wx:if="{{selectedType === 'delivery'}}" class="type-fields">
+      <view class="form-group">
+        <view class="form-label">
+          <text class="label-icon">📦</text>
+          <text class="label-text">代送物品</text>
+          <text class="label-required">*</text>
+        </view>
+        <input
+          class="form-input"
+          placeholder="请输入需要代送的物品"
+          placeholder-class="input-placeholder"
+          value="{{deliveryItem}}"
+          bindinput="onDeliveryItemInput"
+        />
+      </view>
+    </view>
+
+    <view wx:if="{{selectedType === 'queue'}}" class="type-fields">
+      <view class="form-group">
+        <view class="form-label">
+          <text class="label-icon">📍</text>
+          <text class="label-text">排队地点</text>
+          <text class="label-required">*</text>
+        </view>
+        <input
+          class="form-input"
+          placeholder="请输入排队地点"
+          placeholder-class="input-placeholder"
+          value="{{queueLocation}}"
+          bindinput="onQueueLocationInput"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">
+          <text class="label-icon">🎯</text>
+          <text class="label-text">排队目的</text>
+          <text class="label-required">*</text>
+        </view>
+        <input
+          class="form-input"
+          placeholder="请输入排队目的"
+          placeholder-class="input-placeholder"
+          value="{{queuePurpose}}"
+          bindinput="onQueuePurposeInput"
+        />
+      </view>
+    </view>
+
+    <view wx:if="{{selectedType === 'other'}}" class="type-fields">
+      <view class="form-group">
+        <view class="form-label">
+          <text class="label-icon">📝</text>
+          <text class="label-text">任务描述</text>
+          <text class="label-required">*</text>
+        </view>
+        <textarea
+          class="form-textarea"
+          placeholder="请详细描述你的需求"
+          placeholder-class="input-placeholder"
+          value="{{otherDesc}}"
+          bindinput="onOtherDescInput"
+          maxlength="200"
+        />
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">💰</text>
+        <text class="label-text">赏金（元）</text>
+      </view>
+      <view class="bounty-options">
+        <view
+          wx:for="{{bountyOptions}}"
+          wx:key="*this"
+          class="bounty-item {{bounty === item ? 'active' : ''}}"
+          data-value="{{item}}"
+          bindtap="onBountySelect"
+        >
+          ¥{{item}}
+        </view>
+      </view>
+      <input
+        class="form-input bounty-input"
+        placeholder="自定义金额"
+        placeholder-class="input-placeholder"
+        type="digit"
+        bindinput="onBountyInput"
+      />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">⏰</text>
+        <text class="label-text">截止时间</text>
+      </view>
+      <view class="deadline-row">
+        <picker mode="date" value="{{deadlineDate}}" bindchange="onDeadlineDateChange">
+          <view class="form-picker deadline-picker">
+            <text class="picker-value {{deadlineDate ? '' : 'placeholder'}}">
+              {{deadlineDate || '选择日期'}}
+            </text>
+          </view>
+        </picker>
+        <picker mode="time" value="{{deadlineTime}}" bindchange="onDeadlineTimeChange">
+          <view class="form-picker deadline-picker">
+            <text class="picker-value {{deadlineTime ? '' : 'placeholder'}}">
+              {{deadlineTime || '选择时间'}}
+            </text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <view wx:if="{{selectedType !== 'express'}}" class="form-group">
+      <view class="form-label">
+        <text class="label-icon">📍</text>
+        <text class="label-text">取件地点</text>
+      </view>
+      <input
+        class="form-input"
+        placeholder="请输入取件地点"
+        placeholder-class="input-placeholder"
+        value="{{pickupLocation}}"
+        bindinput="onPickupLocationInput"
+      />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">🏠</text>
+        <text class="label-text">送达地点</text>
+        <text class="label-required">*</text>
+      </view>
+      <view class="address-row">
+        <input
+          class="form-input flex-1"
+          placeholder="请输入送达地点"
+          placeholder-class="input-placeholder"
+          value="{{deliveryLocation}}"
+          bindinput="onDeliveryLocationInput"
+        />
+        <view class="address-book-btn" bindtap="onSelectAddress">
+          <text class="address-book-text">地址簿</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">📝</text>
+        <text class="label-text">备注</text>
+      </view>
+      <textarea
+        class="form-textarea"
+        placeholder="其他需要备注的信息"
+        placeholder-class="input-placeholder"
+        value="{{remark}}"
+        bindinput="onRemarkInput"
+        maxlength="200"
+      />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">📱</text>
+        <text class="label-text">联系方式</text>
+        <text class="label-required">*</text>
+      </view>
+      <input
+        class="form-input"
+        placeholder="请输入联系电话"
+        placeholder-class="input-placeholder"
+        type="number"
+        value="{{contactPhone}}"
+        bindinput="onPhoneInput"
+      />
+    </view>
+  </view>
+
+  <view class="submit-bar">
+    <view class="submit-info">
+      <text class="submit-escrow">🔒 赏金托管</text>
+      <text class="submit-price">¥{{bounty}}</text>
+    </view>
+    <view class="submit-btn" bindtap="onSubmit">
+      <text class="submit-text">提交订单</text>
+    </view>
+  </view>
+
+  <view class="picker-mask {{showPickupPicker ? 'show' : ''}}" bindtap="onClosePickupPicker">
+    <view class="picker-panel {{showPickupPicker ? 'show' : ''}}" catchtap="">
+      <view class="picker-header">
+        <text class="picker-title">选择快递点</text>
+        <text class="picker-close" bindtap="onClosePickupPicker">✕</text>
+      </view>
+      <view class="picker-list">
+        <view
+          wx:for="{{pickupPoints}}"
+          wx:key="value"
+          class="picker-item {{selectedPickupPoint === item.value ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          data-label="{{item.label}}"
+          bindtap="onPickupPointSelect"
+        >
+          <text class="picker-item-icon">{{item.icon}}</text>
+          <text class="picker-item-text">{{item.label}}</text>
+          <text wx:if="{{selectedPickupPoint === item.value}}" class="picker-item-check">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="picker-mask {{showPurchaseCategoryPicker ? 'show' : ''}}" bindtap="onClosePurchaseCategoryPicker">
+    <view class="picker-panel {{showPurchaseCategoryPicker ? 'show' : ''}}" catchtap="">
+      <view class="picker-header">
+        <text class="picker-title">选择代买类别</text>
+        <text class="picker-close" bindtap="onClosePurchaseCategoryPicker">✕</text>
+      </view>
+      <view class="picker-list">
+        <view
+          wx:for="{{purchaseCategories}}"
+          wx:key="value"
+          class="picker-item {{selectedPurchaseCategory === item.value ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          data-label="{{item.label}}"
+          bindtap="onPurchaseCategorySelect"
+        >
+          <text class="picker-item-icon">{{item.icon}}</text>
+          <text class="picker-item-text">{{item.label}}</text>
+          <text wx:if="{{selectedPurchaseCategory === item.value}}" class="picker-item-check">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

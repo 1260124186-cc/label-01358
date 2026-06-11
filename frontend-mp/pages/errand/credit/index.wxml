@@ -1,0 +1,110 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="hero-card" wx:if="{{levelInfo}}">
+    <view class="hero-bg-circle hero-bg-circle-1"></view>
+    <view class="hero-bg-circle hero-bg-circle-2"></view>
+    <view class="hero-user">
+      <image class="hero-avatar" src="{{avatar || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+      <view class="hero-user-info">
+        <text class="hero-name">{{name}}</text>
+        <view class="hero-level-badge" style="background: {{levelInfo.color}}20; color: {{levelInfo.color}};">
+          <text>{{levelInfo.icon}} {{levelInfo.label}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="hero-score">
+      <text class="hero-score-value" style="color: {{levelInfo.color}};">{{creditScore}}</text>
+      <text class="hero-score-unit">信用分</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="stats-grid">
+      <view class="stats-item">
+        <text class="stats-num">{{completionRate}}%</text>
+        <text class="stats-label">完成率</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-num">{{goodRate}}%</text>
+        <text class="stats-label">好评率</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-num">{{totalAccepted}}</text>
+        <text class="stats-label">总接单数</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-num">{{totalCompleted}}</text>
+        <text class="stats-label">完成单数</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{creditLevels.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">信用等级</text>
+    </view>
+    <view class="progress-card">
+      <view class="progress-track">
+        <view class="progress-fill" style="width: {{creditScore}}%; background: {{levelInfo.color}};"></view>
+      </view>
+      <view class="progress-labels">
+        <view wx:for="{{creditLevels}}" wx:key="min" class="progress-label-item {{item.isCurrent ? 'current' : ''}}">
+          <text class="progress-label-icon">{{item.icon}}</text>
+          <text class="progress-label-text" style="{{item.isCurrent ? 'color:' + item.color : ''}}">{{item.label}}</text>
+          <text class="progress-label-range">{{item.min}}-{{item.max}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{violations.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">违规记录</text>
+      <text class="section-count">共 {{violations.length}} 条</text>
+    </view>
+    <view class="violation-list">
+      <view class="violation-card" wx:for="{{violations}}" wx:key="id">
+        <view class="violation-icon-wrap">
+          <text class="violation-icon">{{item.icon}}</text>
+        </view>
+        <view class="violation-main">
+          <view class="violation-top">
+            <text class="violation-type">{{item.typeText}}</text>
+            <text class="violation-time">{{item.timeText}}</text>
+          </view>
+          <text class="violation-desc" wx:if="{{item.desc}}">{{item.desc}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{recentOrders.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">最近完成</text>
+    </view>
+    <view class="order-list">
+      <view class="order-card" wx:for="{{recentOrders}}" wx:key="id" data-id="{{item.id}}" bindtap="onOrderTap">
+        <view class="order-main">
+          <text class="order-type-icon">{{item.typeIcon}}</text>
+          <view class="order-info">
+            <text class="order-title">{{item.title}}</text>
+            <text class="order-time">{{item.timeText}}</text>
+          </view>
+        </view>
+        <view class="order-right">
+          <view class="order-rating" wx:if="{{item.rating}}">
+            <text wx:for="{{5}}" wx:for-item="starIdx" wx:key="*this" class="order-star {{starIdx < item.ratingScore ? 'filled' : ''}}">★</text>
+          </view>
+          <text class="order-bounty">¥{{item.bounty}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{!loading && !levelInfo}}">
+    <text class="empty-icon">📊</text>
+    <text class="empty-text">暂无信用数据</text>
+  </view>
+
+</view>

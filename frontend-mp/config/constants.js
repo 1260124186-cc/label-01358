@@ -225,11 +225,115 @@ const EXPRESS_PICKUP_POINTS = [
   { value: 'other', label: '其他快递', icon: '📋' }
 ];
 
+const ERRAND_TASK_TYPES = [
+  { value: 'express', label: '取快递', icon: '📦', color: '#FF6B6B', gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)' },
+  { value: 'purchase', label: '代买', icon: '🛒', color: '#4ECDC4', gradient: 'linear-gradient(135deg, #4ECDC4 0%, #6EE7DE 100%)' },
+  { value: 'delivery', label: '代送', icon: '🚀', color: '#45B7D1', gradient: 'linear-gradient(135deg, #45B7D1 0%, #6DD5ED 100%)' },
+  { value: 'queue', label: '代排队', icon: '🧍', color: '#F59E0B', gradient: 'linear-gradient(135deg, #F59E0B 0%, #FBC94E 100%)' },
+  { value: 'other', label: '其他', icon: '📌', color: '#8B5CF6', gradient: 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)' }
+];
+
 const ERRAND_ORDER_STATUS = [
-  { value: 'pending', label: '待处理', color: '#F59E0B', icon: '⏳' },
-  { value: 'processing', label: '处理中', color: '#3B82F6', icon: '🔄' },
+  { value: 'pending', label: '待接单', color: '#F59E0B', icon: '⏳' },
+  { value: 'accepted', label: '已接单', color: '#3B82F6', icon: '🤝' },
+  { value: 'in_progress', label: '进行中', color: '#8B5CF6', icon: '🔄' },
   { value: 'completed', label: '已完成', color: '#10B981', icon: '✅' },
-  { value: 'cancelled', label: '已取消', color: '#6B7280', icon: '❌' }
+  { value: 'cancelled', label: '已取消', color: '#6B7280', icon: '❌' },
+  { value: 'timeout', label: '已超时', color: '#EF4444', icon: '⏰' }
+];
+
+const ERRAND_HALL_STATUS = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '待接单' },
+  { value: 'accepted', label: '进行中' },
+  { value: 'completed', label: '已完成' },
+  { value: 'cancelled', label: '已取消' }
+];
+
+const ERRAND_BOUNTY_RANGES = [
+  { value: '', label: '不限', min: 0, max: Infinity },
+  { value: '0-3', label: '3元以下', min: 0, max: 3 },
+  { value: '3-5', label: '3-5元', min: 3, max: 5 },
+  { value: '5-10', label: '5-10元', min: 5, max: 10 },
+  { value: '10-20', label: '10-20元', min: 10, max: 20 },
+  { value: '20+', label: '20元以上', min: 20, max: Infinity }
+];
+
+const ERRAND_DISTANCE_RANGES = [
+  { value: '', label: '不限', min: 0, max: Infinity },
+  { value: '0-500', label: '500米内', min: 0, max: 500 },
+  { value: '500-1000', label: '500米-1公里', min: 500, max: 1000 },
+  { value: '1000-2000', label: '1-2公里', min: 1000, max: 2000 },
+  { value: '2000+', label: '2公里以上', min: 2000, max: Infinity }
+];
+
+const ERRAND_SORT_OPTIONS = [
+  { value: 'latest', label: '最新发布', field: 'createTime', order: 'desc' },
+  { value: 'bounty_desc', label: '赏金高到低', field: 'bounty', order: 'desc' },
+  { value: 'bounty_asc', label: '赏金低到高', field: 'bounty', order: 'asc' },
+  { value: 'deadline', label: '即将截止', field: 'deadline', order: 'asc' }
+];
+
+const ERRAND_ORDER_TABS = [
+  { value: 'published', label: '我发布的' },
+  { value: 'accepted', label: '我接的' }
+];
+
+const ERRAND_PUBLISHED_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '待接单' },
+  { value: 'in_progress', label: '进行中' },
+  { value: 'completed', label: '已完成' },
+  { value: 'cancelled', label: '已取消' }
+];
+
+const ERRAND_ACCEPTED_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'accepted', label: '已接单' },
+  { value: 'in_progress', label: '进行中' },
+  { value: 'completed', label: '已完成' }
+];
+
+const ERRAND_RATING_TAGS = [
+  { value: 'fast', label: '速度快', icon: '⚡' },
+  { value: 'polite', label: '态度好', icon: '😊' },
+  { value: 'careful', label: '细心负责', icon: '💯' },
+  { value: 'punctual', label: '准时送达', icon: '⏱️' },
+  { value: 'communicate', label: '沟通顺畅', icon: '💬' }
+];
+
+const ERRAND_CREDIT_LEVELS = [
+  { min: 95, max: 100, label: '优秀', color: '#10B981', icon: '🌟' },
+  { min: 85, max: 94, label: '良好', color: '#3B82F6', icon: '👍' },
+  { min: 70, max: 84, label: '一般', color: '#F59E0B', icon: '👌' },
+  { min: 50, max: 69, label: '较差', color: '#EF4444', icon: '⚠️' },
+  { min: 0, max: 49, label: '极差', color: '#DC2626', icon: '🚫' }
+];
+
+const ERRAND_VIOLATION_TYPES = [
+  { value: 'cancel_frequently', label: '频繁取消', icon: '❌' },
+  { value: 'timeout', label: '超时未完成', icon: '⏰' },
+  { value: 'sensitive_word', label: '违规内容', icon: '🚫' },
+  { value: 'false_info', label: '虚假信息', icon: '⛔' },
+  { value: 'dispute', label: '交易纠纷', icon: '⚖️' }
+];
+
+const ERRAND_ESCROW_STATUS = [
+  { value: 'frozen', label: '已冻结', color: '#F59E0B', icon: '🔒' },
+  { value: 'released', label: '已释放', color: '#10B981', icon: '🔓' },
+  { value: 'refunded', label: '已退款', color: '#3B82F6', icon: '💰' }
+];
+
+const ERRAND_TIMEOUT_MINUTES = 30;
+
+const ERRAND_PURCHASE_CATEGORIES = [
+  { value: 'food', label: '餐饮美食', icon: '🍜' },
+  { value: 'drink', label: '奶茶饮品', icon: '🧋' },
+  { value: 'fruit', label: '水果生鲜', icon: '🍎' },
+  { value: 'medicine', label: '药品', icon: '💊' },
+  { value: 'stationery', label: '文具用品', icon: '✏️' },
+  { value: 'daily', label: '生活用品', icon: '🛍️' },
+  { value: 'other', label: '其他', icon: '📋' }
 ];
 
 const PRINT_COLOR_OPTIONS = [
@@ -247,12 +351,7 @@ const PRINT_PAPER_OPTIONS = [
   { value: 'a3', label: 'A3' }
 ];
 
-const ERRAND_ORDER_TABS = [
-  { value: 'all', label: '全部' },
-  { value: 'pending', label: '待处理' },
-  { value: 'processing', label: '处理中' },
-  { value: 'completed', label: '已完成' }
-];
+
 
 const RENTAL_LOCATION_TYPES = [
   { value: 'campus', label: '校内' },
@@ -665,11 +764,24 @@ module.exports = {
   VOLUNTEER_CATEGORIES,
   VOLUNTEER_TABS,
   EXPRESS_PICKUP_POINTS,
+  ERRAND_TASK_TYPES,
   ERRAND_ORDER_STATUS,
+  ERRAND_HALL_STATUS,
+  ERRAND_BOUNTY_RANGES,
+  ERRAND_DISTANCE_RANGES,
+  ERRAND_SORT_OPTIONS,
+  ERRAND_ORDER_TABS,
+  ERRAND_PUBLISHED_TABS,
+  ERRAND_ACCEPTED_TABS,
+  ERRAND_RATING_TAGS,
+  ERRAND_CREDIT_LEVELS,
+  ERRAND_VIOLATION_TYPES,
+  ERRAND_ESCROW_STATUS,
+  ERRAND_TIMEOUT_MINUTES,
+  ERRAND_PURCHASE_CATEGORIES,
   PRINT_COLOR_OPTIONS,
   PRINT_SIDE_OPTIONS,
   PRINT_PAPER_OPTIONS,
-  ERRAND_ORDER_TABS,
   RENTAL_LOCATION_TYPES,
   RENTAL_HOUSE_TYPES,
   RENTAL_RENT_TYPES,

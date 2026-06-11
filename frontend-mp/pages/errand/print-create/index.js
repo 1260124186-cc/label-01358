@@ -158,14 +158,17 @@ mixPage({
       totalPrice,
       pickupTime,
       contactPhone: contactPhone.trim(),
-      deliveryAddress: deliveryAddress.trim(),
+      pickupLocation: '打印店',
+      deliveryLocation: deliveryAddress.trim(),
       remark: remark.trim()
     });
 
-    if (order) {
+    if (order && !order.error) {
       util.showSuccess('下单成功').then(() => {
         wx.navigateBack();
       });
+    } else if (order && order.error) {
+      util.showToast(order.error);
     } else {
       util.showError('下单失败');
     }
