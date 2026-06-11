@@ -1,0 +1,709 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
+}
+
+/* ==================== 顶部 Tab 栏 ==================== */
+.schedule-tabs {
+  display: flex;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFBFC 100%);
+  padding: 16rpx 12rpx;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.schedule-tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12rpx 0;
+  position: relative;
+  transition: all var(--transition-fast);
+}
+
+.schedule-tab-item:active {
+  transform: scale(0.96);
+}
+
+.schedule-tab-icon {
+  font-size: 40rpx;
+  margin-bottom: 6rpx;
+}
+
+.schedule-tab-label {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  transition: color var(--transition-fast);
+}
+
+.schedule-tab-item.active .schedule-tab-label {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.schedule-tab-indicator {
+  position: absolute;
+  bottom: 0;
+  width: 48rpx;
+  height: 6rpx;
+  background: linear-gradient(90deg, var(--color-primary) 0%, #FF8E8E 100%);
+  border-radius: 3rpx;
+}
+
+/* ==================== 周次切换器 ==================== */
+.week-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 24rpx 16rpx;
+  gap: 32rpx;
+}
+
+.week-nav-btn {
+  width: 64rpx;
+  height: 64rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #FFFFFF 0%, #F5F7FA 100%);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.week-nav-btn:active {
+  transform: scale(0.92);
+  box-shadow: var(--shadow-xs);
+}
+
+.week-nav-icon {
+  font-size: 36rpx;
+  color: var(--color-text-primary);
+  font-weight: 700;
+}
+
+.week-selector {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 40rpx;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  border-radius: var(--radius-full);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.3);
+  transition: all var(--transition-fast);
+}
+
+.week-selector:active {
+  transform: scale(0.98);
+}
+
+.week-text {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.week-arrow {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
+  margin-left: 10rpx;
+}
+
+/* ==================== 视图切换器 ==================== */
+.view-switcher {
+  display: flex;
+  padding: 0 24rpx 20rpx;
+  justify-content: center;
+}
+
+.view-tab-item {
+  padding: 14rpx 48rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-full);
+  margin: 0 8rpx;
+  box-shadow: var(--shadow-xs);
+  transition: all var(--transition-fast);
+}
+
+.view-tab-item.active {
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #4ECDC4 0%, #6EE7DE 100%);
+  box-shadow: 0 4rpx 16rpx rgba(78, 205, 196, 0.3);
+  font-weight: 700;
+}
+
+.view-tab-item:active {
+  transform: scale(0.96);
+}
+
+/* ==================== 周视图 ==================== */
+.week-view-container {
+  padding: 0 16rpx 24rpx;
+}
+
+.week-grid {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.grid-header {
+  display: flex;
+  background: linear-gradient(135deg, #F8FAFB 0%, #F1F4F7 100%);
+  border-bottom: 2rpx solid var(--color-border-light);
+}
+
+.grid-corner {
+  width: 90rpx;
+  flex-shrink: 0;
+  border-right: 2rpx solid var(--color-border-light);
+}
+
+.grid-day-header {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 0;
+  transition: all var(--transition-fast);
+  border-right: 2rpx solid var(--color-border-light);
+}
+
+.grid-day-header:last-child {
+  border-right: none;
+}
+
+.grid-day-header:active {
+  background-color: var(--color-primary-light);
+}
+
+.grid-day-header.today {
+  background: linear-gradient(180deg, var(--color-primary-light) 0%, transparent 100%);
+}
+
+.grid-day-header.today .day-label {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.day-label {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+.grid-body {
+  max-height: calc(100vh - 520rpx);
+}
+
+.grid-body-inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-row {
+  display: flex;
+  min-height: 120rpx;
+  border-bottom: 2rpx solid var(--color-border-light);
+}
+
+.grid-row:last-child {
+  border-bottom: none;
+}
+
+.grid-time-cell {
+  width: 90rpx;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8rpx 0;
+  background: linear-gradient(180deg, #FAFBFC 0%, #F5F7FA 100%);
+  border-right: 2rpx solid var(--color-border-light);
+}
+
+.slot-num {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.slot-time {
+  font-size: 18rpx;
+  color: var(--color-text-muted);
+  margin-top: 2rpx;
+}
+
+.grid-day-cells {
+  flex: 1;
+  display: flex;
+}
+
+.grid-cell {
+  flex: 1;
+  position: relative;
+  border-right: 2rpx solid var(--color-border-light);
+  min-height: 120rpx;
+}
+
+.grid-cell:last-child {
+  border-right: none;
+}
+
+.course-block {
+  position: absolute;
+  left: 4rpx;
+  right: 4rpx;
+  top: 4rpx;
+  bottom: 4rpx;
+  border-radius: var(--radius-md);
+  padding: 8rpx 10rpx;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  transition: all var(--transition-fast);
+  z-index: 1;
+}
+
+.course-block:active {
+  transform: scale(0.96);
+  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.08);
+  z-index: 10;
+}
+
+.course-name {
+  font-size: 22rpx;
+  font-weight: 700;
+  line-height: 1.3;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.course-room {
+  font-size: 18rpx;
+  margin-top: 4rpx;
+  opacity: 0.85;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.course-teacher {
+  font-size: 18rpx;
+  margin-top: 2rpx;
+  opacity: 0.75;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+/* ==================== 日视图 ==================== */
+.day-view-container {
+  padding: 0 24rpx 24rpx;
+}
+
+.day-tabs {
+  display: flex;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: 8rpx;
+  margin-bottom: 24rpx;
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+}
+
+.day-tab-item {
+  flex-shrink: 0;
+  padding: 14rpx 22rpx;
+  border-radius: var(--radius-lg);
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  margin-right: 8rpx;
+  transition: all var(--transition-fast);
+}
+
+.day-tab-item:last-child {
+  margin-right: 0;
+}
+
+.day-tab-item.active {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  color: #FFFFFF;
+  font-weight: 700;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.25);
+}
+
+.day-tab-item:active {
+  transform: scale(0.96);
+}
+
+.day-course-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.day-course-card {
+  display: flex;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-normal);
+}
+
+.day-course-card:active {
+  transform: scale(0.98);
+  box-shadow: var(--shadow-sm);
+}
+
+.course-time-col {
+  width: 130rpx;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 12rpx;
+  background: linear-gradient(180deg, #FAFBFC 0%, #F5F7FA 100%);
+}
+
+.course-slot-badge {
+  padding: 10rpx 14rpx;
+  border-radius: var(--radius-md);
+  margin-bottom: 10rpx;
+}
+
+.slot-badge-text {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.course-time-text {
+  font-size: 20rpx;
+  color: var(--color-text-secondary);
+}
+
+.course-info-col {
+  flex: 1;
+  padding: 20rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.course-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.course-info-row {
+  display: flex;
+  gap: 24rpx;
+  flex-wrap: wrap;
+}
+
+.course-info-item {
+  display: flex;
+  align-items: center;
+}
+
+.info-icon {
+  font-size: 24rpx;
+  margin-right: 6rpx;
+}
+
+.info-text {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+}
+
+/* ==================== 空状态 ==================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 24rpx;
+  opacity: 0.6;
+}
+
+.empty-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 12rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+}
+
+/* ==================== 占位卡片 ==================== */
+.placeholder-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 48rpx 24rpx;
+  padding: 80rpx 40rpx;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFBFC 100%);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-card);
+}
+
+.placeholder-icon {
+  font-size: 120rpx;
+  margin-bottom: 24rpx;
+}
+
+.placeholder-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 12rpx;
+}
+
+.placeholder-desc {
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+  margin-bottom: 40rpx;
+  text-align: center;
+}
+
+.placeholder-btn {
+  padding: 24rpx 64rpx;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  border-radius: var(--radius-full);
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 107, 0.3);
+  transition: all var(--transition-fast);
+}
+
+.placeholder-btn:active {
+  transform: scale(0.96);
+}
+
+.placeholder-btn text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+/* ==================== 浮动按钮 ==================== */
+.fab-btn {
+  position: fixed;
+  right: 40rpx;
+  bottom: calc(60rpx + env(safe-area-inset-bottom));
+  width: 112rpx;
+  height: 112rpx;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12rpx 36rpx rgba(255, 107, 107, 0.4);
+  z-index: 50;
+  transition: all var(--transition-bounce);
+}
+
+.fab-btn:active {
+  transform: scale(0.9);
+  box-shadow: 0 6rpx 18rpx rgba(255, 107, 107, 0.35);
+}
+
+.fab-icon {
+  font-size: 60rpx;
+  color: #FFFFFF;
+  font-weight: 300;
+  line-height: 1;
+  margin-top: -4rpx;
+}
+
+/* ==================== 弹窗 ==================== */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 48rpx;
+}
+
+.modal-content {
+  width: 100%;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20rpx);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-header {
+  padding: 40rpx 32rpx;
+  position: relative;
+}
+
+.modal-header-content {
+  padding-right: 48rpx;
+}
+
+.modal-course-name {
+  font-size: 40rpx;
+  font-weight: 700;
+  line-height: 1.4;
+  display: block;
+  margin-bottom: 12rpx;
+}
+
+.modal-course-slot {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.modal-close-btn:active {
+  transform: scale(0.9);
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.close-icon {
+  font-size: 40rpx;
+  color: var(--color-text-secondary);
+  line-height: 1;
+  font-weight: 300;
+}
+
+.modal-body {
+  padding: 24rpx 32rpx;
+}
+
+.modal-info-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--color-border-light);
+}
+
+.modal-info-item:last-child {
+  border-bottom: none;
+}
+
+.modal-info-icon {
+  font-size: 36rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  width: 48rpx;
+  text-align: center;
+}
+
+.modal-info-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-info-label {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 6rpx;
+}
+
+.modal-info-value {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+}
+
+.modal-footer {
+  display: flex;
+  padding: 24rpx 32rpx 32rpx;
+  gap: 20rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 0;
+  border-radius: var(--radius-xl);
+  font-size: 30rpx;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+  gap: 8rpx;
+}
+
+.modal-btn:active {
+  transform: scale(0.96);
+}
+
+.modal-btn-edit {
+  background: linear-gradient(135deg, #4ECDC4 0%, #6EE7DE 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4rpx 16rpx rgba(78, 205, 196, 0.3);
+}
+
+.modal-btn-delete {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  color: #FFFFFF;
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.3);
+}
+
+.btn-icon {
+  font-size: 28rpx;
+}

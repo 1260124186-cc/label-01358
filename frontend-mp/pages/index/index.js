@@ -103,6 +103,34 @@ Page({
         icon: '/assets/icons/nav-broadcast.png',
         bgColor: 'linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%)',
         url: '/pages/forum/index/index'
+      },
+      {
+        id: 'schedule',
+        name: '课程表',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)',
+        url: '/pages/schedule/index'
+      },
+      {
+        id: 'academic',
+        name: '教务查询',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #43E97B 0%, #38F9D7 100%)',
+        url: '/pages/academic/index'
+      },
+      {
+        id: 'classroom-query',
+        name: '空教室',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #F093FB 0%, #F5576C 100%)',
+        url: '/pages/classroom-query/index'
+      },
+      {
+        id: 'exam-schedule',
+        name: '考试安排',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #FA709A 0%, #FEE140 100%)',
+        url: '/pages/exam-schedule/index'
       }
     ],
     weatherData: null,

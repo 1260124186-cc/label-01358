@@ -3445,8 +3445,438 @@ const MOCK_CLUB_ACTIVITIES = [
   }
 ];
 
+const MOCK_COURSES = [
+  {
+    id: 'course_1',
+    name: '高等数学',
+    teacher: '张建国教授',
+    classroom: 'A栋301',
+    dayOfWeek: 1,
+    startSlot: 1,
+    endSlot: 2,
+    colorIndex: 0,
+    weeks: '1-16周',
+    credit: 4,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_2',
+    name: '大学英语',
+    teacher: '李明华老师',
+    classroom: 'B栋205',
+    dayOfWeek: 1,
+    startSlot: 3,
+    endSlot: 4,
+    colorIndex: 1,
+    weeks: '1-16周',
+    credit: 3,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_3',
+    name: '数据结构',
+    teacher: '王志强教授',
+    classroom: 'E栋402',
+    dayOfWeek: 1,
+    startSlot: 5,
+    endSlot: 6,
+    colorIndex: 2,
+    weeks: '1-14周',
+    credit: 4,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_4',
+    name: '线性代数',
+    teacher: '陈美玲教授',
+    classroom: 'A栋203',
+    dayOfWeek: 2,
+    startSlot: 1,
+    endSlot: 2,
+    colorIndex: 3,
+    weeks: '1-16周',
+    credit: 3,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_5',
+    name: '毛泽东思想概论',
+    teacher: '刘永红老师',
+    classroom: 'C栋101',
+    dayOfWeek: 2,
+    startSlot: 3,
+    endSlot: 4,
+    colorIndex: 4,
+    weeks: '1-16周',
+    credit: 3,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_6',
+    name: '计算机组成原理',
+    teacher: '赵文博教授',
+    classroom: 'E栋301',
+    dayOfWeek: 2,
+    startSlot: 7,
+    endSlot: 8,
+    colorIndex: 5,
+    weeks: '1-14周',
+    credit: 3,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_7',
+    name: '程序设计基础',
+    teacher: '王晓燕老师',
+    classroom: 'E栋501',
+    dayOfWeek: 3,
+    startSlot: 1,
+    endSlot: 2,
+    colorIndex: 6,
+    weeks: '1-16周',
+    credit: 4,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_8',
+    name: '大学物理',
+    teacher: '孙立伟教授',
+    classroom: 'D栋201',
+    dayOfWeek: 3,
+    startSlot: 3,
+    endSlot: 4,
+    colorIndex: 0,
+    weeks: '1-14周',
+    credit: 4,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_9',
+    name: '概率论与数理统计',
+    teacher: '黄丽华教授',
+    classroom: 'A栋401',
+    dayOfWeek: 3,
+    startSlot: 5,
+    endSlot: 6,
+    colorIndex: 1,
+    weeks: '1-16周',
+    credit: 3,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_10',
+    name: '体育',
+    teacher: '周大强老师',
+    classroom: '体育馆',
+    dayOfWeek: 4,
+    startSlot: 3,
+    endSlot: 4,
+    colorIndex: 7,
+    weeks: '1-16周',
+    credit: 2,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_11',
+    name: '操作系统',
+    teacher: '李伟东教授',
+    classroom: 'E栋401',
+    dayOfWeek: 4,
+    startSlot: 5,
+    endSlot: 6,
+    colorIndex: 2,
+    weeks: '1-14周',
+    credit: 4,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_12',
+    name: '离散数学',
+    teacher: '吴雅琴教授',
+    classroom: 'B栋303',
+    dayOfWeek: 5,
+    startSlot: 1,
+    endSlot: 2,
+    colorIndex: 3,
+    weeks: '1-14周',
+    credit: 3,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_13',
+    name: '计算机网络',
+    teacher: '郑海涛教授',
+    classroom: 'E栋403',
+    dayOfWeek: 5,
+    startSlot: 5,
+    endSlot: 6,
+    colorIndex: 4,
+    weeks: '1-16周',
+    credit: 4,
+    semester: '2025-2026-2'
+  },
+  {
+    id: 'course_14',
+    name: '数据库原理',
+    teacher: '林丽娜老师',
+    classroom: 'E栋305',
+    dayOfWeek: 5,
+    startSlot: 9,
+    endSlot: 10,
+    colorIndex: 5,
+    weeks: '1-12周',
+    credit: 3,
+    semester: '2025-2026-2'
+  }
+];
+
+const MOCK_EXAM_SCORES = [
+  {
+    id: 'score_1',
+    courseName: '高等数学',
+    semester: '2025-2026-1',
+    score: 88,
+    credit: 4,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_2',
+    courseName: '大学英语',
+    semester: '2025-2026-1',
+    score: 82,
+    credit: 3,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_3',
+    courseName: '数据结构',
+    semester: '2025-2026-1',
+    score: 76,
+    credit: 4,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_4',
+    courseName: '线性代数',
+    semester: '2025-2026-1',
+    score: 92,
+    credit: 3,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_5',
+    courseName: '程序设计基础',
+    semester: '2025-2026-1',
+    score: 85,
+    credit: 4,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_6',
+    courseName: '大学物理',
+    semester: '2025-2026-1',
+    score: 58,
+    credit: 4,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_7',
+    courseName: '毛泽东思想概论',
+    semester: '2025-2026-1',
+    score: 79,
+    credit: 3,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_8',
+    courseName: '体育',
+    semester: '2025-2026-1',
+    score: 86,
+    credit: 2,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_9',
+    courseName: '离散数学',
+    semester: '2024-2025-2',
+    score: 73,
+    credit: 3,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_10',
+    courseName: '概率论与数理统计',
+    semester: '2024-2025-2',
+    score: 81,
+    credit: 3,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_11',
+    courseName: '计算机组成原理',
+    semester: '2024-2025-2',
+    score: 67,
+    credit: 3,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_12',
+    courseName: '大学英语(二)',
+    semester: '2024-2025-2',
+    score: 84,
+    credit: 3,
+    courseType: '必修',
+    examType: '正常考试'
+  },
+  {
+    id: 'score_13',
+    courseName: '创新创业基础',
+    semester: '2024-2025-2',
+    score: 90,
+    credit: 2,
+    courseType: '选修',
+    examType: '考查课'
+  },
+  {
+    id: 'score_14',
+    courseName: '心理健康教育',
+    semester: '2024-2025-2',
+    score: 88,
+    credit: 2,
+    courseType: '选修',
+    examType: '考查课'
+  }
+];
+
+const MOCK_EXAM_SCHEDULE = [
+  {
+    id: 'exam_1',
+    courseName: '高等数学',
+    examDate: '2026-07-01',
+    startTime: '09:00',
+    endTime: '11:00',
+    classroom: 'A栋301',
+    seatNo: '08',
+    examType: '期末考',
+    isCompleted: false
+  },
+  {
+    id: 'exam_2',
+    courseName: '大学英语',
+    examDate: '2026-07-03',
+    startTime: '09:00',
+    endTime: '11:00',
+    classroom: 'B栋205',
+    seatNo: '15',
+    examType: '期末考',
+    isCompleted: false
+  },
+  {
+    id: 'exam_3',
+    courseName: '数据结构',
+    examDate: '2026-07-05',
+    startTime: '14:00',
+    endTime: '16:00',
+    classroom: 'E栋402',
+    seatNo: '22',
+    examType: '期末考',
+    isCompleted: false
+  },
+  {
+    id: 'exam_4',
+    courseName: '线性代数',
+    examDate: '2026-07-07',
+    startTime: '09:00',
+    endTime: '11:00',
+    classroom: 'A栋203',
+    seatNo: '05',
+    examType: '期末考',
+    isCompleted: false
+  },
+  {
+    id: 'exam_5',
+    courseName: '毛泽东思想概论',
+    examDate: '2026-07-09',
+    startTime: '09:00',
+    endTime: '11:00',
+    classroom: 'C栋101',
+    seatNo: '31',
+    examType: '期末考',
+    isCompleted: false
+  },
+  {
+    id: 'exam_6',
+    courseName: '计算机组成原理',
+    examDate: '2026-06-28',
+    startTime: '19:00',
+    endTime: '21:00',
+    classroom: 'E栋301',
+    seatNo: '12',
+    examType: '期末考',
+    isCompleted: true
+  },
+  {
+    id: 'exam_7',
+    courseName: '大学物理',
+    examDate: '2026-06-25',
+    startTime: '14:00',
+    endTime: '16:00',
+    classroom: 'D栋201',
+    seatNo: '18',
+    examType: '期末考',
+    isCompleted: true
+  }
+];
+
+const MOCK_CLASSROOMS = [
+  { id: 'cr_A_101', building: 'A', room: '101', capacity: 60, type: '普通教室', hasProjector: true, hasAc: true },
+  { id: 'cr_A_102', building: 'A', room: '102', capacity: 60, type: '普通教室', hasProjector: true, hasAc: true },
+  { id: 'cr_A_201', building: 'A', room: '201', capacity: 80, type: '普通教室', hasProjector: true, hasAc: true },
+  { id: 'cr_A_203', building: 'A', room: '203', capacity: 60, type: '普通教室', hasProjector: true, hasAc: true },
+  { id: 'cr_A_301', building: 'A', room: '301', capacity: 120, type: '阶梯教室', hasProjector: true, hasAc: true },
+  { id: 'cr_A_401', building: 'A', room: '401', capacity: 80, type: '普通教室', hasProjector: true, hasAc: true },
+  { id: 'cr_B_101', building: 'B', room: '101', capacity: 45, type: '普通教室', hasProjector: true, hasAc: true },
+  { id: 'cr_B_205', building: 'B', room: '205', capacity: 50, type: '普通教室', hasProjector: true, hasAc: true },
+  { id: 'cr_B_303', building: 'B', room: '303', capacity: 60, type: '普通教室', hasProjector: true, hasAc: false },
+  { id: 'cr_C_101', building: 'C', room: '101', capacity: 200, type: '大阶梯教室', hasProjector: true, hasAc: true },
+  { id: 'cr_C_201', building: 'C', room: '201', capacity: 80, type: '普通教室', hasProjector: true, hasAc: true },
+  { id: 'cr_C_301', building: 'C', room: '301', capacity: 100, type: '阶梯教室', hasProjector: true, hasAc: true },
+  { id: 'cr_D_201', building: 'D', room: '201', capacity: 80, type: '物理实验室', hasProjector: true, hasAc: true },
+  { id: 'cr_D_301', building: 'D', room: '301', capacity: 60, type: '化学实验室', hasProjector: true, hasAc: true },
+  { id: 'cr_E_301', building: 'E', room: '301', capacity: 60, type: '计算机实验室', hasProjector: true, hasAc: true },
+  { id: 'cr_E_305', building: 'E', room: '305', capacity: 40, type: '计算机实验室', hasProjector: true, hasAc: true },
+  { id: 'cr_E_401', building: 'E', room: '401', capacity: 60, type: '计算机实验室', hasProjector: true, hasAc: true },
+  { id: 'cr_E_402', building: 'E', room: '402', capacity: 60, type: '计算机实验室', hasProjector: true, hasAc: true },
+  { id: 'cr_E_403', building: 'E', room: '403', capacity: 60, type: '计算机实验室', hasProjector: true, hasAc: true },
+  { id: 'cr_E_501', building: 'E', room: '501', capacity: 40, type: '研讨室', hasProjector: true, hasAc: true }
+];
+
+const MOCK_COURSE_SETTINGS = {
+  semesterStartDate: '2026-02-16',
+  currentWeek: 17,
+  totalWeeks: 20,
+  reminderMinutes: 10,
+  enableReminder: true
+};
+
 if (module.exports) {
   module.exports.MOCK_CLUBS = MOCK_CLUBS;
   module.exports.MOCK_CLUB_MEMBERS = MOCK_CLUB_MEMBERS;
   module.exports.MOCK_CLUB_ACTIVITIES = MOCK_CLUB_ACTIVITIES;
+  module.exports.MOCK_COURSES = MOCK_COURSES;
+  module.exports.MOCK_EXAM_SCORES = MOCK_EXAM_SCORES;
+  module.exports.MOCK_EXAM_SCHEDULE = MOCK_EXAM_SCHEDULE;
+  module.exports.MOCK_CLASSROOMS = MOCK_CLASSROOMS;
+  module.exports.MOCK_COURSE_SETTINGS = MOCK_COURSE_SETTINGS;
 }

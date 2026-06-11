@@ -3485,6 +3485,446 @@ function updateMapSettings(updates) {
   return newSettings;
 }
 
+// ==================== 课程表模块 ====================
+let courseDataInitialized = false;
+
+function initCourseData() {
+  if (courseDataInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.COURSE_LIST);
+  if (!existing || existing.length === 0) {
+    const courses = mockData.MOCK_COURSES.map((item, index) => ({
+      id: 'mock_course_' + index + '_' + Date.now(),
+      ...item,
+      createTime: Date.now()
+    }));
+    storage.set(STORAGE_KEYS.COURSE_LIST, courses);
+  }
+  const existingSettings = storage.get(STORAGE_KEYS.COURSE_SETTINGS);
+  if (!existingSettings) {
+    storage.set(STORAGE_KEYS.COURSE_SETTINGS, { ...mockData.MOCK_COURSE_SETTINGS });
+  }
+  courseDataInitialized = true;
+}
+
+function getCourseList(filters = {}) {
+  initCourseData();
+  let list = storage.getList(STORAGE_KEYS.COURSE_LIST);
+  if (filters.semester) {
+    list = list.filter(item => item.semester === filters.semester);
+  }
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'teacher', 'classroom']);
+  }
+  return list;
+}
+
+function getCoursesByDay(dayOfWeek) {
+  return getCourseList().filter(c => c.dayOfWeek === dayOfWeek)
+    .sort((a, b) => a.startSlot - b.startSlot);
+}
+
+function getCoursesByWeek() {
+  const result = {};
+  for (let i = 1; i <= 7; i++) {
+    result[i] = getCoursesByDay(i);
+  }
+  return result;
+}
+
+function getCourseDetail(id) {
+  initCourseData();
+  const list = storage.getList(STORAGE_KEYS.COURSE_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function addCourse(data) {
+  initCourseData();
+  const colorIndex = data.colorIndex !== undefined ? data.colorIndex :
+    Math.floor(Math.random() * constants.COURSE_COLORS.length);
+  const item = {
+    id: util.generateId(),
+    ...data,
+    colorIndex,
+    createTime: Date.now()
+  };
+  const success = storage.addToList(STORAGE_KEYS.COURSE_LIST, item);
+  if (success) scheduleClassReminders();
+  return success ? item : null;
+}
+
+function updateCourse(id, updates) {
+  initCourseData();
+  const success = storage.updateInList(STORAGE_KEYS.COURSE_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+  if (success) scheduleClassReminders();
+  return success;
+}
+
+function deleteCourse(id) {
+  initCourseData();
+  const success = storage.removeFromList(STORAGE_KEYS.COURSE_LIST, id);
+  if (success) scheduleClassReminders();
+  return success;
+}
+
+function importCourses(text) {
+  initCourseData();
+  const lines = text.split('\n').filter(l => l.trim());
+  const imported = [];
+  const colorCount = constants.COURSE_COLORS.length;
+  let colorIdx = 0;
+
+  lines.forEach(line => {
+    const parts = line.split(/[,，\t|]/).map(s => s.trim());
+    if (parts.length >= 5) {
+      const [name, teacher, classroom, dayStr, slotStr, weeks, credit] = parts;
+      const dayOfWeek = parseInt(dayStr) || 1;
+      const slots = slotStr.split('-').map(s => parseInt(s));
+      const startSlot = slots[0] || 1;
+      const endSlot = slots[1] || startSlot;
+      imported.push({
+        id: util.generateId(),
+        name,
+        teacher,
+        classroom,
+        dayOfWeek: Math.max(1, Math.min(7, dayOfWeek)),
+        startSlot,
+        endSlot,
+        colorIndex: colorIdx % colorCount,
+        weeks: weeks || '1-16周',
+        credit: parseFloat(credit) || 2,
+        semester: getCurrentSemester(),
+        createTime: Date.now()
+      });
+      colorIdx++;
+    }
+  });
+
+  if (imported.length > 0) {
+    const existing = storage.getList(STORAGE_KEYS.COURSE_LIST);
+    storage.set(STORAGE_KEYS.COURSE_LIST, [...existing, ...imported]);
+    scheduleClassReminders();
+  }
+  return imported;
+}
+
+function getCourseSettings() {
+  initCourseData();
+  return storage.get(STORAGE_KEYS.COURSE_SETTINGS) || { ...mockData.MOCK_COURSE_SETTINGS };
+}
+
+function updateCourseSettings(updates) {
+  initCourseData();
+  const current = getCourseSettings();
+  const newSettings = { ...current, ...updates };
+  storage.set(STORAGE_KEYS.COURSE_SETTINGS, newSettings);
+  scheduleClassReminders();
+  return newSettings;
+}
+
+function getTodayCourses() {
+  const today = new Date().getDay();
+  const dayOfWeek = today === 0 ? 7 : today;
+  return getCoursesByDay(dayOfWeek);
+}
+
+// ==================== 考试成绩 ====================
+let examScoreInitialized = false;
+
+function initExamScoreData() {
+  if (examScoreInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.EXAM_SCORES);
+  if (!existing || existing.length === 0) {
+    storage.set(STORAGE_KEYS.EXAM_SCORES, [...mockData.MOCK_EXAM_SCORES]);
+  }
+  examScoreInitialized = true;
+}
+
+function getExamScoreList(filters = {}) {
+  initExamScoreData();
+  let list = storage.getList(STORAGE_KEYS.EXAM_SCORES);
+  if (filters.semester) {
+    list = list.filter(item => item.semester === filters.semester);
+  }
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['courseName']);
+  }
+  if (filters.courseType) {
+    list = list.filter(item => item.courseType === filters.courseType);
+  }
+  return list;
+}
+
+function getExamScoresBySemester() {
+  const scores = getExamScoreList();
+  const result = {};
+  scores.forEach(s => {
+    if (!result[s.semester]) result[s.semester] = [];
+    result[s.semester].push(s);
+  });
+  return result;
+}
+
+function calculateGPA(scores) {
+  if (!scores || scores.length === 0) return { gpa: 0, totalCredit: 0, weightedSum: 0 };
+  let totalCredit = 0;
+  let weightedSum = 0;
+  scores.forEach(s => {
+    if (s.courseType === '必修' || s.courseType === '选修') {
+      const gpa = constants.getGPA(s.score);
+      totalCredit += s.credit;
+      weightedSum += gpa * s.credit;
+    }
+  });
+  return {
+    gpa: totalCredit > 0 ? Math.round(weightedSum / totalCredit * 100) / 100 : 0,
+    totalCredit,
+    weightedSum
+  };
+}
+
+function calculateCreditStats() {
+  const scores = getExamScoreList();
+  const passed = scores.filter(s => s.score >= 60);
+  const failed = scores.filter(s => s.score < 60);
+  const required = scores.filter(s => s.courseType === '必修');
+  const elective = scores.filter(s => s.courseType === '选修');
+
+  return {
+    totalCourses: scores.length,
+    passedCount: passed.length,
+    failedCount: failed.length,
+    totalCredit: scores.reduce((sum, s) => sum + (s.credit || 0), 0),
+    earnedCredit: passed.reduce((sum, s) => sum + (s.credit || 0), 0),
+    requiredCredit: required.filter(s => s.score >= 60).reduce((sum, s) => sum + (s.credit || 0), 0),
+    electiveCredit: elective.filter(s => s.score >= 60).reduce((sum, s) => sum + (s.credit || 0), 0),
+    gpa: calculateGPA(scores).gpa
+  };
+}
+
+function getFailedCourses() {
+  return getExamScoreList().filter(s => s.score < 60);
+}
+
+// ==================== 考试安排 ====================
+let examScheduleInitialized = false;
+
+function initExamScheduleData() {
+  if (examScheduleInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.EXAM_SCHEDULE);
+  if (!existing || existing.length === 0) {
+    storage.set(STORAGE_KEYS.EXAM_SCHEDULE, [...mockData.MOCK_EXAM_SCHEDULE]);
+  }
+  examScheduleInitialized = true;
+}
+
+function getExamScheduleList(filters = {}) {
+  initExamScheduleData();
+  let list = storage.getList(STORAGE_KEYS.EXAM_SCHEDULE);
+  if (filters.isCompleted !== undefined) {
+    list = list.filter(item => item.isCompleted === filters.isCompleted);
+  }
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['courseName', 'classroom']);
+  }
+  return list.sort((a, b) => {
+    const dateA = new Date(a.examDate + ' ' + a.startTime).getTime();
+    const dateB = new Date(b.examDate + ' ' + b.startTime).getTime();
+    return dateA - dateB;
+  });
+}
+
+function getUpcomingExams() {
+  return getExamScheduleList({ isCompleted: false });
+}
+
+function getExamCountdown() {
+  const upcoming = getUpcomingExams();
+  if (upcoming.length === 0) return null;
+  const now = Date.now();
+  const countdowns = upcoming.map(exam => {
+    const examTime = new Date(exam.examDate + ' ' + exam.startTime).getTime();
+    const diff = examTime - now;
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    return {
+      ...exam,
+      timestamp: examTime,
+      diff,
+      days,
+      hours,
+      minutes,
+      isExpired: diff <= 0
+    };
+  });
+  return countdowns.filter(c => !c.isExpired).sort((a, b) => a.diff - b.diff);
+}
+
+function markExamCompleted(id) {
+  initExamScheduleData();
+  return storage.updateInList(STORAGE_KEYS.EXAM_SCHEDULE, id, {
+    isCompleted: true,
+    completedAt: Date.now()
+  });
+}
+
+// ==================== 空教室查询 ====================
+let classroomDataInitialized = false;
+let classroomScheduleInitialized = false;
+
+function initClassroomData() {
+  if (classroomDataInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.CLASSROOM_LIST);
+  if (!existing || existing.length === 0) {
+    storage.set(STORAGE_KEYS.CLASSROOM_LIST, [...mockData.MOCK_CLASSROOMS]);
+  }
+  classroomDataInitialized = true;
+}
+
+function getClassroomList(filters = {}) {
+  initClassroomData();
+  let list = storage.getList(STORAGE_KEYS.CLASSROOM_LIST);
+  if (filters.building && filters.building !== 'all') {
+    list = list.filter(item => item.building === filters.building);
+  }
+  if (filters.type) {
+    list = list.filter(item => item.type === filters.type);
+  }
+  if (filters.minCapacity !== undefined) {
+    list = list.filter(item => item.capacity >= filters.minCapacity);
+  }
+  if (filters.hasProjector) {
+    list = list.filter(item => item.hasProjector);
+  }
+  if (filters.hasAc) {
+    list = list.filter(item => item.hasAc);
+  }
+  return list;
+}
+
+function generateClassroomSchedule() {
+  if (classroomScheduleInitialized) return;
+  const courses = getCourseList();
+  const schedule = {};
+
+  courses.forEach(course => {
+    const match = course.classroom.match(/^([A-E])栋(\d+)/);
+    if (match) {
+      const building = match[1];
+      const room = match[2];
+      const id = `cr_${building}_${room}`;
+      if (!schedule[id]) schedule[id] = {};
+      for (let slot = course.startSlot; slot <= course.endSlot; slot++) {
+        if (!schedule[id][course.dayOfWeek]) schedule[id][course.dayOfWeek] = {};
+        schedule[id][course.dayOfWeek][slot] = {
+          courseName: course.name,
+          teacher: course.teacher,
+          weeks: course.weeks
+        };
+      }
+    }
+  });
+
+  const randomOccupied = 0.2;
+  const classrooms = getClassroomList();
+  classrooms.forEach(cr => {
+    if (!schedule[cr.id]) schedule[cr.id] = {};
+    for (let day = 1; day <= 7; day++) {
+      if (!schedule[cr.id][day]) schedule[cr.id][day] = {};
+      for (let slot = 1; slot <= 10; slot++) {
+        if (!schedule[cr.id][day][slot] && Math.random() < randomOccupied) {
+          schedule[cr.id][day][slot] = {
+            courseName: '临时占用',
+            teacher: '—',
+            weeks: '活动占用'
+          };
+        }
+      }
+    }
+  });
+
+  storage.set('classroomScheduleData', schedule);
+  classroomScheduleInitialized = true;
+}
+
+function getClassroomSchedule(classroomId) {
+  initClassroomData();
+  generateClassroomSchedule();
+  const schedule = storage.get('classroomScheduleData') || {};
+  return schedule[classroomId] || {};
+}
+
+function getAvailableClassrooms(filters = {}) {
+  initClassroomData();
+  generateClassroomSchedule();
+  const { dayOfWeek, startSlot, endSlot, building } = filters;
+  const classrooms = getClassroomList({ building: building || 'all' });
+  const schedule = storage.get('classroomScheduleData') || {};
+
+  return classrooms.filter(cr => {
+    const crSchedule = schedule[cr.id] || {};
+    const daySchedule = crSchedule[dayOfWeek] || {};
+    for (let slot = startSlot; slot <= endSlot; slot++) {
+      if (daySchedule[slot]) return false;
+    }
+    return true;
+  });
+}
+
+// ==================== 上课提醒 ====================
+function scheduleClassReminders() {
+  const settings = getCourseSettings();
+  if (!settings.enableReminder || !settings.reminderMinutes) {
+    clearClassReminders();
+    return [];
+  }
+
+  const todayCourses = getTodayCourses();
+  const reminders = [];
+  const now = new Date();
+
+  todayCourses.forEach(course => {
+    const slot = constants.getSlotTime(course.startSlot);
+    if (!slot) return;
+
+    const [sh, sm] = slot.start.split(':').map(Number);
+    const startTime = new Date();
+    startTime.setHours(sh, sm, 0, 0);
+
+    const remindTime = new Date(startTime.getTime() - settings.reminderMinutes * 60 * 1000);
+    const diffMs = remindTime.getTime() - now.getTime();
+
+    if (diffMs > 0) {
+      reminders.push({
+        id: 'reminder_' + course.id,
+        courseId: course.id,
+        courseName: course.name,
+        classroom: course.classroom,
+        teacher: course.teacher,
+        startSlot: course.startSlot,
+        startTime: slot.start,
+        remindAt: remindTime.getTime(),
+        minutesBefore: settings.reminderMinutes,
+        scheduled: true
+      });
+    }
+  });
+
+  storage.set(STORAGE_KEYS.CLASS_REMINDERS, reminders);
+  return reminders;
+}
+
+function getClassReminders() {
+  return storage.getList(STORAGE_KEYS.CLASS_REMINDERS);
+}
+
+function clearClassReminders() {
+  return storage.set(STORAGE_KEYS.CLASS_REMINDERS, []);
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -3707,5 +4147,45 @@ module.exports = {
   addMapSearchHistory,
   clearMapSearchHistory,
   getMapSettings,
-  updateMapSettings
+  updateMapSettings,
+
+  // ==================== 课程表模块 ====================
+  initCourseData,
+  getCourseList,
+  getCoursesByDay,
+  getCoursesByWeek,
+  getCourseDetail,
+  addCourse,
+  updateCourse,
+  deleteCourse,
+  importCourses,
+  getCourseSettings,
+  updateCourseSettings,
+  getTodayCourses,
+
+  // ==================== 考试成绩 ====================
+  initExamScoreData,
+  getExamScoreList,
+  getExamScoresBySemester,
+  calculateGPA,
+  calculateCreditStats,
+  getFailedCourses,
+
+  // ==================== 考试安排 ====================
+  initExamScheduleData,
+  getExamScheduleList,
+  getUpcomingExams,
+  getExamCountdown,
+  markExamCompleted,
+
+  // ==================== 空教室查询 ====================
+  initClassroomData,
+  getClassroomList,
+  getAvailableClassrooms,
+  getClassroomSchedule,
+
+  // ==================== 上课提醒 ====================
+  scheduleClassReminders,
+  getClassReminders,
+  clearClassReminders
 };

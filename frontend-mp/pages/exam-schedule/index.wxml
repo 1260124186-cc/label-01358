@@ -1,0 +1,203 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F0F5FF'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="exam-page {{darkMode ? 'dark' : ''}}">
+  <view class="loading" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <scroll-view
+    class="exam-scroll"
+    scroll-y="{{true}}"
+    enhanced="{{true}}"
+    show-scrollbar="{{false}}"
+    wx:else
+  >
+    <view class="exam-content">
+      <view class="page-header">
+        <text class="page-title">考试安排</text>
+        <text class="page-subtitle">考试周倒计时 · 考场座位查询</text>
+      </view>
+
+      <view class="countdown-big-card" wx:if="{{firstExam}}">
+        <view class="countdown-card-header">
+          <text class="countdown-icon">📅</text>
+          <text class="countdown-card-title">距离第一场考试还有</text>
+        </view>
+        <view class="countdown-numbers">
+          <view class="countdown-item">
+            <text class="countdown-num">{{mainCountdown.days}}</text>
+            <text class="countdown-unit">天</text>
+          </view>
+          <view class="countdown-colon">:</view>
+          <view class="countdown-item">
+            <text class="countdown-num">{{mainCountdown.hours}}</text>
+            <text class="countdown-unit">时</text>
+          </view>
+          <view class="countdown-colon">:</view>
+          <view class="countdown-item">
+            <text class="countdown-num">{{mainCountdown.minutes}}</text>
+            <text class="countdown-unit">分</text>
+          </view>
+          <view class="countdown-colon colon-seconds">:</view>
+          <view class="countdown-item item-seconds">
+            <text class="countdown-num num-seconds">{{mainCountdown.seconds}}</text>
+            <text class="countdown-unit unit-seconds">秒</text>
+          </view>
+        </view>
+        <view class="countdown-exam-info">
+          <text class="countdown-course">{{firstExam.courseName}}</text>
+          <text class="countdown-detail">{{firstExam.examDate}} {{firstExam.startTime}} · {{firstExam.classroom}}</text>
+        </view>
+      </view>
+
+      <view class="no-exam-card" wx:else>
+        <text class="no-exam-icon">🎉</text>
+        <text class="no-exam-title">暂无考试安排</text>
+        <text class="no-exam-subtitle">好好学习，天天向上</text>
+      </view>
+
+      <view class="tab-container">
+        <view class="tab-item {{activeTab === 'upcoming' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="upcoming">
+          <text class="tab-text">未考</text>
+          <view class="tab-badge" wx:if="{{upcomingList.length > 0}}">
+            <text class="tab-badge-text">{{upcomingList.length}}</text>
+          </view>
+        </view>
+        <view class="tab-item {{activeTab === 'completed' ? 'tab-active' : ''}}" bindtap="switchTab" data-tab="completed">
+          <text class="tab-text">已考</text>
+          <view class="tab-badge tab-badge-gray" wx:if="{{completedList.length > 0}}">
+            <text class="tab-badge-text">{{completedList.length}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="exam-list" wx:if="{{activeTab === 'upcoming'}}">
+        <view class="empty-tip" wx:if="{{upcomingList.length === 0}}">
+          <text class="empty-icon">📚</text>
+          <text class="empty-text">全部考试已完成，辛苦了！</text>
+        </view>
+
+        <view
+          class="exam-card {{item.urgent ? 'exam-urgent' : ''}}"
+          wx:for="{{upcomingList}}"
+          wx:key="id"
+          bindtap="onExamCardTap"
+          data-exam="{{item}}"
+        >
+          <view class="exam-card-countdown-badge">
+            <text class="exam-countdown-text">{{item.countdownText}}</text>
+          </view>
+
+          <view class="exam-card-header">
+            <text class="exam-course-name">{{item.courseName}}</text>
+            <view class="exam-type-tag">
+              <text class="exam-type-text">{{item.examType}}</text>
+            </view>
+          </view>
+
+          <view class="exam-info-row">
+            <view class="exam-info-item">
+              <text class="exam-info-icon">📆</text>
+              <text class="exam-info-text">{{item.examDate}} {{item.weekdayText}}</text>
+            </view>
+          </view>
+
+          <view class="exam-info-row">
+            <view class="exam-info-item">
+              <text class="exam-info-icon">⏰</text>
+              <text class="exam-info-text">{{item.startTime}} - {{item.endTime}}</text>
+            </view>
+          </view>
+
+          <view class="exam-info-row">
+            <view class="exam-info-item">
+              <text class="exam-info-icon">🏫</text>
+              <text class="exam-info-text">{{item.buildingText}} · {{item.roomText}}</text>
+            </view>
+            <view class="exam-info-item">
+              <text class="exam-info-icon">💺</text>
+              <text class="exam-info-text">座位号 {{item.seatNo}}</text>
+            </view>
+          </view>
+
+          <view class="exam-card-footer">
+            <text class="exam-tip-text">点击标记为已完成</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="exam-list" wx:else>
+        <view class="empty-tip" wx:if="{{completedList.length === 0}}">
+          <text class="empty-icon">⏳</text>
+          <text class="empty-text">暂无已完成的考试</text>
+        </view>
+
+        <view
+          class="exam-card exam-completed"
+          wx:for="{{completedList}}"
+          wx:key="id"
+        >
+          <view class="exam-completed-badge">
+            <text class="exam-completed-text">✓ 已完成</text>
+          </view>
+
+          <view class="exam-card-header">
+            <text class="exam-course-name">{{item.courseName}}</text>
+            <view class="exam-type-tag exam-type-tag-gray">
+              <text class="exam-type-text">{{item.examType}}</text>
+            </view>
+          </view>
+
+          <view class="exam-info-row">
+            <view class="exam-info-item">
+              <text class="exam-info-icon">📆</text>
+              <text class="exam-info-text">{{item.examDate}} {{item.weekdayText}}</text>
+            </view>
+          </view>
+
+          <view class="exam-info-row">
+            <view class="exam-info-item">
+              <text class="exam-info-icon">⏰</text>
+              <text class="exam-info-text">{{item.startTime}} - {{item.endTime}}</text>
+            </view>
+          </view>
+
+          <view class="exam-info-row">
+            <view class="exam-info-item">
+              <text class="exam-info-icon">🏫</text>
+              <text class="exam-info-text">{{item.buildingText}} · {{item.roomText}}</text>
+            </view>
+            <view class="exam-info-item">
+              <text class="exam-info-icon">💺</text>
+              <text class="exam-info-text">座位号 {{item.seatNo}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="tips-card">
+        <view class="tips-header">
+          <text class="tips-icon">💡</text>
+          <text class="tips-title">考试周温馨提示</text>
+        </view>
+        <view class="tips-list">
+          <view class="tips-item">
+            <text class="tips-dot">•</text>
+            <text class="tips-text">请携带身份证、学生证、校园卡等有效证件</text>
+          </view>
+          <view class="tips-item">
+            <text class="tips-dot">•</text>
+            <text class="tips-text">建议提前30分钟到达考场，避免迟到</text>
+          </view>
+          <view class="tips-item">
+            <text class="tips-dot">•</text>
+            <text class="tips-text">诚信应考，严禁作弊，违纪将记入档案</text>
+          </view>
+          <view class="tips-item">
+            <text class="tips-dot">•</text>
+            <text class="tips-text">合理安排作息，保持良好心态，祝考试顺利</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+</view>

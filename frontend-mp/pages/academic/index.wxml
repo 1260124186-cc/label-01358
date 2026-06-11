@@ -1,0 +1,411 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="tab-bar">
+    <view
+      class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="value"
+      bindtap="onTabChange"
+      data-value="{{item.value}}"
+    >
+      <text class="tab-icon">{{item.icon}}</text>
+      <text class="tab-label">{{item.label}}</text>
+    </view>
+  </view>
+
+  <scroll-view class="content-scroll" scroll-y="{{true}}">
+    <!-- 成绩查询 -->
+    <view wx:if="{{currentTab === 'score'}}" class="tab-content">
+      <view class="semester-selector">
+        <view class="selector-label">
+          <text class="selector-icon">📅</text>
+          <text class="selector-text">选择学期</text>
+        </view>
+        <picker
+          mode="selector"
+          range="{{semesterOptions}}"
+          range-key="label"
+          value="{{semesterPickerIndex}}"
+          bindchange="onSemesterChange"
+        >
+          <view class="selector-picker">
+            <text class="picker-value">{{semesterOptions[semesterPickerIndex].label}}</text>
+            <text class="picker-arrow">▼</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="score-summary gradient-card score-gradient">
+        <view class="summary-item">
+          <text class="summary-value">{{scoreList.length}}</text>
+          <text class="summary-label">课程数</text>
+        </view>
+        <view class="summary-divider"></view>
+        <view class="summary-item">
+          <text class="summary-value">{{creditStats.gpa}}</text>
+          <text class="summary-label">总GPA</text>
+        </view>
+        <view class="summary-divider"></view>
+        <view class="summary-item">
+          <text class="summary-value">{{scoreListWithLevel.length > 0 ? (scoreListWithLevel.reduce((s, i) => s + i.score, 0) / scoreListWithLevel.length).toFixed(1) : 0}}</text>
+          <text class="summary-label">平均分</text>
+        </view>
+      </view>
+
+      <view class="section-header">
+        <text class="section-title">📝 成绩列表</text>
+        <text class="section-count">共 {{scoreListWithLevel.length}} 门课程</text>
+      </view>
+
+      <view class="score-list" wx:if="{{scoreListWithLevel.length > 0}}">
+        <view class="score-card" wx:for="{{scoreListWithLevel}}" wx:key="id">
+          <view class="score-card-header">
+            <view class="course-info">
+              <text class="course-name">{{item.courseName}}</text>
+              <view class="course-tags">
+                <text class="course-tag type-tag">{{item.courseType}}</text>
+                <text class="course-tag credit-tag">学分 {{item.credit}}</text>
+              </view>
+            </view>
+            <view class="score-display" style="background: linear-gradient(135deg, {{item.levelColor}} 0%, {{item.levelColor}}CC 100%);">
+              <text class="score-number">{{item.score}}</text>
+              <text class="score-level">{{item.levelLabel}}</text>
+            </view>
+          </view>
+          <view class="score-card-footer">
+            <view class="footer-item">
+              <text class="footer-label">GPA</text>
+              <text class="footer-value gpa-value">{{item.gpa}}</text>
+            </view>
+            <view class="footer-item">
+              <text class="footer-label">考试类型</text>
+              <text class="footer-value">{{item.examType}}</text>
+            </view>
+            <view class="footer-item">
+              <text class="footer-label">绩点</text>
+              <text class="footer-value">{{(item.gpa * item.credit).toFixed(1)}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <empty wx:if="{{scoreListWithLevel.length === 0}}" text="该学期暂无成绩记录" />
+    </view>
+
+    <!-- 学分统计 -->
+    <view wx:if="{{currentTab === 'credit'}}" class="tab-content">
+      <view class="credit-overview gradient-card credit-gradient">
+        <view class="overview-main">
+          <view class="gpa-circle">
+            <text class="gpa-big">{{creditStats.gpa}}</text>
+            <text class="gpa-label">总GPA</text>
+          </view>
+          <view class="overview-info">
+            <view class="info-row">
+              <text class="info-label">已获学分</text>
+              <text class="info-value highlight">{{creditStats.earnedCredit}}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-label">总学分</text>
+              <text class="info-value">{{creditStats.totalCredit}}</text>
+            </view>
+            <view class="info-row">
+              <text class="info-label">学习状态</text>
+              <text class="status-tag status-good">正常</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="progress-section">
+        <view class="progress-card">
+          <view class="progress-header">
+            <text class="progress-title">总体学分进度</text>
+            <text class="progress-percent">{{creditProgressPercent}}%</text>
+          </view>
+          <view class="progress-bar-wrap">
+            <view class="progress-bar progress-total">
+              <view class="progress-fill" style="width: {{creditProgressPercent}}%;"></view>
+            </view>
+          </view>
+          <view class="progress-detail">
+            <text class="detail-text">{{creditStats.earnedCredit}} / 140 学分</text>
+          </view>
+        </view>
+
+        <view class="progress-card">
+          <view class="progress-header">
+            <text class="progress-title">必修学分</text>
+            <text class="progress-percent required">{{requiredProgressPercent}}%</text>
+          </view>
+          <view class="progress-bar-wrap">
+            <view class="progress-bar progress-required">
+              <view class="progress-fill" style="width: {{requiredProgressPercent}}%;"></view>
+            </view>
+          </view>
+          <view class="progress-detail">
+            <text class="detail-text">{{creditStats.requiredCredit}} / 100 学分</text>
+          </view>
+        </view>
+
+        <view class="progress-card">
+          <view class="progress-header">
+            <text class="progress-title">选修学分</text>
+            <text class="progress-percent elective">{{electiveProgressPercent}}%</text>
+          </view>
+          <view class="progress-bar-wrap">
+            <view class="progress-bar progress-elective">
+              <view class="progress-fill" style="width: {{electiveProgressPercent}}%;"></view>
+            </view>
+          </view>
+          <view class="progress-detail">
+            <text class="detail-text">{{creditStats.electiveCredit}} / 40 学分</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-header">
+        <text class="section-title">📊 学分统计详情</text>
+      </view>
+
+      <view class="credit-stats-grid">
+        <view class="stat-card stat-1">
+          <view class="stat-icon-wrap">
+            <text class="stat-icon">📚</text>
+          </view>
+          <text class="stat-value">{{creditStats.totalCourses}}</text>
+          <text class="stat-label">总课程数</text>
+        </view>
+        <view class="stat-card stat-2">
+          <view class="stat-icon-wrap">
+            <text class="stat-icon">✅</text>
+          </view>
+          <text class="stat-value">{{creditStats.passedCount}}</text>
+          <text class="stat-label">通过课程</text>
+        </view>
+        <view class="stat-card stat-3">
+          <view class="stat-icon-wrap">
+            <text class="stat-icon">⚠️</text>
+          </view>
+          <text class="stat-value danger">{{creditStats.failedCount}}</text>
+          <text class="stat-label">挂科课程</text>
+        </view>
+        <view class="stat-card stat-4">
+          <view class="stat-icon-wrap">
+            <text class="stat-icon">🎯</text>
+          </view>
+          <text class="stat-value">{{creditStats.totalCredit}}</text>
+          <text class="stat-label">总学分</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 挂科预警 -->
+    <view wx:if="{{currentTab === 'warning'}}" class="tab-content">
+      <view class="warning-header gradient-card warning-gradient">
+        <view class="warning-icon-wrap">
+          <text class="warning-icon-big">⚠️</text>
+        </view>
+        <view class="warning-header-info">
+          <text class="warning-title">挂科预警提醒</text>
+          <text class="warning-desc">共有 {{failedCoursesWithAdvice.length}} 门课程需要关注</text>
+        </view>
+      </view>
+
+      <block wx:if="{{failedCoursesWithAdvice.length > 0}}">
+        <view class="warning-list">
+          <view
+            class="warning-card {{item.isCritical ? 'critical' : ''}}"
+            wx:for="{{failedCoursesWithAdvice}}"
+            wx:key="id"
+          >
+            <view class="warning-card-header">
+              <view class="warning-course-info">
+                <text class="warning-course-name">{{item.courseName}}</text>
+                <view class="warning-course-tags">
+                  <text class="warning-tag type-tag">{{item.courseType}}</text>
+                  <text class="warning-tag credit-tag">{{item.credit}}学分</text>
+                  <text wx:if="{{item.isCritical}}" class="warning-tag critical-tag">重点关注</text>
+                </view>
+              </view>
+              <view class="warning-score-display">
+                <text class="warning-score">{{item.score}}</text>
+                <text class="warning-score-label">分</text>
+              </view>
+            </view>
+            <view class="warning-card-body">
+              <view class="advice-section">
+                <text class="advice-icon">💡</text>
+                <view class="advice-content">
+                  <text class="advice-label">学习建议</text>
+                  <text class="advice-text">{{item.advice}}</text>
+                </view>
+              </view>
+            </view>
+            <view class="warning-card-footer">
+              <view class="action-btn action-review">
+                <text class="btn-icon">📖</text>
+                <text class="btn-text">复习资料</text>
+              </view>
+              <view class="action-btn action-retake">
+                <text class="btn-icon">🔄</text>
+                <text class="btn-text">申请重修</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <view wx:if="{{failedCoursesWithAdvice.length === 0}}" class="no-warning-card">
+        <view class="no-warning-icon">🎉</view>
+        <text class="no-warning-title">暂无挂科，继续保持！</text>
+        <text class="no-warning-desc">你所有课程都已通过，学习状态非常棒！</text>
+        <view class="no-warning-tips">
+          <view class="tip-item">
+            <text class="tip-icon">✨</text>
+            <text class="tip-text">继续保持良好的学习习惯</text>
+          </view>
+          <view class="tip-item">
+            <text class="tip-icon">🎯</text>
+            <text class="tip-text">争取更高的GPA成绩</text>
+          </view>
+          <view class="tip-item">
+            <text class="tip-icon">🏆</text>
+            <text class="tip-text">为奖学金评选做准备</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 学业分析 -->
+    <view wx:if="{{currentTab === 'analysis'}}" class="tab-content" wx:if="{{analysisData}}">
+      <view class="analysis-overview gradient-card analysis-gradient">
+        <view class="overview-status">
+          <text class="status-label">学习状态</text>
+          <text class="status-badge status-{{analysisData.learningStatus}}">{{analysisData.learningStatus}}</text>
+        </view>
+        <view class="overview-metrics">
+          <view class="metric-item">
+            <text class="metric-value">{{analysisData.avgScore}}</text>
+            <text class="metric-label">平均分</text>
+          </view>
+          <view class="metric-item">
+            <text class="metric-value">{{analysisData.overallGpa}}</text>
+            <text class="metric-label">综合GPA</text>
+          </view>
+          <view class="metric-item">
+            <text class="metric-value">{{analysisData.passRate}}%</text>
+            <text class="metric-label">通过率</text>
+          </view>
+          <view class="metric-item">
+            <text class="metric-value">{{analysisData.excellentRate}}%</text>
+            <text class="metric-label">优秀率</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-header">
+        <text class="section-title">📊 成绩等级分布</text>
+      </view>
+
+      <view class="distribution-card">
+        <view class="distribution-item" wx:for="{{analysisData.levelDistribution}}" wx:key="label">
+          <view class="dist-header">
+            <text class="dist-label" style="color: {{item.color}};">{{item.label}}</text>
+            <text class="dist-count">{{item.count}}门 ({{item.percent}}%)</text>
+          </view>
+          <view class="dist-bar-wrap">
+            <view class="dist-bar" style="background-color: {{item.color}}20;">
+              <view class="dist-fill" style="width: {{item.percent}}%; background: linear-gradient(90deg, {{item.color}} 0%, {{item.color}}CC 100%);"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-header">
+        <text class="section-title">📈 综合能力雷达</text>
+      </view>
+
+      <view class="radar-card">
+        <view class="radar-item" wx:for="{{analysisData.radarData}}" wx:key="label">
+          <view class="radar-header">
+            <text class="radar-label">{{item.label}}</text>
+            <text class="radar-value">{{item.value}}%</text>
+          </view>
+          <view class="radar-bar-wrap">
+            <view class="radar-bar">
+              <view
+                class="radar-fill"
+                style="width: {{item.value}}%; background: linear-gradient(90deg, #6366F1 0%, #8B5CF6 50%, #A855F7 100%);"
+              ></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-header">
+        <text class="section-title">📚 学期趋势分析</text>
+      </view>
+
+      <view class="trend-card">
+        <view class="trend-item" wx:for="{{analysisData.semesterTrend}}" wx:key="semester">
+          <view class="trend-semester">
+            <text class="trend-name">{{item.semesterLabel}}</text>
+          </view>
+          <view class="trend-metrics">
+            <view class="trend-metric">
+              <text class="trend-metric-label">平均分</text>
+              <text class="trend-metric-value blue">{{item.avgScore}}</text>
+            </view>
+            <view class="trend-metric">
+              <text class="trend-metric-label">GPA</text>
+              <text class="trend-metric-value purple">{{item.gpa}}</text>
+            </view>
+          </view>
+          <view class="trend-bar-wrap">
+            <view class="trend-bar trend-bar-score">
+              <view class="trend-fill score-fill" style="width: {{item.avgScore}}%;"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-header">
+        <text class="section-title">🎯 关键指标卡片</text>
+      </view>
+
+      <view class="key-metrics-grid">
+        <view class="key-metric-card metric-blue">
+          <view class="km-header">
+            <text class="km-icon">📖</text>
+          </view>
+          <text class="km-value">{{analysisData.totalCourses}}</text>
+          <text class="km-label">修读课程</text>
+        </view>
+        <view class="key-metric-card metric-green">
+          <view class="km-header">
+            <text class="km-icon">✅</text>
+          </view>
+          <text class="km-value">{{analysisData.passedCount}}</text>
+          <text class="km-label">通过课程</text>
+        </view>
+        <view class="key-metric-card metric-gold">
+          <view class="km-header">
+            <text class="km-icon">🏆</text>
+          </view>
+          <text class="km-value">{{analysisData.excellentCount}}</text>
+          <text class="km-label">优秀课程</text>
+        </view>
+        <view class="key-metric-card metric-purple">
+          <view class="km-header">
+            <text class="km-icon">💯</text>
+          </view>
+          <text class="km-value">{{analysisData.goodRate}}%</text>
+          <text class="km-label">良好率</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>

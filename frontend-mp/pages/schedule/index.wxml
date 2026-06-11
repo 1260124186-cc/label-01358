@@ -1,0 +1,232 @@
+<view class="page">
+  <view class="schedule-tabs">
+    <view
+      class="schedule-tab-item {{activeScheduleTab === item.value ? 'active' : ''}}"
+      wx:for="{{scheduleTabs}}"
+      wx:key="value"
+      bindtap="onScheduleTabTap"
+      data-value="{{item.value}}"
+    >
+      <text class="schedule-tab-icon">{{item.icon}}</text>
+      <text class="schedule-tab-label">{{item.label}}</text>
+      <view class="schedule-tab-indicator" wx:if="{{activeScheduleTab === item.value}}"></view>
+    </view>
+  </view>
+
+  <view class="schedule-content" wx:if="{{activeScheduleTab === 'schedule'}}">
+    <view class="week-switcher">
+      <view class="week-nav-btn" bindtap="onPrevWeek">
+        <text class="week-nav-icon">‹</text>
+      </view>
+      <view class="week-selector" bindtap="onWeekSelect">
+        <text class="week-text">第{{currentWeek}}周</text>
+        <text class="week-arrow">▾</text>
+      </view>
+      <view class="week-nav-btn" bindtap="onNextWeek">
+        <text class="week-nav-icon">›</text>
+      </view>
+    </view>
+
+    <view class="view-switcher">
+      <view
+        class="view-tab-item {{activeViewTab === item.value ? 'active' : ''}}"
+        wx:for="{{scheduleViewTabs}}"
+        wx:key="value"
+        bindtap="onViewTabTap"
+        data-value="{{item.value}}"
+      >
+        <text>{{item.label}}</text>
+      </view>
+    </view>
+
+    <view class="week-view-container" wx:if="{{activeViewTab === 'week'}}">
+      <view class="week-grid">
+        <view class="grid-header">
+          <view class="grid-corner"></view>
+          <view
+            class="grid-day-header {{currentDay === day.value ? 'today' : ''}}"
+            wx:for="{{weekDays}}"
+            wx:for-item="day"
+            wx:key="value"
+            bindtap="onDayTap"
+            data-day="{{day.value}}"
+          >
+            <text class="day-label">{{day.label}}</text>
+          </view>
+        </view>
+
+        <scroll-view class="grid-body" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+          <view class="grid-body-inner">
+            <view
+              class="grid-row"
+              wx:for="{{timeSlots}}"
+              wx:for-item="slot"
+              wx:for-index="rowIdx"
+              wx:key="slot"
+            >
+              <view class="grid-time-cell">
+                <text class="slot-num">{{slot.slot}}</text>
+                <text class="slot-time">{{slot.start}}</text>
+              </view>
+              <view class="grid-day-cells">
+                <view
+                  class="grid-cell"
+                  wx:for="{{weekDays}}"
+                  wx:for-item="day"
+                  wx:key="value"
+                >
+                  <block wx:for="{{weekCourses[day.value]}}" wx:for-item="course" wx:key="id">
+                    <view
+                      wx:if="{{course.topIndex === rowIdx}}"
+                      class="course-block"
+                      style="background: {{course.color.bg}}; border-left: 6rpx solid {{course.color.border}}; color: {{course.color.text}}; height: {{course.slotSpan * 100}}%;"
+                      bindtap="onCourseTap"
+                      data-course="{{course}}"
+                      catchtap="onCourseTap"
+                    >
+                      <text class="course-name">{{course.name}}</text>
+                      <text class="course-room">{{course.classroom}}</text>
+                      <text class="course-teacher">{{course.teacher}}</text>
+                    </view>
+                  </block>
+                </view>
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+    </view>
+
+    <view class="day-view-container" wx:if="{{activeViewTab === 'day'}}">
+      <view class="day-tabs">
+        <view
+          class="day-tab-item {{currentDay === day.value ? 'active' : ''}}"
+          wx:for="{{weekDays}}"
+          wx:for-item="day"
+          wx:key="value"
+          bindtap="onDayTap"
+          data-day="{{day.value}}"
+        >
+          <text class="day-tab-label">{{day.label}}</text>
+        </view>
+      </view>
+
+      <view class="day-course-list" wx:if="{{dayCourses.length > 0}}">
+        <view
+          class="day-course-card"
+          wx:for="{{dayCourses}}"
+          wx:key="id"
+          bindtap="onCourseTap"
+          data-course="{{item}}"
+        >
+          <view class="course-time-col">
+            <view class="course-slot-badge" style="background: {{item.color.border}};">
+              <text class="slot-badge-text">{{item.slotLabel}}</text>
+            </view>
+            <text class="course-time-text">{{item.timeLabel}}</text>
+          </view>
+          <view class="course-info-col" style="border-left: 6rpx solid {{item.color.border}}; background: {{item.color.bg}};">
+            <text class="course-title" style="color: {{item.color.text}};">{{item.name}}</text>
+            <view class="course-info-row">
+              <view class="course-info-item">
+                <text class="info-icon">📍</text>
+                <text class="info-text">{{item.classroom}}</text>
+              </view>
+              <view class="course-info-item">
+                <text class="info-icon">👤</text>
+                <text class="info-text">{{item.teacher}}</text>
+              </view>
+            </view>
+            <view class="course-info-row" wx:if="{{item.weeks}}">
+              <view class="course-info-item">
+                <text class="info-icon">📅</text>
+                <text class="info-text">{{item.weeks}}</text>
+              </view>
+              <view class="course-info-item" wx:if="{{item.credit}}">
+                <text class="info-icon">📖</text>
+                <text class="info-text">{{item.credit}}学分</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="empty-state" wx:else>
+        <text class="empty-icon">📭</text>
+        <text class="empty-title">今天没有课程</text>
+        <text class="empty-desc">享受美好的闲暇时光吧</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="fab-btn fab-btn-import" style="bottom: 200rpx;" bindtap="onImportCourse">
+    <text class="fab-icon" style="font-size: 36rpx;">📥</text>
+  </view>
+
+  <view class="fab-btn" bindtap="onAddCourse">
+    <text class="fab-icon">+</text>
+  </view>
+
+  <view class="modal-mask" wx:if="{{showCourseModal}}" bindtap="onCloseModal" catchtouchmove="preventDefault">
+    <view class="modal-content" catchtap="preventDefault">
+      <view class="modal-header" style="background: linear-gradient(135deg, {{selectedCourseColor.border}} 0%, {{selectedCourseColor.bg}} 100%);">
+        <view class="modal-header-content">
+          <text class="modal-course-name" style="color: {{selectedCourseColor.text}};">{{selectedCourse.name}}</text>
+          <text class="modal-course-slot">{{selectedCourseSlots}}</text>
+        </view>
+        <view class="modal-close-btn" bindtap="onCloseModal" catchtap="onCloseModal">
+          <text class="close-icon">×</text>
+        </view>
+      </view>
+
+      <view class="modal-body">
+        <view class="modal-info-item">
+          <view class="modal-info-icon">📍</view>
+          <view class="modal-info-content">
+            <text class="modal-info-label">上课地点</text>
+            <text class="modal-info-value">{{selectedCourse.classroom}}</text>
+          </view>
+        </view>
+        <view class="modal-info-item">
+          <view class="modal-info-icon">👤</view>
+          <view class="modal-info-content">
+            <text class="modal-info-label">授课教师</text>
+            <text class="modal-info-value">{{selectedCourse.teacher}}</text>
+          </view>
+        </view>
+        <view class="modal-info-item">
+          <view class="modal-info-icon">📅</view>
+          <view class="modal-info-content">
+            <text class="modal-info-label">上课时间</text>
+            <text class="modal-info-value">{{selectedCourseDay}} · {{selectedCourseTime}}</text>
+          </view>
+        </view>
+        <view class="modal-info-item" wx:if="{{selectedCourse.weeks}}">
+          <view class="modal-info-icon">🗓️</view>
+          <view class="modal-info-content">
+            <text class="modal-info-label">上课周次</text>
+            <text class="modal-info-value">{{selectedCourse.weeks}}</text>
+          </view>
+        </view>
+        <view class="modal-info-item" wx:if="{{selectedCourse.credit}}">
+          <view class="modal-info-icon">📖</view>
+          <view class="modal-info-content">
+            <text class="modal-info-label">学分</text>
+            <text class="modal-info-value">{{selectedCourse.credit}} 学分</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <view class="modal-btn modal-btn-edit" bindtap="onEditCourse">
+          <text class="btn-icon">✏️</text>
+          <text>编辑课程</text>
+        </view>
+        <view class="modal-btn modal-btn-delete" bindtap="onDeleteCourse">
+          <text class="btn-icon">🗑️</text>
+          <text>删除课程</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,1179 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+}
+
+/* ==================== Tab 栏 ==================== */
+.tab-bar {
+  display: flex;
+  background-color: var(--color-bg-card);
+  padding: 12rpx 16rpx;
+  border-bottom: 1rpx solid var(--color-border-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.tab-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16rpx 8rpx;
+  border-radius: 16rpx;
+  transition: all 0.3s ease;
+}
+
+.tab-item.active {
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  box-shadow: 0 4rpx 16rpx rgba(99, 102, 241, 0.3);
+}
+
+.tab-icon {
+  font-size: 36rpx;
+  margin-bottom: 4rpx;
+}
+
+.tab-label {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  transition: all 0.3s ease;
+}
+
+.tab-item.active .tab-label {
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+/* ==================== 内容滚动区域 ==================== */
+.content-scroll {
+  height: calc(100vh - 140rpx);
+}
+
+.tab-content {
+  padding: 24rpx;
+}
+
+.bottom-space {
+  height: 60rpx;
+}
+
+/* ==================== 通用渐变卡片 ==================== */
+.gradient-card {
+  border-radius: 24rpx;
+  padding: 32rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.08);
+}
+
+.score-gradient {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.credit-gradient {
+  background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.warning-gradient {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.analysis-gradient {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+/* ==================== 通用Section标题 ==================== */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 32rpx 0 20rpx;
+}
+
+.section-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.section-count {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+/* ==================== 成绩查询 ==================== */
+.semester-selector {
+  background-color: var(--color-bg-card);
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.selector-label {
+  display: flex;
+  align-items: center;
+}
+
+.selector-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.selector-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.selector-picker {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+  padding: 12rpx 24rpx;
+  border-radius: 12rpx;
+}
+
+.picker-value {
+  font-size: 24rpx;
+  color: #FFFFFF;
+  font-weight: 500;
+  margin-right: 12rpx;
+}
+
+.picker-arrow {
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.score-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  color: #FFFFFF;
+}
+
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.summary-value {
+  font-size: 48rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.summary-label {
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+.summary-divider {
+  width: 2rpx;
+  height: 60rpx;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.score-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.score-card {
+  background-color: var(--color-bg-card);
+  border-radius: 20rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.score-card:active {
+  transform: scale(0.99);
+}
+
+.score-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.course-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.course-name {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 12rpx;
+}
+
+.course-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.course-tag {
+  display: inline-block;
+  padding: 6rpx 16rpx;
+  font-size: 22rpx;
+  border-radius: 8rpx;
+  font-weight: 500;
+}
+
+.type-tag {
+  background-color: #E0F2FE;
+  color: #0369A1;
+}
+
+.credit-tag {
+  background-color: #FEF3C7;
+  color: #B45309;
+}
+
+.score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 20rpx;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+
+.score-number {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.score-level {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 4rpx;
+  font-weight: 500;
+}
+
+.score-card-footer {
+  display: flex;
+  align-items: center;
+  padding-top: 20rpx;
+  border-top: 1rpx solid var(--color-border-light);
+}
+
+.footer-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer-label {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 6rpx;
+}
+
+.footer-value {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.gpa-value {
+  color: #6366F1;
+}
+
+/* ==================== 学分统计 ==================== */
+.credit-overview {
+  color: #FFFFFF;
+}
+
+.overview-main {
+  display: flex;
+  align-items: center;
+}
+
+.gpa-circle {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 4rpx solid rgba(255, 255, 255, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-right: 32rpx;
+  flex-shrink: 0;
+}
+
+.gpa-big {
+  font-size: 56rpx;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.gpa-label {
+  font-size: 22rpx;
+  opacity: 0.9;
+  margin-top: 6rpx;
+}
+
+.overview-info {
+  flex: 1;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12rpx 0;
+}
+
+.info-label {
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+.info-value {
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.info-value.highlight {
+  font-size: 36rpx;
+}
+
+.status-tag {
+  padding: 6rpx 20rpx;
+  border-radius: 20rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.status-good {
+  background-color: rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+}
+
+.progress-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.progress-card {
+  background-color: var(--color-bg-card);
+  border-radius: 20rpx;
+  padding: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.progress-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.progress-percent {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #6366F1;
+}
+
+.progress-percent.required {
+  color: #F59E0B;
+}
+
+.progress-percent.elective {
+  color: #8B5CF6;
+}
+
+.progress-bar-wrap {
+  margin-bottom: 12rpx;
+}
+
+.progress-bar {
+  height: 16rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.progress-total {
+  background: linear-gradient(90deg, #E0E7FF 0%, #C7D2FE 100%);
+}
+
+.progress-required {
+  background: linear-gradient(90deg, #FEF3C7 0%, #FDE68A 100%);
+}
+
+.progress-elective {
+  background: linear-gradient(90deg, #EDE9FE 0%, #DDD6FE 100%);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 8rpx;
+  background: linear-gradient(90deg, #6366F1 0%, #8B5CF6 100%);
+  transition: width 0.8s ease;
+}
+
+.progress-total .progress-fill {
+  background: linear-gradient(90deg, #6366F1 0%, #8B5CF6 100%);
+}
+
+.progress-required .progress-fill {
+  background: linear-gradient(90deg, #F59E0B 0%, #FBBF24 100%);
+}
+
+.progress-elective .progress-fill {
+  background: linear-gradient(90deg, #8B5CF6 0%, #A855F7 100%);
+}
+
+.progress-detail {
+  text-align: right;
+}
+
+.detail-text {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+
+.credit-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.stat-card {
+  background-color: var(--color-bg-card);
+  border-radius: 20rpx;
+  padding: 28rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.3s ease;
+}
+
+.stat-card:active {
+  transform: scale(0.98);
+}
+
+.stat-icon-wrap {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16rpx;
+}
+
+.stat-1 .stat-icon-wrap {
+  background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+}
+
+.stat-2 .stat-icon-wrap {
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+}
+
+.stat-3 .stat-icon-wrap {
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+}
+
+.stat-4 .stat-icon-wrap {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+}
+
+.stat-icon {
+  font-size: 40rpx;
+}
+
+.stat-value {
+  font-size: 44rpx;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin-bottom: 8rpx;
+}
+
+.stat-value.danger {
+  color: #EF4444;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+/* ==================== 挂科预警 ==================== */
+.warning-header {
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+}
+
+.warning-icon-wrap {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.warning-icon-big {
+  font-size: 52rpx;
+}
+
+.warning-header-info {
+  flex: 1;
+}
+
+.warning-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.warning-desc {
+  font-size: 26rpx;
+  opacity: 0.9;
+}
+
+.warning-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.warning-card {
+  background-color: var(--color-bg-card);
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.06);
+  border-left: 8rpx solid #FB923C;
+}
+
+.warning-card.critical {
+  border-left-color: #DC2626;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FEF2F2 100%);
+  box-shadow: 0 8rpx 32rpx rgba(220, 38, 38, 0.15);
+}
+
+.page.dark .warning-card.critical {
+  background: linear-gradient(135deg, #1F2937 0%, #3D1E1E 100%);
+}
+
+.warning-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.warning-course-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.warning-course-name {
+  display: block;
+  font-size: 34rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  margin-bottom: 12rpx;
+}
+
+.warning-course-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.warning-tag {
+  display: inline-block;
+  padding: 6rpx 16rpx;
+  font-size: 22rpx;
+  border-radius: 8rpx;
+  font-weight: 500;
+}
+
+.warning-tag.type-tag {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+.warning-tag.credit-tag {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.warning-tag.critical-tag {
+  background-color: #FEE2E2;
+  color: #DC2626;
+  font-weight: 700;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.warning-score-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+
+.warning-score {
+  font-size: 56rpx;
+  font-weight: 800;
+  color: #DC2626;
+  line-height: 1;
+}
+
+.warning-score-label {
+  font-size: 22rpx;
+  color: #DC2626;
+  margin-top: 4rpx;
+  font-weight: 500;
+}
+
+.warning-card-body {
+  padding: 20rpx;
+  background-color: rgba(251, 146, 60, 0.08);
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+}
+
+.warning-card.critical .warning-card-body {
+  background-color: rgba(220, 38, 38, 0.1);
+}
+
+.advice-section {
+  display: flex;
+  align-items: flex-start;
+}
+
+.advice-icon {
+  font-size: 32rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.advice-content {
+  flex: 1;
+}
+
+.advice-label {
+  display: block;
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #92400E;
+  margin-bottom: 8rpx;
+}
+
+.warning-card.critical .advice-label {
+  color: #B91C1C;
+}
+
+.advice-text {
+  display: block;
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.warning-card-footer {
+  display: flex;
+  gap: 16rpx;
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16rpx 20rpx;
+  border-radius: 16rpx;
+  transition: all 0.3s ease;
+}
+
+.action-btn:active {
+  transform: scale(0.96);
+}
+
+.action-review {
+  background: linear-gradient(135deg, #E0F2FE 0%, #BAE6FD 100%);
+}
+
+.action-retake {
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+}
+
+.btn-icon {
+  font-size: 28rpx;
+  margin-right: 8rpx;
+}
+
+.btn-text {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.action-review .btn-text {
+  color: #0369A1;
+}
+
+.action-retake .btn-text {
+  color: #B91C1C;
+}
+
+/* ==================== 无挂科状态 ==================== */
+.no-warning-card {
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 50%, #6EE7B7 100%);
+  border-radius: 24rpx;
+  padding: 48rpx 32rpx;
+  text-align: center;
+  box-shadow: 0 8rpx 32rpx rgba(16, 185, 129, 0.2);
+}
+
+.page.dark .no-warning-card {
+  background: linear-gradient(135deg, #064E3B 0%, #065F46 50%, #047857 100%);
+}
+
+.no-warning-icon {
+  font-size: 100rpx;
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.no-warning-title {
+  display: block;
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #065F46;
+  margin-bottom: 12rpx;
+}
+
+.page.dark .no-warning-title {
+  color: #A7F3D0;
+}
+
+.no-warning-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #047857;
+  margin-bottom: 32rpx;
+}
+
+.page.dark .no-warning-desc {
+  color: #6EE7B7;
+}
+
+.no-warning-tips {
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+
+.tip-item {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 0;
+}
+
+.tip-icon {
+  font-size: 28rpx;
+  margin-right: 16rpx;
+}
+
+.tip-text {
+  font-size: 26rpx;
+  color: #065F46;
+  font-weight: 500;
+}
+
+.page.dark .tip-text {
+  color: #A7F3D0;
+}
+
+/* ==================== 学业分析 ==================== */
+.analysis-overview {
+  color: #FFFFFF;
+}
+
+.overview-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28rpx;
+}
+
+.status-label {
+  font-size: 28rpx;
+  opacity: 0.95;
+}
+
+.status-badge {
+  padding: 10rpx 28rpx;
+  border-radius: 24rpx;
+  font-size: 26rpx;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.status-优秀 {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+}
+
+.status-良好 {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+}
+
+.status-一般 {
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+.status-需努力 {
+  background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+}
+
+.overview-metrics {
+  display: flex;
+  justify-content: space-around;
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.metric-value {
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-bottom: 8rpx;
+}
+
+.metric-label {
+  font-size: 22rpx;
+  opacity: 0.9;
+}
+
+/* 等级分布 */
+.distribution-card {
+  background-color: var(--color-bg-card);
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.distribution-item {
+  padding: 16rpx 0;
+}
+
+.distribution-item + .distribution-item {
+  border-top: 1rpx solid var(--color-border-light);
+}
+
+.dist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.dist-label {
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.dist-count {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+.dist-bar-wrap {
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.dist-bar {
+  height: 16rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.dist-fill {
+  height: 100%;
+  border-radius: 8rpx;
+  transition: width 0.8s ease;
+}
+
+/* 雷达图模拟 */
+.radar-card {
+  background-color: var(--color-bg-card);
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.radar-item {
+  padding: 16rpx 0;
+}
+
+.radar-item + .radar-item {
+  border-top: 1rpx solid var(--color-border-light);
+}
+
+.radar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.radar-label {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.radar-value {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #6366F1;
+}
+
+.radar-bar-wrap {
+  border-radius: 8rpx;
+}
+
+.radar-bar {
+  height: 16rpx;
+  background: linear-gradient(90deg, #EDE9FE 0%, #DDD6FE 100%);
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.radar-fill {
+  height: 100%;
+  border-radius: 8rpx;
+  transition: width 0.8s ease;
+}
+
+/* 学期趋势 */
+.trend-card {
+  background-color: var(--color-bg-card);
+  border-radius: 20rpx;
+  padding: 8rpx 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.trend-item {
+  padding: 24rpx 0;
+}
+
+.trend-item + .trend-item {
+  border-top: 1rpx solid var(--color-border-light);
+}
+
+.trend-semester {
+  margin-bottom: 16rpx;
+}
+
+.trend-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.trend-metrics {
+  display: flex;
+  gap: 32rpx;
+  margin-bottom: 12rpx;
+}
+
+.trend-metric {
+  display: flex;
+  align-items: baseline;
+}
+
+.trend-metric-label {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  margin-right: 8rpx;
+}
+
+.trend-metric-value {
+  font-size: 28rpx;
+  font-weight: 700;
+}
+
+.trend-metric-value.blue {
+  color: #3B82F6;
+}
+
+.trend-metric-value.purple {
+  color: #8B5CF6;
+}
+
+.trend-bar-wrap {
+  border-radius: 8rpx;
+}
+
+.trend-bar {
+  height: 12rpx;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.trend-bar-score {
+  background: linear-gradient(90deg, #DBEAFE 0%, #BFDBFE 100%);
+}
+
+.trend-fill {
+  height: 100%;
+  border-radius: 6rpx;
+  transition: width 0.8s ease;
+}
+
+.score-fill {
+  background: linear-gradient(90deg, #3B82F6 0%, #60A5FA 100%);
+}
+
+/* 关键指标 */
+.key-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.key-metric-card {
+  border-radius: 20rpx;
+  padding: 28rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.key-metric-card:active {
+  transform: scale(0.98);
+}
+
+.metric-blue {
+  background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+}
+
+.metric-green {
+  background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+}
+
+.metric-gold {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+}
+
+.metric-purple {
+  background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
+}
+
+.km-header {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16rpx;
+}
+
+.km-icon {
+  font-size: 36rpx;
+}
+
+.km-value {
+  font-size: 48rpx;
+  font-weight: 800;
+  color: var(--color-text-primary);
+  margin-bottom: 8rpx;
+}
+
+.metric-blue .km-value { color: #1D4ED8; }
+.metric-green .km-value { color: #047857; }
+.metric-gold .km-value { color: #B45309; }
+.metric-purple .km-value { color: #6D28D9; }
+
+.km-label {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+
+/* ==================== 深色模式适配 ==================== */
+.page.dark .semester-selector,
+.page.dark .progress-card,
+.page.dark .stat-card,
+.page.dark .warning-card,
+.page.dark .distribution-card,
+.page.dark .radar-card,
+.page.dark .trend-card,
+.page.dark .score-card {
+  background-color: #1F2937;
+}
+
+.page.dark .course-name,
+.page.dark .progress-title,
+.page.dark .stat-value,
+.page.dark .warning-course-name,
+.page.dark .dist-label,
+.page.dark .radar-label,
+.page.dark .trend-name,
+.page.dark .footer-value,
+.page.dark .km-value {
+  color: #F9FAFB;
+}
+
+.page.dark .score-card-footer {
+  border-top-color: #374151;
+}
+
+.page.dark .section-title {
+  color: #F9FAFB;
+}

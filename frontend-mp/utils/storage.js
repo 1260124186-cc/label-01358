@@ -50,7 +50,13 @@ const STORAGE_KEYS = {
   POI_LIST: 'poiList',
   MAP_FAVORITES: 'mapFavorites',
   MAP_SEARCH_HISTORY: 'mapSearchHistory',
-  MAP_SETTINGS: 'mapSettings'
+  MAP_SETTINGS: 'mapSettings',
+  COURSE_LIST: 'courseList',
+  COURSE_SETTINGS: 'courseSettings',
+  CLASS_REMINDERS: 'classReminders',
+  EXAM_SCORES: 'examScores',
+  EXAM_SCHEDULE: 'examSchedule',
+  CLASSROOM_LIST: 'classroomList'
 };
 
 /**

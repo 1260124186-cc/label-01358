@@ -67,7 +67,12 @@
     "pages/poi-detail/index",
     "pages/route-planner/index",
     "pages/freshman-guide/index",
-    "pages/ar-navigation/index"
+    "pages/ar-navigation/index",
+    "pages/exam-schedule/index",
+    "pages/schedule/index",
+    "pages/schedule-edit/index",
+    "pages/academic/index",
+    "pages/classroom-query/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

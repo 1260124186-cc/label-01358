@@ -540,6 +540,98 @@ const ORIENTATION_TYPES = [
   { value: 'left_front', label: '左前方', angle: 315 }
 ];
 
+const COURSE_TIME_SLOTS = [
+  { slot: 1, label: '第1节', start: '08:00', end: '08:45' },
+  { slot: 2, label: '第2节', start: '08:55', end: '09:40' },
+  { slot: 3, label: '第3节', start: '10:00', end: '10:45' },
+  { slot: 4, label: '第4节', start: '10:55', end: '11:40' },
+  { slot: 5, label: '第5节', start: '14:00', end: '14:45' },
+  { slot: 6, label: '第6节', start: '14:55', end: '15:40' },
+  { slot: 7, label: '第7节', start: '16:00', end: '16:45' },
+  { slot: 8, label: '第8节', start: '16:55', end: '17:40' },
+  { slot: 9, label: '第9节', start: '19:00', end: '19:45' },
+  { slot: 10, label: '第10节', start: '19:55', end: '20:40' }
+];
+
+const WEEK_DAYS = [
+  { value: 1, label: '周一' },
+  { value: 2, label: '周二' },
+  { value: 3, label: '周三' },
+  { value: 4, label: '周四' },
+  { value: 5, label: '周五' },
+  { value: 6, label: '周六' },
+  { value: 7, label: '周日' }
+];
+
+const COURSE_COLORS = [
+  { bg: '#FFE8E8', border: '#FF6B6B', text: '#E53935' },
+  { bg: '#E8F4FF', border: '#4ECDC4', text: '#00897B' },
+  { bg: '#FFF3E0', border: '#FFA726', text: '#EF6C00' },
+  { bg: '#EDE7F6', border: '#9575CD', text: '#5E35B1' },
+  { bg: '#E0F7FA', border: '#4DD0E1', text: '#00ACC1' },
+  { bg: '#FCE4EC', border: '#F06292', text: '#C2185B' },
+  { bg: '#E8F5E9', border: '#81C784', text: '#388E3C' },
+  { bg: '#FFF8E1', border: '#FFD54F', text: '#F57F17' }
+];
+
+const SCHEDULE_VIEW_TABS = [
+  { value: 'week', label: '周视图' },
+  { value: 'day', label: '日视图' }
+];
+
+const SCHEDULE_TABS = [
+  { value: 'schedule', label: '课程表', icon: '📅' },
+  { value: 'academic', label: '教务查询', icon: '📊' },
+  { value: 'classroom', label: '空教室', icon: '🏫' },
+  { value: 'exam', label: '考试安排', icon: '📝' }
+];
+
+const SCORE_LEVELS = [
+  { min: 90, max: 100, label: '优秀', color: '#10B981', gpa: 4.0 },
+  { min: 85, max: 89, label: '良好', color: '#3B82F6', gpa: 3.7 },
+  { min: 80, max: 84, label: '良好', color: '#6366F1', gpa: 3.3 },
+  { min: 75, max: 79, label: '中等', color: '#8B5CF6', gpa: 3.0 },
+  { min: 70, max: 74, label: '中等', color: '#F59E0B', gpa: 2.7 },
+  { min: 65, max: 69, label: '及格', color: '#FB923C', gpa: 2.3 },
+  { min: 60, max: 64, label: '及格', color: '#EF4444', gpa: 2.0 },
+  { min: 0, max: 59, label: '不及格', color: '#DC2626', gpa: 0 }
+];
+
+const CLASSROOM_BUILDINGS = [
+  { value: 'all', label: '全部教学楼' },
+  { value: 'A', label: 'A栋教学楼' },
+  { value: 'B', label: 'B栋教学楼' },
+  { value: 'C', label: 'C栋教学楼' },
+  { value: 'D', label: 'D栋实验楼' },
+  { value: 'E', label: 'E栋信息楼' }
+];
+
+const REMINDER_MINUTES_OPTIONS = [
+  { value: 0, label: '不提醒' },
+  { value: 5, label: '课前5分钟' },
+  { value: 10, label: '课前10分钟' },
+  { value: 15, label: '课前15分钟' },
+  { value: 30, label: '课前30分钟' },
+  { value: 60, label: '课前1小时' }
+];
+
+const IMPORT_METHODS = [
+  { value: 'paste', label: '粘贴文本', icon: '📋' },
+  { value: 'scan', label: '扫码导入', icon: '📷' }
+];
+
+function getScoreLevel(score) {
+  return SCORE_LEVELS.find(l => score >= l.min && score <= l.max) || SCORE_LEVELS[SCORE_LEVELS.length - 1];
+}
+
+function getGPA(score) {
+  return getScoreLevel(score).gpa;
+}
+
+function getSlotTime(slot) {
+  return COURSE_TIME_SLOTS.find(s => s.slot === slot) || null;
+}
+
 function getLabelByValue(list, value) {
   const item = list.find(i => i.value === value);
   return item ? item.label : value;
@@ -614,5 +706,17 @@ module.exports = {
   POI_CATEGORIES,
   POI_CATEGORY_MAP,
   ORIENTATION_TYPES,
+  COURSE_TIME_SLOTS,
+  WEEK_DAYS,
+  COURSE_COLORS,
+  SCHEDULE_VIEW_TABS,
+  SCHEDULE_TABS,
+  SCORE_LEVELS,
+  CLASSROOM_BUILDINGS,
+  REMINDER_MINUTES_OPTIONS,
+  IMPORT_METHODS,
+  getScoreLevel,
+  getGPA,
+  getSlotTime,
   getLabelByValue
 };

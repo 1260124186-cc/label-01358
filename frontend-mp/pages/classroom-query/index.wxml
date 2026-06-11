@@ -1,0 +1,183 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view
+    class="main-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onPullDownRefresh"
+  >
+    <view class="filter-card">
+      <view class="filter-row">
+        <view class="filter-item">
+          <text class="filter-label">教学楼</text>
+          <picker
+            mode="selector"
+            range="{{buildings}}"
+            range-key="label"
+            value="{{buildingIndex}}"
+            bindchange="onBuildingChange"
+          >
+            <view class="picker-box">
+              <text class="picker-text">{{buildings[buildingIndex].label}}</text>
+              <text class="picker-arrow">▾</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="filter-item">
+          <text class="filter-label">星期</text>
+          <picker
+            mode="selector"
+            range="{{weekDays}}"
+            range-key="label"
+            value="{{weekDayIndex}}"
+            bindchange="onWeekDayChange"
+          >
+            <view class="picker-box">
+              <text class="picker-text">{{weekDays[weekDayIndex].label}}</text>
+              <text class="picker-arrow">▾</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="filter-row">
+        <view class="filter-item">
+          <text class="filter-label">开始节次</text>
+          <picker
+            mode="selector"
+            range="{{timeSlots}}"
+            range-key="label"
+            value="{{startSlot - 1}}"
+            bindchange="onStartSlotChange"
+            data-slot="{{startSlot}}"
+          >
+            <view class="picker-box">
+              <text class="picker-text">{{timeSlots[startSlot - 1].label}}</text>
+              <text class="picker-arrow">▾</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="filter-item">
+          <text class="filter-label">结束节次</text>
+          <picker
+            mode="selector"
+            range="{{timeSlots}}"
+            range-key="label"
+            value="{{endSlot - 1}}"
+            bindchange="onEndSlotChange"
+            data-slot="{{endSlot}}"
+          >
+            <view class="picker-box">
+              <text class="picker-text">{{timeSlots[endSlot - 1].label}}</text>
+              <text class="picker-arrow">▾</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="filter-hint">
+        <text class="hint-text">时间：{{timeSlots[startSlot - 1].start}} - {{timeSlots[endSlot - 1].end}}</text>
+      </view>
+
+      <view class="query-btn" bindtap="onQueryTap">
+        <text class="query-btn-icon">🔍</text>
+        <text class="query-btn-text">查询空闲教室</text>
+      </view>
+    </view>
+
+    <view class="result-section">
+      <view class="result-header">
+        <text class="result-title">查询结果</text>
+        <text class="result-count" wx:if="{{hasQueried && !loading}}">{{classroomList.length}} 间可用</text>
+      </view>
+
+      <view wx:if="{{loading}}" class="loading-wrap">
+        <text class="loading-text">正在查询...</text>
+      </view>
+
+      <view wx:elif="{{!hasQueried}}" class="empty-wrap">
+        <text class="empty-icon">🏫</text>
+        <text class="empty-text">选择条件后点击查询</text>
+      </view>
+
+      <view wx:elif="{{classroomList.length === 0}}" class="empty-wrap">
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">当前时段没有空闲教室</text>
+        <text class="empty-hint">试试调整节次或日期</text>
+      </view>
+
+      <view wx:else class="classroom-list">
+        <view
+          class="classroom-card {{expandedId === item.id ? 'expanded' : ''}}"
+          wx:for="{{classroomList}}"
+          wx:key="id"
+        >
+          <view class="card-main" bindtap="onToggleExpand" data-id="{{item.id}}">
+            <view class="card-left">
+              <view class="room-badge building-{{item.building}}">
+                <text class="building-text">{{item.building}}栋</text>
+              </view>
+              <view class="room-info">
+                <text class="room-number">{{item.room}}室</text>
+                <text class="room-type">{{item.type}}</text>
+              </view>
+            </view>
+            <view class="card-mid">
+              <view class="info-row">
+                <text class="info-label">容量</text>
+                <text class="info-value">{{item.capacity}}人</text>
+              </view>
+            </view>
+            <view class="card-right">
+              <view class="facility-icons">
+                <view class="facility-icon {{item.hasProjector ? 'active' : ''}}" title="投影">
+                  <text class="icon-text">📽️</text>
+                </view>
+                <view class="facility-icon {{item.hasAc ? 'active' : ''}}" title="空调">
+                  <text class="icon-text">❄️</text>
+                </view>
+              </view>
+              <text class="expand-arrow">{{expandedId === item.id ? '▲' : '▼'}}</text>
+            </view>
+          </view>
+
+          <view wx:if="{{expandedId === item.id}}" class="schedule-section">
+            <view class="schedule-header">
+              <text class="schedule-title">📅 今日占用情况</text>
+              <view class="legend">
+                <view class="legend-item">
+                  <view class="legend-block free"></view>
+                  <text class="legend-text">空闲</text>
+                </view>
+                <view class="legend-item">
+                  <view class="legend-block busy"></view>
+                  <text class="legend-text">占用</text>
+                </view>
+              </view>
+            </view>
+
+            <view class="schedule-grid">
+              <view
+                class="schedule-cell {{item2.occupied ? 'busy' : 'free'}}"
+                wx:for="{{expandedSchedule}}"
+                wx:for-item="item2"
+                wx:key="slot"
+              >
+                <text class="cell-slot">{{item2.label}}</text>
+                <text class="cell-time">{{item2.start}}</text>
+                <view wx:if="{{item2.occupied}}" class="cell-detail">
+                  <text class="cell-course">{{item2.courseName}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>
