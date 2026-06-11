@@ -4171,6 +4171,8 @@ module.exports = {
   FRESHMAN_REGISTRATION_FLOW
 };
 
+const _tempExports = module.exports;
+
 const MOCK_CLUBS = [
   {
     id: 'club_001',
@@ -4926,13 +4928,14 @@ const MOCK_COURSE_SETTINGS = {
   enableReminder: true
 };
 
-if (module.exports) {
-  module.exports.MOCK_CLUBS = MOCK_CLUBS;
-  module.exports.MOCK_CLUB_MEMBERS = MOCK_CLUB_MEMBERS;
-  module.exports.MOCK_CLUB_ACTIVITIES = MOCK_CLUB_ACTIVITIES;
-  module.exports.MOCK_COURSES = MOCK_COURSES;
-  module.exports.MOCK_EXAM_SCORES = MOCK_EXAM_SCORES;
-  module.exports.MOCK_EXAM_SCHEDULE = MOCK_EXAM_SCHEDULE;
-  module.exports.MOCK_CLASSROOMS = MOCK_CLASSROOMS;
-  module.exports.MOCK_COURSE_SETTINGS = MOCK_COURSE_SETTINGS;
-}
+module.exports = {
+  ..._tempExports,
+  MOCK_CLUBS,
+  MOCK_CLUB_MEMBERS,
+  MOCK_CLUB_ACTIVITIES,
+  MOCK_COURSES,
+  MOCK_EXAM_SCORES,
+  MOCK_EXAM_SCHEDULE,
+  MOCK_CLASSROOMS,
+  MOCK_COURSE_SETTINGS
+};

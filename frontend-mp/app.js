@@ -1,7 +1,7 @@
 const theme = require('./utils/theme');
 const storage = require('./utils/storage');
 const mockData = require('./config/mock-data');
-const config = require('./config');
+const config = require('./config/index');
 const dataService = require('./services/data');
 
 App({
