@@ -25,9 +25,9 @@
           </view>
         </view>
 
-        <view class="dish-tags" wx:if="{{dish.tags && dish.tags.length > 0}}">
-          <view wx:for="{{dish.tags}}" wx:key="*this" class="dish-tag tag-{{item}}">
-            {{item}}
+        <view class="dish-tags" wx:if="{{dishTagsDisplay && dishTagsDisplay.length > 0}}">
+          <view wx:for="{{dishTagsDisplay}}" wx:key="value" class="dish-tag tag-{{item.value}}">
+            {{item.label}}
           </view>
         </view>
       </view>

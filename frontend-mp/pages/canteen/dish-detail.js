@@ -1,15 +1,18 @@
 const dataService = require('../../services/data');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
+const { DISH_TAG_MAP } = require('../../config/constants');
 
 mixPage({
   data: {
     darkMode: false,
     id: '',
     dish: null,
+    dishTagsDisplay: [],
     canteenId: '',
     canteenName: '',
     mealType: '',
+    mealTypeLabel: '',
     isFavorite: false,
     reviews: [],
     avgRating: 0,
@@ -47,8 +50,13 @@ mixPage({
     if (result) {
       const mealTypeMap = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐' };
       const mealTypeLabel = mealTypeMap[result.mealType] || '';
+      const dishTagsDisplay = (result.dish.tags || []).map(v => ({
+        value: v,
+        label: (DISH_TAG_MAP[v] && DISH_TAG_MAP[v].label) || v
+      }));
       this.setData({
         dish: result.dish,
+        dishTagsDisplay,
         canteenId: result.canteenId,
         canteenName: result.canteenName,
         mealType: result.mealType,

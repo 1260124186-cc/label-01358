@@ -133,13 +133,13 @@
             <image class="dish-image" src="{{item.cover || '/assets/images/default-banner.png'}}" mode="aspectFill"/>
             <view class="dish-info">
               <text class="dish-name">{{item.name}}</text>
-              <view class="dish-tags" wx:if="{{item.tags && item.tags.length > 0}}">
+              <view class="dish-tags" wx:if="{{item.tagsDisplay && item.tagsDisplay.length > 0}}">
                 <text
-                  wx:for="{{item.tags}}"
+                  wx:for="{{item.tagsDisplay}}"
                   wx:for-item="tag"
-                  wx:key="*this"
-                  class="dish-tag tag-{{tag}}"
-                >{{tag}}</text>
+                  wx:key="value"
+                  class="dish-tag tag-{{tag.value}}"
+                >{{tag.label}}</text>
               </view>
               <text class="dish-desc" wx:if="{{item.description}}">{{item.description}}</text>
               <text class="dish-price">¥{{item.priceText}}</text>

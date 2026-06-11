@@ -1,6 +1,7 @@
 const dataService = require('../../services/data');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
+const { DISH_TAG_MAP } = require('../../config/constants');
 
 const MEAL_TABS = [
   { key: 'breakfast', label: '早餐' },
@@ -109,7 +110,13 @@ mixPage({
 
       const stalls = (detail.stalls || []).map(stall => ({
         ...stall,
-        tagsText: (stall.featureTags || []).join('、')
+        tagsDisplay: (stall.featureTags || []).map(v => ({
+          value: v,
+          label: (DISH_TAG_MAP[v] && DISH_TAG_MAP[v].label) || v
+        })),
+        tagsText: (stall.featureTags || [])
+          .map(v => (DISH_TAG_MAP[v] && DISH_TAG_MAP[v].label) || v)
+          .join('、')
       }));
 
       const formattedDetail = {
@@ -154,7 +161,16 @@ mixPage({
       ? dataService.getDishesByCanteenAndMeal(this.data.id, mealType)
       : [];
 
-    this.setData({ dishes: dishes || [] });
+    const formattedDishes = (dishes || []).map(d => ({
+      ...d,
+      tagsDisplay: (d.tags || []).map(v => ({
+        value: v,
+        label: (DISH_TAG_MAP[v] && DISH_TAG_MAP[v].label) || v
+      })),
+      priceText: typeof util.formatPrice === 'function' ? util.formatPrice(d.price) : d.price
+    }));
+
+    this.setData({ dishes: formattedDishes });
   },
 
   onMealTabChange(e) {

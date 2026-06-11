@@ -126,21 +126,67 @@
   border-radius: var(--radius-full);
   font-size: var(--font-xs);
   font-weight: 600;
+  color: #fff;
 }
 
-.tag-招牌 {
+.tag-signature {
   background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
-  color: #fff;
 }
 
-.tag-推荐 {
+.tag-recommend {
   background: linear-gradient(135deg, #52C41A 0%, #73D13D 100%);
-  color: #fff;
 }
 
-.tag-新品 {
+.tag-new {
   background: linear-gradient(135deg, #1890FF 0%, #40A9FF 100%);
-  color: #fff;
+}
+
+.tag-hot {
+  background: linear-gradient(135deg, #FF4D4F 0%, #FF7875 100%);
+}
+
+.tag-spicy {
+  background: linear-gradient(135deg, #FF7A45 0%, #FFA940 100%);
+}
+
+.tag-sweet {
+  background: linear-gradient(135deg, #EB2F96 0%, #F759AB 100%);
+}
+
+.tag-vegetarian {
+  background: linear-gradient(135deg, #73D13D 0%, #95DE64 100%);
+}
+
+.tag-healthy {
+  background: linear-gradient(135deg, #13C2C2 0%, #36CFC9 100%);
+}
+
+.tag-popular {
+  background: linear-gradient(135deg, #722ED1 0%, #9254DE 100%);
+}
+
+.tag-classic {
+  background: linear-gradient(135deg, #8C8C8C 0%, #BFBFBF 100%);
+}
+
+.tag-exotic {
+  background: linear-gradient(135deg, #FA8C16 0%, #FFC069 100%);
+}
+
+.tag-custom {
+  background: linear-gradient(135deg, #2F54EB 0%, #597EF7 100%);
+}
+
+.tag-drink {
+  background: linear-gradient(135deg, #40A9FF 0%, #69C0FF 100%);
+}
+
+.tag-quick {
+  background: linear-gradient(135deg, #08979C 0%, #36CFC9 100%);
+}
+
+.tag-affordable {
+  background: linear-gradient(135deg, #D48806 0%, #FFC53D 100%);
 }
 
 .action-section {

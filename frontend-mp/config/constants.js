@@ -393,13 +393,27 @@ const CANTEEN_TIME_SEGMENTS = [
 ];
 
 const DISH_TAGS = [
-  { value: 'hot', label: '热销', color: '#FF4D4F' },
-  { value: 'new', label: '新品', color: '#1890FF' },
+  { value: 'signature', label: '招牌', color: '#FF6B6B' },
   { value: 'recommend', label: '推荐', color: '#52C41A' },
+  { value: 'new', label: '新品', color: '#1890FF' },
+  { value: 'hot', label: '热销', color: '#FF4D4F' },
   { value: 'spicy', label: '辣', color: '#FF7A45' },
   { value: 'sweet', label: '甜', color: '#EB2F96' },
-  { value: 'vegetarian', label: '素食', color: '#73D13D' }
+  { value: 'vegetarian', label: '素食', color: '#73D13D' },
+  { value: 'healthy', label: '健康', color: '#13C2C2' },
+  { value: 'popular', label: '网红', color: '#722ED1' },
+  { value: 'classic', label: '经典', color: '#8C8C8C' },
+  { value: 'exotic', label: '异域', color: '#FA8C16' },
+  { value: 'custom', label: '定制', color: '#2F54EB' },
+  { value: 'drink', label: '饮品', color: '#40A9FF' },
+  { value: 'quick', label: '快捷', color: '#08979C' },
+  { value: 'affordable', label: '划算', color: '#D48806' }
 ];
+
+const DISH_TAG_MAP = DISH_TAGS.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, color: t.color };
+  return acc;
+}, {});
 
 const RENTAL_SORT_OPTIONS = [
   { value: 'latest', label: '最新发布', field: 'createTime', order: 'desc' },
@@ -468,5 +482,6 @@ module.exports = {
   CANTEEN_CROWD_LEVELS,
   CANTEEN_TIME_SEGMENTS,
   DISH_TAGS,
+  DISH_TAG_MAP,
   getLabelByValue
 };
