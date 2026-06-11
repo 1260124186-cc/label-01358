@@ -1153,24 +1153,84 @@ const MOCK_MARKET_ITEMS = [
     description: '自用iPhone 13 Pro，256G远峰蓝色，九成新，无磕碰，电池健康度92%。配件齐全，包装盒都在。',
     category: 'electronics',
     price: 4500,
+    originalPrice: 7999,
     images: ['https://picsum.photos/seed/iphone/600/600'],
-    contact: '13800138004'
+    contact: '张同学',
+    phone: '13800138004',
+    userId: 'user_1',
+    userName: '张同学',
+    status: 'selling',
+    views: 328
   },
   {
     title: '高等数学教材 第七版',
     description: '同济大学高等数学教材上下册，九成新，有少量笔记。考研复习必备。',
     category: 'book',
     price: 35,
+    originalPrice: 88,
     images: ['https://picsum.photos/seed/mathbook/600/600'],
-    contact: '13800138005'
+    contact: '李同学',
+    phone: '13800138005',
+    userId: 'user_2',
+    userName: '李同学',
+    status: 'selling',
+    views: 156
   },
   {
     title: '小米空气净化器2S',
     description: '毕业出小米空气净化器2S，使用两年，功能正常，滤芯刚换过。适合宿舍使用。',
     category: 'daily',
     price: 300,
+    originalPrice: 699,
     images: ['https://picsum.photos/seed/purifier/600/600'],
-    contact: '13800138006'
+    contact: '王同学',
+    phone: '13800138006',
+    userId: 'user_3',
+    userName: '王同学',
+    status: 'reserved',
+    views: 245
+  },
+  {
+    title: 'iPad Air 5 64G WiFi版',
+    description: 'iPad Air 5，64G WiFi版，深空灰色，购买于去年，成色95新，平时主要用来看网课，现闲置出售。送保护套和充电器。',
+    category: 'electronics',
+    price: 2800,
+    originalPrice: 4799,
+    images: ['https://picsum.photos/seed/ipad/600/600'],
+    contact: '陈同学',
+    phone: '13800138007',
+    userId: 'user_4',
+    userName: '陈同学',
+    status: 'selling',
+    views: 512
+  },
+  {
+    title: '考研英语真题全套',
+    description: '考研英语一历年真题，2010-2025年全套，含答案解析，部分做过笔记，适合2026考研的同学。',
+    category: 'book',
+    price: 45,
+    originalPrice: 128,
+    images: ['https://picsum.photos/seed/englishbook/600/600'],
+    contact: '刘同学',
+    phone: '13800138008',
+    userId: 'user_5',
+    userName: '刘同学',
+    status: 'sold',
+    views: 89
+  },
+  {
+    title: 'Nike Air Max 运动鞋 42码',
+    description: 'Nike Air Max 正品，42码，黑白配色，只穿过几次，鞋底几乎无磨损，因买大了半码所以出售。',
+    category: 'sports',
+    price: 350,
+    originalPrice: 899,
+    images: ['https://picsum.photos/seed/sneakers/600/600'],
+    contact: '赵同学',
+    phone: '13800138009',
+    userId: 'user_6',
+    userName: '赵同学',
+    status: 'selling',
+    views: 178
   }
 ];
 

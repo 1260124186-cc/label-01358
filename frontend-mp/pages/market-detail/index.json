@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "商品详情",
   "usingComponents": {
-    "btn": "/components/btn/index"
+    "btn": "/components/btn/index",
+    "share-card": "/components/share-card/index"
   }
 }

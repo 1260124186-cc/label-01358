@@ -1,0 +1,276 @@
+.share-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.share-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.share-content {
+  position: relative;
+  width: 600rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.share-modal.show .share-content {
+  transform: scale(1);
+}
+
+.share-card-wrapper {
+  width: 100%;
+  margin-bottom: 40rpx;
+}
+
+.share-card {
+  background: linear-gradient(135deg, #FFFFFF 0%, #F8F9FA 100%);
+  border-radius: 32rpx;
+  overflow: hidden;
+  box-shadow: 0 20rpx 60rpx rgba(0, 0, 0, 0.15);
+}
+
+.card-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 500rpx;
+  overflow: hidden;
+}
+
+.card-image {
+  width: 100%;
+  height: 100%;
+}
+
+.card-badge {
+  position: absolute;
+  top: 24rpx;
+  left: 24rpx;
+  padding: 8rpx 20rpx;
+  border-radius: var(--radius-sm);
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.card-badge.status-selling {
+  color: #27AE60;
+  background: linear-gradient(135deg, #E8F8EF 0%, #D1F2E1 100%);
+}
+
+.card-badge.status-reserved {
+  color: #F39C12;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+}
+
+.card-badge.status-sold {
+  color: #6B7280;
+  background-color: #F3F4F6;
+}
+
+.badge-text {
+  font-size: 24rpx;
+  font-weight: 600;
+}
+
+.card-discount-badge {
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+  padding: 8rpx 20rpx;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  border-radius: var(--radius-sm);
+}
+
+.discount-badge-text {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.card-info {
+  padding: 32rpx;
+}
+
+.card-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1F2937;
+  line-height: 1.4;
+  margin-bottom: 20rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.card-price-row {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 28rpx;
+}
+
+.card-price {
+  display: flex;
+  align-items: baseline;
+  color: var(--color-primary);
+}
+
+.price-symbol {
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-right: 4rpx;
+}
+
+.price-value {
+  font-size: 56rpx;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.card-original-price {
+  margin-left: 16rpx;
+  font-size: 28rpx;
+  color: #9CA3AF;
+  text-decoration: line-through;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 24rpx;
+  border-top: 1rpx solid #E5E7EB;
+}
+
+.card-brand {
+  display: flex;
+  align-items: center;
+}
+
+.brand-text {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.card-qr-placeholder {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.qr-icon {
+  font-size: 36rpx;
+}
+
+.qr-text {
+  font-size: 24rpx;
+  color: #6B7280;
+}
+
+.share-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 80rpx;
+  margin-bottom: 40rpx;
+}
+
+.action-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: none;
+  border: none;
+  padding: 0;
+  line-height: normal;
+}
+
+.action-item::after {
+  border: none;
+}
+
+.action-icon-wrapper {
+  width: 100rpx;
+  height: 100rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-bottom: 12rpx;
+  transition: transform 0.2s ease;
+}
+
+.action-icon-wrapper:active {
+  transform: scale(0.92);
+}
+
+.action-icon-wrapper.save {
+  background: linear-gradient(135deg, #4ECDC4 0%, #6EE7DE 100%);
+}
+
+.action-icon-wrapper.share {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+}
+
+.action-icon {
+  font-size: 44rpx;
+}
+
+.action-text {
+  font-size: 26rpx;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.share-btn {
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  line-height: normal;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0;
+}
+
+.share-btn::after {
+  border: none;
+}
+
+.close-btn {
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.close-btn:active {
+  transform: scale(0.9);
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.close-icon {
+  font-size: 32rpx;
+  color: #FFFFFF;
+  font-weight: 300;
+}

@@ -27,14 +27,22 @@
         />
         <view class="item-info">
           <view class="item-header">
-            <view class="item-price">¥{{item.priceText}}</view>
+            <view class="item-price-row">
+              <text class="item-price">¥{{item.priceText}}</text>
+              <view class="item-discount-tag" wx:if="{{item.hasDiscount}}">
+                <text class="item-discount-text">{{item.discountText}}</text>
+              </view>
+            </view>
             <view class="item-status-tag status-{{item.status}}">
               {{item.statusText}}
             </view>
           </view>
+          <text class="item-original-price" wx:if="{{item.originalPrice}}">原价 ¥{{item.originalPriceText}}</text>
           <text class="item-title">{{item.title}}</text>
           <text class="item-desc">{{item.description}}</text>
           <view class="item-meta">
+            <text class="item-meta-text">👁️ {{item.viewsText}}</text>
+            <text class="item-meta-dot">·</text>
             <text class="item-meta-text">{{item.categoryText}}</text>
             <text class="item-meta-dot">·</text>
             <text class="item-meta-text">{{item.timeText}}</text>

@@ -69,11 +69,12 @@ App({
         marketList = mockData.MOCK_MARKET_ITEMS.map((item, index) => ({
           id: 'mock_mk_' + index + '_' + now,
           ...item,
-          userId: 'test_user',
-          createTime: now - (index + 10) * 86400000,
-          updateTime: now - (index + 10) * 86400000,
-          status: 'selling',
-          views: Math.floor(Math.random() * 200) + 50
+          userId: item.userId || 'test_user',
+          userName: item.userName || '测试用户',
+          createTime: item.createTime || (now - (index + 10) * 86400000),
+          updateTime: item.updateTime || (now - (index + 10) * 86400000),
+          status: item.status || 'selling',
+          views: item.views !== undefined ? item.views : (Math.floor(Math.random() * 200) + 50)
         }));
         storage.set(STORAGE_KEYS.MARKET_LIST, marketList);
       }

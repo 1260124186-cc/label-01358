@@ -79,15 +79,41 @@
 
 .item-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 8rpx;
+  margin-bottom: 6rpx;
+}
+
+.item-price-row {
+  display: flex;
+  align-items: center;
 }
 
 .item-price {
   font-size: 32rpx;
   font-weight: 700;
   color: #EF4444;
+  line-height: 1;
+}
+
+.item-discount-tag {
+  margin-left: 10rpx;
+  padding: 4rpx 12rpx;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  border-radius: 6rpx;
+}
+
+.item-discount-text {
+  font-size: 20rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+}
+
+.item-original-price {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+  margin-bottom: 6rpx;
 }
 
 .item-status-tag {
@@ -95,6 +121,7 @@
   padding: 4rpx 12rpx;
   font-size: 22rpx;
   border-radius: 6rpx;
+  flex-shrink: 0;
 }
 
 .item-status-tag.status-selling {

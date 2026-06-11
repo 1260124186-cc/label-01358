@@ -1,0 +1,59 @@
+<view class="share-modal {{visible ? 'show' : ''}}" catchtap="onMaskTap">
+  <view class="share-content" catchtap="preventTap">
+    <view class="share-card-wrapper">
+      <view class="share-card">
+        <view class="card-image-wrapper">
+          <image class="card-image" src="{{image}}" mode="aspectFill" />
+          <view class="card-badge status-{{status}}" wx:if="{{statusText}}">
+            <text class="badge-text">{{statusText}}</text>
+          </view>
+          <view class="card-discount-badge" wx:if="{{discount}}">
+            <text class="discount-badge-text">{{discount}}</text>
+          </view>
+        </view>
+
+        <view class="card-info">
+          <view class="card-title">{{title}}</view>
+
+          <view class="card-price-row">
+            <view class="card-price">
+              <text class="price-symbol">¥</text>
+              <text class="price-value">{{price}}</text>
+            </view>
+            <text class="card-original-price" wx:if="{{originalPrice}}">¥{{originalPrice}}</text>
+          </view>
+
+          <view class="card-footer">
+            <view class="card-brand">
+              <text class="brand-text">校园二手市场</text>
+            </view>
+            <view class="card-qr-placeholder">
+              <text class="qr-icon">📱</text>
+              <text class="qr-text">扫码查看</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="share-actions">
+      <view class="action-item" catchtap="onSaveImage">
+        <view class="action-icon-wrapper save">
+          <text class="action-icon">💾</text>
+        </view>
+        <text class="action-text">保存图片</text>
+      </view>
+
+      <button class="action-item share-btn" open-type="share" catchtap="onShareAppMessage">
+        <view class="action-icon-wrapper share">
+          <text class="action-icon">↗️</text>
+        </view>
+        <text class="action-text">分享给好友</text>
+      </button>
+    </view>
+
+    <view class="close-btn" catchtap="onClose">
+      <text class="close-icon">✕</text>
+    </view>
+  </view>
+</view>

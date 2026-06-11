@@ -34,15 +34,35 @@ mixPage({
     const userInfo = app.globalData.userInfo || {};
     const { currentTab } = this.data;
 
-    const list = dataService.getMyMarketList(userInfo.id, currentTab).map(item => ({
-      ...item,
-      timeText: util.relativeTime(item.createTime),
-      priceText: util.formatPrice(item.price),
-      categoryText: constants.getLabelByValue(constants.MARKET_CATEGORIES, item.category),
-      statusText: constants.getLabelByValue(constants.MARKET_STATUS, item.status)
-    }));
+    const list = dataService.getMyMarketList(userInfo.id, currentTab).map(item => {
+      const discountText = this.calculateDiscount(item.price, item.originalPrice);
+      return {
+        ...item,
+        timeText: util.relativeTime(item.createTime),
+        priceText: util.formatPrice(item.price),
+        originalPriceText: item.originalPrice ? util.formatPrice(item.originalPrice) : '',
+        discountText,
+        hasDiscount: !!discountText,
+        viewsText: this.formatViews(item.views),
+        categoryText: constants.getLabelByValue(constants.MARKET_CATEGORIES, item.category),
+        statusText: constants.getLabelByValue(constants.MARKET_STATUS, item.status)
+      };
+    });
 
     this.setData({ list });
+  },
+
+  calculateDiscount(price, originalPrice) {
+    if (!originalPrice || originalPrice <= price || price <= 0) return '';
+    const discount = Math.round((price / originalPrice) * 10);
+    if (discount >= 10) return '';
+    return discount + '折';
+  },
+
+  formatViews(views) {
+    if (!views || views < 1000) return views || 0;
+    if (views < 10000) return (views / 1000).toFixed(1) + 'k';
+    return (views / 10000).toFixed(1) + 'w';
   },
 
   onTabChange(e) {

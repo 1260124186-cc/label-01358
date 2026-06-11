@@ -1,3 +1,4 @@
+const app = getApp();
 const dataService = require('../../services/data');
 const constants = require('../../config/constants');
 const util = require('../../utils/util');
@@ -10,7 +11,15 @@ mixPage({
     id: '',
     detail: null,
     isFavorite: false,
-    currentImageIndex: 0
+    isOwner: false,
+    currentImageIndex: 0,
+    showStatusAction: false,
+    showShareCard: false,
+    statusOptions: [
+      { value: 'selling', label: '在售', desc: '商品正在出售中' },
+      { value: 'reserved', label: '已预订', desc: '商品已被预订，暂不出售' },
+      { value: 'sold', label: '已售出', desc: '商品已成功售出' }
+    ]
   },
 
   onLoad(options) {
@@ -22,7 +31,7 @@ mixPage({
 
   onShow() {
     if (this.data.id) {
-      this.checkFavorite();
+      this.loadDetail();
     }
   },
 
@@ -30,16 +39,25 @@ mixPage({
     const detail = dataService.getMarketDetail(this.data.id);
 
     if (detail) {
+      const discountText = this.calculateDiscount(detail.price, detail.originalPrice);
+      const saveText = this.calculateSave(detail.price, detail.originalPrice);
       const formattedDetail = {
         ...detail,
         priceText: util.formatPrice(detail.price),
         originalPriceText: detail.originalPrice ? util.formatPrice(detail.originalPrice) : '',
+        discountText,
+        saveText,
+        hasDiscount: !!discountText,
+        viewsText: this.formatViews(detail.views),
         timeText: util.relativeTime(detail.createTime),
         categoryText: constants.getLabelByValue(constants.MARKET_CATEGORIES, detail.category),
         statusText: constants.getLabelByValue(constants.MARKET_STATUS, detail.status)
       };
 
-      this.setData({ detail: formattedDetail });
+      const userInfo = app.globalData.userInfo || {};
+      const isOwner = userInfo.id && detail.userId === userInfo.id;
+
+      this.setData({ detail: formattedDetail, isOwner });
 
       // 增加浏览量
       dataService.increaseMarketViews(this.data.id);
@@ -50,6 +68,25 @@ mixPage({
       // 检查收藏状态
       this.checkFavorite();
     }
+  },
+
+  calculateDiscount(price, originalPrice) {
+    if (!originalPrice || originalPrice <= price || price <= 0) return '';
+    const discount = Math.round((price / originalPrice) * 10);
+    if (discount >= 10) return '';
+    return discount + '折';
+  },
+
+  calculateSave(price, originalPrice) {
+    if (!originalPrice || originalPrice <= price) return '';
+    const save = originalPrice - price;
+    return util.formatPrice(save);
+  },
+
+  formatViews(views) {
+    if (!views || views < 1000) return views || 0;
+    if (views < 10000) return (views / 1000).toFixed(1) + 'k';
+    return (views / 10000).toFixed(1) + 'w';
   },
 
   checkFavorite() {
@@ -104,12 +141,173 @@ mixPage({
   },
 
   onReport() {
-    // 检查登录状态
     if (!util.checkLogin()) {
       return;
     }
 
     const { id } = this.data;
     util.navigateTo(`/pages/report/index?targetType=market&targetId=${id}`);
+  },
+
+  onEdit() {
+    if (!util.checkLogin()) {
+      return;
+    }
+
+    const { id } = this.data;
+    util.navigateTo(`/pages/market-publish/index?mode=edit&id=${id}`);
+  },
+
+  onToggleStatusAction() {
+    this.setData({ showStatusAction: !this.data.showStatusAction });
+  },
+
+  onChangeStatus(e) {
+    const { status } = e.currentTarget.dataset;
+    const { detail, id } = this.data;
+
+    if (detail.status === status) {
+      this.setData({ showStatusAction: false });
+      return;
+    }
+
+    const statusLabel = constants.getLabelByValue(constants.MARKET_STATUS, status);
+
+    wx.showModal({
+      title: '确认修改状态',
+      content: `确定要将商品状态修改为"${statusLabel}"吗？`,
+      success: (res) => {
+        if (res.confirm) {
+          const success = dataService.updateMarketItem(id, { status });
+          if (success) {
+            util.showSuccess(`已修改为${statusLabel}`);
+            this.setData({ showStatusAction: false });
+            this.loadDetail();
+          } else {
+            util.showError('修改失败，请重试');
+          }
+        }
+      }
+    });
+  },
+
+  async onDelete() {
+    if (!util.checkLogin()) {
+      return;
+    }
+
+    const confirm = await util.showConfirm('确定要下架并删除此商品吗？删除后将同时清除相关的收藏和浏览记录。');
+    if (!confirm) return;
+
+    const success = dataService.deleteMarketItem(this.data.id);
+    if (success) {
+      util.showSuccess('已删除商品');
+      setTimeout(() => {
+        util.navigateBack();
+      }, 1500);
+    } else {
+      util.showError('删除失败，请重试');
+    }
+  },
+
+  onShare() {
+    if (wx.showShareMenu) {
+      wx.showShareMenu({
+        withShareTicket: true,
+        menus: ['shareAppMessage', 'shareTimeline']
+      });
+    }
+    this.setData({ showShareCard: true });
+  },
+
+  onCloseShareCard() {
+    this.setData({ showShareCard: false });
+  },
+
+  onSaveShareImage() {
+    const { detail } = this.data;
+    if (!detail || !detail.images || detail.images.length === 0) {
+      util.showError('保存失败');
+      return;
+    }
+
+    wx.showLoading({ title: '保存中...' });
+
+    const imageUrl = detail.images[0];
+
+    if (imageUrl.startsWith('http')) {
+      wx.downloadFile({
+        url: imageUrl,
+        success: (res) => {
+          if (res.statusCode === 200) {
+            this.saveImageToAlbum(res.tempFilePath);
+          } else {
+            wx.hideLoading();
+            util.showError('保存失败');
+          }
+        },
+        fail: () => {
+          wx.hideLoading();
+          util.showError('保存失败');
+        }
+      });
+    } else {
+      this.saveImageToAlbum(imageUrl);
+    }
+  },
+
+  saveImageToAlbum(filePath) {
+    wx.saveImageToPhotosAlbum({
+      filePath: filePath,
+      success: () => {
+        wx.hideLoading();
+        util.showSuccess('已保存到相册');
+      },
+      fail: (err) => {
+        wx.hideLoading();
+        if (err.errMsg && err.errMsg.includes('auth deny')) {
+          wx.showModal({
+            title: '提示',
+            content: '需要您授权保存图片到相册',
+            confirmText: '去授权',
+            success: (res) => {
+              if (res.confirm) {
+                wx.openSetting();
+              }
+            }
+          });
+        } else {
+          util.showError('保存失败');
+        }
+      }
+    });
+  },
+
+  onShareAppMessage() {
+    const { detail } = this.data;
+    if (detail) {
+      return {
+        title: `【${detail.statusText}】${detail.title} - ¥${detail.priceText}`,
+        path: `/pages/market-detail/index?id=${detail.id}`,
+        imageUrl: detail.images && detail.images[0] ? detail.images[0] : ''
+      };
+    }
+    return {
+      title: '二手市场 - 校园闲置交易',
+      path: '/pages/market/index'
+    };
+  },
+
+  onShareTimeline() {
+    const { detail } = this.data;
+    if (detail) {
+      return {
+        title: `${detail.title} - ¥${detail.priceText}`,
+        imageUrl: detail.images && detail.images[0] ? detail.images[0] : ''
+      };
+    }
+    return {
+      title: '二手市场 - 校园闲置交易'
+    };
   }
 });

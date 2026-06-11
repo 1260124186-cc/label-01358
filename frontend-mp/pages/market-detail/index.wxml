@@ -20,17 +20,39 @@
       </swiper-item>
     </swiper>
     <view class="image-counter">{{currentImageIndex + 1}}/{{detail.images.length}}</view>
+    <view class="status-badge status-{{detail.status}}">
+      <text class="status-badge-text">{{detail.statusText}}</text>
+    </view>
   </view>
 
   <!-- 价格信息 -->
   <view class="price-section">
     <view class="price-row">
-      <text class="price-current">¥{{detail.priceText}}</text>
-      <text class="price-original" wx:if="{{detail.originalPrice}}">¥{{detail.originalPriceText}}</text>
+      <view class="price-main">
+        <text class="price-current">¥{{detail.priceText}}</text>
+        <view class="discount-tag" wx:if="{{detail.hasDiscount}}">
+          <text class="discount-text">{{detail.discountText}}</text>
+        </view>
+        <view class="save-tag" wx:if="{{detail.hasDiscount && detail.originalPrice}}">
+          <text class="save-text">省 ¥{{detail.saveText}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="price-original-row" wx:if="{{detail.originalPrice}}">
+      <text class="price-original-label">原价</text>
+      <text class="price-original">¥{{detail.originalPriceText}}</text>
     </view>
     <view class="info-row">
-      <text class="info-views">{{detail.views}}次浏览</text>
+      <view class="info-views">
+        <text class="info-icon">👁️</text>
+        <text class="info-text">{{detail.viewsText}} 浏览</text>
+      </view>
+      <text class="info-dot">·</text>
       <text class="info-time">{{detail.timeText}}</text>
+      <text class="info-dot">·</text>
+      <view class="info-category">
+        <text class="info-category-text">{{detail.categoryText}}</text>
+      </view>
     </view>
   </view>
 
@@ -47,6 +69,14 @@
         </view>
         <view
           class="action-btn"
+          bindtap="onShare"
+          open-type="share"
+        >
+          <text class="action-icon">↗️</text>
+        </view>
+        <view
+          class="action-btn"
+          wx:if="{{!isOwner}}"
           bindtap="onReport"
         >
           <text class="action-icon">🚫</text>
@@ -56,6 +86,45 @@
     <view class="info-tags">
       <text class="info-tag">{{detail.categoryText}}</text>
       <text class="info-tag status-{{detail.status}}">{{detail.statusText}}</text>
+    </view>
+
+    <!-- 卖家操作区 -->
+    <view class="owner-actions" wx:if="{{isOwner}}">
+      <view class="owner-title">
+        <text class="owner-title-text">卖家操作</text>
+      </view>
+      <view class="owner-btn-group">
+        <view class="owner-btn" bindtap="onEdit">
+          <text class="owner-btn-icon">✏️</text>
+          <text class="owner-btn-text">编辑</text>
+        </view>
+        <view class="owner-btn" bindtap="onToggleStatusAction">
+          <text class="owner-btn-icon">🔄</text>
+          <text class="owner-btn-text">改状态</text>
+        </view>
+        <view class="owner-btn owner-btn-danger" bindtap="onDelete">
+          <text class="owner-btn-icon">🗑️</text>
+          <text class="owner-btn-text">下架</text>
+        </view>
+      </view>
+
+      <!-- 状态选择面板 -->
+      <view class="status-panel" wx:if="{{showStatusAction}}">
+        <view class="status-panel-title">选择商品状态</view>
+        <view
+          class="status-option {{detail.status === item.value ? 'active' : ''}}"
+          wx:for="{{statusOptions}}"
+          wx:key="value"
+          bindtap="onChangeStatus"
+          data-status="{{item.value}}"
+        >
+          <view class="status-option-main">
+            <text class="status-option-label status-{{item.value}}">{{item.label}}</text>
+            <text class="status-option-desc">{{item.desc}}</text>
+          </view>
+          <text class="status-option-check" wx:if="{{detail.status === item.value}}">✓</text>
+        </view>
+      </view>
     </view>
   </view>
 
@@ -89,11 +158,33 @@
         <text class="bottom-icon {{isFavorite ? 'active' : ''}}">{{isFavorite ? '★' : '☆'}}</text>
         <text class="bottom-text">收藏</text>
       </view>
+      <view class="bottom-action" open-type="share" bindtap="onShare">
+        <text class="bottom-icon">↗️</text>
+        <text class="bottom-text">分享</text>
+      </view>
     </view>
-    <view class="bottom-right">
+    <view class="bottom-right" wx:if="{{!isOwner}}">
       <btn type="primary" size="large" block="{{true}}" bind:click="onCallPhone">立即联系卖家</btn>
     </view>
+    <view class="bottom-right" wx:else>
+      <btn type="primary" size="large" block="{{true}}" bind:click="onEdit">编辑商品</btn>
+    </view>
   </view>
+
+  <!-- 分享卡片 -->
+  <share-card
+    visible="{{showShareCard}}"
+    image="{{detail.images[0]}}"
+    title="{{detail.title}}"
+    price="{{detail.priceText}}"
+    originalPrice="{{detail.originalPriceText}}"
+    discount="{{detail.discountText}}"
+    statusText="{{detail.statusText}}"
+    status="{{detail.status}}"
+    bind:close="onCloseShareCard"
+    bind:save="onSaveShareImage"
+    bind:share="onShareAppMessage"
+  />
 </view>
 
 <view class="page empty-page {{darkMode ? 'dark' : ''}}" wx:else>
