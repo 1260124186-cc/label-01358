@@ -89,7 +89,16 @@
     "pages/real-name-verify/index",
     "pages/credit-history/index",
     "pages/news-detail/index",
-    "pages/news-list/index"
+    "pages/news-list/index",
+    "pages/admin/index/index",
+    "pages/admin/announcement-list/index",
+    "pages/admin/announcement-edit/index",
+    "pages/admin/news-list/index",
+    "pages/admin/news-edit/index",
+    "pages/admin/broadcast-list/index",
+    "pages/admin/broadcast-edit/index",
+    "pages/admin/scenery-list/index",
+    "pages/admin/scenery-edit/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

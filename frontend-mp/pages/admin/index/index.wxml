@@ -1,0 +1,49 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header">
+    <view class="header-title">内容管理中心</view>
+    <view class="header-desc">管理校园公告、动态、广播和风光内容</view>
+  </view>
+
+  <view class="stats-grid">
+    <view class="stats-item" style="background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);">
+      <text class="stats-count">{{stats.announcementCount}}</text>
+      <text class="stats-label">公告总数</text>
+    </view>
+    <view class="stats-item" style="background: linear-gradient(135deg, #4ECDC4 0%, #6EE7DE 100%);">
+      <text class="stats-count">{{stats.newsCount}}</text>
+      <text class="stats-label">动态总数</text>
+    </view>
+    <view class="stats-item" style="background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);">
+      <text class="stats-count">{{stats.broadcastCount}}</text>
+      <text class="stats-label">广播节目</text>
+    </view>
+    <view class="stats-item" style="background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);">
+      <text class="stats-count">{{stats.sceneryCount}}</text>
+      <text class="stats-label">风光图片</text>
+    </view>
+  </view>
+
+  <view class="module-section">
+    <view class="section-title">管理模块</view>
+    <view class="module-list">
+      <view 
+        class="module-card"
+        wx:for="{{modules}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onModuleTap"
+        hover-class="module-card-hover"
+      >
+        <view class="module-icon" style="background-color: {{item.color}}20;">
+          <text class="icon-text">{{item.icon}}</text>
+        </view>
+        <view class="module-info">
+          <text class="module-name">{{item.name}}</text>
+          <text class="module-desc">{{item.desc}}</text>
+        </view>
+        <text class="module-arrow">›</text>
+      </view>
+    </view>
+  </view>
+</view>

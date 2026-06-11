@@ -70,7 +70,11 @@ const STORAGE_KEYS = {
   USER_CREDIT_SCORES: 'userCreditScores',
   REPORTS: 'reports',
   BLACKLIST: 'blacklist',
-  USER_BEHAVIOR_LOG: 'userBehaviorLog'
+  USER_BEHAVIOR_LOG: 'userBehaviorLog',
+  ANNOUNCEMENTS: 'announcements',
+  CAMPUS_NEWS: 'campusNews',
+  BROADCAST_PROGRAMS: 'broadcastPrograms',
+  SCENERY_MANAGE: 'sceneryManage'
 };
 
 /**

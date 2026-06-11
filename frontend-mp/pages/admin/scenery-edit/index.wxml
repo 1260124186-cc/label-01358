@@ -1,0 +1,60 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">🏞️</text>
+      <text class="title-text">风光图片</text>
+    </view>
+    <view class="image-upload-wrap">
+      <view class="image-preview scenery-preview" wx:if="{{image}}" bindtap="onPreviewImage">
+        <image class="preview-image" src="{{image}}" mode="aspectFill" />
+        <view class="remove-btn" catchtap="onRemoveImage">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="upload-btn scenery-upload" wx:else bindtap="onChooseImage">
+        <text class="upload-icon">+</text>
+        <text class="upload-text">上传图片</text>
+        <text class="upload-hint">建议尺寸 1920 x 1080</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">✏️</text>
+      <text class="title-text">图片信息</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">图片标题</text>
+      <input
+        class="form-input"
+        placeholder="请输入图片标题"
+        value="{{title}}"
+        bindinput="onTitleInput"
+        maxlength="50"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">图片描述</text>
+      <textarea
+        class="form-textarea"
+        placeholder="描述图片内容、拍摄场景等..."
+        value="{{description}}"
+        bindinput="onDescInput"
+        maxlength="200"
+        auto-height
+      />
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <view class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="onSubmit">
+      <text>{{submitting ? '保存中...' : '保存'}}</text>
+    </view>
+  </view>
+
+  <view class="bottom-spacing"></view>
+</view>

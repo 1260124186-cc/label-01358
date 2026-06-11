@@ -153,6 +153,9 @@ Page({
       case 'changelog':
         util.navigateTo('/pages/changelog/index');
         break;
+      case 'admin':
+        util.navigateTo('/pages/admin/index/index');
+        break;
     }
   },
 

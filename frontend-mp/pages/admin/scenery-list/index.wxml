@@ -1,0 +1,53 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="list-container">
+    <view class="list-header">
+      <text class="list-count">共 {{list.length}} 张图片</text>
+      <view class="add-btn" bindtap="onAdd">
+        <text class="add-icon">+</text>
+        <text>新增</text>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{list.length === 0}}">
+      <text class="empty-icon">🏞️</text>
+      <text class="empty-text">暂无风光图片，点击右上角新增</text>
+    </view>
+
+    <view class="scenery-grid" wx:else>
+      <view class="scenery-card" wx:for="{{list}}" wx:key="id">
+        <view class="order-badge">
+          <text>{{item.order}}</text>
+        </view>
+        <view class="scenery-image">
+          <image src="{{item.image}}" mode="aspectFill" />
+        </view>
+        <view class="scenery-info">
+          <text class="scenery-title">{{item.title}}</text>
+          <text class="scenery-desc">{{item.description || '暂无描述'}}</text>
+          <text class="scenery-time">📅 {{item.timeText}}</text>
+        </view>
+
+        <view class="move-actions">
+          <view class="move-btn" data-id="{{item.id}}" bindtap="onMoveUp">
+            <text>▲</text>
+          </view>
+          <view class="move-btn" data-id="{{item.id}}" bindtap="onMoveDown">
+            <text>▼</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="item-actions-row" wx:for="{{list}}" wx:key="id" wx:for-index="idx" wx:for-item="actionItem">
+        <view class="action-btn action-edit" data-id="{{actionItem.id}}" bindtap="onEdit">
+          <text>编辑</text>
+        </view>
+        <view class="action-btn action-delete" data-id="{{actionItem.id}}" bindtap="onDelete">
+          <text>删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-spacing"></view>
+</view>

@@ -1,0 +1,121 @@
+@import "/pages/admin/announcement-list/index.wxss";
+
+.scenery-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+.scenery-card {
+  position: relative;
+  background-color: var(--color-bg-card);
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 16rpx;
+}
+
+.order-badge {
+  position: absolute;
+  top: 16rpx;
+  left: 16rpx;
+  z-index: 10;
+  width: 48rpx;
+  height: 48rpx;
+  background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+  color: #FFFFFF;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+.scenery-image {
+  width: 100%;
+  height: 400rpx;
+}
+
+.scenery-image image {
+  width: 100%;
+  height: 100%;
+}
+
+.scenery-info {
+  padding: 20rpx 24rpx;
+}
+
+.scenery-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 8rpx;
+}
+
+.scenery-desc {
+  display: block;
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  margin-bottom: 8rpx;
+}
+
+.scenery-time {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+
+.move-actions {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.move-btn {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 12rpx;
+  font-size: 20rpx;
+  color: #FFFFFF;
+  transition: all 0.2s ease;
+}
+
+.move-btn:active {
+  background-color: var(--color-primary);
+}
+
+.item-actions-row {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.item-actions-row .action-btn {
+  flex: 1;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 36rpx;
+  font-size: 26rpx;
+  font-weight: 500;
+}
+
+.action-edit {
+  background-color: #EDE9FE;
+  color: #7C3AED;
+}
+
+.action-delete {
+  background-color: #FEE2E2;
+  color: #DC2626;
+}

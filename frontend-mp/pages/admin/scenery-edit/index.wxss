@@ -1,0 +1,13 @@
+@import "/pages/admin/announcement-edit/index.wxss";
+
+.scenery-preview {
+  height: 400rpx;
+}
+
+.scenery-preview .preview-image {
+  height: 100%;
+}
+
+.scenery-upload {
+  height: 400rpx;
+}

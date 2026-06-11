@@ -1,0 +1,126 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">🖼️</text>
+      <text class="title-text">封面图片</text>
+    </view>
+    <view class="image-upload-wrap">
+      <view class="image-preview" wx:if="{{cover}}" bindtap="onPreviewCover">
+        <image class="preview-image" src="{{cover}}" mode="aspectFill" />
+        <view class="remove-btn" catchtap="onRemoveCover">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="upload-btn" wx:else bindtap="onChooseCover">
+        <text class="upload-icon">+</text>
+        <text class="upload-text">上传封面</text>
+        <text class="upload-hint">建议尺寸 800 x 400</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">✏️</text>
+      <text class="title-text">基本信息</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">公告标题</text>
+      <input
+        class="form-input"
+        placeholder="请输入公告标题"
+        value="{{title}}"
+        bindinput="onTitleInput"
+        maxlength="100"
+      />
+      <text class="char-count">{{title.length}}/100</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">公告内容</text>
+      <textarea
+        class="form-textarea"
+        placeholder="请输入公告详细内容..."
+        value="{{content}}"
+        bindinput="onContentInput"
+        maxlength="2000"
+        auto-height
+      />
+      <text class="char-count">{{content.length}}/2000</text>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">⚙️</text>
+      <text class="title-text">发布设置</text>
+    </view>
+
+    <view class="form-item form-switch" bindtap="onToggleTop">
+      <text class="form-label">置顶公告</text>
+      <view class="switch-track {{isTop ? 'active' : ''}}">
+        <view class="switch-thumb"></view>
+      </view>
+    </view>
+
+    <view class="form-item" bindtap="onStatusTap">
+      <text class="form-label">发布状态</text>
+      <view class="form-value">
+        <text class="value-text" style="color: {{statusList[statusIndex].color}};">{{statusList[statusIndex].label}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">发布时间</text>
+      <view class="datetime-row">
+        <picker mode="date" value="{{publishTimeText.substring(0, 10)}}" bindchange="onDateChange">
+          <view class="datetime-btn">
+            <text>{{publishTimeText.substring(0, 10)}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+        <picker mode="time" value="{{publishTimeText.substring(11, 16)}}" bindchange="onTimeChange">
+          <view class="datetime-btn">
+            <text>{{publishTimeText.substring(11, 16)}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <view class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="onSubmit">
+      <text>{{submitting ? '保存中...' : '保存公告'}}</text>
+    </view>
+  </view>
+
+  <view class="picker-modal" wx:if="{{showStatusPicker}}" catchtap="onCloseStatusPicker">
+    <view class="picker-content" catchtap="stopBubble">
+      <view class="picker-header">
+        <text class="picker-title">选择发布状态</text>
+        <view class="close-btn" catchtap="onCloseStatusPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <scroll-view class="picker-list" scroll-y>
+        <view
+          class="picker-item {{status === item.value ? 'active' : ''}}"
+          wx:for="{{statusList}}"
+          wx:key="value"
+          data-value="{{item.value}}"
+          data-index="{{index}}"
+          catchtap="onStatusSelect"
+        >
+          <text class="item-text" style="color: {{item.color}};">● {{item.label}}</text>
+          <text class="check-icon" wx:if="{{status === item.value}}">✓</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="bottom-spacing"></view>
+</view>

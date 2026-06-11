@@ -1,0 +1,68 @@
+@import "/pages/scenery-publish/index.wxss";
+
+.form-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 24rpx;
+  border-bottom: none;
+}
+
+.form-switch .form-label {
+  margin-bottom: 0;
+}
+
+.switch-track {
+  width: 96rpx;
+  height: 56rpx;
+  border-radius: 28rpx;
+  background-color: #E5E7EB;
+  padding: 4rpx;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.switch-track.active {
+  background-color: var(--color-primary);
+}
+
+.switch-thumb {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background-color: #FFFFFF;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.switch-track.active .switch-thumb {
+  transform: translateX(40rpx);
+}
+
+.datetime-row {
+  display: flex;
+  gap: 20rpx;
+  padding-top: 8rpx;
+}
+
+.datetime-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72rpx;
+  padding: 0 24rpx;
+  background-color: var(--color-bg-page);
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  color: var(--color-text-primary);
+}
+
+.datetime-btn .arrow {
+  font-size: 32rpx;
+  color: var(--color-text-muted);
+}
+
+.page.dark .datetime-btn {
+  background-color: rgba(255, 255, 255, 0.06);
+}

@@ -1,0 +1,65 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="list-container">
+    <view class="list-header">
+      <text class="list-count">共 {{list.length}} 个节目</text>
+      <view class="add-btn" bindtap="onAdd">
+        <text class="add-icon">+</text>
+        <text>新增</text>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{list.length === 0}}">
+      <text class="empty-icon">🎙️</text>
+      <text class="empty-text">暂无节目，点击右上角新增</text>
+    </view>
+
+    <view class="item-list" wx:else>
+      <view class="program-card" wx:for="{{list}}" wx:key="id">
+        <view class="program-order">
+          <text class="order-num">{{item.order}}</text>
+        </view>
+
+        <view class="program-cover">
+          <image src="{{item.cover || '/assets/images/default-broadcast.png'}}" mode="aspectFill" />
+          <view class="play-icon">▶</view>
+        </view>
+
+        <view class="program-info">
+          <view class="program-top">
+            <text class="program-title">{{item.title}}</text>
+            <view class="tag tag-status" style="background-color: {{item.statusInfo.color}}20; color: {{item.statusInfo.color}};">
+              <text>{{item.statusInfo.label}}</text>
+            </view>
+          </view>
+          <text class="program-desc">{{item.description}}</text>
+          <view class="program-meta">
+            <text class="meta-item">🎤 {{item.anchor || '未知主播'}}</text>
+            <text class="meta-item">⏱ {{item.durationText}}</text>
+            <text class="meta-item">📅 {{item.timeText}}</text>
+          </view>
+        </view>
+
+        <view class="move-actions">
+          <view class="move-btn" data-id="{{item.id}}" bindtap="onMoveUp">
+            <text>▲</text>
+          </view>
+          <view class="move-btn" data-id="{{item.id}}" bindtap="onMoveDown">
+            <text>▼</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="item-actions-row" wx:for="{{list}}" wx:key="id" wx:for-index="idx" wx:for-item="actionItem">
+        <view class="action-btn action-edit" data-id="{{actionItem.id}}" bindtap="onEdit">
+          <text>编辑</text>
+        </view>
+        <view class="action-btn action-delete" data-id="{{actionItem.id}}" bindtap="onDelete">
+          <text>删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-spacing"></view>
+</view>

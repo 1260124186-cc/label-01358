@@ -1,0 +1,221 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">🖼️</text>
+      <text class="title-text">封面图片</text>
+    </view>
+    <view class="image-upload-wrap">
+      <view class="image-preview" wx:if="{{cover}}" bindtap="onPreviewCover">
+        <image class="preview-image" src="{{cover}}" mode="aspectFill" />
+        <view class="remove-btn" catchtap="onRemoveCover">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="upload-btn" wx:else bindtap="onChooseCover">
+        <text class="upload-icon">+</text>
+        <text class="upload-text">上传封面</text>
+        <text class="upload-hint">建议尺寸 800 x 600</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">✏️</text>
+      <text class="title-text">基本信息</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">动态标题</text>
+      <input
+        class="form-input"
+        placeholder="请输入动态标题"
+        value="{{title}}"
+        bindinput="onTitleInput"
+        maxlength="100"
+      />
+      <text class="char-count">{{title.length}}/100</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">内容摘要</text>
+      <textarea
+        class="form-textarea"
+        placeholder="简短描述，显示在列表页（不超过200字）"
+        value="{{summary}}"
+        bindinput="onSummaryInput"
+        maxlength="200"
+        auto-height
+      />
+      <text class="char-count">{{summary.length}}/200</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">详细内容</text>
+      <textarea
+        class="form-textarea"
+        placeholder="请输入动态详细内容..."
+        value="{{content}}"
+        bindinput="onContentInput"
+        maxlength="5000"
+        auto-height
+      />
+      <text class="char-count">{{content.length}}/5000</text>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">📸</text>
+      <text class="title-text">内容图片</text>
+      <text class="title-hint">（最多9张）</text>
+    </view>
+    <view class="images-grid">
+      <view class="image-item" wx:for="{{images}}" wx:key="index">
+        <image src="{{item}}" mode="aspectFill" data-src="{{item}}" bindtap="onPreviewImage" />
+        <view class="remove-btn" catchtap="onRemoveImage" data-index="{{index}}">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="image-add" wx:if="{{images.length < 9}}" bindtap="onAddImages">
+        <text class="add-icon">+</text>
+        <text class="add-text">添加</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">🏷️</text>
+      <text class="title-text">分类与标签</text>
+    </view>
+
+    <view class="form-item" bindtap="onCategoryTap">
+      <text class="form-label">分类</text>
+      <view class="form-value">
+        <text class="value-text">{{categories[categoryIndex].icon}} {{categories[categoryIndex].label}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">标签</text>
+      <view class="tag-input-row">
+        <input
+          class="tag-input"
+          placeholder="输入标签后点击添加"
+          value="{{tagInput}}"
+          bindinput="onTagInput"
+          maxlength="10"
+          confirm-type="done"
+          bindconfirm="onAddTag"
+        />
+        <view class="tag-add-btn" bindtap="onAddTag">添加</view>
+      </view>
+      <view class="tags-list" wx:if="{{tags.length > 0}}">
+        <view class="tag-chip" wx:for="{{tags}}" wx:key="index" data-index="{{index}}" bindtap="onRemoveTag">
+          <text>#{{item}}</text>
+          <text class="tag-close">✕</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">⚙️</text>
+      <text class="title-text">发布设置</text>
+    </view>
+
+    <view class="form-item form-switch" bindtap="onToggleTop">
+      <text class="form-label">置顶显示</text>
+      <view class="switch-track {{isTop ? 'active' : ''}}">
+        <view class="switch-thumb"></view>
+      </view>
+    </view>
+
+    <view class="form-item" bindtap="onStatusTap">
+      <text class="form-label">发布状态</text>
+      <view class="form-value">
+        <text class="value-text" style="color: {{statusList[statusIndex].color}};">{{statusList[statusIndex].label}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">发布时间</text>
+      <view class="datetime-row">
+        <picker mode="date" value="{{publishTimeText.substring(0, 10)}}" bindchange="onDateChange">
+          <view class="datetime-btn">
+            <text>{{publishTimeText.substring(0, 10)}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+        <picker mode="time" value="{{publishTimeText.substring(11, 16)}}" bindchange="onTimeChange">
+          <view class="datetime-btn">
+            <text>{{publishTimeText.substring(11, 16)}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <view class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="onSubmit">
+      <text>{{submitting ? '保存中...' : '保存动态'}}</text>
+    </view>
+  </view>
+
+  <view class="picker-modal" wx:if="{{showCategoryPicker}}" catchtap="onCloseCategoryPicker">
+    <view class="picker-content" catchtap="stopBubble">
+      <view class="picker-header">
+        <text class="picker-title">选择分类</text>
+        <view class="close-btn" catchtap="onCloseCategoryPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <scroll-view class="picker-list" scroll-y>
+        <view
+          class="picker-item {{category === item.value ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="value"
+          data-value="{{item.value}}"
+          data-index="{{index}}"
+          catchtap="onCategorySelect"
+        >
+          <text class="item-icon">{{item.icon}}</text>
+          <text class="item-text">{{item.label}}</text>
+          <text class="check-icon" wx:if="{{category === item.value}}">✓</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="picker-modal" wx:if="{{showStatusPicker}}" catchtap="onCloseStatusPicker">
+    <view class="picker-content" catchtap="stopBubble">
+      <view class="picker-header">
+        <text class="picker-title">选择发布状态</text>
+        <view class="close-btn" catchtap="onCloseStatusPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <scroll-view class="picker-list" scroll-y>
+        <view
+          class="picker-item {{status === item.value ? 'active' : ''}}"
+          wx:for="{{statusList}}"
+          wx:key="value"
+          data-value="{{item.value}}"
+          data-index="{{index}}"
+          catchtap="onStatusSelect"
+        >
+          <text class="item-text" style="color: {{item.color}};">● {{item.label}}</text>
+          <text class="check-icon" wx:if="{{status === item.value}}">✓</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="bottom-spacing"></view>
+</view>

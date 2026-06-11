@@ -1,0 +1,173 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">🖼️</text>
+      <text class="title-text">节目封面</text>
+    </view>
+    <view class="image-upload-wrap">
+      <view class="image-preview" wx:if="{{cover}}" bindtap="onPreviewCover">
+        <image class="preview-image" src="{{cover}}" mode="aspectFill" />
+        <view class="remove-btn" catchtap="onRemoveCover">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="upload-btn" wx:else bindtap="onChooseCover">
+        <text class="upload-icon">+</text>
+        <text class="upload-text">上传封面</text>
+        <text class="upload-hint">建议尺寸 600 x 600</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">🎙️</text>
+      <text class="title-text">基本信息</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">节目名称</text>
+      <input
+        class="form-input"
+        placeholder="请输入节目名称"
+        value="{{title}}"
+        bindinput="onTitleInput"
+        maxlength="100"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">节目介绍</text>
+      <textarea
+        class="form-textarea"
+        placeholder="简要介绍节目内容..."
+        value="{{description}}"
+        bindinput="onDescInput"
+        maxlength="500"
+        auto-height
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">主播</text>
+      <input
+        class="form-input"
+        placeholder="请输入主播名称"
+        value="{{anchor}}"
+        bindinput="onAnchorInput"
+        maxlength="30"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">🔊</text>
+      <text class="title-text">音频内容</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">音频文件</text>
+      <view class="file-row">
+        <view class="file-name" wx:if="{{audioUrl}}">
+          <text class="file-icon">🎵</text>
+          <text class="file-text">{{audioUrl.length > 50 ? audioUrl.substring(0, 50) + '...' : audioUrl}}</text>
+        </view>
+        <view class="file-placeholder" wx:else>
+          <text>未选择音频文件</text>
+        </view>
+      </view>
+      <view class="upload-audio-btn" bindtap="onChooseAudio">
+        <text class="upload-audio-icon">📁</text>
+        <text>选择音频文件</text>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">音频URL</text>
+      <input
+        class="form-input"
+        placeholder="或直接输入音频URL地址"
+        value="{{audioUrl}}"
+        bindinput="onAudioUrlInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">时长 (mm:ss)</text>
+      <input
+        class="form-input"
+        placeholder="例如: 05:30"
+        value="{{durationText}}"
+        bindinput="onDurationInput"
+        bindblur="onDurationBlur"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">⚙️</text>
+      <text class="title-text">发布设置</text>
+    </view>
+
+    <view class="form-item" bindtap="onStatusTap">
+      <text class="form-label">发布状态</text>
+      <view class="form-value">
+        <text class="value-text" style="color: {{statusList[statusIndex].color}};">{{statusList[statusIndex].label}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">发布时间</text>
+      <view class="datetime-row">
+        <picker mode="date" value="{{publishTimeText.substring(0, 10)}}" bindchange="onDateChange">
+          <view class="datetime-btn">
+            <text>{{publishTimeText.substring(0, 10)}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+        <picker mode="time" value="{{publishTimeText.substring(11, 16)}}" bindchange="onTimeChange">
+          <view class="datetime-btn">
+            <text>{{publishTimeText.substring(11, 16)}}</text>
+            <text class="arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <view class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="onSubmit">
+      <text>{{submitting ? '保存中...' : '保存节目'}}</text>
+    </view>
+  </view>
+
+  <view class="picker-modal" wx:if="{{showStatusPicker}}" catchtap="onCloseStatusPicker">
+    <view class="picker-content" catchtap="stopBubble">
+      <view class="picker-header">
+        <text class="picker-title">选择发布状态</text>
+        <view class="close-btn" catchtap="onCloseStatusPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <scroll-view class="picker-list" scroll-y>
+        <view
+          class="picker-item {{status === item.value ? 'active' : ''}}"
+          wx:for="{{statusList}}"
+          wx:key="value"
+          data-value="{{item.value}}"
+          data-index="{{index}}"
+          catchtap="onStatusSelect"
+        >
+          <text class="item-text" style="color: {{item.color}};">● {{item.label}}</text>
+          <text class="check-icon" wx:if="{{status === item.value}}">✓</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="bottom-spacing"></view>
+</view>

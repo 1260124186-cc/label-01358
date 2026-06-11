@@ -836,7 +836,28 @@ function getLabelByValue(list, value) {
   return item ? item.label : value;
 }
 
+const PUBLISH_STATUS = [
+  { value: 'draft', label: '草稿', color: '#6B7280' },
+  { value: 'published', label: '已发布', color: '#10B981' },
+  { value: 'offline', label: '已下线', color: '#EF4444' }
+];
+
+const PUBLISH_STATUS_MAP = PUBLISH_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const ADMIN_MODULES = [
+  { id: 'announcement', name: '公告管理', icon: '📢', color: '#FF6B6B', desc: '管理校园公告通知' },
+  { id: 'news', name: '校园动态', icon: '📰', color: '#4ECDC4', desc: '管理校园新闻动态' },
+  { id: 'broadcast', name: '广播节目', icon: '🎙️', color: '#F59E0B', desc: '管理校园广播节目' },
+  { id: 'scenery', name: '风光管理', icon: '🏞️', color: '#8B5CF6', desc: '管理校园风光图片' }
+];
+
 module.exports = {
+  PUBLISH_STATUS,
+  PUBLISH_STATUS_MAP,
+  ADMIN_MODULES,
   LOST_FOUND_TYPES,
   LOST_FOUND_STATUS,
   LOST_FOUND_STATUS_MAP,
@@ -941,5 +962,8 @@ module.exports = {
   getScoreLevel,
   getGPA,
   getSlotTime,
-  getLabelByValue
+  getLabelByValue,
+  PUBLISH_STATUS,
+  PUBLISH_STATUS_MAP,
+  ADMIN_MODULES
 };

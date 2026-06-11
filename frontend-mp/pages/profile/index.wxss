@@ -224,6 +224,12 @@
   color: var(--color-text-muted);
 }
 
+.menu-desc {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  margin-right: 8rpx;
+}
+
 .color-scheme-list {
   display: flex;
   padding: 0 8rpx;

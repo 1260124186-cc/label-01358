@@ -67,6 +67,20 @@
     </view>
   </view>
 
+  <view class="menu-section" aria-label="内容管理">
+    <view class="section-title">内容管理</view>
+    <view class="menu-card">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="admin" aria-role="button" aria-label="内容管理">
+        <view class="menu-icon-wrap" style="background-color: #E0F2FE;">
+          <text class="menu-icon">⚙️</text>
+        </view>
+        <text class="menu-text">内容管理</text>
+        <text class="menu-desc">公告/动态/广播/风光</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
   <view class="menu-section" aria-label="外观设置">
     <view class="section-title">外观设置</view>
     <view class="menu-card">
@@ -101,9 +115,9 @@
   <view class="menu-section" aria-label="主题色选择">
     <view class="section-title">主题色</view>
     <view class="color-scheme-list">
-      <view 
-        class="color-scheme-item {{colorScheme === item.value ? 'active' : ''}}" 
-        wx:for="{{colorSchemes}}" 
+      <view
+        class="color-scheme-item {{colorScheme === item.value ? 'active' : ''}}"
+        wx:for="{{colorSchemes}}"
         wx:key="value"
         bindtap="onColorSchemeChange"
         data-scheme="{{item.value}}"
