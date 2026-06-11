@@ -64,7 +64,13 @@ const STORAGE_KEYS = {
   BROADCAST_FAVORITES: 'broadcastFavorites',
   BROADCAST_RECENT: 'broadcastRecent',
   BROADCAST_PLAY_MODE: 'broadcastPlayMode',
-  BROADCAST_PLAYBACK_RATE: 'broadcastPlaybackRate'
+  BROADCAST_PLAYBACK_RATE: 'broadcastPlaybackRate',
+  USERS: 'users',
+  USER_REAL_NAME_VERIFY: 'userRealNameVerify',
+  USER_CREDIT_SCORES: 'userCreditScores',
+  REPORTS: 'reports',
+  BLACKLIST: 'blacklist',
+  USER_BEHAVIOR_LOG: 'userBehaviorLog'
 };
 
 /**

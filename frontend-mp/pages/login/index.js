@@ -1,6 +1,7 @@
 const app = getApp();
 const util = require('../../utils/util');
-const storage = require('../../utils/storage');
+const userService = require('../../services/userService');
+const security = require('../../utils/security');
 const { mixPage } = require('../../utils/withTheme');
 
 mixPage({
@@ -8,7 +9,11 @@ mixPage({
     darkMode: false,
     isLogin: true,
     showPassword: false,
+    showConfirmPassword: false,
     submitting: false,
+    passwordStrength: 0,
+    passwordStrengthText: '',
+    passwordStrengthColor: '',
     formData: {
       account: '',
       password: '',
@@ -22,11 +27,50 @@ mixPage({
     this.setData({
       [`formData.${field}`]: value
     });
+
+    if (field === 'password') {
+      this.updatePasswordStrength(value);
+    }
+  },
+
+  updatePasswordStrength(password) {
+    const strength = security.getPasswordStrength(password);
+    let strengthText = '';
+    let strengthColor = '';
+
+    if (strength === 0) {
+      strengthText = '';
+      strengthColor = '';
+    } else if (strength < 30) {
+      strengthText = '弱';
+      strengthColor = '#F44336';
+    } else if (strength < 60) {
+      strengthText = '中';
+      strengthColor = '#FF9800';
+    } else if (strength < 80) {
+      strengthText = '强';
+      strengthColor = '#4CAF50';
+    } else {
+      strengthText = '极强';
+      strengthColor = '#2196F3';
+    }
+
+    this.setData({
+      passwordStrength: strength,
+      passwordStrengthText,
+      passwordStrengthColor: strengthColor
+    });
   },
 
   togglePassword() {
     this.setData({
       showPassword: !this.data.showPassword
+    });
+  },
+
+  toggleConfirmPassword() {
+    this.setData({
+      showConfirmPassword: !this.data.showConfirmPassword
     });
   },
 
@@ -37,7 +81,10 @@ mixPage({
         account: '',
         password: '',
         confirmPassword: ''
-      }
+      },
+      passwordStrength: 0,
+      passwordStrengthText: '',
+      passwordStrengthColor: ''
     });
   },
 
@@ -54,8 +101,9 @@ mixPage({
       return false;
     }
 
-    if (formData.password.length < 6) {
-      util.showToast('密码至少6位');
+    const passwordCheck = security.validatePasswordStrength(formData.password);
+    if (!passwordCheck.valid) {
+      util.showToast(passwordCheck.message);
       return false;
     }
 
@@ -73,60 +121,35 @@ mixPage({
     this.setData({ submitting: true });
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 800));
-
       const { isLogin, formData } = this.data;
 
       if (isLogin) {
-        // 登录逻辑
-        const users = storage.get('users') || [];
-        const user = users.find(u => u.account === formData.account && u.password === formData.password);
+        const result = userService.loginUser(formData.account, formData.password);
 
-        if (user) {
-          const userInfo = {
-            nickName: user.nickName,
-            account: user.account,
-            avatarUrl: user.avatarUrl || ''
-          };
-          app.updateUserInfo(userInfo);
-          await util.showSuccess('登录成功');
+        if (result.success) {
+          app.updateUserInfo(result.user);
+          await util.showSuccess(result.message);
           util.navigateBack();
         } else {
-          util.showError('账号或密码错误');
+          util.showError(result.message);
         }
       } else {
-        // 注册逻辑
-        const users = storage.get('users') || [];
-        const exists = users.find(u => u.account === formData.account);
-
-        if (exists) {
-          util.showError('账号已存在');
-          return;
-        }
-
-        const newUser = {
-          nickName: formData.account,
+        const result = userService.registerUser({
           account: formData.account,
           password: formData.password,
-          avatarUrl: '',
-          createTime: Date.now()
-        };
+          nickName: formData.account
+        });
 
-        users.push(newUser);
-        storage.set('users', users);
-
-        // 注册成功后自动登录
-        const userInfo = {
-          nickName: newUser.nickName,
-          account: newUser.account,
-          avatarUrl: ''
-        };
-        app.updateUserInfo(userInfo);
-
-        await util.showSuccess('注册成功');
-        util.navigateBack();
+        if (result.success) {
+          app.updateUserInfo(result.user);
+          await util.showSuccess(result.message);
+          util.navigateBack();
+        } else {
+          util.showError(result.message);
+        }
       }
     } catch (e) {
+      console.error('登录注册失败:', e);
       util.showError('操作失败');
     } finally {
       this.setData({ submitting: false });

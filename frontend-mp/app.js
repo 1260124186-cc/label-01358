@@ -3,6 +3,8 @@ const storage = require('./utils/storage');
 const mockData = require('./config/mock-data');
 const config = require('./config/index');
 const dataService = require('./services/data');
+const userService = require('./services/userService');
+const security = require('./utils/security');
 
 App({
   globalData: {
@@ -251,17 +253,42 @@ App({
   // 初始化测试账号
   initTestAccount() {
     try {
-      const users = wx.getStorageSync('users') || [];
+      userService.initLegacyUsers();
+
+      const users = userService.getUserList();
       const testAccountExists = users.some(u => u.account === 'test');
       if (!testAccountExists) {
-        users.push({
-          nickName: 'test',
+        const hashedPassword = security.hashPassword('123456');
+        const testUser = {
+          id: 'test_user',
+          nickName: '测试用户',
           account: 'test',
-          password: '123456',
+          passwordHash: hashedPassword.hash,
+          passwordSalt: hashedPassword.salt,
+          passwordIterations: hashedPassword.iterations,
           avatarUrl: '',
-          createTime: Date.now()
-        });
-        wx.setStorageSync('users', users);
+          gender: 0,
+          birthday: '',
+          region: [],
+          signature: '这是一个测试账号',
+          realNameVerified: true,
+          realNameInfo: {
+            realName: '张三',
+            studentId: '2024001001',
+            department: '计算机学院',
+            status: 'approved'
+          },
+          creditScore: 85,
+          creditLevel: userService.getCreditLevel(85),
+          createTime: Date.now(),
+          updateTime: Date.now(),
+          lastLoginTime: Date.now(),
+          status: 'active',
+          publishCount: 5,
+          dealCount: 3
+        };
+        users.push(testUser);
+        storage.set(storage.STORAGE_KEYS.USERS, users);
       }
     } catch (e) {
       console.error('初始化测试账号失败:', e);

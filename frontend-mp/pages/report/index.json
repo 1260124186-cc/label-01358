@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "举报",
+  "navigationBarBackgroundColor": "#FF6B6B",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#F8F9FA",
+  "usingComponents": {
+    "btn": "../../components/btn/index"
+  }
+}

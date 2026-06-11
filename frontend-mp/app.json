@@ -80,7 +80,12 @@
     "pages/academic/index",
     "pages/classroom-query/index",
     "pages/feedback/index",
-    "pages/changelog/index"
+    "pages/changelog/index",
+    "pages/user-profile/index",
+    "pages/report/index",
+    "pages/blacklist/index",
+    "pages/real-name-verify/index",
+    "pages/credit-history/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

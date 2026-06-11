@@ -1,0 +1,119 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{userInfo}}">
+  <!-- 当前信用分卡片 -->
+  <view class="score-card">
+    <view class="card-bg"></view>
+    <view class="card-content">
+      <view class="score-header">
+        <text class="score-label">当前信用评分</text>
+        <view class="rules-btn" bindtap="viewRules">
+          <text class="rules-icon">ℹ️</text>
+          <text class="rules-text">评分规则</text>
+        </view>
+      </view>
+      <view class="score-main">
+        <text class="score-value" style="color: {{userInfo.creditLevel.color}};">{{userInfo.creditScore}}</text>
+        <view class="level-badge" style="background: {{userInfo.creditLevel.color}};">
+          <text class="level-text">{{userInfo.creditLevel.level}}</text>
+        </view>
+      </view>
+      <text class="level-label" style="color: {{userInfo.creditLevel.color}};">{{userInfo.creditLevel.label}}</text>
+      
+      <!-- 进度条 -->
+      <view class="score-progress">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{userInfo.creditScore}}%; background: {{userInfo.creditLevel.color}};"></view>
+        </view>
+        <view class="progress-labels">
+          <text class="label-start">0</text>
+          <text class="label-end">100</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 统计数据 -->
+  <view class="stats-section" wx:if="{{creditStats}}">
+    <view class="stats-grid">
+      <view class="stats-item">
+        <text class="stats-value positive">+{{creditStats.totalPositive}}</text>
+        <text class="stats-label">累计加分</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-value negative">-{{creditStats.totalNegative}}</text>
+        <text class="stats-label">累计扣分</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-value">{{creditStats.maxScore}}</text>
+        <text class="stats-label">最高分数</text>
+      </view>
+      <view class="stats-item">
+        <text class="stats-value">{{creditStats.totalRecords}}</text>
+        <text class="stats-label">信用记录</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 用户信息 -->
+  <view class="user-card">
+    <image class="user-avatar" src="{{userInfo.avatarUrl || '/assets/images/default-avatar.png'}}" mode="aspectFill"/>
+    <view class="user-info">
+      <view class="user-name-row">
+        <text class="user-name">{{userInfo.nickName}}</text>
+        <view class="verify-badge" wx:if="{{userInfo.realNameVerified}}">
+          <text class="verify-icon">✓</text>
+          <text class="verify-text">已认证</text>
+        </view>
+      </view>
+      <text class="user-department" wx:if="{{userInfo.realNameInfo && userInfo.realNameInfo.department}}">
+        {{userInfo.realNameInfo.department}}
+      </text>
+    </view>
+  </view>
+
+  <!-- 信用历史列表 -->
+  <view class="history-section">
+    <view class="section-header">
+      <text class="section-title">信用变动记录</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-history" wx:if="{{creditHistory.length === 0}}">
+      <text class="empty-icon">📊</text>
+      <text class="empty-text">暂无信用变动记录</text>
+      <text class="empty-desc">保持良好行为，积累您的信用分</text>
+    </view>
+
+    <!-- 历史记录列表 -->
+    <view class="history-list" wx:if="{{creditHistory.length > 0}}">
+      <view class="history-item" wx:for="{{creditHistory}}" wx:key="id">
+        <view class="item-left">
+          <view class="item-icon">
+            <text>{{getChangeTypeIcon(item.type)}}</text>
+          </view>
+          <view class="timeline-dot" wx:if="{{index < creditHistory.length - 1}}"></view>
+        </view>
+        <view class="item-content">
+          <view class="item-header">
+            <text class="item-title">{{getChangeTypeLabel(item.type)}}</text>
+            <text class="item-change {{item.changeClass}}">{{item.changeText}}</text>
+          </view>
+          <text class="item-desc" wx:if="{{item.description}}">{{item.description}}</text>
+          <view class="item-footer">
+            <text class="item-time">{{item.timeText}}</text>
+            <text class="item-score">信用分：{{item.scoreAfter}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部空间 -->
+  <view class="bottom-space"></view>
+
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-icon">⏳</text>
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>

@@ -1,0 +1,415 @@
+.page {
+  min-height: 100vh;
+  background-color: #F8F9FA;
+  padding: 24rpx 32rpx;
+  padding-bottom: 60rpx;
+}
+
+.page.dark {
+  background-color: #0F1117;
+}
+
+/* 举报对象卡片 */
+.target-card {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.target-header {
+  margin-bottom: 16rpx;
+}
+
+.target-label {
+  font-size: 26rpx;
+  color: #666666;
+}
+
+.target-info {
+  display: flex;
+  align-items: flex-start;
+}
+
+.target-type-tag {
+  padding: 6rpx 16rpx;
+  background: #FFEBEE;
+  color: #F44336;
+  font-size: 22rpx;
+  border-radius: 8rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.target-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.target-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 8rpx;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.target-author {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+/* Section通用样式 */
+.section {
+  background: #FFFFFF;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.title-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.required {
+  color: #F44336;
+  font-size: 28rpx;
+  margin-left: 4rpx;
+}
+
+.optional {
+  color: #F44336;
+  font-size: 24rpx;
+  margin-left: 8rpx;
+}
+
+/* 举报类型列表 */
+.type-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.type-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  border: 2rpx solid #EEEEEE;
+  border-radius: 12rpx;
+  transition: all 0.3s ease;
+}
+
+.type-item.selected {
+  border-color: #FF6B6B;
+  background: rgba(255, 107, 107, 0.05);
+}
+
+.type-icon {
+  font-size: 36rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.type-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.type-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333333;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.type-desc {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+.type-check {
+  width: 40rpx;
+  height: 40rpx;
+  background: #FF6B6B;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.check-icon {
+  font-size: 24rpx;
+  color: #FFFFFF;
+}
+
+/* 描述输入 */
+.desc-wrapper {
+  position: relative;
+}
+
+.desc-input {
+  width: 100%;
+  min-height: 200rpx;
+  padding: 20rpx;
+  background: #F8F9FA;
+  border: 2rpx solid #EEEEEE;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  color: #333333;
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+.char-count {
+  position: absolute;
+  right: 16rpx;
+  bottom: 16rpx;
+}
+
+.count-text {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+/* 图片上传 */
+.image-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.image-item {
+  position: relative;
+  width: 160rpx;
+  height: 160rpx;
+}
+
+.uploaded-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 12rpx;
+  background: #F0F0F0;
+}
+
+.image-remove {
+  position: absolute;
+  top: -12rpx;
+  right: -12rpx;
+  width: 40rpx;
+  height: 40rpx;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.remove-icon {
+  font-size: 28rpx;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.upload-btn {
+  width: 160rpx;
+  height: 160rpx;
+  border: 2rpx dashed #CCCCCC;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #FAFAFA;
+}
+
+.upload-icon {
+  font-size: 48rpx;
+  color: #CCCCCC;
+  line-height: 1;
+}
+
+.upload-text {
+  font-size: 22rpx;
+  color: #999999;
+  margin-top: 4rpx;
+}
+
+.upload-count {
+  font-size: 20rpx;
+  color: #CCCCCC;
+  margin-top: 2rpx;
+}
+
+.upload-tip {
+  padding-top: 12rpx;
+  border-top: 1rpx solid #F0F0F0;
+}
+
+.tip-text {
+  font-size: 22rpx;
+  color: #999999;
+}
+
+/* 联系方式 */
+.contact-wrapper {
+  background: #F8F9FA;
+  border: 2rpx solid #EEEEEE;
+  border-radius: 12rpx;
+  padding: 0 20rpx;
+}
+
+.contact-input {
+  height: 88rpx;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+/* 匿名选项 */
+.anonymous-section {
+  padding-bottom: 16rpx;
+}
+
+.anonymous-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12rpx;
+}
+
+.anonymous-info {
+  display: flex;
+  align-items: center;
+}
+
+.anonymous-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.anonymous-text {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #333333;
+}
+
+.anonymous-tip {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+/* 提交按钮区域 */
+.submit-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+  margin-top: 32rpx;
+  margin-bottom: 32rpx;
+}
+
+/* 温馨提示 */
+.notice-section {
+  background: #FFF8E1;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+
+.notice-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.notice-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.notice-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #FF8F00;
+}
+
+.notice-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.notice-text {
+  font-size: 24rpx;
+  color: #795548;
+  line-height: 1.6;
+}
+
+/* 深色模式 */
+.page.dark .section,
+.page.dark .target-card {
+  background-color: #1E2128;
+}
+
+.page.dark .title-text,
+.page.dark .target-title,
+.page.dark .type-name,
+.page.dark .anonymous-text {
+  color: #E8ECF1;
+}
+
+.page.dark .target-label,
+.page.dark .type-desc,
+.page.dark .target-author,
+.page.dark .count-text,
+.page.dark .tip-text,
+.page.dark .anonymous-tip {
+  color: #8B95A7;
+}
+
+.page.dark .type-item {
+  border-color: #2A2E37;
+  background: transparent;
+}
+
+.page.dark .type-item.selected {
+  border-color: #FF6B6B;
+  background: rgba(255, 107, 107, 0.1);
+}
+
+.page.dark .desc-input,
+.page.dark .contact-wrapper {
+  background: #2A2E37;
+  border-color: #2A2E37;
+  color: #E8ECF1;
+}
+
+.page.dark .upload-btn {
+  border-color: #3A3F4B;
+  background: #2A2E37;
+}
+
+.page.dark .notice-section {
+  background: rgba(255, 143, 0, 0.1);
+}
+
+.page.dark .notice-title {
+  color: #FFB300;
+}
+
+.page.dark .notice-text {
+  color: #8D6E63;
+}

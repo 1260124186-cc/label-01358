@@ -1,0 +1,222 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 认证状态提示 -->
+  <view class="status-card {{verifyStatus && verifyStatus.status}}" wx:if="{{verifyStatus}}">
+    <view class="status-icon">
+      <text wx:if="{{verifyStatus.status === 'approved'}}">✅</text>
+      <text wx:elif="{{verifyStatus.status === 'pending'}}">⏳</text>
+      <text wx:elif="{{verifyStatus.status === 'rejected'}}">❌</text>
+      <text wx:else>🔍</text>
+    </view>
+    <view class="status-info">
+      <text class="status-title">
+        <block wx:if="{{verifyStatus.status === 'approved'}}">已认证</block>
+        <block wx:elif="{{verifyStatus.status === 'pending'}}">审核中</block>
+        <block wx:elif="{{verifyStatus.status === 'rejected'}}">认证失败</block>
+        <block wx:else">待审核</block>
+      </text>
+      <text class="status-desc" wx:if="{{verifyStatus.status === 'approved'}}">
+        您的实名认证已通过，享受更多平台权益
+      </text>
+      <text class="status-desc" wx:elif="{{verifyStatus.status === 'pending'}}">
+        您的认证申请正在审核中，预计24小时内完成
+      </text>
+      <text class="status-desc" wx:elif="{{verifyStatus.status === 'rejected'}}">
+        认证失败原因：{{verifyStatus.rejectReason || '信息不完整'}}
+      </text>
+    </view>
+  </view>
+
+  <!-- 认证说明 -->
+  <view class="intro-card" wx:if="{{!verifyStatus || verifyStatus.status !== 'approved'}}">
+    <view class="intro-header">
+      <text class="intro-icon">🎓</text>
+      <text class="intro-title">为什么要实名认证？</text>
+    </view>
+    <view class="intro-list">
+      <view class="intro-item">
+        <text class="intro-item-icon">✓</text>
+        <text class="intro-item-text">提升信用评分，获得更高信任等级</text>
+      </view>
+      <view class="intro-item">
+        <text class="intro-item-icon">✓</text>
+        <text class="intro-item-text">在个人主页展示实名认证标识</text>
+      </view>
+      <view class="intro-item">
+        <text class="intro-item-icon">✓</text>
+        <text class="intro-item-text">参与更多平台活动和特权功能</text>
+      </view>
+      <view class="intro-item">
+        <text class="intro-item-icon">✓</text>
+        <text class="intro-item-text">提高交易安全性，降低纠纷风险</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 认证表单 -->
+  <view class="form-section" wx:if="{{!verifyStatus || verifyStatus.status === 'rejected'}}">
+    <view class="form-title">填写认证信息</view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-text">真实姓名</text>
+        <text class="required">*</text>
+      </view>
+      <view class="form-input-wrap">
+        <input
+          class="form-input"
+          placeholder="请输入您的真实姓名"
+          placeholder-style="color: #999999"
+          value="{{formData.realName}}"
+          bindinput="onNameInput"
+          maxlength="20"
+        />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-text">学号</text>
+        <text class="required">*</text>
+      </view>
+      <view class="form-input-wrap">
+        <input
+          class="form-input"
+          placeholder="请输入您的学号（8-12位数字）"
+          placeholder-style="color: #999999"
+          value="{{formData.studentId}}"
+          bindinput="onStudentIdInput"
+          maxlength="12"
+          type="number"
+        />
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-text">院系</text>
+        <text class="required">*</text>
+      </view>
+      <picker
+        mode="selector"
+        range="{{departmentList}}"
+        value="{{departmentIndex}}"
+        bindchange="onDepartmentChange"
+      >
+        <view class="form-picker-wrap">
+          <text class="form-picker-text {{formData.department ? '' : 'placeholder'}}">
+            {{formData.department || '请选择您的院系'}}
+          </text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view class="form-label">
+        <text class="label-text">班级</text>
+        <text class="optional">（选填）</text>
+      </view>
+      <view class="form-input-wrap">
+        <input
+          class="form-input"
+          placeholder="请输入您的班级，如：计科2001班"
+          placeholder-style="color: #999999"
+          value="{{formData.className}}"
+          bindinput="onClassInput"
+          maxlength="30"
+        />
+      </view>
+    </view>
+
+    <!-- 协议同意 -->
+    <view class="terms-section">
+      <view class="terms-row">
+        <checkbox
+          class="terms-checkbox"
+          checked="{{agreeTerms}}"
+          bindchange="onAgreeChange"
+          color="#FF6B6B"
+        />
+        <text class="terms-text">
+          我已阅读并同意
+          <text class="terms-link" catchtap="viewTerms">《信息使用协议》</text>
+        </text>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-section">
+      <btn 
+        type="primary" 
+        size="large" 
+        bind:click="onSubmit"
+        loading="{{submitting}}"
+        disabled="{{submitting}}"
+        block
+      >
+        {{submitting ? '提交中...' : '提交认证'}}
+      </btn>
+    </view>
+  </view>
+
+  <!-- 已认证信息展示 -->
+  <view class="info-section" wx:if="{{verifyStatus && verifyStatus.status === 'approved'}}">
+    <view class="info-title">认证信息</view>
+    <view class="info-list">
+      <view class="info-item">
+        <text class="info-label">姓名</text>
+        <text class="info-value">{{formData.realName}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">学号</text>
+        <text class="info-value">{{formData.studentId}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">院系</text>
+        <text class="info-value">{{formData.department}}</text>
+      </view>
+      <view class="info-item" wx:if="{{formData.className}}">
+        <text class="info-label">班级</text>
+        <text class="info-value">{{formData.className}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">认证时间</text>
+        <text class="info-value">{{verifyStatus.approvedTime || '-'}}</text>
+      </view>
+    </view>
+    <view class="info-tip">
+      <text class="tip-icon">ℹ️</text>
+      <text class="tip-text">认证信息不可随意修改，如需修改请联系管理员</text>
+    </view>
+  </view>
+
+  <!-- 审核中信息展示 -->
+  <view class="info-section" wx:if="{{verifyStatus && verifyStatus.status === 'pending'}}">
+    <view class="info-title">已提交的信息</view>
+    <view class="info-list">
+      <view class="info-item">
+        <text class="info-label">姓名</text>
+        <text class="info-value">{{formData.realName}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">学号</text>
+        <text class="info-value">{{formData.studentId}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">院系</text>
+        <text class="info-value">{{formData.department}}</text>
+      </view>
+    </view>
+    <view class="info-tip">
+      <text class="tip-icon">⏳</text>
+      <text class="tip-text">审核期间请耐心等待，如有疑问可联系管理员</text>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-icon">⏳</text>
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>

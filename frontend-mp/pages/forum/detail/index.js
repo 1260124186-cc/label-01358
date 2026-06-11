@@ -130,7 +130,7 @@ mixPage({
 
   onMoreReport() {
     this.setData({ showMoreMenu: false });
-    this.onShowReport();
+    this.onReport();
   },
 
   onMoreDelete() {
@@ -138,18 +138,11 @@ mixPage({
     this.onDeletePost();
   },
 
-  onShowReport() { this.setData({ showReportPicker: true }); },
-  onHideReport() { this.setData({ showReportPicker: false }); },
+  onReport() {
+    if (!util.checkLogin()) return;
 
-  onReport(e) {
-    const { value } = e.currentTarget.dataset;
-    const result = dataService.reportForumPost(this.data.id, value);
-    if (result.success) {
-      this.setData({ showReportPicker: false });
-      util.showSuccess('举报成功');
-    } else {
-      util.showToast(result.message || '举报失败');
-    }
+    const { id } = this.data;
+    util.navigateTo(`/pages/report/index?targetType=forum&targetId=${id}`);
   },
 
   onDeletePost() {

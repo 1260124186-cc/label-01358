@@ -45,6 +45,12 @@
         >
           <text class="action-icon">{{isFavorite ? '★' : '☆'}}</text>
         </view>
+        <view
+          class="action-btn"
+          bindtap="onReport"
+        >
+          <text class="action-icon">🚫</text>
+        </view>
       </view>
     </view>
     <view class="info-tags">

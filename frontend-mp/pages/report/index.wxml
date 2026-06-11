@@ -1,0 +1,160 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 举报对象信息 -->
+  <view class="target-card" wx:if="{{targetInfo}}">
+    <view class="target-header">
+      <text class="target-label">举报对象</text>
+    </view>
+    <view class="target-info">
+      <view class="target-type-tag">{{targetInfo.type}}</view>
+      <view class="target-content">
+        <text class="target-title">{{targetInfo.title}}</text>
+        <text class="target-author">发布者：{{targetInfo.author}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 举报类型选择 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="title-text">举报类型</text>
+      <text class="required">*</text>
+    </view>
+    <view class="type-list">
+      <view 
+        class="type-item {{selectedType === type.value ? 'selected' : ''}}"
+        wx:for="{{reportTypes}}"
+        wx:key="value"
+        bindtap="onTypeSelect"
+        data-value="{{type.value}}"
+      >
+        <text class="type-icon">{{type.icon}}</text>
+        <view class="type-content">
+          <text class="type-name">{{type.label}}</text>
+          <text class="type-desc" wx:if="{{type.description}}">{{type.description}}</text>
+        </view>
+        <view class="type-check" wx:if="{{selectedType === type.value}}">
+          <text class="check-icon">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 举报描述 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="title-text">详细描述</text>
+      <text class="required">*</text>
+    </view>
+    <view class="desc-wrapper">
+      <textarea
+        class="desc-input"
+        placeholder="请详细描述举报原因，提供相关信息有助于我们更快处理..."
+        placeholder-style="color: #999999"
+        maxlength="500"
+        value="{{description}}"
+        bindinput="onDescriptionInput"
+        auto-height
+      />
+      <view class="char-count">
+        <text class="count-text">{{description.length}}/500</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 图片上传 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="title-text">上传证据（可选）</text>
+      <text class="optional" wx:if="{{selectedType && selectedRequiresProof}}">（必需）</text>
+    </view>
+    <view class="image-upload">
+      <view class="image-list">
+        <view class="image-item" wx:for="{{images}}" wx:key="index">
+          <image class="uploaded-image" src="{{item}}" mode="aspectFill" bindtap="previewImage" data-index="{{index}}"/>
+          <view class="image-remove" bindtap="removeImage" data-index="{{index}}">
+            <text class="remove-icon">×</text>
+          </view>
+        </view>
+        <view class="upload-btn" wx:if="{{images.length < maxImages}}" bindtap="chooseImage">
+          <text class="upload-icon">+</text>
+          <text class="upload-text">添加图片</text>
+          <text class="upload-count">{{images.length}}/{{maxImages}}</text>
+        </view>
+      </view>
+      <view class="upload-tip">
+        <text class="tip-text">支持上传截图、聊天记录等证据，最多{{maxImages}}张</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 联系方式 -->
+  <view class="section">
+    <view class="section-title">
+      <text class="title-text">联系方式（可选）</text>
+    </view>
+    <view class="contact-wrapper">
+      <input
+        class="contact-input"
+        placeholder="如需要回复，请留下您的手机号或微信号"
+        placeholder-style="color: #999999"
+        value="{{contactInfo}}"
+        bindinput="onContactInput"
+        maxlength="50"
+      />
+    </view>
+  </view>
+
+  <!-- 匿名选项 -->
+  <view class="section anonymous-section">
+    <view class="anonymous-row">
+      <view class="anonymous-info">
+        <text class="anonymous-icon">👤</text>
+        <text class="anonymous-text">匿名举报</text>
+      </view>
+      <switch
+        class="anonymous-switch"
+        checked="{{anonymous}}"
+        bindchange="onAnonymousChange"
+        color="#FF6B6B"
+      />
+    </view>
+    <text class="anonymous-tip">开启后，被举报人将看不到您的身份信息</text>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-section">
+    <btn 
+      type="primary" 
+      size="large" 
+      bind:click="onSubmit"
+      loading="{{submitting}}"
+      disabled="{{submitting}}"
+      block
+    >
+      {{submitting ? '提交中...' : '提交举报'}}
+    </btn>
+    <btn 
+      type="secondary" 
+      size="large" 
+      bind:click="onCancel"
+      disabled="{{submitting}}"
+      block
+    >
+      取消
+    </btn>
+  </view>
+
+  <!-- 温馨提示 -->
+  <view class="notice-section">
+    <view class="notice-header">
+      <text class="notice-icon">📋</text>
+      <text class="notice-title">温馨提示</text>
+    </view>
+    <view class="notice-content">
+      <text class="notice-text">1. 请确保举报内容真实有效，恶意举报将被追究责任</text>
+      <text class="notice-text">2. 我们会在24小时内处理您的举报</text>
+      <text class="notice-text">3. 对于紧急情况，请直接联系平台管理员</text>
+    </view>
+  </view>
+</view>

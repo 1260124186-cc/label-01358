@@ -1,0 +1,71 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{blacklist.length === 0 && !loading}}">
+    <text class="empty-icon">🚫</text>
+    <text class="empty-title">暂无黑名单</text>
+    <text class="empty-desc">您还没有将任何人加入黑名单</text>
+  </view>
+
+  <!-- 黑名单列表 -->
+  <view class="blacklist-container" wx:if="{{blacklist.length > 0}}">
+    <view class="list-header">
+      <text class="list-title">黑名单用户</text>
+      <text class="list-count">共{{blacklist.length}}人</text>
+    </view>
+
+    <view class="user-list">
+      <view 
+        class="user-item" 
+        wx:for="{{blacklist}}" 
+        wx:key="id"
+        bindtap="onUserTap"
+        data-user-id="{{item.user.id}}"
+      >
+        <image class="user-avatar" src="{{item.user.avatarUrl || '/assets/images/default-avatar.png'}}" mode="aspectFill"/>
+        <view class="user-info">
+          <view class="user-name-row">
+            <text class="user-name">{{item.user.nickName}}</text>
+            <view class="verify-badge" wx:if="{{item.user.realNameVerified}}">
+              <text class="verify-icon">✓</text>
+              <text class="verify-text">已认证</text>
+            </view>
+          </view>
+          <text class="user-department" wx:if="{{item.user.realNameInfo && item.user.realNameInfo.department}}">
+            {{item.user.realNameInfo.department}}
+          </text>
+          <text class="block-time">加入时间：{{item.timeText}}</text>
+          <text class="block-reason" wx:if="{{item.reason}}">原因：{{item.reason}}</text>
+        </view>
+        <view class="remove-btn" catchtap="onRemoveTap" data-user-id="{{item.user.id}}" data-nick-name="{{item.user.nickName}}">
+          <text class="remove-text">移出</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-icon">⏳</text>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 确认对话框 -->
+  <view class="confirm-mask" wx:if="{{showConfirm}}" bindtap="onCancelRemove"></view>
+  <view class="confirm-dialog {{showConfirm ? 'show' : ''}}">
+    <view class="confirm-title">
+      <text>确认操作</text>
+    </view>
+    <view class="confirm-content">
+      <text class="confirm-message">{{confirmData.message}}</text>
+    </view>
+    <view class="confirm-actions">
+      <view class="confirm-btn cancel" bindtap="onCancelRemove">
+        <text>取消</text>
+      </view>
+      <view class="confirm-btn primary" bindtap="onConfirmRemove">
+        <text>确定</text>
+      </view>
+    </view>
+  </view>
+</view>

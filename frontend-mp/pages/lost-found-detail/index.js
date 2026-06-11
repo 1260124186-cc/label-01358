@@ -153,5 +153,15 @@ mixPage({
         // 用户取消或失败
       }
     });
+  },
+
+  onReport() {
+    // 检查登录状态
+    if (!util.checkLogin()) {
+      return;
+    }
+
+    const { id } = this.data;
+    util.navigateTo(`/pages/report/index?targetType=lostFound&targetId=${id}`);
   }
 });

@@ -1,0 +1,297 @@
+.page {
+  min-height: 100vh;
+  background-color: #F8F9FA;
+  padding: 24rpx 32rpx;
+}
+
+.page.dark {
+  background-color: #0F1117;
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 150rpx 0;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 32rpx;
+  opacity: 0.4;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 12rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #999999;
+}
+
+/* 黑名单列表 */
+.blacklist-container {
+  padding-bottom: 40rpx;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+  padding: 0 8rpx;
+}
+
+.list-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.list-count {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.user-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: #F0F0F0;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.user-name-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+
+.user-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.verify-badge {
+  display: flex;
+  align-items: center;
+  padding: 2rpx 10rpx;
+  background: rgba(76, 175, 80, 0.15);
+  border-radius: 16rpx;
+}
+
+.verify-icon {
+  font-size: 18rpx;
+  margin-right: 4rpx;
+  color: #4CAF50;
+}
+
+.verify-text {
+  font-size: 18rpx;
+  color: #4CAF50;
+}
+
+.user-department {
+  font-size: 24rpx;
+  color: #666666;
+  margin-bottom: 6rpx;
+}
+
+.block-time {
+  font-size: 22rpx;
+  color: #999999;
+  margin-bottom: 4rpx;
+}
+
+.block-reason {
+  font-size: 22rpx;
+  color: #FF6B6B;
+}
+
+.remove-btn {
+  padding: 12rpx 24rpx;
+  background: rgba(255, 107, 107, 0.1);
+  border-radius: 24rpx;
+  flex-shrink: 0;
+}
+
+.remove-text {
+  font-size: 24rpx;
+  color: #FF6B6B;
+  font-weight: 500;
+}
+
+/* 加载状态 */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.loading-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #999999;
+}
+
+/* 确认对话框 */
+.confirm-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.confirm-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  width: 560rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 0.3s ease;
+  z-index: 1001;
+}
+
+.confirm-dialog.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.confirm-title {
+  padding: 32rpx;
+  text-align: center;
+  border-bottom: 1rpx solid #F0F0F0;
+}
+
+.confirm-title text {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.confirm-content {
+  padding: 40rpx 32rpx;
+}
+
+.confirm-message {
+  font-size: 28rpx;
+  color: #666666;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.confirm-actions {
+  display: flex;
+  border-top: 1rpx solid #F0F0F0;
+}
+
+.confirm-btn {
+  flex: 1;
+  padding: 28rpx;
+  text-align: center;
+}
+
+.confirm-btn text {
+  font-size: 30rpx;
+}
+
+.confirm-btn.cancel {
+  border-right: 1rpx solid #F0F0F0;
+}
+
+.confirm-btn.cancel text {
+  color: #999999;
+}
+
+.confirm-btn.primary text {
+  color: #FF6B6B;
+  font-weight: 600;
+}
+
+/* 深色模式 */
+.page.dark .user-item,
+.page.dark .confirm-dialog {
+  background-color: #1E2128;
+}
+
+.page.dark .list-title,
+.page.dark .user-name,
+.page.dark .confirm-title text,
+.page.dark .confirm-btn.primary text {
+  color: #E8ECF1;
+}
+
+.page.dark .list-count,
+.page.dark .empty-desc,
+.page.dark .loading-text,
+.page.dark .confirm-message,
+.page.dark .confirm-btn.cancel text {
+  color: #8B95A7;
+}
+
+.page.dark .user-department {
+  color: #B0B8C4;
+}
+
+.page.dark .block-time {
+  color: #6B7280;
+}
+
+.page.dark .confirm-title,
+.page.dark .confirm-content,
+.page.dark .confirm-actions,
+.page.dark .confirm-btn.cancel {
+  border-color: #2A2E37;
+}
+
+.page.dark .empty-title {
+  color: #E8ECF1;
+}
