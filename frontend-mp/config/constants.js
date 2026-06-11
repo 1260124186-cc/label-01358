@@ -786,6 +786,27 @@ const SCENERY_LOCATIONS = [
   { value: 'other', label: '其他地点', latitude: 39.9042, longitude: 116.4074 }
 ];
 
+const NEWS_CATEGORIES = [
+  { value: 'all', label: '全部', icon: '📰' },
+  { value: 'notice', label: '通知公告', icon: '📢' },
+  { value: 'activity', label: '校园活动', icon: '🎉' },
+  { value: 'competition', label: '竞赛获奖', icon: '🏆' },
+  { value: 'job', label: '就业招聘', icon: '💼' },
+  { value: 'lecture', label: '学术讲座', icon: '🎓' },
+  { value: 'research', label: '科研成果', icon: '🔬' },
+  { value: 'honor', label: '荣誉表彰', icon: '🏅' }
+];
+
+const NEWS_CATEGORY_MAP = NEWS_CATEGORIES.reduce((acc, c) => {
+  acc[c.value] = { label: c.label, icon: c.icon };
+  return acc;
+}, {});
+
+const NEWS_SORT_OPTIONS = [
+  { value: 'latest', label: '最新发布', field: 'createTime', order: 'desc' },
+  { value: 'views', label: '最多浏览', field: 'views', order: 'desc' }
+];
+
 function getScoreLevel(score) {
   return SCORE_LEVELS.find(l => score >= l.min && score <= l.max) || SCORE_LEVELS[SCORE_LEVELS.length - 1];
 }
@@ -900,6 +921,9 @@ module.exports = {
   SCENERY_SOLAR_TERMS,
   SCENERY_REVIEW_STATUS,
   SCENERY_LOCATIONS,
+  NEWS_CATEGORIES,
+  NEWS_CATEGORY_MAP,
+  NEWS_SORT_OPTIONS,
   getScoreLevel,
   getGPA,
   getSlotTime,

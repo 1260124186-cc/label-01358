@@ -87,7 +87,9 @@
     "pages/report/index",
     "pages/blacklist/index",
     "pages/real-name-verify/index",
-    "pages/credit-history/index"
+    "pages/credit-history/index",
+    "pages/news-detail/index",
+    "pages/news-list/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

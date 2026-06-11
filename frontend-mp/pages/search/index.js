@@ -228,7 +228,7 @@ mixPage({
 
   onNewsItemTap(e) {
     const item = e.currentTarget.dataset.item;
-    util.showToast('动态详情开发中');
+    util.navigateTo(`/pages/news-detail/index?id=${item.id}`);
   },
 
   onPhonebookCall(e) {

@@ -1,0 +1,91 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
+  <image
+    class="cover-image"
+    src="{{detail.image}}"
+    mode="aspectFill"
+    bindtap="onPreviewImage"
+    data-src="{{detail.image}}"
+  />
+
+  <view class="content-section">
+    <view class="news-header">
+      <view class="category-tag">
+        <text class="category-icon">{{detail.categoryInfo.icon}}</text>
+        <text class="category-text">{{detail.categoryInfo.label}}</text>
+      </view>
+      <text class="content-title">{{detail.title}}</text>
+      <view class="news-meta">
+        <text class="meta-item">📅 {{detail.timeText}}</text>
+        <text class="meta-item">👁️ {{detail.views}}</text>
+      </view>
+    </view>
+
+    <view class="content-divider"></view>
+
+    <text class="news-summary">{{detail.summary}}</text>
+
+    <view class="images-section" wx:if="{{detail.images && detail.images.length > 0}}">
+      <text class="images-title">📸 图片</text>
+      <view class="images-grid">
+        <view
+          class="image-item"
+          wx:for="{{detail.images}}"
+          wx:key="*this"
+          bindtap="onPreviewImage"
+          data-src="{{item}}"
+        >
+          <image src="{{item}}" mode="aspectFill" />
+        </view>
+      </view>
+    </view>
+
+    <view class="content-text-section">
+      <text class="content-text">{{detail.content}}</text>
+    </view>
+
+    <view class="share-tip">
+      <text class="share-icon">💡</text>
+      <text class="share-text">点击图片可查看大图</text>
+    </view>
+  </view>
+
+  <view class="related-section">
+    <view class="section-header">
+      <view class="section-title-wrap">
+        <view class="section-icon"></view>
+        <text class="section-title">相关推荐</text>
+      </view>
+      <text class="section-subtitle">猜你感兴趣</text>
+    </view>
+
+    <view class="related-list">
+      <view
+        class="related-item"
+        wx:for="{{relatedNews}}"
+        wx:key="id"
+        bindtap="onRelatedNewsTap"
+        data-id="{{item.id}}"
+      >
+        <view class="related-content">
+          <view class="related-tag" wx:if="{{item.categoryInfo}}">
+            <text>{{item.categoryInfo.icon}} {{item.categoryInfo.label}}</text>
+          </view>
+          <text class="related-title">{{item.title}}</text>
+          <text class="related-summary">{{item.summary}}</text>
+          <view class="related-meta">
+            <text class="related-time">{{item.timeText}}</text>
+            <text class="related-views">👁️ {{item.views}}</text>
+          </view>
+        </view>
+        <image class="related-image" src="{{item.image}}" mode="aspectFill" />
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-padding"></view>
+</view>
+
+<view class="page empty-page {{darkMode ? 'dark' : ''}}" wx:else>
+  <text class="empty-text">动态不存在或已删除</text>
+</view>

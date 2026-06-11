@@ -240,11 +240,11 @@ Page({
 
   onNewsTap(e) {
     const { item } = e.currentTarget.dataset;
-    util.showToast('动态详情开发中');
+    util.navigateTo(`/pages/news-detail/index?id=${item.id}`);
   },
 
   onMoreNews() {
-    util.showToast('更多动态开发中');
+    util.navigateTo('/pages/news-list/index');
   },
 
   onQuickPublish(e) {

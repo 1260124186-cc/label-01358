@@ -1,0 +1,97 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="page-header">
+    <view class="header-content">
+      <text class="header-title">校园动态</text>
+      <text class="header-subtitle">了解校园大小事</text>
+    </view>
+    <view class="header-decoration">
+      <text class="deco-icon">📰</text>
+    </view>
+  </view>
+
+  <view class="filter-bar">
+    <scroll-view class="tab-scroll" scroll-x enable-flex show-scrollbar="{{false}}">
+      <view class="tab-list">
+        <view
+          class="tab-item {{activeCategory === item.value ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="value"
+          bindtap="onCategoryChange"
+          data-value="{{item.value}}"
+        >
+          <text class="tab-icon">{{item.icon}}</text>
+          <text class="tab-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="sort-btn" bindtap="onSortTap">
+      <text class="sort-icon">⇅</text>
+      <text class="sort-text">{{currentSortText}}</text>
+    </view>
+  </view>
+
+  <view class="content-section">
+    <view class="list-header">
+      <text class="list-count">共 {{filteredList.length}} 条动态</text>
+    </view>
+
+    <view class="news-list" wx:if="{{filteredList.length > 0}}">
+      <view
+        class="news-item"
+        wx:for="{{filteredList}}"
+        wx:key="id"
+        bindtap="onNewsTap"
+        data-id="{{item.id}}"
+      >
+        <view class="news-content">
+          <view class="news-tags">
+            <view class="category-tag" wx:if="{{item.categoryInfo}}">
+              <text class="tag-icon">{{item.categoryInfo.icon}}</text>
+              <text class="tag-text">{{item.categoryInfo.label}}</text>
+            </view>
+          </view>
+          <text class="news-title">{{item.title}}</text>
+          <text class="news-summary">{{item.summary}}</text>
+          <view class="news-meta">
+            <text class="meta-item">{{item.timeText}}</text>
+            <text class="meta-item">👁️ {{item.views}}</text>
+          </view>
+        </view>
+        <image class="news-image" src="{{item.image}}" mode="aspectFill" />
+      </view>
+    </view>
+
+    <view class="empty-state" wx:else>
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无该分类的动态</text>
+      <text class="empty-subtitle">换个分类看看吧～</text>
+    </view>
+  </view>
+
+  <view class="bottom-padding"></view>
+
+  <view class="sort-modal {{showSortPanel ? 'show' : ''}}" catchtap="stopPropagation" wx:if="{{showSortPanel}}">
+    <view class="modal-mask" bindtap="onCloseSortPanel"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">排序方式</text>
+        <view class="modal-close" bindtap="onCloseSortPanel">
+          <text class="close-icon">✕</text>
+        </view>
+      </view>
+      <view class="sort-options">
+        <view
+          class="sort-option {{currentSort === item.value ? 'active' : ''}}"
+          wx:for="{{sortOptions}}"
+          wx:key="value"
+          bindtap="onSortSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{currentSort === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
