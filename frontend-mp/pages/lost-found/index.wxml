@@ -1,6 +1,5 @@
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
 <view class="page {{darkMode ? 'dark' : ''}}">
-  <!-- 顶部筛选 -->
   <view class="filter-section">
     <view class="filter-tabs">
       <view
@@ -25,7 +24,6 @@
     </view>
   </view>
 
-  <!-- 列表 -->
   <scroll-view
     class="list-scroll"
     scroll-y="{{true}}"
@@ -33,8 +31,16 @@
     refresher-triggered="{{refreshing}}"
     bindrefresherrefresh="onRefresh"
     bindscrolltolower="onLoadMore"
+    lower-threshold="50"
   >
-    <view class="list-container" wx:if="{{list.length > 0}}">
+    <skeleton
+      wx:if="{{showSkeleton}}"
+      type="card"
+      count="{{5}}"
+      loading="{{true}}"
+    />
+
+    <view class="list-container" wx:if="{{!showSkeleton && list.length > 0}}">
       <view
         class="item-card"
         wx:for="{{list}}"
@@ -63,13 +69,27 @@
             class="item-image"
             src="{{item.images[0]}}"
             mode="aspectFill"
+            lazy-load="{{true}}"
           />
         </view>
       </view>
     </view>
 
+    <view class="load-more" wx:if="{{!showSkeleton && list.length > 0}}">
+      <view class="load-more-loading" wx:if="{{loadingMore}}">
+        <view class="loading-spinner"></view>
+        <text class="load-more-text">加载中...</text>
+      </view>
+      <view class="load-more-no-more" wx:elif="{{noMore}}">
+        <text class="load-more-text">没有更多了</text>
+      </view>
+      <view class="load-more-tip" wx:else>
+        <text class="load-more-text">上拉加载更多</text>
+      </view>
+    </view>
+
     <empty
-      wx:if="{{!loading && list.length === 0}}"
+      wx:if="{{!showSkeleton && !loading && list.length === 0}}"
       text="暂无失物招领信息"
       showAction="{{true}}"
       actionText="发布信息"
@@ -77,12 +97,10 @@
     />
   </scroll-view>
 
-  <!-- 发布按钮 -->
   <view class="publish-btn" hover-class="publish-btn-hover" bindtap="onPublish">
     <text class="publish-icon">+</text>
   </view>
 
-  <!-- 物品类型选择器 -->
   <view class="picker-mask {{showItemTypePicker ? 'show' : ''}}" bindtap="onHideItemTypePicker">
     <view class="picker-content" catchtap="stopPropagation">
       <view class="picker-header">

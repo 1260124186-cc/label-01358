@@ -2,13 +2,11 @@ const dataService = require('../../services/data');
 const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
+const { mixinList, DEFAULT_PAGE_SIZE } = require('../../utils/listMixin');
 
-mixPage({
+let pageOptions = {
   data: {
     darkMode: false,
-    list: [],
-    loading: false,
-    refreshing: false,
     currentType: '',
     currentItemType: '',
     currentItemTypeText: '',
@@ -17,65 +15,35 @@ mixPage({
   },
 
   onLoad() {
-    this.loadList();
+    this._initFilters();
   },
 
   onShow() {
-    this.loadList();
   },
 
-  onPullDownRefresh() {
-    this.loadList().then(() => {
-      wx.stopPullDownRefresh();
-    });
-  },
-
-  loadList() {
-    this.setData({ loading: true });
-
-    return new Promise((resolve) => {
-      const filters = {};
-
-      if (this.data.currentType) {
-        filters.type = this.data.currentType;
-      }
-
-      if (this.data.currentItemType) {
-        filters.itemType = this.data.currentItemType;
-      }
-
-      const list = dataService.getLostFoundList(filters);
-
-      const formattedList = list.map(item => ({
-        ...item,
-        timeText: util.relativeTime(item.createTime),
-        itemTypeText: constants.getLabelByValue(constants.ITEM_TYPES, item.itemType),
-        locationText: constants.getLabelByValue(constants.LOCATIONS, item.location)
-      }));
-
-      this.setData({
-        list: formattedList,
-        loading: false,
-        refreshing: false
-      });
-
-      resolve();
-    });
+  _initFilters() {
+    const filters = {};
+    if (this.data.currentType) {
+      filters.type = this.data.currentType;
+    }
+    if (this.data.currentItemType) {
+      filters.itemType = this.data.currentItemType;
+    }
+    this.setListFilters(filters);
   },
 
   onRefresh() {
-    this.setData({ refreshing: true });
-    this.loadList();
+    this.refreshList();
   },
 
   onLoadMore() {
-    // 本地存储暂不需要分页
+    this.loadMore();
   },
 
   onTypeChange(e) {
     const { type } = e.currentTarget.dataset;
     this.setData({ currentType: type });
-    this.loadList();
+    this._initFilters();
   },
 
   onShowItemTypePicker() {
@@ -96,16 +64,15 @@ mixPage({
       showItemTypePicker: false
     });
 
-    this.loadList();
+    this._initFilters();
   },
 
   onItemTap(e) {
     const { item } = e.currentTarget.dataset;
-    util.navigateTo(`/pages/lost-found-detail/index?id=${item.id}`);
+    this.goToDetail(`/pages/lost-found-detail/index?id=${item.id}`);
   },
 
   onPublish() {
-    // 检查登录状态
     if (!util.checkLogin()) {
       return;
     }
@@ -113,6 +80,35 @@ mixPage({
   },
 
   stopPropagation() {
-    // 阻止事件冒泡
+  }
+};
+
+pageOptions = mixinList(pageOptions, {
+  listKey: 'lost_found',
+  pageSize: DEFAULT_PAGE_SIZE,
+  enableCache: true,
+  cacheFirst: true,
+  dataField: 'list',
+  loadMethod: function({ page, pageSize, filters }) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const result = dataService.getLostFoundListPaged({
+          page,
+          pageSize,
+          filters
+        });
+        resolve(result);
+      }, 500);
+    });
+  },
+  formatItem: function(item) {
+    return {
+      ...item,
+      timeText: util.relativeTime(item.createTime),
+      itemTypeText: constants.getLabelByValue(constants.ITEM_TYPES, item.itemType),
+      locationText: constants.getLabelByValue(constants.LOCATIONS, item.location)
+    };
   }
 });
+
+mixPage(pageOptions);

@@ -1,6 +1,7 @@
 const theme = require('./utils/theme');
 const storage = require('./utils/storage');
 const mockData = require('./config/mock-data');
+const config = require('./config');
 const dataService = require('./services/data');
 
 App({
@@ -11,7 +12,9 @@ App({
     navBarHeight: 44,
     themeMode: 'system',
     isDark: false,
-    colorScheme: 'coral'
+    colorScheme: 'coral',
+    seedDataEnabled: config.ENABLE_SEED_DATA,
+    seedDataConfig: config.SEED_DATA_CONFIG
   },
 
   onLaunch() {
@@ -19,7 +22,9 @@ App({
     this.loadUserInfo();
     this.initTestAccount();
     this.initTheme();
-    this.initMockData();
+    if (config.ENABLE_SEED_DATA) {
+      this.initMockData();
+    }
   },
 
   initMockData() {

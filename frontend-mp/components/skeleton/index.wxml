@@ -1,0 +1,42 @@
+<view class="skeleton {{loading ? 'skeleton-loading' : ''}}" wx:if="{{loading}}">
+  <block wx:if="{{type === 'list'}}">
+    <view class="skeleton-item" wx:for="{{items}}" wx:key="index">
+      <view class="skeleton-avatar" wx:if="{{avatar}}"></view>
+      <view class="skeleton-content">
+        <view class="skeleton-title" wx:if="{{title}}"></view>
+        <view class="skeleton-paragraphs">
+          <view
+            class="skeleton-paragraph"
+            wx:for="{{paragraph}}"
+            wx:for-item="pIndex"
+            wx:key="pIndex"
+          ></view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:elif="{{type === 'card'}}">
+    <view class="skeleton-card" wx:for="{{items}}" wx:key="index">
+      <view class="skeleton-card-image"></view>
+      <view class="skeleton-card-content">
+        <view class="skeleton-card-title"></view>
+        <view class="skeleton-card-desc"></view>
+        <view class="skeleton-card-tags">
+          <view class="skeleton-card-tag"></view>
+          <view class="skeleton-card-tag"></view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <block wx:elif="{{type === 'grid'}}">
+    <view class="skeleton-grid">
+      <view class="skeleton-grid-item" wx:for="{{items}}" wx:key="index">
+        <view class="skeleton-grid-image"></view>
+        <view class="skeleton-grid-title"></view>
+        <view class="skeleton-grid-subtitle"></view>
+      </view>
+    </view>
+  </block>
+</view>

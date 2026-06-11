@@ -1,7 +1,9 @@
 {
   "navigationBarTitleText": "失物招领",
   "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50,
   "usingComponents": {
-    "empty": "/components/empty/index"
+    "empty": "/components/empty/index",
+    "skeleton": "/components/skeleton/index"
   }
 }

@@ -116,6 +116,23 @@ function sortByField(list, sortValue, sortOptions) {
   });
 }
 
+function paginateList(list, page = 1, pageSize = 15) {
+  const total = list.length;
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+  const pageList = list.slice(start, end);
+  const hasMore = end < total;
+
+  return {
+    list: pageList,
+    total,
+    page,
+    pageSize,
+    hasMore,
+    totalPages: Math.ceil(total / pageSize)
+  };
+}
+
 // ==================== 失物招领 ====================
 
 /**
@@ -141,7 +158,15 @@ function getLostFoundList(filters = {}) {
 
   list = filterByKeyword(list, filters.keyword, ['title', 'description']);
 
+  list = sortByField(list, filters.sort || 'latest', constants.SORT_OPTIONS);
+
   return list;
+}
+
+function getLostFoundListPaged(pagination = {}) {
+  const { page = 1, pageSize = 15, filters = {} } = pagination;
+  const list = getLostFoundList(filters);
+  return paginateList(list, page, pageSize);
 }
 
 /**
@@ -4128,7 +4153,10 @@ function clearClassReminders() {
 }
 
 module.exports = {
+  paginateList,
+
   getLostFoundList,
+  getLostFoundListPaged,
   getLostFoundDetail,
   publishLostFound,
   updateLostFound,
