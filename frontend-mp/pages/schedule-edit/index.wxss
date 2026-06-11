@@ -120,8 +120,11 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-end;
-  gap: 12rpx;
 }
+
+.color-list { margin-right: -12rpx; margin-bottom: -12rpx; }
+
+.color-list > * { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .color-item {
   width: 52rpx;

@@ -61,8 +61,11 @@
   align-items: center;
   justify-content: center;
   padding: 24rpx 24rpx 16rpx;
-  gap: 32rpx;
 }
+
+.week-switcher > * { margin-right: 32rpx; }
+
+.week-switcher > *:last-child { margin-right: 0; }
 
 .week-nav-btn {
   width: 64rpx;
@@ -355,8 +358,11 @@
 .day-course-list {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
 }
+
+.day-course-list > * { margin-bottom: 20rpx; }
+
+.day-course-list > *:last-child { margin-bottom: 0; }
 
 .day-course-card {
   display: flex;
@@ -405,8 +411,11 @@
   padding: 20rpx 24rpx;
   display: flex;
   flex-direction: column;
-  gap: 12rpx;
 }
+
+.course-info-col > * { margin-bottom: 12rpx; }
+
+.course-info-col > *:last-child { margin-bottom: 0; }
 
 .course-title {
   font-size: 32rpx;
@@ -416,9 +425,12 @@
 
 .course-info-row {
   display: flex;
-  gap: 24rpx;
   flex-wrap: wrap;
 }
+
+.course-info-row { margin-right: -24rpx; margin-bottom: -24rpx; }
+
+.course-info-row > * { margin-right: 24rpx; margin-bottom: 24rpx; }
 
 .course-info-item {
   display: flex;
@@ -672,8 +684,11 @@
 .modal-footer {
   display: flex;
   padding: 24rpx 32rpx 32rpx;
-  gap: 20rpx;
 }
+
+.modal-footer > * { margin-right: 20rpx; }
+
+.modal-footer > *:last-child { margin-right: 0; }
 
 .modal-btn {
   flex: 1;
@@ -685,8 +700,11 @@
   font-size: 30rpx;
   font-weight: 600;
   transition: all var(--transition-fast);
-  gap: 8rpx;
 }
+
+.modal-btn > * { margin-right: 8rpx; }
+
+.modal-btn > *:last-child { margin-right: 0; }
 
 .modal-btn:active {
   transform: scale(0.96);

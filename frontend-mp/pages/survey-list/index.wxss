@@ -22,8 +22,11 @@
 
 .filter-tabs {
   display: inline-flex;
-  gap: 12rpx;
 }
+
+.filter-tabs > * { margin-right: 12rpx; }
+
+.filter-tabs > *:last-child { margin-right: 0; }
 
 .filter-tab {
   display: inline-block;
@@ -72,9 +75,12 @@
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 16rpx;
   margin-bottom: 8rpx;
 }
+
+.survey-title-row > * { margin-right: 16rpx; }
+
+.survey-title-row > *:last-child { margin-right: 0; }
 
 .survey-title {
   font-size: 32rpx;
@@ -115,15 +121,21 @@
 .survey-meta {
   display: flex;
   align-items: center;
-  gap: 24rpx;
   margin-bottom: 20rpx;
 }
+
+.survey-meta > * { margin-right: 24rpx; }
+
+.survey-meta > *:last-child { margin-right: 0; }
 
 .meta-item {
   display: flex;
   align-items: center;
-  gap: 6rpx;
 }
+
+.meta-item > * { margin-right: 6rpx; }
+
+.meta-item > *:last-child { margin-right: 0; }
 
 .meta-icon {
   font-size: 24rpx;
@@ -145,8 +157,11 @@
 .action-left {
   display: flex;
   align-items: center;
-  gap: 12rpx;
 }
+
+.action-left > * { margin-right: 12rpx; }
+
+.action-left > *:last-child { margin-right: 0; }
 
 .responded-tag {
   padding: 6rpx 16rpx;
@@ -160,8 +175,11 @@
 .action-right {
   display: flex;
   align-items: center;
-  gap: 12rpx;
 }
+
+.action-right > * { margin-right: 12rpx; }
+
+.action-right > *:last-child { margin-right: 0; }
 
 .action-btn {
   padding: 8rpx 20rpx;

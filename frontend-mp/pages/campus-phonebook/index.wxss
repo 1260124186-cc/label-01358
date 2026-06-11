@@ -120,8 +120,11 @@
 .emergency-list {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
 }
+
+.emergency-list > * { margin-bottom: 16rpx; }
+
+.emergency-list > *:last-child { margin-bottom: 0; }
 
 .emergency-item {
   display: flex;
@@ -216,8 +219,11 @@
 .category-tabs {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
 }
+
+.category-tabs { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.category-tabs > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .category-tab {
   padding: 16rpx 32rpx;
@@ -250,8 +256,11 @@
 .phone-list {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
 }
+
+.phone-list > * { margin-bottom: 16rpx; }
+
+.phone-list > *:last-child { margin-bottom: 0; }
 
 .phone-card {
   display: flex;
@@ -364,10 +373,13 @@
 
 /* ==================== 办事指南 ==================== */
 .guide-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20rpx;
+  display: flex;
+  flex-wrap: wrap;
 }
+
+.guide-grid { margin-right: -20rpx; margin-bottom: -20rpx; }
+
+.guide-grid > * { margin-right: 20rpx; margin-bottom: 20rpx; width: calc(100% / 3 - 20rpx); }
 
 .guide-item {
   display: flex;

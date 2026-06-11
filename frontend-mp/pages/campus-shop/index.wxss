@@ -20,9 +20,12 @@
 
 .category-tabs {
   display: inline-flex;
-  gap: 16rpx;
   padding-right: 16rpx;
 }
+
+.category-tabs > * { margin-right: 16rpx; }
+
+.category-tabs > *:last-child { margin-right: 0; }
 
 .category-tab {
   display: inline-flex;
@@ -227,10 +230,13 @@
 .shop-tags {
   display: flex;
   align-items: center;
-  gap: 12rpx;
   margin-top: 12rpx;
   flex-wrap: wrap;
 }
+
+.shop-tags { margin-right: -12rpx; margin-bottom: -12rpx; }
+
+.shop-tags > * { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .shop-desc {
   font-size: var(--font-sm);

@@ -20,8 +20,11 @@
 
 .filter-tabs {
   display: flex;
-  gap: 12rpx;
 }
+
+.filter-tabs > * { margin-right: 12rpx; }
+
+.filter-tabs > *:last-child { margin-right: 0; }
 
 .filter-tab {
   padding: 14rpx 28rpx;
@@ -156,8 +159,11 @@
 .item-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 10rpx;
 }
+
+.item-tags { margin-right: -10rpx; margin-bottom: -10rpx; }
+
+.item-tags > * { margin-right: 10rpx; margin-bottom: 10rpx; }
 
 .item-tag {
   padding: 6rpx 14rpx;
@@ -332,8 +338,11 @@
 .load-more-loading {
   display: flex;
   align-items: center;
-  gap: 16rpx;
 }
+
+.load-more-loading > * { margin-right: 16rpx; }
+
+.load-more-loading > *:last-child { margin-right: 0; }
 
 .loading-spinner {
   width: 32rpx;

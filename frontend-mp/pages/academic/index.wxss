@@ -185,7 +185,6 @@
 .score-list {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
 }
 
 .score-card {
@@ -194,6 +193,7 @@
   padding: 24rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  margin-bottom: 20rpx;
 }
 
 .score-card:active {
@@ -223,7 +223,6 @@
 .course-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 12rpx;
 }
 
 .course-tag {
@@ -232,6 +231,7 @@
   font-size: 22rpx;
   border-radius: 8rpx;
   font-weight: 500;
+  margin-right: 12rpx;
 }
 
 .type-tag {
@@ -376,7 +376,6 @@
 .progress-section {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
 }
 
 .progress-card {
@@ -464,9 +463,9 @@
 }
 
 .credit-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20rpx;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -10rpx;
 }
 
 .stat-card {
@@ -478,6 +477,8 @@
   align-items: center;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
   transition: all 0.3s ease;
+  width: calc(50% - 20rpx);
+  margin: 0 10rpx 20rpx;
 }
 
 .stat-card:active {
@@ -572,7 +573,6 @@
 .warning-list {
   display: flex;
   flex-direction: column;
-  gap: 24rpx;
 }
 
 .warning-card {
@@ -616,7 +616,6 @@
 .warning-course-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 12rpx;
 }
 
 .warning-tag {
@@ -718,7 +717,6 @@
 
 .warning-card-footer {
   display: flex;
-  gap: 16rpx;
 }
 
 .action-btn {
@@ -741,6 +739,7 @@
 
 .action-retake {
   background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  margin-right: 0;
 }
 
 .btn-icon {
@@ -1024,13 +1023,13 @@
 
 .trend-metrics {
   display: flex;
-  gap: 32rpx;
   margin-bottom: 12rpx;
 }
 
 .trend-metric {
   display: flex;
   align-items: baseline;
+  margin-right: 32rpx;
 }
 
 .trend-metric-label {
@@ -1078,9 +1077,9 @@
 
 /* 关键指标 */
 .key-metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20rpx;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -10rpx;
 }
 
 .key-metric-card {
@@ -1091,6 +1090,8 @@
   align-items: center;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
   transition: all 0.3s ease;
+  width: calc(50% - 20rpx);
+  margin: 0 10rpx 20rpx;
 }
 
 .key-metric-card:active {

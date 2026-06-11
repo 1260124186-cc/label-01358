@@ -28,8 +28,11 @@
 .image-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
 }
+
+.image-list { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.image-list > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .image-item {
   position: relative;

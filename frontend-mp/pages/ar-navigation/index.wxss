@@ -97,12 +97,15 @@
 .direction-indicator {
   display: flex;
   align-items: center;
-  gap: 12rpx;
   background: rgba(0, 0, 0, 0.5);
   padding: 16rpx 28rpx;
   border-radius: 32rpx;
   backdrop-filter: blur(10px);
 }
+
+.direction-indicator > * { margin-right: 12rpx; }
+
+.direction-indicator > *:last-child { margin-right: 0; }
 
 .direction-icon {
   font-size: 32rpx;
@@ -162,7 +165,6 @@
 .ar-poi-card {
   display: flex;
   align-items: center;
-  gap: 12rpx;
   background: rgba(0, 0, 0, 0.75);
   border: 2rpx solid #3B82F6;
   border-radius: 16rpx;
@@ -171,6 +173,10 @@
   min-width: 240rpx;
   box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.4);
 }
+
+.ar-poi-card > * { margin-right: 12rpx; }
+
+.ar-poi-card > *:last-child { margin-right: 0; }
 
 .ar-poi-icon {
   width: 48rpx;
@@ -294,8 +300,11 @@
 .panel-toggle {
   display: flex;
   align-items: center;
-  gap: 8rpx;
 }
+
+.panel-toggle > * { margin-right: 8rpx; }
+
+.panel-toggle > *:last-child { margin-right: 0; }
 
 .panel-toggle text {
   font-size: 24rpx;
@@ -314,14 +323,16 @@
 
 .poi-list {
   display: inline-flex;
-  gap: 16rpx;
   padding-bottom: 8rpx;
 }
+
+.poi-list > * { margin-right: 16rpx; }
+
+.poi-list > *:last-child { margin-right: 0; }
 
 .poi-item {
   display: flex;
   align-items: center;
-  gap: 16rpx;
   background: rgba(255, 255, 255, 0.1);
   border: 2rpx solid transparent;
   border-radius: 16rpx;
@@ -330,6 +341,10 @@
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
 }
+
+.poi-item > * { margin-right: 16rpx; }
+
+.poi-item > *:last-child { margin-right: 0; }
 
 .poi-item.active {
   background: rgba(59, 130, 246, 0.2);
@@ -368,8 +383,11 @@
 
 .poi-meta {
   display: flex;
-  gap: 16rpx;
 }
+
+.poi-meta > * { margin-right: 16rpx; }
+
+.poi-meta > *:last-child { margin-right: 0; }
 
 .poi-distance {
   font-size: 22rpx;
@@ -408,11 +426,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8rpx;
   padding: 16rpx 24rpx;
   border-radius: 16rpx;
   transition: background 0.3s ease;
 }
+
+.action-btn > * { margin-bottom: 8rpx; }
+
+.action-btn > *:last-child { margin-bottom: 0; }
 
 .action-btn:active {
   background: rgba(255, 255, 255, 0.1);

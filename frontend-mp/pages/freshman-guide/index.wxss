@@ -78,9 +78,12 @@
 .section-header {
   display: flex;
   align-items: center;
-  gap: 12rpx;
   margin-bottom: 28rpx;
 }
+
+.section-header > * { margin-right: 12rpx; }
+
+.section-header > *:last-child { margin-right: 0; }
 
 .section-icon {
   font-size: 36rpx;
@@ -102,8 +105,11 @@
 
 .flow-step {
   display: flex;
-  gap: 24rpx;
 }
+
+.flow-step > * { margin-right: 24rpx; }
+
+.flow-step > *:last-child { margin-right: 0; }
 
 .step-indicator {
   display: flex;
@@ -231,12 +237,15 @@
 .step-poi {
   display: flex;
   align-items: center;
-  gap: 12rpx;
   background: #F0F9FF;
   padding: 16rpx 20rpx;
   border-radius: 12rpx;
   margin-bottom: 12rpx;
 }
+
+.step-poi > * { margin-right: 12rpx; }
+
+.step-poi > *:last-child { margin-right: 0; }
 
 .page.dark .step-poi {
   background: rgba(59, 130, 246, 0.1);
@@ -265,11 +274,14 @@
 .step-tips {
   display: flex;
   align-items: flex-start;
-  gap: 12rpx;
   background: #FFFBEB;
   padding: 16rpx 20rpx;
   border-radius: 12rpx;
 }
+
+.step-tips > * { margin-right: 12rpx; }
+
+.step-tips > *:last-child { margin-right: 0; }
 
 .page.dark .step-tips {
   background: rgba(245, 158, 11, 0.1);
@@ -293,8 +305,11 @@
 .keypoints-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
 }
+
+.keypoints-grid { margin-right: -20rpx; margin-bottom: -20rpx; }
+
+.keypoints-grid > * { margin-right: 20rpx; margin-bottom: 20rpx; }
 
 .keypoint-card {
   width: calc(33.333% - 14rpx);
@@ -304,8 +319,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12rpx;
 }
+
+.keypoint-card > * { margin-bottom: 12rpx; }
+
+.keypoint-card > *:last-child { margin-bottom: 0; }
 
 .page.dark .keypoint-card {
   background: #2D3142;
@@ -343,16 +361,22 @@
 .materials-list {
   display: flex;
   flex-direction: column;
-  gap: 4rpx;
 }
+
+.materials-list > * { margin-bottom: 4rpx; }
+
+.materials-list > *:last-child { margin-bottom: 0; }
 
 .material-item {
   display: flex;
   align-items: center;
-  gap: 20rpx;
   padding: 20rpx 16rpx;
   border-radius: 12rpx;
 }
+
+.material-item > * { margin-right: 20rpx; }
+
+.material-item > *:last-child { margin-right: 0; }
 
 .material-item:nth-child(odd) {
   background: #FAFAFA;
@@ -384,17 +408,23 @@
 .contact-card {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
 }
+
+.contact-card > * { margin-bottom: 20rpx; }
+
+.contact-card > *:last-child { margin-bottom: 0; }
 
 .contact-item {
   display: flex;
   align-items: center;
-  gap: 20rpx;
   padding: 20rpx;
   background: #FAFAFA;
   border-radius: 16rpx;
 }
+
+.contact-item > * { margin-right: 20rpx; }
+
+.contact-item > *:last-child { margin-right: 0; }
 
 .page.dark .contact-item {
   background: #2D3142;
@@ -445,9 +475,12 @@
   padding: 20rpx 32rpx;
   padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   display: flex;
-  gap: 16rpx;
   box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
 }
+
+.bottom-action > * { margin-right: 16rpx; }
+
+.bottom-action > *:last-child { margin-right: 0; }
 
 .page.dark .bottom-action {
   background: #1E2230;
@@ -460,8 +493,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8rpx;
 }
+
+.action-btn > * { margin-right: 8rpx; }
+
+.action-btn > *:last-child { margin-right: 0; }
 
 .action-btn.secondary {
   background: #F0F2F5;

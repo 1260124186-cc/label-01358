@@ -28,9 +28,12 @@
 .form-label {
   display: flex;
   align-items: center;
-  gap: 8rpx;
   margin-bottom: 16rpx;
 }
+
+.form-label > * { margin-right: 8rpx; }
+
+.form-label > *:last-child { margin-right: 0; }
 
 .label-icon {
   font-size: 28rpx;
@@ -73,9 +76,12 @@
 .form-sub-row {
   display: flex;
   align-items: center;
-  gap: 12rpx;
   margin-top: 16rpx;
 }
+
+.form-sub-row > * { margin-right: 12rpx; }
+
+.form-sub-row > *:last-child { margin-right: 0; }
 
 .sub-label {
   font-size: 26rpx;
@@ -129,9 +135,12 @@
 
 .param-options {
   display: flex;
-  gap: 16rpx;
   flex-wrap: wrap;
 }
+
+.param-options { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.param-options > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .param-item {
   padding: 14rpx 28rpx;
@@ -144,8 +153,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4rpx;
 }
+
+.param-item > * { margin-bottom: 4rpx; }
+
+.param-item > *:last-child { margin-bottom: 0; }
 
 .print-page.dark .param-item {
   background: #262A3A;
@@ -172,8 +184,11 @@
 .copies-control {
   display: flex;
   align-items: center;
-  gap: 16rpx;
 }
+
+.copies-control > * { margin-right: 16rpx; }
+
+.copies-control > *:last-child { margin-right: 0; }
 
 .copies-btn {
   width: 64rpx;
@@ -287,9 +302,12 @@
 
 .address-row {
   display: flex;
-  gap: 16rpx;
   align-items: center;
 }
+
+.address-row > * { margin-right: 16rpx; }
+
+.address-row > *:last-child { margin-right: 0; }
 
 .flex-1 {
   flex: 1;
@@ -354,8 +372,11 @@
 .submit-info {
   display: flex;
   align-items: baseline;
-  gap: 8rpx;
 }
+
+.submit-info > * { margin-right: 8rpx; }
+
+.submit-info > *:last-child { margin-right: 0; }
 
 .submit-label {
   font-size: 26rpx;
@@ -456,9 +477,12 @@
   align-items: center;
   padding: 24rpx 20rpx;
   border-radius: 12rpx;
-  gap: 16rpx;
   transition: background 0.2s;
 }
+
+.picker-item > * { margin-right: 16rpx; }
+
+.picker-item > *:last-child { margin-right: 0; }
 
 .picker-item:active {
   background: #f5f5f5;

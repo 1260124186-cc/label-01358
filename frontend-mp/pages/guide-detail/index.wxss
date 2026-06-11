@@ -119,8 +119,11 @@
 .phones-list {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
 }
+
+.phones-list > * { margin-bottom: 16rpx; }
+
+.phones-list > *:last-child { margin-bottom: 0; }
 
 .phone-item {
   display: flex;

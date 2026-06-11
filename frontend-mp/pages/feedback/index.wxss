@@ -23,9 +23,12 @@
 
 .type-pills {
   display: inline-flex;
-  gap: 16rpx;
   padding-bottom: 4rpx;
 }
+
+.type-pills > * { margin-right: 16rpx; }
+
+.type-pills > *:last-child { margin-right: 0; }
 
 .type-pill {
   display: inline-flex;
@@ -93,15 +96,18 @@
 
 /* ==================== 图片网格 ==================== */
 .image-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16rpx;
+  display: flex;
+  flex-wrap: wrap;
   padding: 24rpx 0;
 }
 
+.image-grid { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.image-grid > * { margin-right: 16rpx; margin-bottom: 16rpx; }
+
 .image-item {
   position: relative;
-  width: 100%;
+  width: calc(50% - 16rpx);
   padding-bottom: 100%;
 }
 
@@ -133,7 +139,7 @@
 }
 
 .image-add {
-  width: 100%;
+  width: calc(50% - 16rpx);
   padding-bottom: 100%;
   position: relative;
   background-color: var(--color-bg-input);

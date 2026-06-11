@@ -40,8 +40,11 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 24rpx;
 }
+
+.podium > * { margin-right: 24rpx; }
+
+.podium > *:last-child { margin-right: 0; }
 
 .podium-item {
   display: flex;
@@ -176,10 +179,13 @@
 .rank-left {
   display: flex;
   align-items: center;
-  gap: 16rpx;
   flex: 1;
   min-width: 0;
 }
+
+.rank-left > * { margin-right: 16rpx; }
+
+.rank-left > *:last-child { margin-right: 0; }
 
 .rank-number {
   width: 52rpx;
@@ -224,9 +230,12 @@
 .rank-info {
   display: flex;
   flex-direction: column;
-  gap: 4rpx;
   min-width: 0;
 }
+
+.rank-info > * { margin-bottom: 4rpx; }
+
+.rank-info > *:last-child { margin-bottom: 0; }
 
 .rank-name {
   font-size: var(--font-base);
@@ -245,10 +254,13 @@
 .rank-right {
   display: flex;
   align-items: baseline;
-  gap: 4rpx;
   flex-shrink: 0;
   margin-left: 16rpx;
 }
+
+.rank-right > * { margin-right: 4rpx; }
+
+.rank-right > *:last-child { margin-right: 0; }
 
 .rank-hours {
   font-size: var(--font-xl);
@@ -280,8 +292,11 @@
 .my-rank-left {
   display: flex;
   align-items: center;
-  gap: 16rpx;
 }
+
+.my-rank-left > * { margin-right: 16rpx; }
+
+.my-rank-left > *:last-child { margin-right: 0; }
 
 .my-rank-badge {
   width: 56rpx;
@@ -316,8 +331,11 @@
 .my-rank-info {
   display: flex;
   flex-direction: column;
-  gap: 4rpx;
 }
+
+.my-rank-info > * { margin-bottom: 4rpx; }
+
+.my-rank-info > *:last-child { margin-bottom: 0; }
 
 .my-rank-label {
   font-size: var(--font-xs);
@@ -333,8 +351,11 @@
 .my-rank-right {
   display: flex;
   align-items: baseline;
-  gap: 4rpx;
 }
+
+.my-rank-right > * { margin-right: 4rpx; }
+
+.my-rank-right > *:last-child { margin-right: 0; }
 
 .my-rank-hours {
   font-size: 48rpx;

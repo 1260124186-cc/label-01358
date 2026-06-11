@@ -20,10 +20,13 @@
 
 .tab-bar {
   display: inline-flex;
-  gap: 40rpx;
   height: 88rpx;
   align-items: center;
 }
+
+.tab-bar > * { margin-right: 40rpx; }
+
+.tab-bar > *:last-child { margin-right: 0; }
 
 .tab-item {
   display: inline-flex;
@@ -71,9 +74,12 @@
 
 .category-chips {
   display: inline-flex;
-  gap: 16rpx;
   padding-right: 16rpx;
 }
+
+.category-chips > * { margin-right: 16rpx; }
+
+.category-chips > *:last-child { margin-right: 0; }
 
 .category-chip {
   display: inline-flex;
@@ -202,8 +208,11 @@
 .card-info {
   display: flex;
   flex-direction: column;
-  gap: 10rpx;
 }
+
+.card-info > * { margin-bottom: 10rpx; }
+
+.card-info > *:last-child { margin-bottom: 0; }
 
 .info-row {
   display: flex;

@@ -41,8 +41,11 @@
 .form-item.row {
   display: flex;
   align-items: center;
-  gap: 20rpx;
 }
+
+.form-item.row > * { margin-right: 20rpx; }
+
+.form-item.row > *:last-child { margin-right: 0; }
 
 .form-item.row .label {
   flex-shrink: 0;
@@ -117,8 +120,11 @@
 .date-time-wrap {
   flex: 1;
   display: flex;
-  gap: 16rpx;
 }
+
+.date-time-wrap > * { margin-right: 16rpx; }
+
+.date-time-wrap > *:last-child { margin-right: 0; }
 
 .date-time-wrap .picker-value {
   flex: 1;
@@ -194,8 +200,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12rpx;
 }
+
+.uploader-hint > * { margin-bottom: 12rpx; }
+
+.uploader-hint > *:last-child { margin-bottom: 0; }
 
 .upload-icon {
   font-size: 72rpx;
@@ -215,9 +224,12 @@
 .tags-wrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
   align-items: center;
 }
+
+.tags-wrap { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.tags-wrap > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .tag {
   display: inline-flex;
@@ -239,8 +251,11 @@
 .tag-input-wrap {
   display: flex;
   align-items: center;
-  gap: 12rpx;
 }
+
+.tag-input-wrap > * { margin-right: 12rpx; }
+
+.tag-input-wrap > *:last-child { margin-right: 0; }
 
 .tag-input {
   width: 200rpx;

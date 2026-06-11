@@ -232,8 +232,11 @@
 .members-list {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
 }
+
+.members-list > * { margin-bottom: 16rpx; }
+
+.members-list > *:last-child { margin-bottom: 0; }
 
 .member-item {
   display: flex;
@@ -269,8 +272,11 @@
 .member-name-row {
   display: flex;
   align-items: center;
-  gap: 12rpx;
 }
+
+.member-name-row > * { margin-right: 12rpx; }
+
+.member-name-row > *:last-child { margin-right: 0; }
 
 .member-name {
   font-size: 28rpx;
@@ -476,8 +482,11 @@
 .manage-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
 }
+
+.manage-actions { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.manage-actions > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .manage-btn {
   flex: 1;
@@ -593,8 +602,11 @@
 .bar-right {
   flex: 1;
   display: flex;
-  gap: 16rpx;
 }
+
+.bar-right > * { margin-right: 16rpx; }
+
+.bar-right > *:last-child { margin-right: 0; }
 
 .bar-btn {
   height: 80rpx;

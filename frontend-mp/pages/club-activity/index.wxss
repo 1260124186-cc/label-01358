@@ -19,10 +19,13 @@
 
 .tab-bar {
   display: inline-flex;
-  gap: 40rpx;
   height: 88rpx;
   align-items: center;
 }
+
+.tab-bar > * { margin-right: 40rpx; }
+
+.tab-bar > *:last-child { margin-right: 0; }
 
 .tab-item {
   display: inline-flex;
@@ -69,9 +72,12 @@
 
 .category-chips {
   display: inline-flex;
-  gap: 16rpx;
   padding-right: 16rpx;
 }
+
+.category-chips > * { margin-right: 16rpx; }
+
+.category-chips > *:last-child { margin-right: 0; }
 
 .category-chip {
   display: inline-flex;
@@ -222,11 +228,14 @@
 }
 
 .info-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12rpx 24rpx;
+  display: flex;
+  flex-wrap: wrap;
   margin-bottom: 20rpx;
 }
+
+.info-grid { margin-right: -12rpx; margin-bottom: -12rpx; }
+
+.info-grid > * { margin-right: 12rpx; margin-bottom: 12rpx; width: calc(50% - 12rpx); }
 
 .info-item {
   display: flex;
@@ -299,8 +308,11 @@
 .tags-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 12rpx;
 }
+
+.tags-row { margin-right: -12rpx; margin-bottom: -12rpx; }
+
+.tags-row > * { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .tag {
   font-size: var(--font-xs);

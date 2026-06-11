@@ -159,9 +159,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16rpx;
   margin-bottom: 48rpx;
 }
+
+.dot-indicators > * { margin-right: 16rpx; }
+
+.dot-indicators > *:last-child { margin-right: 0; }
 
 .dot {
   width: 16rpx;

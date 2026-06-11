@@ -216,8 +216,11 @@
 .record-list {
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
 }
+
+.record-list > * { margin-bottom: 16rpx; }
+
+.record-list > *:last-child { margin-bottom: 0; }
 
 .record-card {
   display: flex;
@@ -253,8 +256,11 @@
 .record-meta {
   display: flex;
   align-items: center;
-  gap: 12rpx;
 }
+
+.record-meta > * { margin-right: 12rpx; }
+
+.record-meta > *:last-child { margin-right: 0; }
 
 .record-tag {
   font-size: 22rpx;
@@ -317,13 +323,16 @@
   left: 0;
   right: 0;
   display: flex;
-  gap: 20rpx;
   padding: 20rpx 24rpx;
   padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   background-color: var(--color-bg-card);
   box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
   z-index: 50;
 }
+
+.bottom-actions > * { margin-right: 20rpx; }
+
+.bottom-actions > *:last-child { margin-right: 0; }
 
 .action-btn {
   flex: 1;

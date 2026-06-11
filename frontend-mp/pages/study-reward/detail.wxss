@@ -38,13 +38,16 @@
 .reward-points-badge {
   display: flex;
   align-items: center;
-  gap: 6rpx;
   background: rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(10rpx);
   padding: 12rpx 20rpx;
   border-radius: 25rpx;
   flex-shrink: 0;
 }
+
+.reward-points-badge > * { margin-right: 6rpx; }
+
+.reward-points-badge > *:last-child { margin-right: 0; }
 
 .reward-points-badge .points-icon {
   font-size: 28rpx;
@@ -58,19 +61,25 @@
 
 .reward-tags {
   display: flex;
-  gap: 15rpx;
   flex-wrap: wrap;
 }
+
+.reward-tags { margin-right: -15rpx; margin-bottom: -15rpx; }
+
+.reward-tags > * { margin-right: 15rpx; margin-bottom: 15rpx; }
 
 .tag {
   display: inline-flex;
   align-items: center;
-  gap: 6rpx;
   padding: 8rpx 20rpx;
   border-radius: 20rpx;
   font-size: 24rpx;
   font-weight: 500;
 }
+
+.tag > * { margin-right: 6rpx; }
+
+.tag > *:last-child { margin-right: 0; }
 
 .status-tag {
   font-weight: 600;
@@ -177,9 +186,12 @@
 .publisher-info {
   display: flex;
   align-items: center;
-  gap: 20rpx;
   margin-bottom: 15rpx;
 }
+
+.publisher-info > * { margin-right: 20rpx; }
+
+.publisher-info > *:last-child { margin-right: 0; }
 
 .publisher-avatar {
   width: 80rpx;
@@ -202,14 +214,20 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6rpx;
 }
+
+.publisher-detail > * { margin-bottom: 6rpx; }
+
+.publisher-detail > *:last-child { margin-bottom: 0; }
 
 .publisher-name-row {
   display: flex;
   align-items: center;
-  gap: 10rpx;
 }
+
+.publisher-name-row > * { margin-right: 10rpx; }
+
+.publisher-name-row > *:last-child { margin-right: 0; }
 
 .publisher-name {
   font-size: 28rpx;
@@ -236,10 +254,13 @@
 
 .stats-row {
   display: flex;
-  gap: 30rpx;
   padding-top: 15rpx;
   border-top: 1rpx solid #f0f0f0;
 }
+
+.stats-row > * { margin-right: 30rpx; }
+
+.stats-row > *:last-child { margin-right: 0; }
 
 .reward-detail-page.dark .stats-row {
   border-top-color: #0f3460;
@@ -297,8 +318,11 @@
 .responses-list {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
 }
+
+.responses-list > * { margin-bottom: 20rpx; }
+
+.responses-list > *:last-child { margin-bottom: 0; }
 
 .response-card {
   position: relative;
@@ -328,12 +352,15 @@
   right: 15rpx;
   display: flex;
   align-items: center;
-  gap: 4rpx;
   background: #10B981;
   color: #fff;
   padding: 6rpx 14rpx;
   border-radius: 16rpx;
 }
+
+.adopted-badge > * { margin-right: 4rpx; }
+
+.adopted-badge > *:last-child { margin-right: 0; }
 
 .adopted-icon {
   font-size: 20rpx;
@@ -347,9 +374,12 @@
 .response-header {
   display: flex;
   align-items: center;
-  gap: 15rpx;
   margin-bottom: 12rpx;
 }
+
+.response-header > * { margin-right: 15rpx; }
+
+.response-header > *:last-child { margin-right: 0; }
 
 .responder-avatar {
   width: 60rpx;
@@ -372,8 +402,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4rpx;
 }
+
+.responder-info > * { margin-bottom: 4rpx; }
+
+.responder-info > *:last-child { margin-bottom: 0; }
 
 .responder-name {
   font-size: 26rpx;
@@ -429,12 +462,15 @@
   right: 0;
   display: flex;
   align-items: center;
-  gap: 15rpx;
   padding: 20rpx 30rpx;
   background: #fff;
   border-top: 1rpx solid #eee;
   z-index: 100;
 }
+
+.reply-bar > * { margin-right: 15rpx; }
+
+.reply-bar > *:last-child { margin-right: 0; }
 
 .reward-detail-page.dark .reply-bar {
   background: #16213e;
@@ -521,13 +557,16 @@
   right: 0;
   display: flex;
   align-items: center;
-  gap: 10rpx;
   padding: 15rpx 30rpx;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10rpx);
   border-top: 1rpx solid #eee;
   z-index: 99;
 }
+
+.copyright-bar > * { margin-right: 10rpx; }
+
+.copyright-bar > *:last-child { margin-right: 0; }
 
 .reward-detail-page.dark .copyright-bar {
   background: rgba(22, 33, 62, 0.95);

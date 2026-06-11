@@ -20,8 +20,11 @@
 /* ==================== 类型选择 ==================== */
 .type-selector {
   display: flex;
-  gap: 20rpx;
 }
+
+.type-selector > * { margin-right: 20rpx; }
+
+.type-selector > *:last-child { margin-right: 0; }
 
 .type-option {
   flex: 1;
@@ -160,9 +163,12 @@
 .image-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
   padding: 24rpx 0;
 }
+
+.image-list { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.image-list > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .image-item {
   position: relative;
@@ -237,8 +243,11 @@
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 16rpx;
 }
+
+.location-selector > * { margin-right: 16rpx; }
+
+.location-selector > *:last-child { margin-right: 0; }
 
 .location-selector .form-picker {
   flex: 1;
@@ -247,12 +256,15 @@
 .map-location-btn {
   display: flex;
   align-items: center;
-  gap: 8rpx;
   padding: 16rpx 24rpx;
   background: linear-gradient(135deg, #CFFAFE 0%, #A5F3FC 100%);
   border-radius: 24rpx;
   flex-shrink: 0;
 }
+
+.map-location-btn > * { margin-right: 8rpx; }
+
+.map-location-btn > *:last-child { margin-right: 0; }
 
 .map-icon {
   font-size: 28rpx;
@@ -267,12 +279,15 @@
 .poi-location-card {
   display: flex;
   align-items: center;
-  gap: 20rpx;
   padding: 20rpx;
   background: #F0F9FF;
   border-radius: 16rpx;
   flex: 1;
 }
+
+.poi-location-card > * { margin-right: 20rpx; }
+
+.poi-location-card > *:last-child { margin-right: 0; }
 
 .page.dark .poi-location-card {
   background: rgba(59, 130, 246, 0.1);
@@ -321,9 +336,12 @@
 .poi-location-action {
   display: flex;
   align-items: center;
-  gap: 4rpx;
   flex-shrink: 0;
 }
+
+.poi-location-action > * { margin-right: 4rpx; }
+
+.poi-location-action > *:last-child { margin-right: 0; }
 
 .poi-location-action text {
   font-size: 24rpx;
@@ -408,11 +426,14 @@
   padding: 24rpx 32rpx;
   display: flex;
   align-items: center;
-  gap: 16rpx;
   background: #F8F9FA;
   margin: 24rpx 32rpx;
   border-radius: 16rpx;
 }
+
+.picker-search > * { margin-right: 16rpx; }
+
+.picker-search > *:last-child { margin-right: 0; }
 
 .page.dark .picker-search {
   background: #2D3142;
@@ -440,10 +461,13 @@
 .picker-item {
   display: flex;
   align-items: center;
-  gap: 20rpx;
   padding: 24rpx 0;
   border-bottom: 1rpx solid #F0F2F5;
 }
+
+.picker-item > * { margin-right: 20rpx; }
+
+.picker-item > *:last-child { margin-right: 0; }
 
 .page.dark .picker-item {
   border-bottom-color: #2D3142;

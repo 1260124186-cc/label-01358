@@ -110,9 +110,12 @@
 
 .recommend-list {
   display: inline-flex;
-  gap: 20rpx;
   padding-right: 24rpx;
 }
+
+.recommend-list > * { margin-right: 20rpx; }
+
+.recommend-list > *:last-child { margin-right: 0; }
 
 .dish-card {
   width: 320rpx;
@@ -246,9 +249,12 @@
 
 .new-dishes-list {
   display: inline-flex;
-  gap: 16rpx;
   padding-right: 24rpx;
 }
+
+.new-dishes-list > * { margin-right: 16rpx; }
+
+.new-dishes-list > *:last-child { margin-right: 0; }
 
 .new-dish-card {
   width: 240rpx;
@@ -345,8 +351,11 @@
 .canteen-list {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
 }
+
+.canteen-list > * { margin-bottom: 20rpx; }
+
+.canteen-list > *:last-child { margin-bottom: 0; }
 
 .canteen-card {
   background-color: var(--color-bg-card);
@@ -490,8 +499,11 @@
   padding: 16rpx 20rpx;
   background-color: var(--color-bg-input);
   border-radius: var(--radius-lg);
-  gap: 12rpx;
 }
+
+.canteen-hours > * { margin-right: 12rpx; }
+
+.canteen-hours > *:last-child { margin-right: 0; }
 
 .hour-item {
   flex: 1;

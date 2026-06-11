@@ -34,12 +34,15 @@
 .image-uploader {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
   background-color: #fff;
   padding: 24rpx;
   border-radius: 20rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
 }
+
+.image-uploader { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.image-uploader > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .page.dark .image-uploader {
   background-color: #1A1D29;
@@ -212,8 +215,11 @@
 
 .form-row {
   display: flex;
-  gap: 24rpx;
 }
+
+.form-row > * { margin-right: 24rpx; }
+
+.form-row > *:last-child { margin-right: 0; }
 
 .flex-1 {
   flex: 1;
@@ -223,9 +229,12 @@
   flex: 1;
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
   justify-content: flex-end;
 }
+
+.selector-group { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.selector-group > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .selector-item {
   padding: 12rpx 28rpx;
@@ -255,12 +264,15 @@
 .facility-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
   background-color: #fff;
   padding: 24rpx;
   border-radius: 20rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
 }
+
+.facility-grid { margin-right: -20rpx; margin-bottom: -20rpx; }
+
+.facility-grid > * { margin-right: 20rpx; margin-bottom: 20rpx; }
 
 .page.dark .facility-grid {
   background-color: #1A1D29;

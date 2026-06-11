@@ -23,9 +23,12 @@
 
 .type-list {
   display: inline-flex;
-  gap: 16rpx;
   padding: 4rpx 0;
 }
+
+.type-list > * { margin-right: 16rpx; }
+
+.type-list > *:last-child { margin-right: 0; }
 
 .type-card {
   display: inline-flex;
@@ -112,9 +115,12 @@
 .image-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
   padding: 24rpx 0;
 }
+
+.image-list { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.image-list > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .image-item {
   position: relative;
@@ -189,9 +195,12 @@
 .topic-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 12rpx;
   flex: 1;
 }
+
+.topic-chips { margin-right: -12rpx; margin-bottom: -12rpx; }
+
+.topic-chips > * { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .topic-chip {
   display: inline-flex;
@@ -343,11 +352,14 @@
 .picker-body {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
   padding: 0 32rpx 32rpx;
   max-height: 560rpx;
   overflow-y: auto;
 }
+
+.picker-body { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.picker-body > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .picker-topic {
   display: inline-flex;

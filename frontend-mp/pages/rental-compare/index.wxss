@@ -30,8 +30,11 @@
 .header-left {
   display: flex;
   align-items: center;
-  gap: 16rpx;
 }
+
+.header-left > * { margin-right: 16rpx; }
+
+.header-left > *:last-child { margin-right: 0; }
 
 .header-title {
   font-size: 34rpx;
@@ -337,11 +340,14 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 8rpx;
   font-size: 22rpx;
   font-weight: 500;
   text-align: left;
 }
+
+.house-type-badge > * { margin-right: 8rpx; }
+
+.house-type-badge > *:last-child { margin-right: 0; }
 
 .badge-dot {
   width: 12rpx;
@@ -355,8 +361,11 @@
   justify-content: center;
   flex-direction: column;
   width: 100%;
-  gap: 8rpx;
 }
+
+.cell-content > * { margin-bottom: 8rpx; }
+
+.cell-content > *:last-child { margin-bottom: 0; }
 
 .cell-text {
   font-size: 26rpx;
@@ -413,11 +422,14 @@
 }
 
 .facilities-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12rpx;
+  display: flex;
+  flex-wrap: wrap;
   width: 100%;
 }
+
+.facilities-grid { margin-right: -12rpx; margin-bottom: -12rpx; }
+
+.facilities-grid > * { margin-right: 12rpx; margin-bottom: 12rpx; width: calc(50% - 12rpx); }
 
 .facility-chip {
   display: flex;
@@ -494,12 +506,15 @@
 .compare-tip {
   display: flex;
   align-items: flex-start;
-  gap: 12rpx;
   padding: 20rpx 28rpx;
   padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   background-color: #FFFBEB;
   border-top: 1rpx solid #FDE68A;
 }
+
+.compare-tip > * { margin-right: 12rpx; }
+
+.compare-tip > *:last-child { margin-right: 0; }
 
 .page.dark .compare-tip {
   background-color: rgba(245, 158, 11, 0.08);

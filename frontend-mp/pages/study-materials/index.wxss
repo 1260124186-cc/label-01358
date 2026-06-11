@@ -13,8 +13,11 @@
   align-items: center;
   padding: 20rpx 30rpx;
   background: #fff;
-  gap: 20rpx;
 }
+
+.search-section > * { margin-right: 20rpx; }
+
+.search-section > *:last-child { margin-right: 0; }
 
 .study-page.dark .search-section {
   background: #16213e;
@@ -27,8 +30,11 @@
   background: #f5f5f5;
   border-radius: 40rpx;
   padding: 15rpx 25rpx;
-  gap: 15rpx;
 }
+
+.search-box > * { margin-right: 15rpx; }
+
+.search-box > *:last-child { margin-right: 0; }
 
 .study-page.dark .search-box {
   background: #0f3460;
@@ -55,12 +61,15 @@
 .points-badge {
   display: flex;
   align-items: center;
-  gap: 8rpx;
   background: linear-gradient(135deg, #FFEAA7, #FDCB6E);
   padding: 12rpx 20rpx;
   border-radius: 30rpx;
   box-shadow: 0 4rpx 12rpx rgba(253, 203, 110, 0.3);
 }
+
+.points-badge > * { margin-right: 8rpx; }
+
+.points-badge > *:last-child { margin-right: 0; }
 
 .points-icon {
   font-size: 24rpx;
@@ -129,13 +138,16 @@
 .category-item {
   display: inline-flex;
   align-items: center;
-  gap: 8rpx;
   padding: 15rpx 25rpx;
   margin-right: 15rpx;
   border-radius: 30rpx;
   border: 2rpx solid transparent;
   transition: all 0.3s;
 }
+
+.category-item > * { margin-right: 8rpx; }
+
+.category-item > *:last-child { margin-right: 0; }
 
 .category-icon {
   font-size: 28rpx;
@@ -184,8 +196,11 @@
 .materials-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
 }
+
+.materials-grid { margin-right: -20rpx; margin-bottom: -20rpx; }
+
+.materials-grid > * { margin-right: 20rpx; margin-bottom: 20rpx; }
 
 .material-card {
   width: calc(50% - 10rpx);
@@ -301,8 +316,11 @@
 
 .stats {
   display: flex;
-  gap: 15rpx;
 }
+
+.stats > * { margin-right: 15rpx; }
+
+.stats > *:last-child { margin-right: 0; }
 
 .stat-item {
   font-size: 22rpx;
@@ -317,8 +335,11 @@
 .rewards-list {
   display: flex;
   flex-direction: column;
-  gap: 20rpx;
 }
+
+.rewards-list > * { margin-bottom: 20rpx; }
+
+.rewards-list > *:last-child { margin-bottom: 0; }
 
 .reward-card {
   background: #fff;
@@ -360,12 +381,15 @@
 .reward-points {
   display: flex;
   align-items: center;
-  gap: 6rpx;
   background: linear-gradient(135deg, #FFEAA7, #FDCB6E);
   padding: 10rpx 18rpx;
   border-radius: 25rpx;
   flex-shrink: 0;
 }
+
+.reward-points > * { margin-right: 6rpx; }
+
+.reward-points > *:last-child { margin-right: 0; }
 
 .reward-points .points-icon {
   font-size: 24rpx;
@@ -394,10 +418,13 @@
 
 .reward-meta {
   display: flex;
-  gap: 12rpx;
   margin-bottom: 15rpx;
   flex-wrap: wrap;
 }
+
+.reward-meta { margin-right: -12rpx; margin-bottom: -12rpx; }
+
+.reward-meta > * { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .status-tag {
   font-weight: 500;
@@ -417,8 +444,11 @@
 
 .reward-stats {
   display: flex;
-  gap: 20rpx;
 }
+
+.reward-stats > * { margin-right: 20rpx; }
+
+.reward-stats > *:last-child { margin-right: 0; }
 
 .reward-stats .stat-item {
   font-size: 24rpx;
@@ -464,13 +494,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10rpx;
   padding: 15rpx 30rpx;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10rpx);
   border-top: 1rpx solid #eee;
   z-index: 50;
 }
+
+.copyright-tip > * { margin-right: 10rpx; }
+
+.copyright-tip > *:last-child { margin-right: 0; }
 
 .study-page.dark .copyright-tip {
   background: rgba(22, 33, 62, 0.95);

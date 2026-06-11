@@ -14,8 +14,11 @@
   align-items: center;
   padding: 20rpx 24rpx;
   background: linear-gradient(135deg, #CFFAFE 0%, #A5F3FC 100%);
-  gap: 16rpx;
 }
+
+.select-mode-bar > * { margin-right: 16rpx; }
+
+.select-mode-bar > *:last-child { margin-right: 0; }
 
 .select-mode-icon {
   font-size: 32rpx;
@@ -41,9 +44,12 @@
   align-items: center;
   padding: 20rpx 24rpx;
   background-color: #fff;
-  gap: 16rpx;
   z-index: 100;
 }
+
+.search-bar > * { margin-right: 16rpx; }
+
+.search-bar > *:last-child { margin-right: 0; }
 
 .page.dark .search-bar {
   background-color: #2a2a2a;
@@ -57,8 +63,11 @@
   border-radius: 40rpx;
   padding: 0 24rpx;
   height: 72rpx;
-  gap: 12rpx;
 }
+
+.search-input-wrap > * { margin-right: 12rpx; }
+
+.search-input-wrap > *:last-child { margin-right: 0; }
 
 .page.dark .search-input-wrap {
   background-color: #3a3a3a;
@@ -132,9 +141,12 @@
 .history-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
   margin-bottom: 40rpx;
 }
+
+.history-tags { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.history-tags > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .history-tag {
   padding: 12rpx 24rpx;
@@ -158,8 +170,11 @@
   align-items: center;
   padding: 24rpx 0;
   border-bottom: 1rpx solid #eee;
-  gap: 20rpx;
 }
+
+.search-result-item > * { margin-right: 20rpx; }
+
+.search-result-item > *:last-child { margin-right: 0; }
 
 .page.dark .search-result-item {
   border-bottom-color: #3a3a3a;
@@ -173,8 +188,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8rpx;
 }
+
+.result-info > * { margin-bottom: 8rpx; }
+
+.result-info > *:last-child { margin-bottom: 0; }
 
 .result-name {
   font-size: 30rpx;
@@ -201,20 +219,26 @@
 }
 
 .hot-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20rpx;
+  display: flex;
+  flex-wrap: wrap;
 }
+
+.hot-grid { margin-right: -20rpx; margin-bottom: -20rpx; }
+
+.hot-grid > * { margin-right: 20rpx; margin-bottom: 20rpx; width: calc(25% - 20rpx); }
 
 .hot-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12rpx;
   padding: 24rpx 12rpx;
   background-color: #f8f9fa;
   border-radius: 16rpx;
 }
+
+.hot-item > * { margin-bottom: 12rpx; }
+
+.hot-item > *:last-child { margin-bottom: 0; }
 
 .page.dark .hot-item {
   background-color: #2a2a2a;
@@ -254,18 +278,24 @@
 
 .category-list {
   display: inline-flex;
-  gap: 16rpx;
 }
+
+.category-list > * { margin-right: 16rpx; }
+
+.category-list > *:last-child { margin-right: 0; }
 
 .category-item {
   display: inline-flex;
   align-items: center;
-  gap: 8rpx;
   padding: 12rpx 24rpx;
   background-color: #f0f2f5;
   border-radius: 32rpx;
   transition: all 0.2s;
 }
+
+.category-item > * { margin-right: 8rpx; }
+
+.category-item > *:last-child { margin-right: 0; }
 
 .page.dark .category-item {
   background-color: #3a3a3a;
@@ -298,8 +328,11 @@
   background-color: #f0f2f5;
   border-radius: 32rpx;
   padding: 6rpx;
-  gap: 4rpx;
 }
+
+.map-type-switch > * { margin-right: 4rpx; }
+
+.map-type-switch > *:last-child { margin-right: 0; }
 
 .page.dark .map-type-switch {
   background-color: #3a3a3a;
@@ -476,9 +509,12 @@
   bottom: 200rpx;
   display: flex;
   flex-direction: column;
-  gap: 16rpx;
   z-index: 10;
 }
+
+.map-controls > * { margin-bottom: 16rpx; }
+
+.map-controls > *:last-child { margin-bottom: 0; }
 
 .control-btn {
   width: 80rpx;
@@ -513,9 +549,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8rpx;
   padding: 12rpx 24rpx;
 }
+
+.action-item > * { margin-bottom: 8rpx; }
+
+.action-item > *:last-child { margin-bottom: 0; }
 
 .action-icon {
   font-size: 40rpx;
@@ -568,8 +607,11 @@
 
 .route-stats {
   display: flex;
-  gap: 24rpx;
 }
+
+.route-stats > * { margin-right: 24rpx; }
+
+.route-stats > *:last-child { margin-right: 0; }
 
 .stat-item {
   font-size: 26rpx;
@@ -588,10 +630,13 @@
 
 .step-item {
   display: flex;
-  gap: 16rpx;
   padding: 16rpx 0;
   border-bottom: 1rpx solid #f0f0f0;
 }
+
+.step-item > * { margin-right: 16rpx; }
+
+.step-item > *:last-child { margin-right: 0; }
 
 .page.dark .step-item {
   border-bottom-color: #3a3a3a;
@@ -615,8 +660,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4rpx;
 }
+
+.step-content > * { margin-bottom: 4rpx; }
+
+.step-content > *:last-child { margin-bottom: 0; }
 
 .step-text {
   font-size: 28rpx;
@@ -634,8 +682,11 @@
 
 .route-actions {
   display: flex;
-  gap: 20rpx;
 }
+
+.route-actions > * { margin-right: 20rpx; }
+
+.route-actions > *:last-child { margin-right: 0; }
 
 .btn-secondary {
   flex: 1;
@@ -681,9 +732,12 @@
 .preview-header {
   display: flex;
   align-items: center;
-  gap: 20rpx;
   margin-bottom: 20rpx;
 }
+
+.preview-header > * { margin-right: 20rpx; }
+
+.preview-header > *:last-child { margin-right: 0; }
 
 .preview-icon {
   width: 80rpx;
@@ -700,8 +754,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 8rpx;
 }
+
+.preview-info > * { margin-bottom: 8rpx; }
+
+.preview-info > *:last-child { margin-bottom: 0; }
 
 .preview-name {
   font-size: 32rpx;
@@ -721,8 +778,11 @@
 .preview-rating {
   display: flex;
   align-items: center;
-  gap: 8rpx;
 }
+
+.preview-rating > * { margin-right: 8rpx; }
+
+.preview-rating > *:last-child { margin-right: 0; }
 
 .rating-stars {
   font-size: 28rpx;
@@ -737,19 +797,25 @@
 .preview-actions {
   display: flex;
   justify-content: space-around;
-  gap: 16rpx;
 }
+
+.preview-actions > * { margin-right: 16rpx; }
+
+.preview-actions > *:last-child { margin-right: 0; }
 
 .preview-actions .action-btn {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8rpx;
   padding: 16rpx;
   background-color: #f8f9fa;
   border-radius: 16rpx;
 }
+
+.preview-actions .action-btn > * { margin-bottom: 8rpx; }
+
+.preview-actions .action-btn > *:last-child { margin-bottom: 0; }
 
 .page.dark .preview-actions .action-btn {
   background-color: #3a3a3a;
@@ -847,8 +913,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4rpx;
 }
+
+.step-info > * { margin-bottom: 4rpx; }
+
+.step-info > *:last-child { margin-bottom: 0; }
 
 .step-num {
   font-size: 20rpx;

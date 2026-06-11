@@ -260,8 +260,11 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 8rpx;
 }
+
+.cert-sign > * { margin-bottom: 8rpx; }
+
+.cert-sign > *:last-child { margin-bottom: 0; }
 
 .cert-sign-org {
   font-size: 26rpx;
@@ -323,13 +326,16 @@
   left: 0;
   right: 0;
   display: flex;
-  gap: 20rpx;
   padding: 20rpx 24rpx;
   padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   background-color: var(--color-bg-card);
   box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
   z-index: 50;
 }
+
+.bottom-actions > * { margin-right: 20rpx; }
+
+.bottom-actions > *:last-child { margin-right: 0; }
 
 .dark .bottom-actions {
   box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.3);

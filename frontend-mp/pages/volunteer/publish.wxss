@@ -30,11 +30,14 @@
 .section-header {
   display: flex;
   align-items: center;
-  gap: 10rpx;
   margin-bottom: 30rpx;
   padding-bottom: 20rpx;
   border-bottom: 1rpx solid #f0f0f0;
 }
+
+.section-header > * { margin-right: 10rpx; }
+
+.section-header > *:last-child { margin-right: 0; }
 
 .publish-page.dark .section-header {
   border-bottom-color: #0f3460;
@@ -143,8 +146,11 @@
 
 .datetime-row {
   display: flex;
-  gap: 15rpx;
 }
+
+.datetime-row > * { margin-right: 15rpx; }
+
+.datetime-row > *:last-child { margin-right: 0; }
 
 .datetime-picker {
   flex: 1;

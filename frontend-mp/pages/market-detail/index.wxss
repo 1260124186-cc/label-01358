@@ -68,8 +68,11 @@
 .info-row {
   display: flex;
   align-items: center;
-  gap: 24rpx;
 }
+
+.info-row > * { margin-right: 24rpx; }
+
+.info-row > *:last-child { margin-right: 0; }
 
 .info-views,
 .info-time {
@@ -135,8 +138,11 @@
 .info-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 12rpx;
 }
+
+.info-tags { margin-right: -12rpx; margin-bottom: -12rpx; }
+
+.info-tags > * { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .info-tag {
   padding: 8rpx 20rpx;

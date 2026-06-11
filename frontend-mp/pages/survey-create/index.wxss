@@ -101,9 +101,12 @@
 .question-header {
   display: flex;
   align-items: center;
-  gap: 12rpx;
   margin-bottom: 16rpx;
 }
+
+.question-header > * { margin-right: 12rpx; }
+
+.question-header > *:last-child { margin-right: 0; }
 
 .question-index {
   width: 44rpx;
@@ -145,8 +148,11 @@
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 8rpx;
 }
+
+.question-actions > * { margin-right: 8rpx; }
+
+.question-actions > *:last-child { margin-right: 0; }
 
 .q-action {
   width: 52rpx;
@@ -195,17 +201,23 @@
 .option-list {
   display: flex;
   flex-direction: column;
-  gap: 12rpx;
 }
+
+.option-list > * { margin-bottom: 12rpx; }
+
+.option-list > *:last-child { margin-bottom: 0; }
 
 .option-item {
   display: flex;
   align-items: center;
-  gap: 12rpx;
   padding: 12rpx 16rpx;
   background-color: var(--color-bg-input);
   border-radius: var(--radius-md);
 }
+
+.option-item > * { margin-right: 12rpx; }
+
+.option-item > *:last-child { margin-right: 0; }
 
 .option-radio {
   font-size: 28rpx;
@@ -374,8 +386,11 @@
 .type-info {
   display: flex;
   flex-direction: column;
-  gap: 4rpx;
 }
+
+.type-info > * { margin-bottom: 4rpx; }
+
+.type-info > *:last-child { margin-bottom: 0; }
 
 .type-name {
   font-size: 30rpx;

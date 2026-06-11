@@ -59,13 +59,17 @@
 .skeleton-paragraphs {
   display: flex;
   flex-direction: column;
-  gap: 12rpx;
 }
 
 .skeleton-paragraph {
   height: 24rpx;
   background: #f0f0f0;
   border-radius: 4rpx;
+  margin-bottom: 12rpx;
+}
+
+.skeleton-paragraph:last-child {
+  margin-bottom: 0;
 }
 
 .skeleton-paragraph:nth-child(1) {
@@ -120,7 +124,6 @@
 
 .skeleton-card-tags {
   display: flex;
-  gap: 16rpx;
 }
 
 .skeleton-card-tag {
@@ -128,13 +131,19 @@
   height: 36rpx;
   background: #f0f0f0;
   border-radius: 18rpx;
+  margin-right: 16rpx;
+}
+
+.skeleton-card-tag:last-child {
+  margin-right: 0;
 }
 
 .skeleton-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
   padding: 20rpx;
+  margin-right: -20rpx;
+  margin-bottom: -20rpx;
 }
 
 .skeleton-grid-item {
@@ -142,6 +151,8 @@
   background: #fff;
   border-radius: 16rpx;
   overflow: hidden;
+  margin-right: 20rpx;
+  margin-bottom: 20rpx;
 }
 
 .skeleton-grid-image {

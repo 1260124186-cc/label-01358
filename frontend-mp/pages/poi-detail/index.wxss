@@ -7,9 +7,12 @@
   padding: 40rpx 32rpx 48rpx;
   display: flex;
   align-items: center;
-  gap: 24rpx;
   position: relative;
 }
+
+.poi-header > * { margin-right: 24rpx; }
+
+.poi-header > *:last-child { margin-right: 0; }
 
 .poi-icon-wrap {
   width: 100rpx;
@@ -75,9 +78,12 @@
 .section-title {
   display: flex;
   align-items: center;
-  gap: 12rpx;
   margin-bottom: 20rpx;
 }
+
+.section-title > * { margin-right: 12rpx; }
+
+.section-title > *:last-child { margin-right: 0; }
 
 .title-icon {
   font-size: 32rpx;
@@ -160,8 +166,11 @@
 .facilities-wrap {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
 }
+
+.facilities-wrap { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.facilities-wrap > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .facility-tag {
   background: #F0F7FF;
@@ -206,8 +215,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16rpx;
 }
+
+.map-placeholder > * { margin-bottom: 16rpx; }
+
+.map-placeholder > *:last-child { margin-bottom: 0; }
 
 .map-placeholder-icon {
   font-size: 64rpx;
@@ -245,9 +257,12 @@
 
 .nearby-list {
   display: inline-flex;
-  gap: 20rpx;
   padding: 8rpx 0;
 }
+
+.nearby-list > * { margin-right: 20rpx; }
+
+.nearby-list > *:last-child { margin-right: 0; }
 
 .nearby-item {
   width: 180rpx;
@@ -257,9 +272,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12rpx;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
 }
+
+.nearby-item > * { margin-bottom: 12rpx; }
+
+.nearby-item > *:last-child { margin-bottom: 0; }
 
 .page.dark .nearby-item {
   background: #1E2230;
@@ -306,9 +324,12 @@
   padding: 20rpx 24rpx;
   padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   display: flex;
-  gap: 16rpx;
   box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
 }
+
+.bottom-actions > * { margin-right: 16rpx; }
+
+.bottom-actions > *:last-child { margin-right: 0; }
 
 .page.dark .bottom-actions {
   background: #1E2230;
@@ -321,8 +342,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8rpx;
 }
+
+.action-btn > * { margin-right: 8rpx; }
+
+.action-btn > *:last-child { margin-right: 0; }
 
 .action-btn.secondary {
   background: #F0F2F5;

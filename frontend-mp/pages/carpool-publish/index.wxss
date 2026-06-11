@@ -33,12 +33,15 @@
 
 .type-selector {
   display: flex;
-  gap: 20rpx;
   background-color: #fff;
   padding: 24rpx;
   border-radius: 20rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
 }
+
+.type-selector > * { margin-right: 20rpx; }
+
+.type-selector > *:last-child { margin-right: 0; }
 
 .page.dark .type-selector {
   background-color: #1A1D29;
@@ -193,9 +196,12 @@
   flex: 1;
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
   justify-content: flex-end;
 }
+
+.seats-selector { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.seats-selector > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .seats-item {
   padding: 12rpx 28rpx;

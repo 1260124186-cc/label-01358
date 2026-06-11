@@ -21,19 +21,25 @@
 .category-row {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
 }
+
+.category-row > * { margin-right: var(--spacing-sm); }
+
+.category-row > *:last-child { margin-right: 0; }
 
 .category-tag {
   display: inline-flex;
   align-items: center;
-  gap: 6rpx;
   padding: 8rpx 20rpx;
   border-radius: var(--radius-full);
   font-size: var(--font-sm);
   font-weight: 500;
 }
+
+.category-tag > * { margin-right: 6rpx; }
+
+.category-tag > *:last-child { margin-right: 0; }
 
 .category-icon {
   font-size: var(--font-md);
@@ -95,8 +101,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4rpx;
 }
+
+.info-content > * { margin-bottom: 4rpx; }
+
+.info-content > *:last-child { margin-bottom: 0; }
 
 .info-label {
   font-size: var(--font-sm);
@@ -121,8 +130,11 @@
 .contact-row {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
 }
+
+.contact-row > * { margin-right: var(--spacing-md); }
+
+.contact-row > *:last-child { margin-right: 0; }
 
 .phone-link {
   font-size: var(--font-base);
@@ -140,17 +152,23 @@
 .registration-list {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm);
 }
+
+.registration-list > * { margin-bottom: var(--spacing-sm); }
+
+.registration-list > *:last-child { margin-bottom: 0; }
 
 .registration-item {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
   padding: 12rpx 16rpx;
   background: var(--color-bg-input);
   border-radius: var(--radius-md);
 }
+
+.registration-item > * { margin-right: var(--spacing-md); }
+
+.registration-item > *:last-child { margin-right: 0; }
 
 .reg-avatar {
   width: 60rpx;
@@ -199,13 +217,16 @@
   right: 0;
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
   padding: 20rpx var(--spacing-xl);
   padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
   background: var(--color-bg-card);
   border-top: 1rpx solid var(--color-border);
   z-index: 100;
 }
+
+.action-bar > * { margin-right: var(--spacing-md); }
+
+.action-bar > *:last-child { margin-right: 0; }
 
 .action-btn {
   display: flex;

@@ -21,8 +21,11 @@
 .search-row {
   display: flex;
   align-items: center;
-  gap: 20rpx;
 }
+
+.search-row > * { margin-right: 20rpx; }
+
+.search-row > *:last-child { margin-right: 0; }
 
 .search-box {
   flex: 1;
@@ -160,8 +163,11 @@
 .type-tabs {
   display: inline-flex;
   padding: 0 20rpx;
-  gap: 12rpx;
 }
+
+.type-tabs > * { margin-right: 12rpx; }
+
+.type-tabs > *:last-child { margin-right: 0; }
 
 .type-tab {
   display: inline-flex;
@@ -211,8 +217,11 @@
 .filter-row {
   display: inline-flex;
   padding: 0 20rpx;
-  gap: 16rpx;
 }
+
+.filter-row > * { margin-right: 16rpx; }
+
+.filter-row > *:last-child { margin-right: 0; }
 
 .filter-chip {
   display: inline-flex;
@@ -457,8 +466,11 @@
 .footer-right {
   display: flex;
   align-items: center;
-  gap: 16rpx;
 }
+
+.footer-right > * { margin-right: 16rpx; }
+
+.footer-right > *:last-child { margin-right: 0; }
 
 .publisher-info {
   display: flex;

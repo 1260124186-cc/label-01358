@@ -111,8 +111,11 @@
 .filter-row {
   display: inline-flex;
   padding: 0 20rpx;
-  gap: 16rpx;
 }
+
+.filter-row > * { margin-right: 16rpx; }
+
+.filter-row > *:last-child { margin-right: 0; }
 
 .filter-chip {
   display: inline-flex;
@@ -277,9 +280,12 @@
 .card-info {
   display: flex;
   flex-wrap: wrap;
-  gap: 20rpx;
   margin-bottom: 20rpx;
 }
+
+.card-info { margin-right: -20rpx; margin-bottom: -20rpx; }
+
+.card-info > * { margin-right: 20rpx; margin-bottom: 20rpx; }
 
 .info-item {
   display: flex;
@@ -335,8 +341,11 @@
 .card-meta {
   display: flex;
   align-items: center;
-  gap: 12rpx;
 }
+
+.card-meta > * { margin-right: 12rpx; }
+
+.card-meta > *:last-child { margin-right: 0; }
 
 .verified-tag {
   padding: 4rpx 12rpx;

@@ -116,8 +116,11 @@
 .history-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
 }
+
+.history-tags { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.history-tags > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .history-tag {
   display: inline-flex;
@@ -214,9 +217,12 @@
   align-items: center;
   padding: 16rpx 24rpx;
   background-color: var(--color-bg-card);
-  gap: 8rpx;
   border-bottom: 1rpx solid var(--color-border-light);
 }
+
+.filter-bar > * { margin-right: 8rpx; }
+
+.filter-bar > *:last-child { margin-right: 0; }
 
 .filter-item {
   display: flex;
@@ -301,8 +307,11 @@
 .filter-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
 }
+
+.filter-group { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.filter-group > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .filter-option {
   display: flex;
@@ -410,9 +419,12 @@
 .result-card-top {
   display: flex;
   align-items: center;
-  gap: 10rpx;
   margin-bottom: 12rpx;
 }
+
+.result-card-top > * { margin-right: 10rpx; }
+
+.result-card-top > *:last-child { margin-right: 0; }
 
 .result-card-title {
   font-size: var(--font-md);

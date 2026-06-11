@@ -24,9 +24,12 @@
 
 .filter-tabs {
   display: inline-flex;
-  gap: 12rpx;
   padding-right: 16rpx;
 }
+
+.filter-tabs > * { margin-right: 12rpx; }
+
+.filter-tabs > *:last-child { margin-right: 0; }
 
 .filter-tab {
   display: inline-block;
@@ -95,9 +98,12 @@
 .study-entry-content {
   display: flex;
   align-items: center;
-  gap: 16rpx;
   flex: 1;
 }
+
+.study-entry-content > * { margin-right: 16rpx; }
+
+.study-entry-content > *:last-child { margin-right: 0; }
 
 .study-entry-icon {
   font-size: 48rpx;
@@ -108,8 +114,11 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6rpx;
 }
+
+.study-entry-info > * { margin-bottom: 6rpx; }
+
+.study-entry-info > *:last-child { margin-bottom: 0; }
 
 .study-entry-title {
   font-size: 30rpx;
@@ -125,11 +134,14 @@
 .study-entry-action {
   display: flex;
   align-items: center;
-  gap: 4rpx;
   background: rgba(255, 255, 255, 0.2);
   padding: 10rpx 20rpx;
   border-radius: var(--radius-full);
 }
+
+.study-entry-action > * { margin-right: 4rpx; }
+
+.study-entry-action > *:last-child { margin-right: 0; }
 
 .entry-btn-text {
   font-size: 24rpx;
@@ -160,8 +172,11 @@
 .goods-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 16rpx;
 }
+
+.goods-grid { margin-right: -16rpx; margin-bottom: -16rpx; }
+
+.goods-grid > * { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .goods-card {
   width: calc(50% - 8rpx);
