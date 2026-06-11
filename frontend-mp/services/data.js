@@ -3,6 +3,7 @@
  */
 
 const storage = require('../utils/storage');
+const { STORAGE_KEYS } = storage;
 const util = require('../utils/util');
 const constants = require('../config/constants');
 const mockData = require('../config/mock-data');
@@ -76,7 +77,6 @@ function initStudyRewards() {
   }
   studyRewardsInitialized = true;
 }
-const { STORAGE_KEYS } = storage;
 
 function filterByKeyword(list, keyword, fields) {
   if (!keyword) return list;

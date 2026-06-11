@@ -4128,7 +4128,7 @@ const FRESHMAN_REGISTRATION_FLOW = [
   }
 ];
 
-module.exports = {
+const _firstExports = {
   ANNOUNCEMENTS,
   CAMPUS_NEWS,
   SCENERY_LIST,
@@ -4170,8 +4170,6 @@ module.exports = {
   ORIENTATION_GUIDE,
   FRESHMAN_REGISTRATION_FLOW
 };
-
-const _tempExports = module.exports;
 
 const MOCK_CLUBS = [
   {
@@ -4929,7 +4927,7 @@ const MOCK_COURSE_SETTINGS = {
 };
 
 module.exports = {
-  ..._tempExports,
+  ..._firstExports,
   MOCK_CLUBS,
   MOCK_CLUB_MEMBERS,
   MOCK_CLUB_ACTIVITIES,

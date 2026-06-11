@@ -1,8 +1,8 @@
-const dataService = require('/services/data');
-const constants = require('/config/constants');
-const util = require('/utils/util');
-const fileUtil = require('/utils/file');
-const { mixPage } = require('/utils/withTheme');
+const dataService = require('../../../services/data');
+const constants = require('../../../config/constants');
+const util = require('../../../utils/util');
+const fileUtil = require('../../../utils/file');
+const { mixPage } = require('../../../utils/withTheme');
 
 mixPage({
   data: {
