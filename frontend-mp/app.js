@@ -10,7 +10,8 @@ App({
     statusBarHeight: 0,
     navBarHeight: 44,
     themeMode: 'system',
-    isDark: false
+    isDark: false,
+    colorScheme: 'coral'
   },
 
   onLaunch() {
@@ -289,6 +290,16 @@ App({
     } catch (e) {
       console.error('设置主题失败:', e);
       return { mode, resolved: mode, isDark: false };
+    }
+  },
+
+  setColorScheme(colorScheme) {
+    try {
+      const result = theme.setColorScheme(colorScheme);
+      return result;
+    } catch (e) {
+      console.error('设置主题色失败:', e);
+      return { colorScheme, isDark: false };
     }
   },
 

@@ -1,21 +1,27 @@
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
-<view class="page {{darkMode ? 'dark' : ''}}">
-  <!-- 头部操作栏 -->
+<view class="page {{darkMode ? 'dark' : ''}} color-scheme-{{colorScheme}} {{fontSizeClass}}" aria-role="main" aria-label="消息通知页面">
   <view class="header">
     <view class="header-actions">
-      <view class="header-action" bindtap="onMarkAllRead">
+      <view class="view-mode-switch" aria-label="切换视图模式">
+        <view class="view-mode-btn {{viewMode === 'list' ? 'active' : ''}}" bindtap="onViewModeChange" data-mode="list" aria-role="button" aria-label="列表视图">
+          <text class="view-mode-icon">☰</text>
+        </view>
+        <view class="view-mode-btn {{viewMode === 'group' ? 'active' : ''}}" bindtap="onViewModeChange" data-mode="group" aria-role="button" aria-label="分组视图">
+          <text class="view-mode-icon">⊞</text>
+        </view>
+      </view>
+      <view class="header-action" bindtap="onMarkAllRead" aria-role="button" aria-label="全部标记已读">
         <text class="action-icon">✓</text>
         <text class="action-text">全部已读</text>
       </view>
-      <view class="header-action" bindtap="onSettings">
+      <view class="header-action" bindtap="onSettings" aria-role="button" aria-label="通知设置">
         <text class="action-icon">⚙</text>
         <text class="action-text">设置</text>
       </view>
     </view>
   </view>
 
-  <!-- 分类标签 -->
-  <scroll-view class="tabs-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+  <scroll-view class="tabs-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}" aria-label="通知分类">
     <view class="tabs">
       <view 
         class="tab-item {{activeTab === item.value ? 'active' : ''}}" 
@@ -23,6 +29,9 @@
         wx:key="value"
         bindtap="onTabChange"
         data-value="{{item.value}}"
+        aria-role="tab"
+        aria-selected="{{activeTab === item.value}}"
+        aria-label="{{item.label}}"
       >
         <text class="tab-icon" wx:if="{{item.icon}}">{{item.icon}}</text>
         <text class="tab-text">{{item.label}}</text>
@@ -36,43 +45,92 @@
     </view>
   </scroll-view>
 
-  <!-- 通知列表 -->
   <view class="content">
-    <block wx:if="{{filteredNotifications.length > 0}}">
-      <view 
-        class="notification-item {{item.read ? 'read' : ''}}" 
-        wx:for="{{filteredNotifications}}" 
-        wx:key="id"
-        bindtap="onNotificationTap"
-        data-id="{{item.id}}"
-        data-type="{{item.type}}"
-        data-subtype="{{item.subType}}"
-        data-extra="{{item.extra}}"
-      >
-        <view class="notification-unread-dot" wx:if="{{!item.read}}"></view>
-        <view class="notification-icon" style="background-color: {{item.typeColor}}; color: {{item.typeIconColor}};">
-          {{item.typeIcon}}
-        </view>
-        <view class="notification-content">
-          <view class="notification-header">
-            <text class="notification-title">{{item.title}}</text>
-            <text class="notification-time">{{item.timeText}}</text>
+    <block wx:if="{{viewMode === 'list'}}">
+      <block wx:if="{{filteredNotifications.length > 0}}">
+        <view 
+          class="notification-item {{item.read ? 'read' : ''}}" 
+          wx:for="{{filteredNotifications}}" 
+          wx:key="id"
+          bindtap="onNotificationTap"
+          data-id="{{item.id}}"
+          data-type="{{item.type}}"
+          data-subtype="{{item.subType}}"
+          data-extra="{{item.extra}}"
+          aria-role="article"
+          aria-label="{{item.typeLabel}} {{item.title}} {{item.timeText}}"
+        >
+          <view class="notification-unread-dot" wx:if="{{!item.read}}" aria-label="未读"></view>
+          <view class="notification-icon" style="background-color: {{item.typeColor}}; color: {{item.typeIconColor}};">
+            {{item.typeIcon}}
           </view>
-          <text class="notification-desc">{{item.content}}</text>
-          <view class="notification-footer" wx:if="{{item.extra && item.extra.preview}}">
-            <text class="notification-preview">{{item.extra.preview}}</text>
+          <view class="notification-content">
+            <view class="notification-header">
+              <text class="notification-title">{{item.title}}</text>
+              <text class="notification-time">{{item.timeText}}</text>
+            </view>
+            <text class="notification-desc">{{item.content}}</text>
+            <view class="notification-footer" wx:if="{{item.extra && item.extra.preview}}">
+              <text class="notification-preview">{{item.extra.preview}}</text>
+            </view>
+          </view>
+          <view class="notification-delete" catchtap="onDelete" data-id="{{item.id}}" aria-role="button" aria-label="删除通知">
+            <text class="delete-icon">×</text>
           </view>
         </view>
-        <view class="notification-delete" catchtap="onDelete" data-id="{{item.id}}">
-          <text class="delete-icon">×</text>
-        </view>
+      </block>
+
+      <view class="empty-state" wx:else>
+        <image class="empty-icon" src="/assets/images/empty.png" mode="aspectFit" aria-hidden="true" />
+        <text class="empty-text">暂无消息</text>
+        <text class="empty-desc">有新消息时会在这里显示</text>
       </view>
     </block>
 
-    <view class="empty-state" wx:else>
-      <image class="empty-icon" src="/assets/images/empty.png" mode="aspectFit" />
-      <text class="empty-text">暂无消息</text>
-      <text class="empty-desc">有新消息时会在这里显示</text>
-    </view>
+    <block wx:if="{{viewMode === 'group'}}">
+      <block wx:if="{{groupedNotifications.length > 0}}">
+        <view class="notification-group" wx:for="{{groupedNotifications}}" wx:key="key" wx:for-item="group">
+          <view class="group-header">
+            <text class="group-icon">{{group.icon}}</text>
+            <text class="group-label">{{group.label}}</text>
+            <text class="group-count">{{group.items.length}}</text>
+          </view>
+          <view 
+            class="notification-item {{item.read ? 'read' : ''}}" 
+            wx:for="{{group.items}}" 
+            wx:key="id"
+            wx:for-item="item"
+            bindtap="onNotificationTap"
+            data-id="{{item.id}}"
+            data-type="{{item.type}}"
+            data-subtype="{{item.subType}}"
+            data-extra="{{item.extra}}"
+            aria-role="article"
+            aria-label="{{item.typeLabel}} {{item.title}}"
+          >
+            <view class="notification-unread-dot" wx:if="{{!item.read}}" aria-label="未读"></view>
+            <view class="notification-icon" style="background-color: {{item.typeColor}}; color: {{item.typeIconColor}};">
+              {{item.typeIcon}}
+            </view>
+            <view class="notification-content">
+              <view class="notification-header">
+                <text class="notification-title">{{item.title}}</text>
+                <text class="notification-time">{{item.timeText}}</text>
+              </view>
+              <text class="notification-desc">{{item.content}}</text>
+            </view>
+            <view class="notification-delete" catchtap="onDelete" data-id="{{item.id}}" aria-role="button" aria-label="删除通知">
+              <text class="delete-icon">×</text>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <view class="empty-state" wx:else>
+        <image class="empty-icon" src="/assets/images/empty.png" mode="aspectFit" aria-hidden="true" />
+        <text class="empty-text">暂无消息</text>
+        <text class="empty-desc">有新消息时会在这里显示</text>
+      </view>
+    </block>
   </view>
 </view>

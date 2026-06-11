@@ -2,6 +2,7 @@ const app = getApp();
 const dataService = require('../../services/data');
 const util = require('../../utils/util');
 const themeUtil = require('../../utils/theme');
+const fontsizeUtil = require('../../utils/fontsize');
 
 Page({
   data: {
@@ -10,25 +11,48 @@ Page({
     historyCount: 0,
     unreadCount: 0,
     darkMode: false,
-    themeMode: 'system'
+    themeMode: 'system',
+    colorScheme: 'coral',
+    fontSize: 'standard',
+    fontSizeClass: 'font-size-standard',
+    colorSchemes: []
   },
 
   onLoad() {
     this.loadUserInfo();
     this.loadThemeState();
+    this.loadFontState();
   },
 
   onShow() {
     this.loadUserInfo();
     this.loadCounts();
     this.loadThemeState();
+    this.loadFontState();
   },
 
   loadThemeState() {
-    const { themeMode, isDark } = app.globalData;
+    const { themeMode, isDark, colorScheme } = app.globalData;
+    const schemes = Object.entries(themeUtil.COLOR_SCHEMES).map(([key, config]) => ({
+      value: key,
+      name: config.name,
+      icon: config.icon,
+      primary: config.primary,
+      primaryLight: config.primaryLight
+    }));
     this.setData({
       themeMode: themeMode || 'system',
-      darkMode: isDark || false
+      darkMode: isDark || false,
+      colorScheme: colorScheme || 'coral',
+      colorSchemes: schemes
+    });
+  },
+
+  loadFontState() {
+    const fontState = fontsizeUtil.init();
+    this.setData({
+      fontSize: fontState.size,
+      fontSizeClass: fontState.className
     });
   },
 
@@ -56,6 +80,23 @@ Page({
     });
   },
 
+  onColorSchemeChange(e) {
+    const { scheme } = e.currentTarget.dataset;
+    const result = app.setColorScheme(scheme);
+    this.setData({
+      colorScheme: result.colorScheme
+    });
+  },
+
+  onFontSizeChange(e) {
+    const { size } = e.currentTarget.dataset;
+    const result = fontsizeUtil.setFontSize(size);
+    this.setData({
+      fontSize: result.size,
+      fontSizeClass: result.config.className
+    });
+  },
+
   loadUserInfo() {
     const userInfo = app.globalData.userInfo || {};
     this.setData({ userInfo });
@@ -74,7 +115,6 @@ Page({
   },
 
   onEditProfile() {
-    // 未登录跳转登录页，已登录跳转编辑页
     if (!this.data.userInfo.nickName) {
       util.navigateTo('/pages/login/index');
     } else {
@@ -85,7 +125,6 @@ Page({
   onMenuTap(e) {
     const { type } = e.currentTarget.dataset;
 
-    // 这些功能需要登录
     if (['favorites', 'history', 'myLostFound', 'myMarket'].includes(type)) {
       if (!util.checkLogin()) {
         return;
@@ -108,6 +147,12 @@ Page({
       case 'myMarket':
         util.showToast('功能开发中');
         break;
+      case 'feedback':
+        util.navigateTo('/pages/feedback/index');
+        break;
+      case 'changelog':
+        util.navigateTo('/pages/changelog/index');
+        break;
     }
   },
 
@@ -124,7 +169,7 @@ Page({
   onAbout() {
     wx.showModal({
       title: '关于我们',
-      content: '校园生活服务小程序 v1.0.0\n\n为校园师生提供便捷的失物招领、二手交易、校园资讯等服务。',
+      content: '校园生活服务小程序 v2.0.0\n\n为校园师生提供便捷的失物招领、二手交易、校园资讯等服务。',
       showCancel: false,
       confirmColor: '#FF6B6B'
     });
@@ -134,11 +179,9 @@ Page({
     const confirm = await util.showConfirm('确定要退出登录吗？');
 
     if (confirm) {
-      // 清除用户信息
       app.globalData.userInfo = {};
       wx.removeStorageSync('userInfo');
 
-      // 清除收藏和浏览历史
       dataService.clearFavorites();
       dataService.clearHistory();
 

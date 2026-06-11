@@ -1,0 +1,57 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="onboarding {{darkMode ? 'dark' : ''}} color-scheme-{{colorScheme}} {{fontSizeClass}}" aria-role="main" aria-label="欢迎引导页面">
+  <view class="onboarding-header safe-top">
+    <text class="skip-btn" bindtap="onSkip" aria-role="button" aria-label="跳过引导">跳过</text>
+  </view>
+
+  <swiper
+    class="step-swiper"
+    current="{{currentStep}}"
+    bindchange="onStepChange"
+    duration="{{400}}"
+    easing-function="easeInOutCubic"
+  >
+    <swiper-item wx:for="{{steps}}" wx:key="title">
+      <view class="step-card step-{{item.color}}" aria-role="group" aria-label="第{{index + 1}}步: {{item.title}}">
+        <view class="step-bg-circle step-bg-circle-1"></view>
+        <view class="step-bg-circle step-bg-circle-2"></view>
+        <view class="step-icon-wrap">
+          <text class="step-icon">{{item.icon}}</text>
+        </view>
+        <text class="step-title">{{item.title}}</text>
+        <text class="step-desc">{{item.description}}</text>
+      </view>
+    </swiper-item>
+  </swiper>
+
+  <view class="onboarding-footer">
+    <view class="dot-indicators" aria-role="tablist" aria-label="引导步骤">
+      <view
+        wx:for="{{steps}}"
+        wx:key="title"
+        class="dot {{currentStep === index ? 'dot-active' : ''}} dot-{{item.color}}"
+        bindtap="onDotTap"
+        data-index="{{index}}"
+        aria-role="tab"
+        aria-selected="{{currentStep === index}}"
+        aria-label="第{{index + 1}}步"
+      ></view>
+    </view>
+
+    <view class="action-area">
+      <view class="action-spacer"></view>
+      <view
+        class="next-btn {{currentStep === steps.length - 1 ? 'finish-btn' : ''}}"
+        bindtap="onNext"
+        hover-class="next-btn-hover"
+        aria-role="button"
+        aria-label="{{currentStep === steps.length - 1 ? '开始使用' : '下一步'}}"
+      >
+        <text class="next-btn-text">{{currentStep === steps.length - 1 ? '开始使用' : '下一步'}}</text>
+        <text wx:if="{{currentStep < steps.length - 1}}" class="next-btn-arrow">→</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

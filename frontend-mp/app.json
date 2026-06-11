@@ -1,6 +1,7 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/onboarding/index",
     "pages/weather/index",
     "pages/search/index",
     "pages/campus-phonebook/index",
@@ -74,7 +75,9 @@
     "pages/schedule/index",
     "pages/schedule-edit/index",
     "pages/academic/index",
-    "pages/classroom-query/index"
+    "pages/classroom-query/index",
+    "pages/feedback/index",
+    "pages/changelog/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

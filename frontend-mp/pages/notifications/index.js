@@ -2,27 +2,35 @@ const app = getApp();
 const dataService = require('../../services/data');
 const util = require('../../utils/util');
 const constants = require('../../config/constants');
+const fontsizeUtil = require('../../utils/fontsize');
 
 Page({
   data: {
     darkMode: false,
+    colorScheme: 'coral',
+    fontSizeClass: 'font-size-standard',
+    fontSize: 'standard',
     activeTab: 'all',
+    viewMode: 'list',
     tabs: [
       { value: 'all', label: '全部' },
       ...constants.NOTIFICATION_TYPES
     ],
     notifications: [],
     filteredNotifications: [],
+    groupedNotifications: [],
     unreadCount: 0,
     unreadCountByType: {}
   },
 
   onLoad() {
     this.loadThemeState();
+    this.loadFontState();
   },
 
   onShow() {
     this.loadThemeState();
+    this.loadFontState();
     this.loadNotifications();
     this.loadUnreadCount();
   },
@@ -34,9 +42,18 @@ Page({
   },
 
   loadThemeState() {
-    const { isDark } = app.globalData;
+    const { isDark, colorScheme } = app.globalData;
     this.setData({
-      darkMode: isDark || false
+      darkMode: isDark || false,
+      colorScheme: colorScheme || 'coral'
+    });
+  },
+
+  loadFontState() {
+    const fontState = fontsizeUtil.init();
+    this.setData({
+      fontSizeClass: fontState.className,
+      fontSize: fontState.size
     });
   },
 
@@ -73,10 +90,34 @@ Page({
       };
     });
 
+    const groupedNotifications = this._buildGroups(filteredNotifications);
+
     this.setData({
       notifications,
-      filteredNotifications
+      filteredNotifications,
+      groupedNotifications
     });
+  },
+
+  _buildGroups(notifications) {
+    const groups = [
+      { key: 'system', label: '系统公告', icon: '📢', items: [] },
+      { key: 'interaction', label: '互动提醒', icon: '💬', items: [] },
+      { key: 'transaction', label: '交易提醒', icon: '🛒', items: [] },
+      { key: 'activity', label: '活动提醒', icon: '🎉', items: [] },
+      { key: 'survey', label: '问卷邀请', icon: '📋', items: [] }
+    ];
+
+    notifications.forEach(item => {
+      const group = groups.find(g => g.key === item.type);
+      if (group) {
+        group.items.push(item);
+      } else {
+        groups[groups.length - 1].items.push(item);
+      }
+    });
+
+    return groups.filter(g => g.items.length > 0);
   },
 
   loadUnreadCount() {
@@ -93,6 +134,11 @@ Page({
     this.setData({ activeTab: value }, () => {
       this.loadNotifications();
     });
+  },
+
+  onViewModeChange(e) {
+    const { mode } = e.currentTarget.dataset;
+    this.setData({ viewMode: mode });
   },
 
   onNotificationTap(e) {

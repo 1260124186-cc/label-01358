@@ -58,7 +58,9 @@ const STORAGE_KEYS = {
   CLASS_REMINDERS: 'classReminders',
   EXAM_SCORES: 'examScores',
   EXAM_SCHEDULE: 'examSchedule',
-  CLASSROOM_LIST: 'classroomList'
+  CLASSROOM_LIST: 'classroomList',
+  FONT_SIZE_SETTINGS: 'font_size_settings',
+  FEEDBACK_LIST: 'feedbackList'
 };
 
 /**

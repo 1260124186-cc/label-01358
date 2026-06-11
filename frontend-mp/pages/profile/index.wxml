@@ -1,25 +1,23 @@
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
-<view class="page {{darkMode ? 'dark' : ''}}">
-  <!-- 用户信息 -->
-  <view class="user-section">
+<view class="page {{darkMode ? 'dark' : ''}} color-scheme-{{colorScheme}} {{fontSizeClass}}" aria-role="main" aria-label="个人中心">
+  <view class="user-section" aria-label="用户信息">
     <view class="user-card">
-      <image class="user-avatar" src="{{userInfo.avatarUrl || '/assets/images/default-avatar.png'}}" mode="aspectFill" />
+      <image class="user-avatar" src="{{userInfo.avatarUrl || '/assets/images/default-avatar.png'}}" mode="aspectFill" aria-label="用户头像" />
       <view class="user-info">
         <text class="user-name">{{userInfo.nickName || '未登录'}}</text>
         <text class="user-desc" wx:if="{{userInfo.nickName}}">欢迎使用校园生活服务</text>
         <text class="user-desc" wx:else>登录后享受更多服务</text>
       </view>
-      <view class="user-action" bindtap="onEditProfile">
+      <view class="user-action" bindtap="onEditProfile" aria-role="button" aria-label="{{userInfo.nickName ? '编辑资料' : '登录'}}">
         <text class="action-text">{{userInfo.nickName ? '编辑' : '登录'}}</text>
         <text class="action-arrow">›</text>
       </view>
     </view>
   </view>
 
-  <!-- 功能菜单 -->
-  <view class="menu-section">
+  <view class="menu-section" aria-label="功能菜单">
     <view class="menu-card">
-      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="notifications">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="notifications" aria-role="button" aria-label="消息通知 {{unreadCount > 0 ? unreadCount + '条未读' : ''}}">
         <view class="menu-icon-wrap" style="background-color: #FEE2E2;">
           <text class="menu-icon">🔔</text>
         </view>
@@ -28,7 +26,7 @@
         <text class="menu-arrow">›</text>
       </view>
 
-      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="favorites">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="favorites" aria-role="button" aria-label="我的收藏">
         <view class="menu-icon-wrap" style="background-color: #FEF3C7;">
           <text class="menu-icon">★</text>
         </view>
@@ -37,7 +35,7 @@
         <text class="menu-arrow">›</text>
       </view>
 
-      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="history">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="history" aria-role="button" aria-label="浏览历史">
         <view class="menu-icon-wrap" style="background-color: #DBEAFE;">
           <text class="menu-icon">🕐</text>
         </view>
@@ -48,11 +46,10 @@
     </view>
   </view>
 
-  <!-- 我的发布 -->
-  <view class="menu-section">
+  <view class="menu-section" aria-label="我的发布">
     <view class="section-title">我的发布</view>
     <view class="menu-card">
-      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="myLostFound">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="myLostFound" aria-role="button" aria-label="失物招领">
         <view class="menu-icon-wrap" style="background-color: #FEE2E2;">
           <text class="menu-icon">🔍</text>
         </view>
@@ -60,7 +57,7 @@
         <text class="menu-arrow">›</text>
       </view>
 
-      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="myMarket">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="myMarket" aria-role="button" aria-label="二手商品">
         <view class="menu-icon-wrap" style="background-color: #D1FAE5;">
           <text class="menu-icon">🛒</text>
         </view>
@@ -70,11 +67,10 @@
     </view>
   </view>
 
-  <!-- 主题设置 -->
-  <view class="menu-section">
+  <view class="menu-section" aria-label="外观设置">
     <view class="section-title">外观设置</view>
     <view class="menu-card">
-      <view class="theme-switch" bindtap="onThemeToggle">
+      <view class="theme-switch" bindtap="onThemeToggle" aria-role="switch" aria-checked="{{darkMode}}" aria-label="深色模式">
         <view class="theme-switch-label">
           <view class="theme-switch-icon" style="background-color: {{darkMode ? '#1E1B4B' : '#FEF3C7'}};">
             <text class="menu-icon">{{darkMode ? '🌙' : '☀️'}}</text>
@@ -89,24 +85,80 @@
         </view>
       </view>
     </view>
-    <view class="theme-mode-group">
-      <view class="theme-mode-item {{themeMode === 'light' ? 'active' : ''}}" bindtap="onThemeModeChange" data-mode="light">
+    <view class="theme-mode-group" aria-label="主题模式选择">
+      <view class="theme-mode-item {{themeMode === 'light' ? 'active' : ''}}" bindtap="onThemeModeChange" data-mode="light" aria-role="radio" aria-checked="{{themeMode === 'light'}}" aria-label="浅色模式">
         ☀️ 浅色
       </view>
-      <view class="theme-mode-item {{themeMode === 'dark' ? 'active' : ''}}" bindtap="onThemeModeChange" data-mode="dark">
+      <view class="theme-mode-item {{themeMode === 'dark' ? 'active' : ''}}" bindtap="onThemeModeChange" data-mode="dark" aria-role="radio" aria-checked="{{themeMode === 'dark'}}" aria-label="深色模式">
         🌙 深色
       </view>
-      <view class="theme-mode-item {{themeMode === 'system' ? 'active' : ''}}" bindtap="onThemeModeChange" data-mode="system">
+      <view class="theme-mode-item {{themeMode === 'system' ? 'active' : ''}}" bindtap="onThemeModeChange" data-mode="system" aria-role="radio" aria-checked="{{themeMode === 'system'}}" aria-label="跟随系统">
         🔄 跟随系统
       </view>
     </view>
   </view>
 
-  <!-- 其他 -->
-  <view class="menu-section">
-    <view class="section-title">其他</view>
+  <view class="menu-section" aria-label="主题色选择">
+    <view class="section-title">主题色</view>
+    <view class="color-scheme-list">
+      <view 
+        class="color-scheme-item {{colorScheme === item.value ? 'active' : ''}}" 
+        wx:for="{{colorSchemes}}" 
+        wx:key="value"
+        bindtap="onColorSchemeChange"
+        data-scheme="{{item.value}}"
+        aria-role="radio"
+        aria-checked="{{colorScheme === item.value}}"
+        aria-label="{{item.name}}"
+      >
+        <view class="color-scheme-dot" style="background-color: {{item.primary}};"></view>
+        <text class="color-scheme-name">{{item.name}}</text>
+        <view class="color-scheme-check" wx:if="{{colorScheme === item.value}}">✓</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="menu-section" aria-label="字体大小设置">
+    <view class="section-title">字体大小</view>
+    <view class="font-size-group">
+      <view class="font-size-item {{fontSize === 'standard' ? 'active' : ''}}" bindtap="onFontSizeChange" data-size="standard" aria-role="radio" aria-checked="{{fontSize === 'standard'}}" aria-label="标准字体">
+        <text class="font-size-label">A</text>
+        <text class="font-size-desc">标准</text>
+      </view>
+      <view class="font-size-item {{fontSize === 'large' ? 'active' : ''}}" bindtap="onFontSizeChange" data-size="large" aria-role="radio" aria-checked="{{fontSize === 'large'}}" aria-label="大字体">
+        <text class="font-size-label font-size-label-lg">A</text>
+        <text class="font-size-desc">大</text>
+      </view>
+      <view class="font-size-item {{fontSize === 'xl' ? 'active' : ''}}" bindtap="onFontSizeChange" data-size="xl" aria-role="radio" aria-checked="{{fontSize === 'xl'}}" aria-label="特大字体">
+        <text class="font-size-label font-size-label-xl">A</text>
+        <text class="font-size-desc">特大</text>
+      </view>
+    </view>
+    <view class="font-size-preview">
+      <text class="preview-text">预览文字效果，校园生活服务</text>
+    </view>
+  </view>
+
+  <view class="menu-section" aria-label="更多功能">
+    <view class="section-title">更多</view>
     <view class="menu-card">
-      <view class="menu-item" hover-class="menu-item-hover" bindtap="onClearCache">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="feedback" aria-role="button" aria-label="意见反馈">
+        <view class="menu-icon-wrap" style="background-color: #E9D5FF;">
+          <text class="menu-icon">💬</text>
+        </view>
+        <text class="menu-text">意见反馈</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="changelog" aria-role="button" aria-label="更新日志">
+        <view class="menu-icon-wrap" style="background-color: #DBEAFE;">
+          <text class="menu-icon">📋</text>
+        </view>
+        <text class="menu-text">更新日志</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onClearCache" aria-role="button" aria-label="清除缓存">
         <view class="menu-icon-wrap" style="background-color: #F3F4F6;">
           <text class="menu-icon">🗑</text>
         </view>
@@ -114,7 +166,7 @@
         <text class="menu-arrow">›</text>
       </view>
 
-      <view class="menu-item" hover-class="menu-item-hover" bindtap="onAbout">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onAbout" aria-role="button" aria-label="关于我们">
         <view class="menu-icon-wrap" style="background-color: #F3F4F6;">
           <text class="menu-icon">ℹ</text>
         </view>
@@ -122,7 +174,7 @@
         <text class="menu-arrow">›</text>
       </view>
 
-      <view class="menu-item" hover-class="menu-item-hover" bindtap="onLogout" wx:if="{{userInfo.nickName}}">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onLogout" wx:if="{{userInfo.nickName}}" aria-role="button" aria-label="退出登录">
         <view class="menu-icon-wrap" style="background-color: #FEE2E2;">
           <text class="menu-icon">🚪</text>
         </view>
@@ -132,8 +184,7 @@
     </view>
   </view>
 
-  <!-- 版本信息 -->
-  <view class="version-section">
-    <text class="version-text">校园生活服务 v1.0.0</text>
+  <view class="version-section" aria-label="版本信息">
+    <text class="version-text">校园生活服务 v2.0.0</text>
   </view>
 </view>

@@ -1,0 +1,104 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}} color-scheme-{{colorScheme}} {{fontSizeClass}}">
+
+  <!-- 反馈类型选择 -->
+  <view class="form-section">
+    <view class="section-title">反馈类型</view>
+    <scroll-view class="type-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="type-pills">
+        <view
+          wx:for="{{feedbackTypes}}"
+          wx:key="value"
+          class="type-pill {{selectedType === item.value ? 'active' : ''}}"
+          bindtap="onTypeSelect"
+          data-value="{{item.value}}"
+          aria-label="选择{{item.label}}"
+        >
+          <text class="pill-text">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 反馈内容 -->
+  <view class="form-section">
+    <view class="section-title">反馈内容</view>
+    <view class="form-card">
+      <textarea
+        class="feedback-textarea"
+        placeholder="请详细描述您的问题或建议…"
+        value="{{content}}"
+        bindinput="onContentInput"
+        maxlength="500"
+        aria-label="反馈内容"
+      />
+      <text class="textarea-count">{{content.length || 0}}/500</text>
+    </view>
+  </view>
+
+  <!-- 图片上传 -->
+  <view class="form-section">
+    <view class="section-title">上传图片（选填）</view>
+    <view class="form-card">
+      <view class="image-grid">
+        <view
+          class="image-item"
+          wx:for="{{imageList}}"
+          wx:key="index"
+        >
+          <image
+            class="image-thumb"
+            src="{{item}}"
+            mode="aspectFill"
+            bindtap="onPreviewImage"
+            data-index="{{index}}"
+            aria-label="预览图片"
+          />
+          <view
+            class="image-delete"
+            catchtap="onDeleteImage"
+            data-index="{{index}}"
+            aria-label="删除图片"
+          >×</view>
+        </view>
+        <view
+          class="image-add"
+          wx:if="{{imageList.length < maxImages}}"
+          bindtap="onChooseImage"
+          aria-label="添加图片"
+        >
+          <text class="add-icon">+</text>
+        </view>
+      </view>
+      <text class="image-tip">最多上传{{maxImages}}张图片</text>
+    </view>
+  </view>
+
+  <!-- 联系方式 -->
+  <view class="form-section">
+    <view class="section-title">联系方式（选填）</view>
+    <view class="form-card">
+      <input
+        class="contact-input"
+        placeholder="请输入邮箱或手机号，方便我们联系您"
+        value="{{contactInfo}}"
+        bindinput="onContactInput"
+        maxlength="50"
+        aria-label="联系方式"
+      />
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-section">
+    <view
+      class="submit-btn {{submitting ? 'disabled' : ''}}"
+      bindtap="{{submitting ? '' : 'onSubmit'}}"
+      aria-label="提交反馈"
+    >
+      <text wx:if="{{submitting}}" class="submit-loading">●</text>
+      <text>{{submitting ? '提交中…' : '提交反馈'}}</text>
+    </view>
+  </view>
+
+</view>

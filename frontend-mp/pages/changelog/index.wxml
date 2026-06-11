@@ -1,0 +1,45 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}} color-scheme-{{colorScheme}} {{fontSizeClass}}" aria-label="版本更新日志">
+  <view class="changelog-header">
+    <text class="header-title">更新日志</text>
+    <text class="header-subtitle">记录每一次进步</text>
+  </view>
+
+  <view class="timeline">
+    <view
+      class="timeline-item"
+      wx:for="{{versions}}"
+      wx:key="version"
+      aria-label="{{item.version}} {{item.date}}"
+    >
+      <view class="timeline-track">
+        <view class="timeline-dot {{item.current ? 'active' : ''}}"></view>
+        <view class="timeline-line" wx:if="{{index < versions.length - 1}}"></view>
+      </view>
+      <view class="timeline-card">
+        <view class="card-header">
+          <view class="card-header-left">
+            <text class="version-number">{{item.version}}</text>
+            <view class="current-tag" wx:if="{{item.current}}">
+              <text class="current-tag-text">当前版本</text>
+            </view>
+          </view>
+          <view class="date-badge">
+            <text class="date-text">{{item.date}}</text>
+          </view>
+        </view>
+        <view class="feature-list">
+          <view
+            class="feature-item"
+            wx:for="{{item.features}}"
+            wx:for-item="feature"
+            wx:key="*this"
+          >
+            <text class="feature-check">✓</text>
+            <text class="feature-text">{{feature}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -136,21 +136,47 @@ Page({
     weatherData: null,
     newsList: [],
     refreshing: false,
-    darkMode: false
+    darkMode: false,
+    colorScheme: 'coral',
+    fontSizeClass: 'font-size-standard'
   },
 
   onLoad() {
+    this.checkOnboarding();
     this.loadData();
+    this.loadThemeState();
+    this.loadFontState();
   },
 
   onShow() {
     this.loadThemeState();
+    this.loadFontState();
+  },
+
+  checkOnboarding() {
+    try {
+      const shown = wx.getStorageSync('onboarding_shown');
+      if (!shown) {
+        wx.navigateTo({ url: '/pages/onboarding/index' });
+      }
+    } catch (e) {}
   },
 
   loadThemeState() {
     const app = getApp();
-    const { isDark } = app.globalData;
-    this.setData({ darkMode: isDark || false });
+    const { isDark, colorScheme } = app.globalData;
+    this.setData({
+      darkMode: isDark || false,
+      colorScheme: colorScheme || 'coral'
+    });
+  },
+
+  loadFontState() {
+    const fontsizeUtil = require('../../utils/fontsize');
+    const fontState = fontsizeUtil.init();
+    this.setData({
+      fontSizeClass: fontState.className
+    });
   },
 
   onPullDownRefresh() {
