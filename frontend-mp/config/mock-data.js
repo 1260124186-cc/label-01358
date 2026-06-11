@@ -57,38 +57,435 @@ const SCENERY_LIST = [
   {
     id: '1',
     title: '图书馆',
-    description: '现代化的图书馆，藏书百万册，是学习的理想场所',
-    image: 'https://picsum.photos/seed/library/800/600'
+    description: '现代化的图书馆，藏书百万册，是学习的理想场所。日落时分，阳光透过落地窗洒在书架上，光影斑驳，美不胜收。',
+    image: 'https://picsum.photos/seed/library/800/600',
+    category: 'architecture',
+    season: 'autumn',
+    solarTerm: 'qiufen',
+    location: { value: 'library', label: '图书馆', latitude: 39.9042, longitude: 116.4074 },
+    likes: 128,
+    liked: false,
+    comments: [
+      { id: 'c1', userId: 'u1', userName: '爱学习的小明', avatar: 'https://picsum.photos/seed/avatar1/100/100', content: '图书馆真的太美了，学习氛围超棒！', createTime: Date.now() - 86400000, likes: 12 },
+      { id: 'c2', userId: 'u2', userName: '考研学姐', avatar: 'https://picsum.photos/seed/avatar2/100/100', content: '每天都在这里复习，已经上岸啦！', createTime: Date.now() - 172800000, likes: 25 }
+    ],
+    commentCount: 2,
+    uploader: { id: 'u0', name: '校园摄影师', avatar: 'https://picsum.photos/seed/avatar0/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 259200000,
+    views: 1520
   },
   {
     id: '2',
     title: '樱花大道',
-    description: '每年春季，樱花盛开，美不胜收',
-    image: 'https://picsum.photos/seed/cherry/800/600'
+    description: '每年春季，樱花盛开，美不胜收。微风拂过，花瓣如雨般飘落，置身其中仿佛进入了童话世界。',
+    image: 'https://picsum.photos/seed/cherry/800/600',
+    category: 'nature',
+    season: 'spring',
+    solarTerm: 'chunfen',
+    location: { value: 'cherry_blossom', label: '樱花大道', latitude: 39.9050, longitude: 116.4080 },
+    likes: 256,
+    liked: true,
+    comments: [
+      { id: 'c1', userId: 'u3', userName: '樱花控', avatar: 'https://picsum.photos/seed/avatar3/100/100', content: '每年三月必来打卡！', createTime: Date.now() - 43200000, likes: 35 },
+      { id: 'c2', userId: 'u4', userName: '摄影小白', avatar: 'https://picsum.photos/seed/avatar4/100/100', content: '请问今年樱花开了吗？', createTime: Date.now() - 21600000, likes: 5 },
+      { id: 'c3', userId: 'u5', userName: '汉服爱好者', avatar: 'https://picsum.photos/seed/avatar5/100/100', content: '穿汉服来拍照超有感觉的！', createTime: Date.now() - 10800000, likes: 18 }
+    ],
+    commentCount: 3,
+    uploader: { id: 'u1', name: '爱学习的小明', avatar: 'https://picsum.photos/seed/avatar1/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 518400000,
+    views: 3280
   },
   {
     id: '3',
     title: '湖心亭',
-    description: '校园中心湖畔的古典亭台，是休闲放松的好去处',
-    image: 'https://picsum.photos/seed/lake/800/600'
+    description: '校园中心湖畔的古典亭台，是休闲放松的好去处。夏日傍晚，坐在亭中乘凉，看湖面波光粼粼，听蝉鸣声声。',
+    image: 'https://picsum.photos/seed/lake/800/600',
+    category: 'nature',
+    season: 'summer',
+    solarTerm: 'xiazhi',
+    location: { value: 'lake_pavilion', label: '湖心亭', latitude: 39.9035, longitude: 116.4065 },
+    likes: 89,
+    liked: false,
+    comments: [
+      { id: 'c1', userId: 'u6', userName: '湖畔诗人', avatar: 'https://picsum.photos/seed/avatar6/100/100', content: '在这里背诗太有意境了', createTime: Date.now() - 259200000, likes: 8 }
+    ],
+    commentCount: 1,
+    uploader: { id: 'u2', name: '考研学姐', avatar: 'https://picsum.photos/seed/avatar2/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 777600000,
+    views: 980
   },
   {
     id: '4',
     title: '体育馆',
-    description: '设施完善的综合体育馆，可容纳万人',
-    image: 'https://picsum.photos/seed/gym/800/600'
+    description: '设施完善的综合体育馆，可容纳万人。校运会的时候这里人声鼎沸，青春的汗水在这里挥洒。',
+    image: 'https://picsum.photos/seed/gym/800/600',
+    category: 'activity',
+    season: 'autumn',
+    solarTerm: 'liqiu',
+    location: { value: 'gym', label: '体育馆', latitude: 39.9060, longitude: 116.4090 },
+    likes: 167,
+    liked: false,
+    comments: [
+      { id: 'c1', userId: 'u7', userName: '运动达人', avatar: 'https://picsum.photos/seed/avatar7/100/100', content: '去年校运会还在这里拿了冠军！', createTime: Date.now() - 129600000, likes: 22 },
+      { id: 'c2', userId: 'u8', userName: '篮球少年', avatar: 'https://picsum.photos/seed/avatar8/100/100', content: '周末约球吗？', createTime: Date.now() - 64800000, likes: 15 }
+    ],
+    commentCount: 2,
+    uploader: { id: 'u3', name: '樱花控', avatar: 'https://picsum.photos/seed/avatar3/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 388800000,
+    views: 2150
   },
   {
     id: '5',
-    title: '钟楼',
-    description: '校园标志性建筑，见证了学校的百年历史',
-    image: 'https://picsum.photos/seed/tower/800/600'
+    title: '钟楼夜景',
+    description: '校园标志性建筑，见证了学校的百年历史。夜幕降临，钟楼灯光亮起，在星空下格外庄严肃穆。',
+    image: 'https://picsum.photos/seed/tower_night/800/600',
+    category: 'night',
+    season: 'winter',
+    solarTerm: 'dongzhi',
+    location: { value: 'clock_tower', label: '钟楼', latitude: 39.9048, longitude: 116.4055 },
+    likes: 312,
+    liked: true,
+    comments: [
+      { id: 'c1', userId: 'u9', userName: '夜景爱好者', avatar: 'https://picsum.photos/seed/avatar9/100/100', content: '这个角度绝了！请问是怎么拍的？', createTime: Date.now() - 5400000, likes: 45 },
+      { id: 'c2', userId: 'u10', userName: '毕业生老周', avatar: 'https://picsum.photos/seed/avatar10/100/100', content: '毕业十年了，看到钟楼还是很感动', createTime: Date.now() - 10800000, likes: 68 },
+      { id: 'c3', userId: 'u11', userName: '大一新生', avatar: 'https://picsum.photos/seed/avatar11/100/100', content: '第一次看到这么美的校园！', createTime: Date.now() - 3600000, likes: 28 }
+    ],
+    commentCount: 3,
+    uploader: { id: 'u4', name: '摄影小白', avatar: 'https://picsum.photos/seed/avatar4/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 1036800000,
+    views: 5680
   },
   {
     id: '6',
     title: '科技楼',
-    description: '现代化的科研大楼，汇聚了众多实验室',
-    image: 'https://picsum.photos/seed/tech/800/600'
+    description: '现代化的科研大楼，汇聚了众多实验室。夜晚灯火通明，那是科研人在追逐梦想。',
+    image: 'https://picsum.photos/seed/tech/800/600',
+    category: 'architecture',
+    season: 'summer',
+    solarTerm: 'dashu',
+    location: { value: 'tech_building', label: '科技楼', latitude: 39.9055, longitude: 116.4060 },
+    likes: 95,
+    liked: false,
+    comments: [
+      { id: 'c1', userId: 'u12', userName: '科研狗', avatar: 'https://picsum.photos/seed/avatar12/100/100', content: '每天都在这里肝论文...', createTime: Date.now() - 172800000, likes: 30 }
+    ],
+    commentCount: 1,
+    uploader: { id: 'u5', name: '汉服爱好者', avatar: 'https://picsum.photos/seed/avatar5/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 648000000,
+    views: 1320
+  },
+  {
+    id: '7',
+    title: '春季运动会',
+    description: '一年一度的春季运动会，同学们挥洒汗水，奋勇争先。开幕式的团体操表演太震撼了！',
+    image: 'https://picsum.photos/seed/sports_day/800/600',
+    category: 'activity',
+    season: 'spring',
+    solarTerm: 'qingming',
+    location: { value: 'stadium', label: '操场', latitude: 39.9075, longitude: 116.4085 },
+    likes: 234,
+    liked: false,
+    comments: [
+      { id: 'c1', userId: 'u13', userName: '啦啦队长', avatar: 'https://picsum.photos/seed/avatar13/100/100', content: '我们学院的团体操拿了一等奖！', createTime: Date.now() - 259200000, likes: 52 },
+      { id: 'c2', userId: 'u14', userName: '短跑健将', avatar: 'https://picsum.photos/seed/avatar14/100/100', content: '100米冠军在此！', createTime: Date.now() - 129600000, likes: 38 }
+    ],
+    commentCount: 2,
+    uploader: { id: 'u6', name: '湖畔诗人', avatar: 'https://picsum.photos/seed/avatar6/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 432000000,
+    views: 2890
+  },
+  {
+    id: '8',
+    title: '冬日初雪',
+    description: '今年的第一场雪，整个校园银装素裹。湖心亭和古松相映成趣，宛如一幅水墨画。',
+    image: 'https://picsum.photos/seed/snow/800/600',
+    category: 'nature',
+    season: 'winter',
+    solarTerm: 'daxue',
+    location: { value: 'lake_pavilion', label: '湖心亭', latitude: 39.9035, longitude: 116.4065 },
+    likes: 456,
+    liked: true,
+    comments: [
+      { id: 'c1', userId: 'u15', userName: '南方来的同学', avatar: 'https://picsum.photos/seed/avatar15/100/100', content: '第一次见到这么大的雪！太激动了', createTime: Date.now() - 86400000, likes: 78 },
+      { id: 'c2', userId: 'u16', userName: '雪人艺术家', avatar: 'https://picsum.photos/seed/avatar16/100/100', content: '今天堆了个超大的雪人，在图书馆门口', createTime: Date.now() - 43200000, likes: 45 },
+      { id: 'c3', userId: 'u17', userName: '摄影爱好者', avatar: 'https://picsum.photos/seed/avatar17/100/100', content: '雪景真的太美了，拍了好多照片', createTime: Date.now() - 21600000, likes: 32 }
+    ],
+    commentCount: 3,
+    uploader: { id: 'u7', name: '运动达人', avatar: 'https://picsum.photos/seed/avatar7/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 129600000,
+    views: 7820
+  },
+  {
+    id: '9',
+    title: '教学楼夜景',
+    description: '深夜的教学楼，依旧灯火通明。自习室里是为梦想奋斗的身影，这就是青春最美的模样。',
+    image: 'https://picsum.photos/seed/classroom_night/800/600',
+    category: 'night',
+    season: 'autumn',
+    solarTerm: 'hanlu',
+    location: { value: 'teaching_building', label: '教学楼', latitude: 39.9040, longitude: 116.4085 },
+    likes: 278,
+    liked: false,
+    comments: [
+      { id: 'c1', userId: 'u18', userName: '考研冲刺中', avatar: 'https://picsum.photos/seed/avatar18/100/100', content: '每天都学到闭馆，加油！', createTime: Date.now() - 5400000, likes: 56 },
+      { id: 'c2', userId: 'u19', userName: '路灯下的猫', avatar: 'https://picsum.photos/seed/avatar19/100/100', content: '回宿舍路上看到这灯光，心里很暖', createTime: Date.now() - 7200000, likes: 42 }
+    ],
+    commentCount: 2,
+    uploader: { id: 'u8', name: '篮球少年', avatar: 'https://picsum.photos/seed/avatar8/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 216000000,
+    views: 3560
+  },
+  {
+    id: '10',
+    title: '食堂烟火',
+    description: '午餐时间的食堂，香气四溢。糖醋排骨、红烧肉、麻辣烫...哪个是你的最爱？',
+    image: 'https://picsum.photos/seed/canteen/800/600',
+    category: 'activity',
+    season: 'autumn',
+    solarTerm: 'shuangjiang',
+    location: { value: 'canteen', label: '食堂', latitude: 39.9065, longitude: 116.4075 },
+    likes: 189,
+    liked: false,
+    comments: [
+      { id: 'c1', userId: 'u20', userName: '吃货一号', avatar: 'https://picsum.photos/seed/avatar20/100/100', content: '二食堂的糖醋排骨yyds！', createTime: Date.now() - 14400000, likes: 63 },
+      { id: 'c2', userId: 'u21', userName: '减脂进行时', avatar: 'https://picsum.photos/seed/avatar21/100/100', content: '推荐一食堂的轻食窗口，好吃不胖', createTime: Date.now() - 18000000, likes: 35 }
+    ],
+    commentCount: 2,
+    uploader: { id: 'u9', name: '夜景爱好者', avatar: 'https://picsum.photos/seed/avatar9/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 302400000,
+    views: 2450
+  },
+  {
+    id: '11',
+    title: '图书馆夜景',
+    description: '星空下的图书馆，灯火辉煌。每一盏灯都照亮着一个梦想，每一扇窗都是一个故事。',
+    image: 'https://picsum.photos/seed/library_night/800/600',
+    category: 'night',
+    season: 'summer',
+    solarTerm: 'xiaoshu',
+    location: { value: 'library', label: '图书馆', latitude: 39.9042, longitude: 116.4074 },
+    likes: 345,
+    liked: true,
+    comments: [
+      { id: 'c1', userId: 'u22', userName: '期末冲刺', avatar: 'https://picsum.photos/seed/avatar22/100/100', content: '考试周每天都待到闭馆...', createTime: Date.now() - 3600000, likes: 89 },
+      { id: 'c2', userId: 'u23', userName: '考研上岸', avatar: 'https://picsum.photos/seed/avatar23/100/100', content: '就是在这里，我度过了最难忘的一年。现已上岸，感谢图书馆的陪伴！', createTime: Date.now() - 7200000, likes: 128 }
+    ],
+    commentCount: 2,
+    uploader: { id: 'u10', name: '毕业生老周', avatar: 'https://picsum.photos/seed/avatar10/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 172800000,
+    views: 6230
+  },
+  {
+    id: '12',
+    title: '春日宿舍区',
+    description: '春天来了，宿舍楼下的玉兰花盛开。推开窗就能闻到花香，这是属于我们的青春记忆。',
+    image: 'https://picsum.photos/seed/dorm_spring/800/600',
+    category: 'nature',
+    season: 'spring',
+    solarTerm: 'guyu',
+    location: { value: 'dormitory', label: '宿舍区', latitude: 39.9070, longitude: 116.4050 },
+    likes: 210,
+    liked: false,
+    comments: [
+      { id: 'c1', userId: 'u24', userName: '3号楼住户', avatar: 'https://picsum.photos/seed/avatar24/100/100', content: '我就在这栋楼！每天被花香叫醒太幸福了', createTime: Date.now() - 43200000, likes: 48 },
+      { id: 'c2', userId: 'u25', userName: '毕业学姐', avatar: 'https://picsum.photos/seed/avatar25/100/100', content: '好怀念宿舍楼下的玉兰花，毕业两年了还时常想起', createTime: Date.now() - 86400000, likes: 56 }
+    ],
+    commentCount: 2,
+    uploader: { id: 'u11', name: '大一新生', avatar: 'https://picsum.photos/seed/avatar11/100/100' },
+    reviewStatus: 'approved',
+    createTime: Date.now() - 540000000,
+    views: 2780
+  },
+  {
+    id: '13',
+    title: '迎新晚会',
+    description: '一年一度的迎新晚会，学长学姐们精心准备的节目太精彩了！欢迎新同学加入我们的大家庭。',
+    image: 'https://picsum.photos/seed/welcome_party/800/600',
+    category: 'activity',
+    season: 'autumn',
+    solarTerm: 'bailu',
+    location: { value: 'gym', label: '体育馆', latitude: 39.9060, longitude: 116.4090 },
+    likes: 156,
+    liked: false,
+    comments: [
+      { id: 'c1', userId: 'u26', userName: '学生会主席', avatar: 'https://picsum.photos/seed/avatar26/100/100', content: '筹备了一个月，看到大家开心一切都值得！', createTime: Date.now() - 172800000, likes: 72 }
+    ],
+    commentCount: 1,
+    uploader: { id: 'u12', name: '科研狗', avatar: 'https://picsum.photos/seed/avatar12/100/100' },
+    reviewStatus: 'pending',
+    createTime: Date.now() - 86400000,
+    views: 890
+  }
+];
+
+const SCENERY_COLLECTIONS = [
+  {
+    id: 'col1',
+    title: '春日限定·樱花季',
+    description: '三月春风拂面来，樱花满园次第开。',
+    cover: 'https://picsum.photos/seed/cherry_collection/800/400',
+    type: 'season',
+    season: 'spring',
+    solarTerms: ['chunfen', 'qingming'],
+    itemCount: 24,
+    views: 3580,
+    color: '#FF9CA2',
+    icon: '🌸'
+  },
+  {
+    id: 'col2',
+    title: '盛夏光年·绿意浓',
+    description: '绿树阴浓夏日长，楼台倒影入池塘。',
+    cover: 'https://picsum.photos/seed/summer_collection/800/400',
+    type: 'season',
+    season: 'summer',
+    solarTerms: ['lixia', 'xiazhi', 'dashu'],
+    itemCount: 18,
+    views: 2340,
+    color: '#7ED957',
+    icon: '☀️'
+  },
+  {
+    id: 'col3',
+    title: '秋色满园·黄金季',
+    description: '停车坐爱枫林晚，霜叶红于二月花。',
+    cover: 'https://picsum.photos/seed/autumn_collection/800/400',
+    type: 'season',
+    season: 'autumn',
+    solarTerms: ['liqiu', 'qiufen', 'shuangjiang'],
+    itemCount: 32,
+    views: 4120,
+    color: '#FF8C42',
+    icon: '🍂'
+  },
+  {
+    id: 'col4',
+    title: '银装素裹·冬日情',
+    description: '忽如一夜春风来，千树万树梨花开。',
+    cover: 'https://picsum.photos/seed/winter_collection/800/400',
+    type: 'season',
+    season: 'winter',
+    solarTerms: ['lidong', 'daxue', 'dongzhi'],
+    itemCount: 28,
+    views: 5680,
+    color: '#A8D8EA',
+    icon: '❄️'
+  },
+  {
+    id: 'col5',
+    title: '立春·万物复苏',
+    description: '春回大地，万物复苏，校园里的小生命们也开始活跃起来。',
+    cover: 'https://picsum.photos/seed/lichun_collection/800/400',
+    type: 'solar_term',
+    season: 'spring',
+    solarTerms: ['lichun'],
+    itemCount: 12,
+    views: 1890,
+    color: '#A8E6CF',
+    icon: '🌱'
+  },
+  {
+    id: 'col6',
+    title: '清明·踏青时节',
+    description: '清明时节雨纷纷，路上行人欲断魂。校园春色正当时。',
+    cover: 'https://picsum.photos/seed/qingming_collection/800/400',
+    type: 'solar_term',
+    season: 'spring',
+    solarTerms: ['qingming'],
+    itemCount: 15,
+    views: 2150,
+    color: '#95E1D3',
+    icon: '🌿'
+  },
+  {
+    id: 'col7',
+    title: '夏至·蝉鸣悠扬',
+    description: '夏至已至，蝉鸣悠扬，阳光正好，青春正盛。',
+    cover: 'https://picsum.photos/seed/xiazhi_collection/800/400',
+    type: 'solar_term',
+    season: 'summer',
+    solarTerms: ['xiazhi'],
+    itemCount: 20,
+    views: 2780,
+    color: '#FFD93D',
+    icon: '☀️'
+  },
+  {
+    id: 'col8',
+    title: '冬至·温暖相伴',
+    description: '冬至大如年，人间小团圆。吃一碗热腾腾的饺子，温暖整个冬天。',
+    cover: 'https://picsum.photos/seed/dongzhi_collection/800/400',
+    type: 'solar_term',
+    season: 'winter',
+    solarTerms: ['dongzhi'],
+    itemCount: 25,
+    views: 3890,
+    color: '#FFEAA7',
+    icon: '⛄'
+  },
+  {
+    id: 'col9',
+    title: '校园夜色·光影故事',
+    description: '夜幕降临，华灯初上，校园的夜晚有着别样的美丽。',
+    cover: 'https://picsum.photos/seed/night_collection/800/400',
+    type: 'theme',
+    season: '',
+    solarTerms: [],
+    itemCount: 45,
+    views: 6230,
+    color: '#6C5CE7',
+    icon: '🌙'
+  },
+  {
+    id: 'col10',
+    title: '毕业季·青春不散',
+    description: '愿你出走半生，归来仍是少年。致我们终将逝去的青春。',
+    cover: 'https://picsum.photos/seed/graduation_collection/800/400',
+    type: 'theme',
+    season: 'summer',
+    solarTerms: ['mangzhong'],
+    itemCount: 68,
+    views: 8560,
+    color: '#FD79A8',
+    icon: '🎓'
+  }
+];
+
+const SCENERY_USER_SUBMISSIONS = [
+  {
+    id: 'sub1',
+    title: '自习室的清晨',
+    description: '早上7点的自习室，已经有很多同学在晨读了。新的一天，从努力开始！',
+    image: 'https://picsum.photos/seed/user_sub1/800/600',
+    category: 'activity',
+    location: { value: 'library', label: '图书馆', latitude: 39.9042, longitude: 116.4074 },
+    season: 'autumn',
+    reviewStatus: 'pending',
+    uploader: { id: 'u27', name: '早起的鸟儿', avatar: 'https://picsum.photos/seed/avatar27/100/100' },
+    createTime: Date.now() - 3600000
+  },
+  {
+    id: 'sub2',
+    title: '食堂的美食',
+    description: '今天发现了一个新窗口，麻辣香锅太好吃了！推荐给大家～',
+    image: 'https://picsum.photos/seed/user_sub2/800/600',
+    category: 'activity',
+    location: { value: 'canteen', label: '食堂', latitude: 39.9065, longitude: 116.4075 },
+    season: 'autumn',
+    reviewStatus: 'pending',
+    uploader: { id: 'u28', name: '美食发现家', avatar: 'https://picsum.photos/seed/avatar28/100/100' },
+    createTime: Date.now() - 7200000
   }
 ];
 
@@ -3303,6 +3700,8 @@ module.exports = {
   ANNOUNCEMENTS,
   CAMPUS_NEWS,
   SCENERY_LIST,
+  SCENERY_COLLECTIONS,
+  SCENERY_USER_SUBMISSIONS,
   BROADCAST_LIST,
   MOCK_LOST_FOUND,
   MOCK_MARKET_ITEMS,

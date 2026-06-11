@@ -1,0 +1,137 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{scenery}}">
+  <view class="image-section">
+    <image class="main-image" src="{{scenery.image}}" mode="aspectFill" bindtap="onPreviewImage" />
+    <view class="image-overlay"></view>
+    <view class="image-info">
+      <view class="title-row">
+        <text class="title">{{scenery.title}}</text>
+        <view class="category-tag" wx:if="{{categoryInfo}}">
+          <text class="tag-icon">{{categoryInfo.icon}}</text>
+          <text class="tag-text">{{categoryInfo.label}}</text>
+        </view>
+      </view>
+      <view class="meta-row">
+        <view class="meta-item" wx:if="{{seasonInfo}}">
+          <text class="meta-icon">{{seasonInfo.icon}}</text>
+          <text class="meta-text">{{seasonInfo.label}}</text>
+        </view>
+        <view class="meta-item" wx:if="{{solarTermInfo}}">
+          <text class="meta-icon">{{solarTermInfo.icon}}</text>
+          <text class="meta-text">{{solarTermInfo.label}}</text>
+        </view>
+        <view class="meta-item" bindtap="onOpenLocation">
+          <text class="meta-icon">📍</text>
+          <text class="meta-text">{{locationName}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="uploader-info">
+      <image class="uploader-avatar" src="{{scenery.uploader.avatar}}" mode="aspectFill" />
+      <view class="uploader-text">
+        <text class="uploader-name">{{scenery.uploader.name}}</text>
+        <text class="upload-time">{{uploadTime}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="description-section">
+    <text class="description">{{scenery.description}}</text>
+  </view>
+
+  <view class="stats-section">
+    <view class="stat-item">
+      <text class="stat-value">{{scenery.views}}</text>
+      <text class="stat-label">浏览</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item {{isLiked ? 'liked' : ''}}" bindtap="onLike">
+      <text class="stat-icon">{{isLiked ? '❤️' : '🤍'}}</text>
+      <text class="stat-value">{{likeCount}}</text>
+      <text class="stat-label">点赞</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <text class="stat-icon">💬</text>
+      <text class="stat-value">{{commentCount}}</text>
+      <text class="stat-label">评论</text>
+    </view>
+  </view>
+
+  <view class="comments-section">
+    <view class="section-header">
+      <view class="section-title-wrap">
+        <view class="section-icon"></view>
+        <text class="section-title">评论 ({{commentCount}})</text>
+      </view>
+    </view>
+
+    <view class="comment-input-wrap">
+      <input 
+        class="comment-input" 
+        placeholder="写下你的评论..." 
+        value="{{commentInput}}"
+        bindinput="onCommentInput"
+        confirm-type="send"
+        bindconfirm="onSubmitComment"
+      />
+      <view class="send-btn {{commentInput ? 'active' : ''}}" bindtap="onSubmitComment">
+        <text>发送</text>
+      </view>
+    </view>
+
+    <view class="comments-list">
+      <view class="empty-state" wx:if="{{comments.length === 0}}">
+        <text class="empty-icon">💬</text>
+        <text class="empty-text">暂无评论，快来抢沙发吧</text>
+      </view>
+      <view 
+        class="comment-item" 
+        wx:for="{{comments}}" 
+        wx:key="id"
+      >
+        <image class="comment-avatar" src="{{item.avatar}}" mode="aspectFill" />
+        <view class="comment-content">
+          <view class="comment-header">
+            <text class="comment-name">{{item.userName}}</text>
+            <text class="comment-time">{{item.timeText}}</text>
+          </view>
+          <text class="comment-text">{{item.content}}</text>
+          <view class="comment-actions">
+            <view class="comment-like" data-index="{{index}}" bindtap="onLikeComment">
+              <text class="like-icon">👍</text>
+              <text class="like-count">{{item.likes}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="map-modal" wx:if="{{showMapModal}}" catchtap="onCloseMapModal">
+    <view class="map-content" catchtap="">
+      <view class="map-header">
+        <text class="map-title">📍 {{locationName}}</text>
+        <view class="close-btn" catchtap="onCloseMapModal">
+          <text>✕</text>
+        </view>
+      </view>
+      <map 
+        class="map-container"
+        latitude="{{mapLatitude}}"
+        longitude="{{mapLongitude}}"
+        markers="{{mapMarkers}}"
+        scale="17"
+        show-location="{{true}}"
+      ></map>
+      <view class="map-actions">
+        <view class="map-btn" bindtap="onNavigateToMap">
+          <text class="btn-icon">🧭</text>
+          <text class="btn-text">导航到这里</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-spacing"></view>
+</view>

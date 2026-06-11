@@ -719,6 +719,73 @@ const IMPORT_METHODS = [
   { value: 'scan', label: '扫码导入', icon: '📷' }
 ];
 
+const SCENERY_CATEGORIES = [
+  { value: 'all', label: '全部', icon: '📷' },
+  { value: 'architecture', label: '建筑', icon: '🏛️' },
+  { value: 'nature', label: '自然', icon: '🌿' },
+  { value: 'activity', label: '活动', icon: '🎉' },
+  { value: 'night', label: '夜景', icon: '🌙' }
+];
+
+const SCENERY_CATEGORY_MAP = SCENERY_CATEGORIES.reduce((acc, c) => {
+  acc[c.value] = { label: c.label, icon: c.icon };
+  return acc;
+}, {});
+
+const SCENERY_SEASONS = [
+  { value: 'spring', label: '春', icon: '🌸', color: '#FF9CA2' },
+  { value: 'summer', label: '夏', icon: '☀️', color: '#FFD93D' },
+  { value: 'autumn', label: '秋', icon: '🍂', color: '#FF8C42' },
+  { value: 'winter', label: '冬', icon: '❄️', color: '#A8D8EA' }
+];
+
+const SCENERY_SOLAR_TERMS = [
+  { value: 'lichun', label: '立春', season: 'spring', icon: '🌱' },
+  { value: 'yushui', label: '雨水', season: 'spring', icon: '💧' },
+  { value: 'jingzhe', label: '惊蛰', season: 'spring', icon: '🐛' },
+  { value: 'chunfen', label: '春分', season: 'spring', icon: '🌷' },
+  { value: 'qingming', label: '清明', season: 'spring', icon: '🌿' },
+  { value: 'guyu', label: '谷雨', season: 'spring', icon: '🌾' },
+  { value: 'lixia', label: '立夏', season: 'summer', icon: '🌻' },
+  { value: 'xiaoman', label: '小满', season: 'summer', icon: '🌾' },
+  { value: 'mangzhong', label: '芒种', season: 'summer', icon: '🌾' },
+  { value: 'xiazhi', label: '夏至', season: 'summer', icon: '☀️' },
+  { value: 'xiaoshu', label: '小暑', season: 'summer', icon: '🔥' },
+  { value: 'dashu', label: '大暑', season: 'summer', icon: '🌡️' },
+  { value: 'liqiu', label: '立秋', season: 'autumn', icon: '🍁' },
+  { value: 'chushu', label: '处暑', season: 'autumn', icon: '🌤️' },
+  { value: 'bailu', label: '白露', season: 'autumn', icon: '💦' },
+  { value: 'qiufen', label: '秋分', season: 'autumn', icon: '🍂' },
+  { value: 'hanlu', label: '寒露', season: 'autumn', icon: '🌨️' },
+  { value: 'shuangjiang', label: '霜降', season: 'autumn', icon: '❄️' },
+  { value: 'lidong', label: '立冬', season: 'winter', icon: '🧣' },
+  { value: 'xiaoxue', label: '小雪', season: 'winter', icon: '🌨️' },
+  { value: 'daxue', label: '大雪', season: 'winter', icon: '❄️' },
+  { value: 'dongzhi', label: '冬至', season: 'winter', icon: '⛄' },
+  { value: 'xiaohan', label: '小寒', season: 'winter', icon: '🥶' },
+  { value: 'dahan', label: '大寒', season: 'winter', icon: '🧊' }
+];
+
+const SCENERY_REVIEW_STATUS = [
+  { value: 'pending', label: '审核中', color: '#F59E0B' },
+  { value: 'approved', label: '已通过', color: '#10B981' },
+  { value: 'rejected', label: '已拒绝', color: '#EF4444' }
+];
+
+const SCENERY_LOCATIONS = [
+  { value: 'library', label: '图书馆', latitude: 39.9042, longitude: 116.4074 },
+  { value: 'cherry_blossom', label: '樱花大道', latitude: 39.9050, longitude: 116.4080 },
+  { value: 'lake_pavilion', label: '湖心亭', latitude: 39.9035, longitude: 116.4065 },
+  { value: 'gym', label: '体育馆', latitude: 39.9060, longitude: 116.4090 },
+  { value: 'clock_tower', label: '钟楼', latitude: 39.9048, longitude: 116.4055 },
+  { value: 'tech_building', label: '科技楼', latitude: 39.9055, longitude: 116.4060 },
+  { value: 'teaching_building', label: '教学楼', latitude: 39.9040, longitude: 116.4085 },
+  { value: 'canteen', label: '食堂', latitude: 39.9065, longitude: 116.4075 },
+  { value: 'dormitory', label: '宿舍区', latitude: 39.9070, longitude: 116.4050 },
+  { value: 'stadium', label: '操场', latitude: 39.9075, longitude: 116.4085 },
+  { value: 'other', label: '其他地点', latitude: 39.9042, longitude: 116.4074 }
+];
+
 function getScoreLevel(score) {
   return SCORE_LEVELS.find(l => score >= l.min && score <= l.max) || SCORE_LEVELS[SCORE_LEVELS.length - 1];
 }
@@ -827,6 +894,12 @@ module.exports = {
   CLASSROOM_BUILDINGS,
   REMINDER_MINUTES_OPTIONS,
   IMPORT_METHODS,
+  SCENERY_CATEGORIES,
+  SCENERY_CATEGORY_MAP,
+  SCENERY_SEASONS,
+  SCENERY_SOLAR_TERMS,
+  SCENERY_REVIEW_STATUS,
+  SCENERY_LOCATIONS,
   getScoreLevel,
   getGPA,
   getSlotTime,

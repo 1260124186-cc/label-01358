@@ -1,0 +1,190 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">📷</text>
+      <text class="title-text">上传照片</text>
+    </view>
+    <view class="image-upload-wrap">
+      <view class="image-preview" wx:if="{{imagePath}}" bindtap="onPreviewImage">
+        <image class="preview-image" src="{{imagePath}}" mode="aspectFill" />
+        <view class="remove-btn" catchtap="onRemoveImage">
+          <text>✕</text>
+        </view>
+      </view>
+      <view class="upload-btn" wx:else bindtap="onChooseImage">
+        <text class="upload-icon">+</text>
+        <text class="upload-text">添加照片</text>
+        <text class="upload-hint">支持拍照或从相册选择</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">✏️</text>
+      <text class="title-text">基本信息</text>
+    </view>
+    
+    <view class="form-item">
+      <text class="form-label">标题</text>
+      <input 
+        class="form-input" 
+        placeholder="给这张照片起个名字"
+        value="{{title}}"
+        bindinput="onTitleInput"
+        maxlength="30"
+      />
+      <text class="char-count">{{title.length}}/30</text>
+    </view>
+
+    <view class="form-item">
+      <text class="form-label">描述</text>
+      <textarea 
+        class="form-textarea" 
+        placeholder="分享一下这张照片背后的故事..."
+        value="{{description}}"
+        bindinput="onDescInput"
+        maxlength="200"
+        auto-height
+      />
+      <text class="char-count">{{description.length}}/200</text>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">
+      <text class="title-icon">🏷️</text>
+      <text class="title-text">分类信息</text>
+    </view>
+
+    <view class="form-item" bindtap="onCategoryTap">
+      <text class="form-label">分类</text>
+      <view class="form-value">
+        <text class="value-text">{{categories[categoryIndex].icon}} {{categories[categoryIndex].label}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <view class="form-item" bindtap="onSeasonTap">
+      <text class="form-label">季节</text>
+      <view class="form-value">
+        <text class="value-text">{{seasons[seasonIndex].icon}} {{seasons[seasonIndex].label}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <view class="form-item" bindtap="onLocationTap">
+      <text class="form-label">拍摄地点</text>
+      <view class="form-value">
+        <text class="value-text">📍 {{locations[locationIndex].label}}</text>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <view class="form-item" wx:if="{{selectedLocation === 'other'}}">
+      <text class="form-label">具体地点</text>
+      <input 
+        class="form-input" 
+        placeholder="请输入具体拍摄地点"
+        value="{{customLocation}}"
+        bindinput="onCustomLocationInput"
+        maxlength="50"
+      />
+    </view>
+  </view>
+
+  <view class="tips-section">
+    <view class="tips-card">
+      <text class="tips-icon">💡</text>
+      <view class="tips-content">
+        <text class="tips-title">投稿须知</text>
+        <text class="tips-text">• 照片需为原创，内容积极向上</text>
+        <text class="tips-text">• 审核通过后将展示在风光列表</text>
+        <text class="tips-text">• 优质内容有机会入选主题合集</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <view class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="onSubmit">
+      <text>{{submitting ? '提交中...' : '提交投稿'}}</text>
+    </view>
+  </view>
+
+  <view class="picker-modal" wx:if="{{showCategoryPicker}}" catchtap="onCloseCategoryPicker">
+    <view class="picker-content" catchtap="">
+      <view class="picker-header">
+        <text class="picker-title">选择分类</text>
+        <view class="close-btn" catchtap="onCloseCategoryPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <scroll-view class="picker-list" scroll-y>
+        <view 
+          class="picker-item {{selectedCategory === item.value ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="value"
+          data-value="{{item.value}}"
+          data-index="{{index}}"
+          catchtap="onCategorySelect"
+        >
+          <text class="item-icon">{{item.icon}}</text>
+          <text class="item-text">{{item.label}}</text>
+          <text class="check-icon" wx:if="{{selectedCategory === item.value}}">✓</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="picker-modal" wx:if="{{showLocationPicker}}" catchtap="onCloseLocationPicker">
+    <view class="picker-content" catchtap="">
+      <view class="picker-header">
+        <text class="picker-title">选择地点</text>
+        <view class="close-btn" catchtap="onCloseLocationPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <scroll-view class="picker-list" scroll-y>
+        <view 
+          class="picker-item {{selectedLocation === item.value ? 'active' : ''}}"
+          wx:for="{{locations}}"
+          wx:key="value"
+          data-value="{{item.value}}"
+          data-index="{{index}}"
+          catchtap="onLocationSelect"
+        >
+          <text class="item-text">{{item.label}}</text>
+          <text class="check-icon" wx:if="{{selectedLocation === item.value}}">✓</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="picker-modal" wx:if="{{showSeasonPicker}}" catchtap="onCloseSeasonPicker">
+    <view class="picker-content" catchtap="">
+      <view class="picker-header">
+        <text class="picker-title">选择季节</text>
+        <view class="close-btn" catchtap="onCloseSeasonPicker">
+          <text>✕</text>
+        </view>
+      </view>
+      <scroll-view class="picker-list" scroll-y>
+        <view 
+          class="picker-item {{selectedSeason === item.value ? 'active' : ''}}"
+          wx:for="{{seasons}}"
+          wx:key="value"
+          data-value="{{item.value}}"
+          data-index="{{index}}"
+          catchtap="onSeasonSelect"
+        >
+          <text class="item-icon">{{item.icon}}</text>
+          <text class="item-text">{{item.label}}</text>
+          <text class="check-icon" wx:if="{{selectedSeason === item.value}}">✓</text>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="bottom-spacing"></view>
+</view>

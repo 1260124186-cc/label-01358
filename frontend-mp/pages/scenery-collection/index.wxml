@@ -1,0 +1,134 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header-section">
+    <view class="header-title">
+      <text class="title-icon">🎨</text>
+      <text class="title-text">主题合集</text>
+    </view>
+    <text class="header-desc">发现校园四季之美，感受节气变化</text>
+  </view>
+
+  <view class="tabs-section">
+    <scroll-view class="tabs-scroll" scroll-x show-scrollbar="{{false}}">
+      <view class="tabs-wrap">
+        <view 
+          class="tab-item {{activeTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          data-value="{{item.value}}"
+          bindtap="onTabChange"
+        >
+          <text class="tab-icon">{{item.icon}}</text>
+          <text class="tab-text">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="collections-section">
+    <view 
+      class="collection-card"
+      wx:for="{{currentCollections}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onOpenCollection"
+    >
+      <view class="card-image-wrap">
+        <image class="card-image" src="{{item.cover}}" mode="aspectFill" />
+        <view class="card-overlay" style="background: linear-gradient(135deg, {{item.color}}40 0%, {{item.color}}80 100%);"></view>
+        <view class="card-badge">
+          <text class="badge-icon">{{item.icon}}</text>
+        </view>
+        <view class="card-stats">
+          <text class="stat-item">📷 {{item.itemCount}}张</text>
+          <text class="stat-item">👁️ {{item.views}}</text>
+        </view>
+      </view>
+      <view class="card-content">
+        <text class="card-title">{{item.title}}</text>
+        <text class="card-desc">{{item.description}}</text>
+        <view class="card-preview" wx:if="{{item.items && item.items.length > 0}}">
+          <image 
+            class="preview-image" 
+            wx:for="{{item.items}}" 
+            wx:for-item="img" 
+            wx:for-index="imgIdx"
+            wx:key="id"
+            src="{{img.image}}" 
+            mode="aspectFill"
+            wx:if="{{imgIdx < 4}}"
+          />
+          <view class="preview-more" wx:if="{{item.items.length > 4}}">
+            <text>+{{item.items.length - 4}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{currentCollections.length === 0}}">
+      <text class="empty-icon">📭</text>
+      <text class="empty-text">暂无合集，敬请期待</text>
+    </view>
+  </view>
+
+  <view class="detail-modal" wx:if="{{showDetail}}" catchtap="onCloseDetail">
+    <view class="detail-content" catchtap="" style="border-top: 8rpx solid {{selectedCollection.color}};">
+      <view class="detail-header">
+        <view class="detail-title-wrap">
+          <text class="detail-icon">{{selectedCollection.icon}}</text>
+          <view class="detail-title-content">
+            <text class="detail-title">{{selectedCollection.title}}</text>
+            <text class="detail-desc">{{selectedCollection.description}}</text>
+          </view>
+        </view>
+        <view class="close-btn" catchtap="onCloseDetail">
+          <text>✕</text>
+        </view>
+      </view>
+      
+      <view class="detail-stats">
+        <view class="detail-stat-item">
+          <text class="stat-value">{{selectedCollection.itemCount}}</text>
+          <text class="stat-label">作品数</text>
+        </view>
+        <view class="detail-stat-item">
+          <text class="stat-value">{{selectedCollection.views}}</text>
+          <text class="stat-label">浏览量</text>
+        </view>
+      </view>
+
+      <scroll-view class="detail-list" scroll-y>
+        <view class="list-header">
+          <view class="section-icon" style="background-color: {{selectedCollection.color}};"></view>
+          <text class="section-title">合集作品</text>
+        </view>
+        
+        <view class="list-empty" wx:if="{{collectionItems.length === 0}}">
+          <text class="empty-icon">📷</text>
+          <text class="empty-text">该合集暂无作品</text>
+        </view>
+
+        <view class="list-grid" wx:else>
+          <view 
+            class="list-item"
+            wx:for="{{collectionItems}}"
+            wx:key="id"
+            data-id="{{item.id}}"
+            catchtap="onItemTap"
+          >
+            <image class="item-image" src="{{item.image}}" mode="aspectFill" />
+            <view class="item-info">
+              <text class="item-title">{{item.title}}</text>
+              <view class="item-meta">
+                <text class="meta-item">❤️ {{item.likes}}</text>
+                <text class="meta-item">💬 {{item.commentCount}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view class="bottom-spacing"></view>
+</view>

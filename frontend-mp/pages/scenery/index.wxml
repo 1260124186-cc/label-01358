@@ -1,71 +1,167 @@
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
 <view class="page {{darkMode ? 'dark' : ''}}">
-  <!-- 顶部轮播 -->
-  <view class="swiper-section">
-    <swiper
-      class="scenery-swiper"
-      indicator-dots="{{true}}"
-      indicator-color="rgba(255,255,255,0.4)"
-      indicator-active-color="#FFFFFF"
-      autoplay="{{true}}"
-      interval="{{5000}}"
-      duration="{{600}}"
-      circular="{{true}}"
-      current="{{currentIndex}}"
-      easing-function="easeInOutCubic"
-      bindchange="onSwiperChange"
-    >
-      <swiper-item
-        wx:for="{{sceneryList}}"
-        wx:key="id"
-        bindtap="onPreviewImage"
-        data-index="{{index}}"
-      >
-        <view class="swiper-item">
-          <image class="swiper-image" src="{{item.image}}" mode="aspectFill" />
-          <view class="swiper-overlay"></view>
-          <view class="swiper-info">
-            <text class="swiper-title">{{item.title}}</text>
-            <text class="swiper-desc">{{item.description}}</text>
-          </view>
-        </view>
-      </swiper-item>
-    </swiper>
+  <!-- 顶部横幅 -->
+  <view class="banner">
+    <view class="banner-content">
+      <text class="banner-title">校园风光</text>
+      <text class="banner-subtitle">发现校园每一处美好</text>
+    </view>
+    <view class="banner-decoration">
+      <text class="deco-icon">🌸</text>
+      <text class="deco-icon">🍂</text>
+      <text class="deco-icon">❄️</text>
+    </view>
   </view>
 
-  <!-- 缩略图列表 -->
-  <view class="thumb-section">
+  <!-- 分类 Tab -->
+  <scroll-view class="tab-scroll" scroll-x enable-flex>
+    <view class="tab-list">
+      <view
+        class="tab-item {{activeCategory === item.value ? 'active' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="value"
+        bindtap="onCategoryChange"
+        data-value="{{item.value}}"
+      >
+        <text class="tab-icon">{{item.icon}}</text>
+        <text class="tab-label">{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 主题合集入口 -->
+  <view class="section">
     <view class="section-header">
       <view class="section-title-wrap">
         <view class="section-icon"></view>
-        <text class="section-title">全部风光</text>
+        <text class="section-title">主题合集</text>
       </view>
-      <text class="section-count">共{{sceneryList.length}}张</text>
+      <view class="section-more" bindtap="onViewAllCollections">
+        <text class="more-text">查看全部</text>
+        <text class="more-arrow">›</text>
+      </view>
     </view>
-    <view class="thumb-grid">
-      <view
-        class="thumb-item {{currentIndex === index ? 'active' : ''}}"
-        wx:for="{{sceneryList}}"
-        wx:key="id"
-        bindtap="onThumbTap"
-        data-index="{{index}}"
-      >
-        <view class="thumb-image-wrap">
-          <image class="thumb-image" src="{{item.image}}" mode="aspectFill" />
-          <view class="thumb-mask" wx:if="{{currentIndex === index}}">
-            <text class="thumb-current">当前</text>
+    <scroll-view class="collection-scroll" scroll-x enable-flex>
+      <view class="collection-list">
+        <view
+          class="collection-card"
+          wx:for="{{collections}}"
+          wx:key="id"
+          bindtap="onCollectionTap"
+          data-id="{{item.id}}"
+        >
+          <image class="collection-cover" src="{{item.cover}}" mode="aspectFill" />
+          <view class="collection-overlay"></view>
+          <view class="collection-info">
+            <view class="collection-badge">
+              <text class="badge-icon">{{item.icon}}</text>
+              <text class="badge-text">{{item.title}}</text>
+            </view>
+            <view class="collection-stats">
+              <text class="stat-item">{{item.itemCount}}张作品</text>
+              <text class="stat-item">{{item.views}}次浏览</text>
+            </view>
           </view>
         </view>
-        <text class="thumb-title">{{item.title}}</text>
       </view>
+    </scroll-view>
+  </view>
+
+  <!-- 照片列表 -->
+  <view class="section">
+    <view class="section-header">
+      <view class="section-title-wrap">
+        <view class="section-icon"></view>
+        <text class="section-title">{{categories[activeCategory === 'all' ? 0 : categories.findIndex(c => c.value === activeCategory)].label}}风光</text>
+      </view>
+      <text class="section-count">共{{filteredList.length}}张</text>
+    </view>
+    <view class="photo-grid">
+      <view
+        class="photo-item"
+        wx:for="{{filteredList}}"
+        wx:key="id"
+        bindtap="onItemTap"
+        data-id="{{item.id}}"
+      >
+        <view class="photo-image-wrap">
+          <image class="photo-image" src="{{item.image}}" mode="aspectFill" />
+          <view class="photo-category-tag" style="background: {{item.seasonInfo ? item.seasonInfo.color + '30' : 'rgba(255,107,107,0.2)'}}; color: {{item.seasonInfo ? item.seasonInfo.color : '#FF6B6B'}}">
+            <text class="tag-icon">{{item.categoryInfo.icon}}</text>
+          </view>
+          <view class="photo-stats">
+            <view class="stat-badge">
+              <text class="stat-icon">❤️</text>
+              <text class="stat-number">{{item.likes}}</text>
+            </view>
+            <view class="stat-badge">
+              <text class="stat-icon">💬</text>
+              <text class="stat-number">{{item.commentCount}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="photo-info">
+          <text class="photo-title">{{item.title}}</text>
+          <view class="photo-meta">
+            <text class="photo-location">📍 {{item.location.label}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="empty-state" wx:if="{{filteredList.length === 0}}">
+      <text class="empty-icon">📷</text>
+      <text class="empty-text">暂无该分类的照片</text>
+      <text class="empty-subtitle">快来上传第一张吧～</text>
     </view>
   </view>
 
-  <!-- 提示 -->
-  <view class="tip-section">
-    <view class="tip-card">
-      <text class="tip-icon">👆</text>
-      <text class="tip-text">点击图片可全屏预览</text>
+  <!-- 底部留白 -->
+  <view class="bottom-padding"></view>
+
+  <!-- 悬浮投稿按钮 -->
+  <view class="publish-btn" bindtap="onPublishTap">
+    <text class="publish-icon">📸</text>
+    <text class="publish-text">投稿</text>
+  </view>
+
+  <!-- 合集详情弹窗 -->
+  <view class="collection-modal {{showCollection ? 'show' : ''}}" wx:if="{{showCollection}}">
+    <view class="modal-mask" bindtap="onCloseCollection"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <view class="modal-title-wrap">
+          <text class="modal-icon">{{currentCollection.icon}}</text>
+          <text class="modal-title">{{currentCollection.title}}</text>
+        </view>
+        <view class="modal-close" bindtap="onCloseCollection">
+          <text class="close-icon">✕</text>
+        </view>
+      </view>
+      <view class="modal-desc">{{currentCollection.description}}</view>
+      <view class="modal-stats">
+        <view class="modal-stat">
+          <text class="modal-stat-number">{{currentCollection.itemCount}}</text>
+          <text class="modal-stat-label">张作品</text>
+        </view>
+        <view class="modal-stat">
+          <text class="modal-stat-number">{{currentCollection.views}}</text>
+          <text class="modal-stat-label">次浏览</text>
+        </view>
+      </view>
+      <view class="modal-subtitle">合集作品</view>
+      <scroll-view class="modal-grid-scroll" scroll-y>
+        <view class="modal-photo-grid">
+          <view
+            class="modal-photo-item"
+            wx:for="{{collectionItems}}"
+            wx:key="id"
+            bindtap="onCollectionItemTap"
+            data-id="{{item.id}}"
+          >
+            <image class="modal-photo-image" src="{{item.image}}" mode="aspectFill" />
+          </view>
+        </view>
+      </scroll-view>
     </view>
   </view>
 </view>
