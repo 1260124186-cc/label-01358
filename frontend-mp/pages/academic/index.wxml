@@ -282,7 +282,7 @@
       <view class="analysis-overview gradient-card analysis-gradient">
         <view class="overview-status">
           <text class="status-label">学习状态</text>
-          <text class="status-badge status-{{analysisData.learningStatus}}">{{analysisData.learningStatus}}</text>
+          <text class="status-badge status-{{analysisData.learningStatusClass}}">{{analysisData.learningStatus}}</text>
         </view>
         <view class="overview-metrics">
           <view class="metric-item">

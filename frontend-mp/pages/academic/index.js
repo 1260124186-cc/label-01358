@@ -191,7 +191,8 @@ Page({
         semesterTrend,
         radarData,
         overallGpa: dataService.calculateGPA(allScores).gpa,
-        learningStatus: passRate >= 90 ? '优秀' : passRate >= 80 ? '良好' : passRate >= 60 ? '一般' : '需努力'
+        learningStatus: passRate >= 90 ? '优秀' : passRate >= 80 ? '良好' : passRate >= 60 ? '一般' : '需努力',
+        learningStatusClass: passRate >= 90 ? 'excellent' : passRate >= 80 ? 'good' : passRate >= 60 ? 'average' : 'needs-work'
       }
     });
   },
