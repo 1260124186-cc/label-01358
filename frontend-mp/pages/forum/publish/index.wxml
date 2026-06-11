@@ -121,7 +121,7 @@
     <view class="picker-tip">最多选择3个话题</view>
     <view class="picker-body">
       <view
-        class="picker-topic {{formData.topics.indexOf(item.value) > -1 ? 'active' : ''}}"
+        class="picker-topic {{topicSelectedMap[item.value] ? 'active' : ''}}"
         wx:for="{{topicList}}"
         wx:key="value"
         bindtap="onToggleTopic"
@@ -129,7 +129,7 @@
       >
         <text class="picker-topic-icon">{{item.icon}}</text>
         <text class="picker-topic-label">{{item.label}}</text>
-        <text class="picker-topic-check" wx:if="{{formData.topics.indexOf(item.value) > -1}}">✓</text>
+        <text class="picker-topic-check" wx:if="{{topicSelectedMap[item.value]}}">✓</text>
       </view>
     </view>
   </view>

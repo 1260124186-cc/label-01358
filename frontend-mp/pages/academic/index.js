@@ -21,6 +21,7 @@ Page({
 
     scoreList: [],
     scoreListWithLevel: [],
+    averageScore: 0,
 
     creditStats: null,
     creditProgressPercent: 0,
@@ -74,10 +75,14 @@ Page({
         ...item,
         levelLabel: level.label,
         levelColor: level.color,
-        gpa: gpa.toFixed(1)
+        gpa: gpa.toFixed(1),
+        weightedGpa: (gpa * item.credit).toFixed(1)
       };
     });
-    this.setData({ scoreList, scoreListWithLevel });
+    const averageScore = scoreListWithLevel.length > 0
+      ? (scoreListWithLevel.reduce((s, i) => s + i.score, 0) / scoreListWithLevel.length).toFixed(1)
+      : 0;
+    this.setData({ scoreList, scoreListWithLevel, averageScore });
   },
 
   loadCreditStats() {

@@ -200,7 +200,7 @@
   </view>
 
   <view class="modal-mask {{showCheckInModal ? 'show' : ''}}" catchtap="onCloseCheckIn">
-    <view class="modal-content" catchtap="">
+    <view class="modal-content" catchtap="preventBubble">
       <view class="modal-header">
         <text class="modal-title">活动签到</text>
         <text class="modal-close" bindtap="onCloseCheckIn">×</text>
@@ -224,7 +224,7 @@
   </view>
 
   <view class="modal-mask {{showQrModal ? 'show' : ''}}" catchtap="onCloseQr">
-    <view class="qr-modal" catchtap="">
+    <view class="qr-modal" catchtap="preventBubble">
       <view class="qr-header">
         <text class="qr-title">签到码</text>
         <text class="qr-close" bindtap="onCloseQr">×</text>

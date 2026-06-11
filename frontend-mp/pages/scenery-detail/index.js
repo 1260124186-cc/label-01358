@@ -176,6 +176,8 @@ mixPage({
     }
   },
 
+  preventBubble() {},
+
   onShareAppMessage() {
     if (this.data.scenery) {
       return {

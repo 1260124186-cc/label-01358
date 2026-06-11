@@ -51,7 +51,7 @@
         data-poi="{{item}}"
         bindtap="onSearchResultTap"
       >
-        <text class="poi-icon">{{getCategoryIcon(item.category)}}</text>
+        <text class="poi-icon">{{item.categoryIcon}}</text>
         <view class="result-info">
           <text class="result-name">{{item.name}}</text>
           <text class="result-address">{{item.address}}</text>
@@ -72,7 +72,7 @@
           data-poi="{{item}}"
           bindtap="onHotPOITap"
         >
-          <text class="hot-icon">{{getCategoryIcon(item.category)}}</text>
+          <text class="hot-icon">{{item.categoryIcon}}</text>
           <text class="hot-name">{{item.name}}</text>
         </view>
       </view>
@@ -131,8 +131,8 @@
         data-poi="{{item}}"
         bindtap="onPOITap"
       >
-        <view class="marker-icon" style="background-color: {{getCategoryColor(item.category)}}">
-          {{getCategoryIcon(item.category)}}
+        <view class="marker-icon" style="background-color: {{item.categoryColor}}">
+          {{item.categoryIcon}}
         </view>
         <view wx:if="{{showLabels}}" class="marker-label">{{item.name}}</view>
       </view>
@@ -233,8 +233,8 @@
 
   <view wx:if="{{selectedPOI && !currentRoute}}" class="poi-preview">
     <view class="preview-header">
-      <text class="preview-icon" style="background-color: {{getCategoryColor(selectedPOI.category)}}">
-        {{getCategoryIcon(selectedPOI.category)}}
+      <text class="preview-icon" style="background-color: {{selectedPOI.categoryColor}}">
+        {{selectedPOI.categoryIcon}}
       </text>
       <view class="preview-info">
         <text class="preview-name">{{selectedPOI.name}}</text>

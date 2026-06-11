@@ -173,7 +173,7 @@
             <text class="picker-name">{{item.name}}</text>
             <text class="picker-category">{{item.categoryLabel}}</text>
           </view>
-          <view class="picker-check" wx:if="{{isSelectedPOI(item)}}">
+          <view class="picker-check" wx:if="{{item.isSelected}}">
             <text>✓</text>
           </view>
         </view>

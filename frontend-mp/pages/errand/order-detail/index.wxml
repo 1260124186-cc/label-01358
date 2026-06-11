@@ -273,7 +273,7 @@
             <view
               wx:for="{{ratingTagsList}}"
               wx:key="value"
-              class="tag-item {{selectedTags.indexOf(item.value) > -1 ? 'selected' : ''}}"
+              class="tag-item {{selectedTagsMap[item.value] ? 'selected' : ''}}"
               data-tag="{{item.value}}"
               bindtap="onTagToggle"
             >

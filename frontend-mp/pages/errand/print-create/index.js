@@ -126,6 +126,8 @@ mixPage({
     this.setData({ remark: e.detail.value });
   },
 
+  preventBubble() {},
+
   onSubmit() {
     const { fileName, filePages, colorType, sideType, paperSize, copies, totalPrice, pickupTime, contactPhone, deliveryAddress, remark } = this.data;
 

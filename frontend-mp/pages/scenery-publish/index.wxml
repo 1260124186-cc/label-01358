@@ -113,7 +113,7 @@
   </view>
 
   <view class="picker-modal" wx:if="{{showCategoryPicker}}" catchtap="onCloseCategoryPicker">
-    <view class="picker-content" catchtap="">
+    <view class="picker-content" catchtap="preventBubble">
       <view class="picker-header">
         <text class="picker-title">选择分类</text>
         <view class="close-btn" catchtap="onCloseCategoryPicker">
@@ -138,7 +138,7 @@
   </view>
 
   <view class="picker-modal" wx:if="{{showLocationPicker}}" catchtap="onCloseLocationPicker">
-    <view class="picker-content" catchtap="">
+    <view class="picker-content" catchtap="preventBubble">
       <view class="picker-header">
         <text class="picker-title">选择地点</text>
         <view class="close-btn" catchtap="onCloseLocationPicker">
@@ -162,7 +162,7 @@
   </view>
 
   <view class="picker-modal" wx:if="{{showSeasonPicker}}" catchtap="onCloseSeasonPicker">
-    <view class="picker-content" catchtap="">
+    <view class="picker-content" catchtap="preventBubble">
       <view class="picker-header">
         <text class="picker-title">选择季节</text>
         <view class="close-btn" catchtap="onCloseSeasonPicker">

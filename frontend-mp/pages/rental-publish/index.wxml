@@ -191,7 +191,7 @@
       <view class="section-title">房屋设施</view>
       <view class="facility-grid">
         <view
-          class="facility-item {{formData.facilities.indexOf(item.value) > -1 ? 'active' : ''}}"
+          class="facility-item {{facilitiesSelectedMap[item.value] ? 'active' : ''}}"
           wx:for="{{facilities}}"
           wx:key="value"
           bindtap="onFacilityToggle"

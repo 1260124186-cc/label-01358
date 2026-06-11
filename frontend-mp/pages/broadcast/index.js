@@ -43,7 +43,8 @@ Page({
     darkMode: false,
     lyrics: [],
     currentLyricIndex: -1,
-    showLyrics: false
+    showLyrics: false,
+    isCurrentFavorite: false
   },
 
   innerAudioContext: null,
@@ -166,7 +167,15 @@ Page({
 
   loadFavorites() {
     const favorites = storage.getList(storage.STORAGE_KEYS.BROADCAST_FAVORITES);
-    this.setData({ favorites });
+    const isCurrentFavorite = this.data.currentAudio
+      ? favorites.some(item => item.id === this.data.currentAudio.id)
+      : false;
+    const favoriteIds = favorites.map(f => f.id);
+    const filteredList = this.data.filteredList.map(item => ({
+      ...item,
+      isFavorite: favoriteIds.indexOf(item.id) > -1
+    }));
+    this.setData({ favorites, isCurrentFavorite, filteredList });
   },
 
   loadRecent() {
@@ -235,11 +244,13 @@ Page({
     if (this.data.currentAudio && this.data.currentAudio.id === item.id) {
       this.onPlayPause();
     } else {
+      const isCurrentFavorite = this.isFavorite(item.id);
       this.setData({
         currentAudio: item,
         currentTime: 0,
         currentTimeText: '00:00',
-        showLyrics: false
+        showLyrics: false,
+        isCurrentFavorite
       });
       this.playAudio(item);
     }
@@ -505,18 +516,21 @@ Page({
       currentAudio: item,
       currentTime: 0,
       currentTimeText: '00:00',
-      showListTab: 'all'
+      showListTab: 'all',
+      isCurrentFavorite: true
     });
     this.playAudio(item);
   },
 
   onPlayFromRecent(e) {
     const { item } = e.currentTarget.dataset;
+    const isCurrentFavorite = this.isFavorite(item.id);
     this.setData({
       currentAudio: item,
       currentTime: 0,
       currentTimeText: '00:00',
-      showListTab: 'all'
+      showListTab: 'all',
+      isCurrentFavorite
     });
     this.playAudio(item);
   }

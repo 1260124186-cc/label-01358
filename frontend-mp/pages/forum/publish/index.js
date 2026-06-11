@@ -19,7 +19,8 @@ mixPage({
     topicList: constants.FORUM_TOPIC_LIST,
     topicLabels: [],
     showTopicPicker: false,
-    submitting: false
+    submitting: false,
+    topicSelectedMap: {}
   },
 
   onTypeSelect(e) {
@@ -53,7 +54,9 @@ mixPage({
       const found = constants.FORUM_TOPIC_LIST.find(tp => tp.value === t);
       return found ? found.label : t;
     });
-    this.setData({ 'formData.topics': topics, topicLabels });
+    const topicSelectedMap = {};
+    topics.forEach(t => { topicSelectedMap[t] = true; });
+    this.setData({ 'formData.topics': topics, topicLabels, topicSelectedMap });
   },
 
   async onChooseImage() {

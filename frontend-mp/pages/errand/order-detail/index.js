@@ -20,6 +20,7 @@ mixPage({
     ratingScore: 0,
     ratingTags: [],
     selectedTags: [],
+    selectedTagsMap: {},
     ratingComment: '',
     ratingTagsList: constants.ERRAND_RATING_TAGS
   },

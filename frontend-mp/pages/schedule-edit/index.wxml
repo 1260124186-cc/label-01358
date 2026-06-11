@@ -2,7 +2,7 @@
 <view class="page {{darkMode ? 'dark' : ''}}">
   <view class="tabs-bar">
     <view
-      wx:if="{{mode !== 'import'"
+      wx:if="{{mode !== 'import'}}"
       class="tab-item {{activeTab === 'manual' ? 'active' : ''}}"
       bindtap="onTabChange"
       data-tab="manual"
@@ -28,7 +28,7 @@
     </view>
   </view>
 
-  <view wx:if="{{activeTab === 'manual'" class="content">
+  <view wx:if="{{activeTab === 'manual'}}" class="content">
     <view class="form-section">
       <view class="form-card">
         <view class="form-item">

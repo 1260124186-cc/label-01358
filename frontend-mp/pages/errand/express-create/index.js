@@ -89,6 +89,8 @@ mixPage({
     });
   },
 
+  preventBubble() {},
+
   onSubmit() {
     const { selectedPickupPoint, pickupPointText, pickupCode, bounty, deliveryAddress, contactPhone, remark } = this.data;
 

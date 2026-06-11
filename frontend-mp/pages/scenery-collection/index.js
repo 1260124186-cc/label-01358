@@ -109,6 +109,8 @@ mixPage({
     util.navigateTo(`/pages/scenery-detail/index?id=${id}`);
   },
 
+  preventBubble() {},
+
   onShareAppMessage() {
     if (this.data.selectedCollection) {
       return {

@@ -76,7 +76,10 @@ Page({
       showStartPicker: true, 
       showEndPicker: false,
       searchKeyword: '',
-      filteredPOIs: this.getAllPOIsWithInfo()
+      filteredPOIs: this.getAllPOIsWithInfo().map(p => ({
+        ...p,
+        isSelected: this.data.startPOI && this.data.startPOI.id === p.id
+      }))
     });
   },
 
@@ -85,7 +88,10 @@ Page({
       showEndPicker: true, 
       showStartPicker: false,
       searchKeyword: '',
-      filteredPOIs: this.getAllPOIsWithInfo()
+      filteredPOIs: this.getAllPOIsWithInfo().map(p => ({
+        ...p,
+        isSelected: this.data.endPOI && this.data.endPOI.id === p.id
+      }))
     });
   },
 
@@ -99,7 +105,12 @@ Page({
 
   onSearchInput(e) {
     const keyword = e.detail.value;
-    const allPOIs = this.getAllPOIsWithInfo();
+    const allPOIs = this.getAllPOIsWithInfo().map(p => ({
+      ...p,
+      isSelected: this.data.showStartPicker
+        ? (this.data.startPOI && this.data.startPOI.id === p.id)
+        : (this.data.endPOI && this.data.endPOI.id === p.id)
+    }));
     const filtered = keyword 
       ? allPOIs.filter(p => 
           p.name.includes(keyword) || 

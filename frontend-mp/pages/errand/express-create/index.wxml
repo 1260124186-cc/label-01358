@@ -117,7 +117,7 @@
   </view>
 
   <view class="picker-mask {{showPickupPicker ? 'show' : ''}}" bindtap="onClosePickupPicker">
-    <view class="picker-panel {{showPickupPicker ? 'show' : ''}}" catchtap="">
+    <view class="picker-panel {{showPickupPicker ? 'show' : ''}}" catchtap="preventBubble">
       <view class="picker-header">
         <text class="picker-title">选择快递点</text>
         <text class="picker-close" bindtap="onClosePickupPicker">✕</text>

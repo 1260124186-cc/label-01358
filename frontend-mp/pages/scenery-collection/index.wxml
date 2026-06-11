@@ -72,7 +72,7 @@
   </view>
 
   <view class="detail-modal" wx:if="{{showDetail}}" catchtap="onCloseDetail">
-    <view class="detail-content" catchtap="" style="border-top: 8rpx solid {{selectedCollection.color}};">
+    <view class="detail-content" catchtap="preventBubble" style="border-top: 8rpx solid {{selectedCollection.color}};">
       <view class="detail-header">
         <view class="detail-title-wrap">
           <text class="detail-icon">{{selectedCollection.icon}}</text>

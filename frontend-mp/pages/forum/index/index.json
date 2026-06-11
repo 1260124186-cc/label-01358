@@ -1,6 +1,6 @@
 {
   "navigationBarTitleText": "校园论坛",
   "usingComponents": {
-    "empty": "../../components/empty/index"
+    "empty": "/components/empty/index"
   }
 }

@@ -243,6 +243,8 @@ mixPage({
     return true;
   },
 
+  preventBubble() {},
+
   onSubmit() {
     if (!this.validateForm()) return;
 

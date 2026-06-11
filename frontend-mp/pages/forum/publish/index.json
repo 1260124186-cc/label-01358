@@ -1,6 +1,6 @@
 {
   "navigationBarTitleText": "发布帖子",
   "usingComponents": {
-    "btn": "../../components/btn/index"
+    "btn": "/components/btn/index"
   }
 }

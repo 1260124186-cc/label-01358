@@ -217,6 +217,8 @@ mixPage({
     util.navigateTo('/pages/club/index?id=' + this.data.activity.clubId);
   },
 
+  preventBubble() {},
+
   onShareAppMessage() {
     return {
       title: this.data.activity ? this.data.activity.title : '社团活动',

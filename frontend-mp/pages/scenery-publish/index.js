@@ -131,6 +131,8 @@ mixPage({
     this.setData({ showSeasonPicker: false });
   },
 
+  preventBubble() {},
+
   onSubmit() {
     if (!util.checkLogin()) return;
 

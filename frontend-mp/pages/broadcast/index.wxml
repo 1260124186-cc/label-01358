@@ -30,8 +30,8 @@
           <text class="player-anchor">主播：{{currentAudio.anchor}}</text>
         </view>
         <view class="favorite-btn" bindtap="onToggleFavorite" data-item="{{currentAudio}}" catchtap="onClosePicker">
-          <text class="favorite-icon {{favorites.some(f => f.id === currentAudio.id) ? 'active' : ''}}">
-            {{favorites.some(f => f.id === currentAudio.id) ? '❤️' : '🤍'}}
+          <text class="favorite-icon {{isCurrentFavorite ? 'active' : ''}}">
+            {{isCurrentFavorite ? '❤️' : '🤍'}}
           </text>
         </view>
       </view>
@@ -99,7 +99,7 @@
       </view>
 
       <!-- 倍速选择 -->
-      <view class="rate-picker {{showRatePicker ? 'show' : ''}}" catchtap="">
+      <view class="rate-picker {{showRatePicker ? 'show' : ''}}" catchtap="onClosePicker">
         <view class="picker-arrow"></view>
         <view
           class="rate-option {{playbackRate === rate ? 'active' : ''}}"
@@ -126,7 +126,7 @@
       </view>
 
       <!-- 定时关闭选择 -->
-      <view class="sleep-picker {{showSleepPicker ? 'show' : ''}}" catchtap="">
+      <view class="sleep-picker {{showSleepPicker ? 'show' : ''}}" catchtap="onClosePicker">
         <view class="picker-arrow sleep-arrow"></view>
         <view
           class="sleep-option {{sleepMinutes === item.minutes ? 'active' : ''}}"
@@ -197,8 +197,8 @@
           </view>
           <view class="broadcast-actions">
             <view class="action-btn" catchtap="onToggleFavorite" data-item="{{item}}">
-              <text class="action-icon {{favorites.some(f => f.id === item.id) ? 'active' : ''}}">
-                {{favorites.some(f => f.id === item.id) ? '❤️' : '🤍'}}
+              <text class="action-icon {{item.isFavorite ? 'active' : ''}}">
+                {{item.isFavorite ? '❤️' : '🤍'}}
               </text>
             </view>
             <view class="broadcast-status" wx:if="{{currentAudio && currentAudio.id === item.id}}">

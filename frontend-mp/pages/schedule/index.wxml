@@ -80,9 +80,8 @@
                       wx:if="{{course.topIndex === rowIdx}}"
                       class="course-block"
                       style="background: {{course.color.bg}}; border-left: 6rpx solid {{course.color.border}}; color: {{course.color.text}}; height: {{course.slotSpan * 100}}%;"
-                      bindtap="onCourseTap"
-                      data-course="{{course}}"
                       catchtap="onCourseTap"
+                      data-course="{{course}}"
                     >
                       <text class="course-name">{{course.name}}</text>
                       <text class="course-room">{{course.classroom}}</text>

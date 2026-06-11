@@ -40,7 +40,8 @@ mixPage({
     publisherTypes: constants.RENTAL_PUBLISHER_TYPES,
     houseTypeIndex: -1,
     leaseTermIndex: -1,
-    submitting: false
+    submitting: false,
+    facilitiesSelectedMap: {}
   },
 
   onLoad() {
@@ -118,8 +119,12 @@ mixPage({
       facilities.push(value);
     }
 
+    const facilitiesSelectedMap = {};
+    facilities.forEach(f => { facilitiesSelectedMap[f] = true; });
+
     this.setData({
-      'formData.facilities': facilities
+      'formData.facilities': facilities,
+      facilitiesSelectedMap
     });
   },
 

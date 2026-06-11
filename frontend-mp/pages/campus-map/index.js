@@ -81,7 +81,14 @@ mixPage({
 
   loadData() {
     return new Promise((resolve) => {
-      const poiList = dataService.getPOIList();
+      const poiList = dataService.getPOIList().map(poi => {
+        const cat = constants.POI_CATEGORY_MAP[poi.category] || {};
+        return {
+          ...poi,
+          categoryIcon: cat.icon || '📍',
+          categoryColor: cat.color || '#6B7280'
+        };
+      });
       const hotPOIs = poiList.slice(0, 8);
       const highlightPOIs = dataService.getHighlightPOIs();
       const freshmanFlow = dataService.getFreshmanRegistrationFlow();
@@ -249,8 +256,13 @@ mixPage({
 
   selectPOI(poi) {
     const isFavorited = dataService.isMapFavorite(poi.id);
+    const cat = constants.POI_CATEGORY_MAP[poi.category] || {};
     this.setData({
-      selectedPOI: poi,
+      selectedPOI: {
+        ...poi,
+        categoryIcon: poi.categoryIcon || cat.icon || '📍',
+        categoryColor: poi.categoryColor || cat.color || '#6B7280'
+      },
       isFavorited,
       currentRoute: null
     });

@@ -109,7 +109,7 @@
   </view>
 
   <view class="map-modal" wx:if="{{showMapModal}}" catchtap="onCloseMapModal">
-    <view class="map-content" catchtap="">
+    <view class="map-content" catchtap="preventBubble">
       <view class="map-header">
         <text class="map-title">📍 {{locationName}}</text>
         <view class="close-btn" catchtap="onCloseMapModal">
