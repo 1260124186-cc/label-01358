@@ -413,8 +413,8 @@
 }
 
 .image-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .image-grid { margin-right: -12rpx; margin-bottom: -12rpx; }
@@ -422,7 +422,7 @@
 .image-grid > * { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .grid-image {
-  width: 100%;
+  width: calc(100% / 3 - 12rpx);
   aspect-ratio: 1;
   border-radius: var(--radius-lg);
 }
