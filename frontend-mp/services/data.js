@@ -2455,6 +2455,413 @@ function getFavoriteDishes() {
   }).filter(Boolean);
 }
 
+// ==================== 校园论坛 ====================
+
+let forumInitialized = false;
+
+function initForumData() {
+  if (forumInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.FORUM_POST_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const posts = mockData.MOCK_FORUM_POSTS.map((item, index) => {
+      const comments = (item.comments || []).map((c, cIdx) => ({
+        id: 'fc_' + index + '_' + cIdx + '_' + now,
+        ...c,
+        createTime: c.createTime || (now - (cIdx + 1) * 3600000)
+      }));
+      return {
+        id: 'forum_' + index + '_' + now,
+        ...item,
+        comments,
+        commentCount: item.commentCount || comments.length,
+        userId: 'mock_user_' + index,
+        likes: item.likes || 0,
+        favorites: item.favorites || 0,
+        views: item.views || 0,
+        hotScore: item.hotScore || 0,
+        createTime: now - (index + 1) * 86400000,
+        updateTime: now - (index + 1) * 86400000
+      };
+    });
+    storage.set(STORAGE_KEYS.FORUM_POST_LIST, posts);
+
+    const topicStats = {};
+    constants.FORUM_TOPIC_LIST.forEach(t => { topicStats[t.value] = 0; });
+    posts.forEach(post => {
+      (post.topics || []).forEach(topic => {
+        if (topicStats[topic] !== undefined) {
+          topicStats[topic]++;
+        }
+      });
+    });
+    storage.set(STORAGE_KEYS.FORUM_TOPIC_STATS, topicStats);
+  }
+  forumInitialized = true;
+}
+
+function checkSensitiveWords(content) {
+  const words = constants.SENSITIVE_WORDS;
+  const found = words.filter(w => content.includes(w));
+  return { hasSensitive: found.length > 0, words: found };
+}
+
+function isUserBanned(userId) {
+  const bannedUsers = storage.getList(STORAGE_KEYS.FORUM_BANNED_USERS);
+  return bannedUsers.some(u => u.userId === userId && (!u.banExpiry || u.banExpiry > Date.now()));
+}
+
+function getForumPostList(filters = {}) {
+  initForumData();
+  let list = storage.getList(STORAGE_KEYS.FORUM_POST_LIST);
+
+  if (filters.type) {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  if (filters.topic) {
+    list = list.filter(item => item.topics && item.topics.includes(filters.topic));
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'content', 'authorName']);
+  }
+
+  if (filters.isAnonymous !== undefined) {
+    list = list.filter(item => item.isAnonymous === filters.isAnonymous);
+  }
+
+  if (filters.sort === 'hot') {
+    list = list.slice().sort((a, b) => (b.hotScore || 0) - (a.hotScore || 0));
+  } else if (filters.sort === 'latest') {
+    list = list.slice().sort((a, b) => b.createTime - a.createTime);
+  } else {
+    list = list.slice().sort((a, b) => (b.hotScore || 0) - (a.hotScore || 0));
+  }
+
+  return list;
+}
+
+function getForumPostDetail(id) {
+  initForumData();
+  const list = storage.getList(STORAGE_KEYS.FORUM_POST_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function publishForumPost(data) {
+  initForumData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'anonymous';
+
+  if (isUserBanned(userId)) {
+    return { success: false, message: '您已被封禁，无法发帖' };
+  }
+
+  const sensitiveCheck = checkSensitiveWords(data.title + data.content);
+  if (sensitiveCheck.hasSensitive) {
+    return { success: false, message: '内容包含敏感词：' + sensitiveCheck.words.join('、') };
+  }
+
+  const item = {
+    id: util.generateId(),
+    ...data,
+    userId,
+    authorName: data.isAnonymous ? '匿名用户' : (userInfo.nickName || '匿名用户'),
+    authorAvatar: data.isAnonymous ? '' : (userInfo.avatarUrl || ''),
+    likes: 0,
+    commentCount: 0,
+    favorites: 0,
+    views: 0,
+    hotScore: 0,
+    comments: [],
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  storage.addToList(STORAGE_KEYS.FORUM_POST_LIST, item);
+
+  if (data.topics && data.topics.length > 0) {
+    const topicStats = storage.get(STORAGE_KEYS.FORUM_TOPIC_STATS) || {};
+    data.topics.forEach(topic => {
+      topicStats[topic] = (topicStats[topic] || 0) + 1;
+    });
+    storage.set(STORAGE_KEYS.FORUM_TOPIC_STATS, topicStats);
+  }
+
+  return { success: true, data: item };
+}
+
+function increaseForumPostViews(id) {
+  const item = getForumPostDetail(id);
+  if (item) {
+    const newViews = (item.views || 0) + 1;
+    storage.updateInList(STORAGE_KEYS.FORUM_POST_LIST, id, {
+      views: newViews,
+      hotScore: calculateHotScore(item.likes || 0, item.commentCount || 0, newViews, item.createTime)
+    });
+  }
+}
+
+function calculateHotScore(likes, comments, views, createTime) {
+  const now = Date.now();
+  const hoursSincePost = Math.max(1, (now - createTime) / 3600000);
+  return Math.round((likes * 3 + comments * 2 + views * 0.5) / Math.pow(hoursSincePost + 2, 1.5) * 100);
+}
+
+function toggleForumPostLike(postId) {
+  initForumData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'anonymous';
+
+  let likes = storage.getList(STORAGE_KEYS.FORUM_LIKES);
+  const existing = likes.find(l => l.postId === postId && l.userId === userId);
+
+  const post = getForumPostDetail(postId);
+  if (!post) return { success: false, message: '帖子不存在' };
+
+  let isLiked;
+  if (existing) {
+    likes = likes.filter(l => !(l.postId === postId && l.userId === userId));
+    isLiked = false;
+  } else {
+    likes.push({ postId, userId, createTime: Date.now() });
+    isLiked = true;
+  }
+  storage.set(STORAGE_KEYS.FORUM_LIKES, likes);
+
+  const newLikes = isLiked ? (post.likes || 0) + 1 : Math.max(0, (post.likes || 0) - 1);
+  storage.updateInList(STORAGE_KEYS.FORUM_POST_LIST, postId, {
+    likes: newLikes,
+    hotScore: calculateHotScore(newLikes, post.commentCount || 0, post.views || 0, post.createTime)
+  });
+
+  return { success: true, isLiked, likes: newLikes };
+}
+
+function isForumPostLiked(postId) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'anonymous';
+
+  const likes = storage.getList(STORAGE_KEYS.FORUM_LIKES);
+  return likes.some(l => l.postId === postId && l.userId === userId);
+}
+
+function addForumComment(postId, content, isAnonymous) {
+  initForumData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'anonymous';
+
+  if (isUserBanned(userId)) {
+    return { success: false, message: '您已被封禁，无法评论' };
+  }
+
+  const sensitiveCheck = checkSensitiveWords(content);
+  if (sensitiveCheck.hasSensitive) {
+    return { success: false, message: '评论包含敏感词' };
+  }
+
+  const post = getForumPostDetail(postId);
+  if (!post) return { success: false, message: '帖子不存在' };
+
+  const comment = {
+    id: util.generateId(),
+    postId,
+    content,
+    userId,
+    authorName: isAnonymous ? '匿名用户' : (userInfo.nickName || '匿名用户'),
+    authorAvatar: isAnonymous ? '' : (userInfo.avatarUrl || ''),
+    isAnonymous: !!isAnonymous,
+    likes: 0,
+    createTime: Date.now()
+  };
+
+  const comments = [...(post.comments || []), comment];
+  const newCommentCount = comments.length;
+  storage.updateInList(STORAGE_KEYS.FORUM_POST_LIST, postId, {
+    comments,
+    commentCount: newCommentCount,
+    updateTime: Date.now(),
+    hotScore: calculateHotScore(post.likes || 0, newCommentCount, post.views || 0, post.createTime)
+  });
+
+  return { success: true, data: comment };
+}
+
+function toggleForumCommentLike(postId, commentId) {
+  initForumData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'anonymous';
+
+  const post = getForumPostDetail(postId);
+  if (!post) return { success: false };
+
+  let likeKey = 'forum_comment_likes';
+  let likes = storage.getList(likeKey);
+  const existing = likes.find(l => l.commentId === commentId && l.userId === userId);
+
+  let isLiked;
+  if (existing) {
+    likes = likes.filter(l => !(l.commentId === commentId && l.userId === userId));
+    isLiked = false;
+  } else {
+    likes.push({ commentId, userId, createTime: Date.now() });
+    isLiked = true;
+  }
+  storage.set(likeKey, likes);
+
+  const comments = (post.comments || []).map(c => {
+    if (c.id === commentId) {
+      return { ...c, likes: isLiked ? (c.likes || 0) + 1 : Math.max(0, (c.likes || 0) - 1) };
+    }
+    return c;
+  });
+
+  storage.updateInList(STORAGE_KEYS.FORUM_POST_LIST, postId, { comments });
+
+  return { success: true, isLiked };
+}
+
+function toggleForumPostFavorite(postId) {
+  const post = getForumPostDetail(postId);
+  if (!post) return { success: false };
+
+  const isFav = isFavorite(postId, 'forum');
+  if (isFav) {
+    removeFavorite(postId, 'forum');
+    const newFavs = Math.max(0, (post.favorites || 0) - 1);
+    storage.updateInList(STORAGE_KEYS.FORUM_POST_LIST, postId, { favorites: newFavs });
+    return { success: true, isFavorite: false };
+  } else {
+    addFavorite(post, 'forum');
+    const newFavs = (post.favorites || 0) + 1;
+    storage.updateInList(STORAGE_KEYS.FORUM_POST_LIST, postId, { favorites: newFavs });
+    return { success: true, isFavorite: true };
+  }
+}
+
+function isForumPostFavorited(postId) {
+  return isFavorite(postId, 'forum');
+}
+
+function deleteForumPost(postId) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'anonymous';
+
+  const post = getForumPostDetail(postId);
+  if (!post) return { success: false, message: '帖子不存在' };
+  if (post.userId !== userId && userId !== 'admin') {
+    return { success: false, message: '无权删除' };
+  }
+
+  storage.removeFromList(STORAGE_KEYS.FORUM_POST_LIST, postId);
+
+  if (post.topics && post.topics.length > 0) {
+    const topicStats = storage.get(STORAGE_KEYS.FORUM_TOPIC_STATS) || {};
+    post.topics.forEach(topic => {
+      if (topicStats[topic] !== undefined) {
+        topicStats[topic] = Math.max(0, topicStats[topic] - 1);
+      }
+    });
+    storage.set(STORAGE_KEYS.FORUM_TOPIC_STATS, topicStats);
+  }
+
+  return { success: true };
+}
+
+function reportForumPost(postId, reason) {
+  initForumData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'anonymous';
+
+  const reports = storage.getList(STORAGE_KEYS.FORUM_REPORTS);
+  const existing = reports.find(r => r.postId === postId && r.reporterId === userId);
+  if (existing) return { success: false, message: '您已举报过该帖子' };
+
+  reports.push({
+    id: util.generateId(),
+    postId,
+    reporterId: userId,
+    reason,
+    createTime: Date.now(),
+    status: 'pending'
+  });
+  storage.set(STORAGE_KEYS.FORUM_REPORTS, reports);
+
+  const postReports = reports.filter(r => r.postId === postId);
+  if (postReports.length >= 5) {
+    deleteForumPost(postId);
+  }
+
+  return { success: true, message: '举报成功' };
+}
+
+function banForumUser(userId, duration) {
+  const bannedUsers = storage.getList(STORAGE_KEYS.FORUM_BANNED_USERS);
+  const existing = bannedUsers.find(u => u.userId === userId);
+
+  if (existing) {
+    existing.banExpiry = duration ? Date.now() + duration : null;
+    existing.updateTime = Date.now();
+  } else {
+    bannedUsers.push({
+      userId,
+      banExpiry: duration ? Date.now() + duration : null,
+      createTime: Date.now()
+    });
+  }
+
+  storage.set(STORAGE_KEYS.FORUM_BANNED_USERS, bannedUsers);
+  return { success: true };
+}
+
+function followForumAuthor(authorId) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'anonymous';
+
+  if (authorId === userId) return { success: false, message: '不能关注自己' };
+
+  let followList = storage.getList('forumFollows');
+  const existing = followList.find(f => f.followerId === userId && f.followingId === authorId);
+
+  if (existing) {
+    followList = followList.filter(f => !(f.followerId === userId && f.followingId === authorId));
+    storage.set('forumFollows', followList);
+    return { success: true, isFollowing: false };
+  } else {
+    followList.push({ followerId: userId, followingId: authorId, createTime: Date.now() });
+    storage.set('forumFollows', followList);
+    return { success: true, isFollowing: true };
+  }
+}
+
+function isFollowingAuthor(authorId) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'anonymous';
+
+  const followList = storage.getList('forumFollows');
+  return followList.some(f => f.followerId === userId && f.followingId === authorId);
+}
+
+function getForumTopicStats() {
+  initForumData();
+  return storage.get(STORAGE_KEYS.FORUM_TOPIC_STATS) || {};
+}
+
+function getUserForumPosts(userId) {
+  initForumData();
+  const list = storage.getList(STORAGE_KEYS.FORUM_POST_LIST);
+  return list.filter(item => item.userId === userId).sort((a, b) => b.createTime - a.createTime);
+}
+
 module.exports = {
   getLostFoundList,
   getLostFoundDetail,
@@ -2614,5 +3021,26 @@ module.exports = {
   toggleFavoriteDish,
   isFavoriteDish,
   getFavoriteCanteens,
-  getFavoriteDishes
+  getFavoriteDishes,
+
+  initForumData,
+  getForumPostList,
+  getForumPostDetail,
+  publishForumPost,
+  increaseForumPostViews,
+  toggleForumPostLike,
+  isForumPostLiked,
+  addForumComment,
+  toggleForumCommentLike,
+  toggleForumPostFavorite,
+  isForumPostFavorited,
+  deleteForumPost,
+  reportForumPost,
+  banForumUser,
+  followForumAuthor,
+  isFollowingAuthor,
+  getForumTopicStats,
+  getUserForumPosts,
+  checkSensitiveWords,
+  isUserBanned
 };

@@ -89,6 +89,13 @@ Page({
         icon: '/assets/icons/nav-market.png',
         bgColor: 'linear-gradient(135deg, #CCFBF1 0%, #99F6E4 100%)',
         url: '/pages/carpool/index'
+      },
+      {
+        id: 'forum',
+        name: '校园论坛',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #FCE7F3 0%, #FBCFE8 100%)',
+        url: '/pages/forum/index/index'
       }
     ],
     weatherData: null,

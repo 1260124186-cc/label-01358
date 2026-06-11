@@ -1,0 +1,136 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <form bindsubmit="onSubmit">
+    <view class="form-section">
+      <view class="section-title">帖子类型</view>
+      <scroll-view class="type-scroll" scroll-x="{{true}}">
+        <view class="type-list">
+          <view
+            class="type-card {{formData.type === item.value ? 'active' : ''}}"
+            wx:for="{{postTypes}}"
+            wx:key="value"
+            bindtap="onTypeSelect"
+            data-type="{{item.value}}"
+            style="{{formData.type === item.value ? 'border-color:' + item.color + '; background: linear-gradient(135deg,' + item.color + '14 0%,' + item.color + '08 100%)' : ''}}"
+          >
+            <text class="type-card-icon">{{item.icon}}</text>
+            <text class="type-card-label">{{item.label}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">标题</view>
+      <view class="form-card">
+        <input
+          class="form-input-full"
+          placeholder="请输入帖子标题"
+          value="{{formData.title}}"
+          bindinput="onInputChange"
+          data-field="title"
+          maxlength="50"
+        />
+        <text class="input-count">{{formData.title.length || 0}}/50</text>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">内容</view>
+      <view class="form-card">
+        <textarea
+          class="form-textarea"
+          placeholder="分享你的想法、问题或经验..."
+          value="{{formData.content}}"
+          bindinput="onInputChange"
+          data-field="content"
+          maxlength="2000"
+        />
+        <text class="textarea-count">{{formData.content.length || 0}}/2000</text>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">上传图片（选填）</view>
+      <view class="form-card">
+        <view class="image-list">
+          <view
+            class="image-item"
+            wx:for="{{formData.images}}"
+            wx:key="index"
+          >
+            <image class="preview-image" src="{{item}}" mode="aspectFill" />
+            <view class="image-delete" catchtap="onDeleteImage" data-index="{{index}}">×</view>
+          </view>
+          <view
+            class="image-add"
+            wx:if="{{formData.images.length < 9}}"
+            bindtap="onChooseImage"
+          >
+            <text class="add-icon">+</text>
+            <text class="add-text">添加图片</text>
+          </view>
+        </view>
+        <text class="image-tip">最多上传9张图片</text>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">话题标签（选填）</view>
+      <view class="form-card">
+        <view class="topic-area" bindtap="onShowTopicPicker">
+          <view class="topic-chips" wx:if="{{topicLabels.length > 0}}">
+            <view class="topic-chip" wx:for="{{topicLabels}}" wx:key="*this">
+              <text class="topic-chip-text">#{{item}}</text>
+            </view>
+          </view>
+          <text class="topic-placeholder" wx:else>点击选择话题</text>
+          <text class="topic-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">发布设置</view>
+      <view class="form-card">
+        <view class="setting-item">
+          <view class="setting-info">
+            <text class="setting-label">匿名发布</text>
+            <text class="setting-desc">其他用户将无法看到你的昵称和头像</text>
+          </view>
+          <view class="switch-track {{formData.isAnonymous ? 'active' : ''}}" bindtap="onToggleAnonymous">
+            <view class="switch-thumb"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="submit-section">
+      <btn type="primary" size="large" block="{{true}}" loading="{{submitting}}" bind:click="onSubmit">
+        发布帖子
+      </btn>
+    </view>
+  </form>
+
+  <view class="topic-mask {{showTopicPicker ? 'show' : ''}}" catchtap="onHideTopicPicker"></view>
+  <view class="topic-picker {{showTopicPicker ? 'show' : ''}}">
+    <view class="picker-header">
+      <text class="picker-title">选择话题</text>
+      <text class="picker-close" bindtap="onHideTopicPicker">完成</text>
+    </view>
+    <view class="picker-tip">最多选择3个话题</view>
+    <view class="picker-body">
+      <view
+        class="picker-topic {{formData.topics.indexOf(item.value) > -1 ? 'active' : ''}}"
+        wx:for="{{topicList}}"
+        wx:key="value"
+        bindtap="onToggleTopic"
+        data-value="{{item.value}}"
+      >
+        <text class="picker-topic-icon">{{item.icon}}</text>
+        <text class="picker-topic-label">{{item.label}}</text>
+        <text class="picker-topic-check" wx:if="{{formData.topics.indexOf(item.value) > -1}}">✓</text>
+      </view>
+    </view>
+  </view>
+</view>

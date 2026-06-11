@@ -1,0 +1,78 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="search-section">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索话题或帖子"
+        placeholder-style="color: var(--color-text-muted)"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+        confirm-type="search"
+      />
+      <view class="search-btn" wx:if="{{searchKeyword}}" bindtap="onSearch">搜索</view>
+    </view>
+  </view>
+
+  <scroll-view class="content-scroll" scroll-y="{{true}}" refresher-enabled="{{true}}" bindrefresherrefresh="onRefresh" refresher-triggered="{{refreshing}}">
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">🔥 热门话题</text>
+        <text class="section-subtitle">{{topicList.length}} 个话题</text>
+      </view>
+      <view class="topic-grid">
+        <view
+          class="topic-card"
+          wx:for="{{topicList}}"
+          wx:key="value"
+          hover-class="topic-card-hover"
+          bindtap="onTopicTap"
+          data-value="{{item.value}}"
+          style="background: linear-gradient(135deg, {{item.color}}1A 0%, {{item.color}}08 100%)"
+        >
+          <view class="topic-icon-wrap" style="background-color: {{item.color}}">
+            <text class="topic-icon">{{item.icon}}</text>
+          </view>
+          <view class="topic-info">
+            <text class="topic-name">#{{item.label}}</text>
+            <text class="topic-count">{{item.postCount}} 篇帖子</text>
+          </view>
+          <text class="topic-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-header">
+        <text class="section-title">📌 热门帖子</text>
+      </view>
+      <view class="hot-list" wx:if="{{hotPosts.length > 0}}">
+        <view
+          class="hot-item"
+          wx:for="{{hotPosts}}"
+          wx:key="id"
+          hover-class="hot-item-hover"
+          bindtap="onPostTap"
+          data-id="{{item.id}}"
+        >
+          <view class="hot-rank" style="background: {{index < 3 ? 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)' : '#E5E7EB'}}">
+            <text class="rank-num">{{index + 1}}</text>
+          </view>
+          <view class="hot-content">
+            <text class="hot-title">{{item.title}}</text>
+            <view class="hot-meta">
+              <view class="type-badge" style="background-color: {{item.typeInfo.color || '#999'}}20; color: {{item.typeInfo.color || '#999'}}">
+                {{item.typeInfo.icon || '📝'}} {{item.typeInfo.label || '帖子'}}
+              </view>
+              <text class="hot-time">{{item.timeText}}</text>
+              <text class="hot-likes">👍 {{item.likes || 0}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <empty wx:else text="暂无热门帖子" />
+    </view>
+  </scroll-view>
+</view>

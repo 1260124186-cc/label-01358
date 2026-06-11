@@ -2345,6 +2345,228 @@ const MOCK_DISHES = [
   { id: 'd17', name: '部队火锅套餐', cover: 'https://picsum.photos/seed/budae/400/300', price: 28.0, originalPrice: null, canteenId: 'c5', canteenName: '北区食堂', recommendReason: null, tags: ['popular'], mealType: 'dinner', sales: 124, rating: 4.6, isNew: false, isRecommend: false, description: '火腿午餐肉年糕方便面，一锅端', calories: 780 }
 ];
 
+const MOCK_FORUM_POSTS = [
+  {
+    type: 'qa',
+    title: '考研数学二用什么资料比较好？',
+    content: '各位学长学姐，考研数学二复习用什么资料比较好？目前看了张宇的基础30讲，感觉还行但想多参考一些，求推荐！',
+    images: [],
+    topics: ['postgraduate', 'exam'],
+    isAnonymous: false,
+    authorName: '学数学的鱼',
+    authorAvatar: '',
+    likes: 42,
+    commentCount: 18,
+    favorites: 15,
+    views: 356,
+    hotScore: 75,
+    comments: [
+      { id: 'c1', content: '推荐李永乐的复习全书，体系很清晰', authorName: '研一学姐', authorAvatar: '', isAnonymous: false, likes: 8, createTime: Date.now() - 7200000 },
+      { id: 'c2', content: '汤家凤的1800题也很不错，题量够', authorName: '上岸选手', authorAvatar: '', isAnonymous: false, likes: 5, createTime: Date.now() - 3600000 }
+    ]
+  },
+  {
+    type: 'rant',
+    title: '三食堂的菜越来越难吃了',
+    content: '今天去三食堂打饭，红烧肉全是肥肉，青菜也不新鲜。之前还好好的，这学期换了厨师吗？大家有没有同感？',
+    images: ['https://picsum.photos/seed/food1/400/300'],
+    topics: ['canteen'],
+    isAnonymous: true,
+    authorName: '匿名用户',
+    authorAvatar: '',
+    likes: 89,
+    commentCount: 34,
+    favorites: 5,
+    views: 723,
+    hotScore: 156,
+    comments: [
+      { id: 'c3', content: '确实！上周的红烧排骨全是骨头', authorName: '干饭人', authorAvatar: '', isAnonymous: false, likes: 12, createTime: Date.now() - 5400000 }
+    ]
+  },
+  {
+    type: 'experience',
+    title: '四级610分经验分享｜阅读满分攻略',
+    content: '本人四级610分，阅读满分248.5。分享一下阅读的做题方法：1.先看题目再看文章，带着问题找答案 2.关键词定位法非常有效 3.平时多读外刊培养语感 4.考前一个月每天做2-3篇阅读保持手感。希望能帮到大家！',
+    images: ['https://picsum.photos/seed/cet1/400/300', 'https://picsum.photos/seed/cet2/400/300'],
+    topics: ['exam', 'postgraduate'],
+    isAnonymous: false,
+    authorName: '英语小达人',
+    authorAvatar: '',
+    likes: 156,
+    commentCount: 45,
+    favorites: 98,
+    views: 1230,
+    hotScore: 299,
+    comments: [
+      { id: 'c4', content: '太详细了！收藏了', authorName: '四级困难户', authorAvatar: '', isAnonymous: false, likes: 3, createTime: Date.now() - 7200000 },
+      { id: 'c5', content: '请问外刊推荐看哪些？', authorName: '迷茫的鱼', authorAvatar: '', isAnonymous: false, likes: 2, createTime: Date.now() - 3600000 }
+    ]
+  },
+  {
+    type: 'lost_help',
+    title: '在图书馆丢失一个黑色双肩包',
+    content: '昨天下午在图书馆三楼自习室丢失一个黑色双肩包，内有笔记本电脑和课本。电脑桌面上有写着姓名的便利贴。如有捡到请联系我，万分感谢！',
+    images: [],
+    topics: [],
+    isAnonymous: false,
+    authorName: '焦急的人',
+    authorAvatar: '',
+    likes: 12,
+    commentCount: 3,
+    favorites: 8,
+    views: 245,
+    hotScore: 23,
+    comments: [
+      { id: 'c6', content: '你可以去图书馆失物招领处看看', authorName: '热心同学', authorAvatar: '', isAnonymous: false, likes: 1, createTime: Date.now() - 1800000 }
+    ]
+  },
+  {
+    type: 'trade',
+    title: '出iPad Air 5 64G WiFi版',
+    content: '毕业出iPad Air 5，64G WiFi版，2024年9月购入，有Apple Care+到2026年9月。屏幕贴膜无划痕，一直戴套使用。配原装妙控键盘和Apple Pencil二代。整套4500出，单出iPad 3000。可面交验货。',
+    images: ['https://picsum.photos/seed/ipad1/400/300', 'https://picsum.photos/seed/ipad2/400/300'],
+    topics: [],
+    isAnonymous: false,
+    authorName: '毕业老学长',
+    authorAvatar: '',
+    likes: 23,
+    commentCount: 8,
+    favorites: 34,
+    views: 567,
+    hotScore: 65,
+    comments: [
+      { id: 'c7', content: '单出Pencil吗？', authorName: '画画的人', authorAvatar: '', isAnonymous: false, likes: 0, createTime: Date.now() - 900000 }
+    ]
+  },
+  {
+    type: 'qa',
+    title: '选课系统一直卡怎么办？',
+    content: '选课系统一直转圈进不去，大家有什么办法吗？我想要的课都快被抢完了！',
+    images: [],
+    topics: ['course_selection'],
+    isAnonymous: true,
+    authorName: '匿名用户',
+    authorAvatar: '',
+    likes: 67,
+    commentCount: 22,
+    favorites: 12,
+    views: 890,
+    hotScore: 101,
+    comments: [
+      { id: 'c8', content: '用电脑端试试，手机端比较卡', authorName: '选课达人', authorAvatar: '', isAnonymous: false, likes: 5, createTime: Date.now() - 2400000 },
+      { id: 'c9', content: '凌晨1点再试，人少', authorName: '夜猫子', authorAvatar: '', isAnonymous: false, likes: 9, createTime: Date.now() - 1800000 }
+    ]
+  },
+  {
+    type: 'experience',
+    title: '求职面经分享｜字节跳动产品经理校招',
+    content: '分享一下字节产品经理校招的全流程：1.笔试-行测+产品分析题 2.群面-6人小组讨论产品设计 3.专业一面-产品sense考察 4.专业二面-项目深挖 5.HR面。重点是要有自己的产品思考框架，建议大家多关注行业动态。',
+    images: [],
+    topics: ['job'],
+    isAnonymous: false,
+    authorName: '产品小白',
+    authorAvatar: '',
+    likes: 198,
+    commentCount: 56,
+    favorites: 145,
+    views: 2340,
+    hotScore: 399,
+    comments: [
+      { id: 'c10', content: '请问群面有什么技巧吗？', authorName: '即将秋招', authorAvatar: '', isAnonymous: false, likes: 4, createTime: Date.now() - 3600000 }
+    ]
+  },
+  {
+    type: 'rant',
+    title: '宿舍热水器又坏了，三天没洗热水澡',
+    content: '南三宿舍热水器又坏了，已经三天了！报修也没人来修，这日子没法过了。冬天洗冷水澡真的要命！有没有同样遭遇的兄弟姐妹？',
+    images: [],
+    topics: ['dorm'],
+    isAnonymous: true,
+    authorName: '匿名用户',
+    authorAvatar: '',
+    likes: 134,
+    commentCount: 41,
+    favorites: 3,
+    views: 956,
+    hotScore: 178,
+    comments: [
+      { id: 'c11', content: '南四也是！报修三天了没反应', authorName: '同命相连', authorAvatar: '', isAnonymous: true, likes: 15, createTime: Date.now() - 7200000 },
+      { id: 'c12', content: '可以打后勤投诉电话催一下', authorName: '过来人', authorAvatar: '', isAnonymous: false, likes: 8, createTime: Date.now() - 5400000 }
+    ]
+  },
+  {
+    type: 'experience',
+    title: '社团纳新避坑指南！这些社团千万别加',
+    content: '大一新生看过来！作为过来人分享一些选社团的经验：1.别加太多，1-2个就够 2.先了解社团活动频率，太频繁会占学习时间 3.某些社团只是挂名，实际没活动 4.面试型社团要看清要求 5.兴趣类社团优先于功利性社团。欢迎大家补充！',
+    images: [],
+    topics: ['club'],
+    isAnonymous: false,
+    authorName: '大三老油条',
+    authorAvatar: '',
+    likes: 223,
+    commentCount: 67,
+    favorites: 112,
+    views: 1890,
+    hotScore: 402,
+    comments: [
+      { id: 'c13', content: '说得太对了！我大一加了4个社团忙到飞起', authorName: '过来人二号', authorAvatar: '', isAnonymous: false, likes: 11, createTime: Date.now() - 4800000 }
+    ]
+  },
+  {
+    type: 'qa',
+    title: '学校附近哪家健身房性价比最高？',
+    content: '想在学校附近办健身卡，求推荐性价比高的健身房。主要想练力量和跑步，最好有游泳池。预算200/月以内。',
+    images: [],
+    topics: ['sports'],
+    isAnonymous: false,
+    authorName: '想变壮',
+    authorAvatar: '',
+    likes: 31,
+    commentCount: 14,
+    favorites: 9,
+    views: 423,
+    hotScore: 54,
+    comments: [
+      { id: 'c14', content: '推荐乐刻，月卡150，器械齐全', authorName: '健身老哥', authorAvatar: '', isAnonymous: false, likes: 3, createTime: Date.now() - 3000000 }
+    ]
+  },
+  {
+    type: 'experience',
+    title: '周末出游推荐｜学校2小时内的5个宝藏景点',
+    content: '给大家推荐几个适合周末去的景点：1.青城山-爬山吸氧好去处 2.都江堰-水利奇观 3.黄龙溪古镇-美食天堂 4.西岭雪山-冬天滑雪 5.三圣花乡-春天赏花。交通都很方便，高铁或大巴都能到。',
+    images: ['https://picsum.photos/seed/travel1/400/300', 'https://picsum.photos/seed/travel2/400/300', 'https://picsum.photos/seed/travel3/400/300'],
+    topics: ['travel'],
+    isAnonymous: false,
+    authorName: '旅行青蛙',
+    authorAvatar: '',
+    likes: 178,
+    commentCount: 38,
+    favorites: 203,
+    views: 1567,
+    hotScore: 319,
+    comments: []
+  },
+  {
+    type: 'rant',
+    title: '打游戏被室友嫌弃怎么办？',
+    content: '我晚上十点后打游戏，声音已经开得很小了，但室友还是嫌吵。可是隔壁宿舍打游戏开外放都没人说啊，是我的问题吗？求大家支招。',
+    images: [],
+    topics: ['game', 'dorm'],
+    isAnonymous: true,
+    authorName: '匿名用户',
+    authorAvatar: '',
+    likes: 56,
+    commentCount: 29,
+    favorites: 2,
+    views: 678,
+    hotScore: 87,
+    comments: [
+      { id: 'c15', content: '买个好耳机吧，十点后确实该安静了', authorName: '和事佬', authorAvatar: '', isAnonymous: false, likes: 18, createTime: Date.now() - 6000000 },
+      { id: 'c16', content: '换个机械键盘静音红轴试试', authorName: '外设党', authorAvatar: '', isAnonymous: false, likes: 7, createTime: Date.now() - 4200000 }
+    ]
+  }
+];
+
 module.exports = {
   ANNOUNCEMENTS,
   CAMPUS_NEWS,
@@ -2376,5 +2598,6 @@ module.exports = {
   NEW_DISHES,
   CANTEEN_DISH_MAP,
   MOCK_CANTEEN_REVIEWS,
-  MOCK_DISH_REVIEWS
+  MOCK_DISH_REVIEWS,
+  MOCK_FORUM_POSTS
 };

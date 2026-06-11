@@ -1,0 +1,221 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.search-section {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-bg-card);
+  border-bottom: 1rpx solid var(--color-border-light);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-full);
+  padding: var(--spacing-sm) var(--spacing-md);
+  gap: var(--spacing-sm);
+}
+
+.search-icon {
+  font-size: var(--font-md);
+  color: var(--color-text-muted);
+}
+
+.search-input {
+  flex: 1;
+  font-size: var(--font-sm);
+  color: var(--color-text-primary);
+  background: transparent;
+}
+
+.search-btn {
+  padding: 8rpx 24rpx;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  color: #FFFFFF;
+  font-size: var(--font-sm);
+  font-weight: 600;
+  border-radius: var(--radius-full);
+}
+
+.content-scroll {
+  height: calc(100vh - 120rpx);
+}
+
+.section {
+  padding: var(--spacing-lg) var(--spacing-lg) 0;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--spacing-md);
+}
+
+.section-title {
+  font-size: var(--font-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.section-subtitle {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.topic-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.topic-card {
+  width: calc(50% - 8rpx);
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md);
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+  gap: var(--spacing-sm);
+}
+
+.topic-card-hover {
+  transform: scale(0.97);
+  box-shadow: var(--shadow-xs);
+}
+
+.topic-icon-wrap {
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-lg);
+  flex-shrink: 0;
+}
+
+.topic-icon {
+  font-size: 36rpx;
+}
+
+.topic-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.topic-name {
+  font-size: var(--font-sm);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 4rpx;
+}
+
+.topic-count {
+  font-size: var(--font-xs);
+  color: var(--color-text-muted);
+  font-weight: 500;
+}
+
+.topic-arrow {
+  font-size: var(--font-lg);
+  color: var(--color-text-muted);
+  font-weight: 300;
+  flex-shrink: 0;
+}
+
+.hot-list {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-2xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.hot-item {
+  display: flex;
+  align-items: flex-start;
+  padding: var(--spacing-md) var(--spacing-lg);
+  gap: var(--spacing-md);
+  border-bottom: 1rpx solid var(--color-border-light);
+  transition: all var(--transition-fast);
+}
+
+.hot-item:last-child {
+  border-bottom: none;
+}
+
+.hot-item-hover {
+  background-color: var(--color-bg-input);
+}
+
+.hot-rank {
+  width: 44rpx;
+  height: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  background-color: #E5E7EB;
+}
+
+.rank-num {
+  font-size: var(--font-xs);
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.hot-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.hot-title {
+  font-size: var(--font-sm);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin-bottom: var(--spacing-xs);
+}
+
+.hot-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 12rpx;
+  font-size: 20rpx;
+  font-weight: 600;
+  border-radius: var(--radius-xs);
+}
+
+.hot-time {
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+}
+
+.hot-likes {
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+}

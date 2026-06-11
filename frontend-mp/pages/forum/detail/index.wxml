@@ -1,0 +1,135 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
+
+  <view class="author-section">
+    <image class="author-avatar" src="{{detail.isAnonymous ? '/assets/images/default-avatar.png' : detail.authorAvatar || '/assets/images/default-avatar.png'}}" mode="aspectFill" />
+    <view class="author-info">
+      <text class="author-name">{{detail.isAnonymous ? '🎭 匿名用户' : detail.authorName}}</text>
+      <text class="author-time">{{detail.timeText}}</text>
+    </view>
+    <view class="author-actions">
+      <view class="follow-btn {{isFollowing ? 'following' : ''}}" wx:if="{{!detail.isAnonymous}}" bindtap="onFollowAuthor">
+        {{isFollowing ? '已关注' : '+ 关注'}}
+      </view>
+      <view class="more-btn" bindtap="onToggleMoreMenu">⋯</view>
+    </view>
+  </view>
+
+  <view class="more-overlay" wx:if="{{showMoreMenu}}" catchtap="onHideMoreMenu"></view>
+  <view class="more-dropdown" wx:if="{{showMoreMenu}}" catchtap="stopPropagation">
+    <view class="more-option" bindtap="onMoreReport">
+      <text class="more-option-icon">🚫</text>
+      <text class="more-option-text">举报</text>
+    </view>
+    <view class="more-option danger" bindtap="onMoreDelete">
+      <text class="more-option-icon">🗑️</text>
+      <text class="more-option-text">删除</text>
+    </view>
+  </view>
+
+  <view class="post-section">
+    <view class="post-type-badge" style="background-color: {{detail.typeInfo.color || '#999'}}20; color: {{detail.typeInfo.color || '#999'}}">
+      {{detail.typeInfo.icon || '📝'}} {{detail.typeInfo.label || '帖子'}}
+    </view>
+
+    <text class="post-title">{{detail.title}}</text>
+
+    <text class="post-content">{{detail.content}}</text>
+
+    <view class="post-images {{detail.images.length === 1 ? 'img-1' : detail.images.length === 2 ? 'img-2' : detail.images.length === 3 ? 'img-3' : detail.images.length === 4 ? 'img-4' : 'img-9'}}" wx:if="{{detail.images && detail.images.length > 0}}">
+      <image class="post-img" wx:for="{{detail.images}}" wx:for-item="img" wx:key="index" src="{{img}}" mode="aspectFill" bindtap="onPreviewImage" data-index="{{index}}" />
+    </view>
+
+    <view class="post-topics" wx:if="{{detail.topicLabels.length > 0}}">
+      <text class="post-topic" wx:for="{{detail.topicLabels}}" wx:for-item="topic" wx:key="index">#{{topic}}</text>
+    </view>
+  </view>
+
+  <view class="stats-bar">
+    <view class="stat-item">
+      <text class="stat-icon">👀</text>
+      <text class="stat-num">{{detail.views || 0}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-icon">👍</text>
+      <text class="stat-num">{{detail.likes || 0}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-icon">💬</text>
+      <text class="stat-num">{{detail.comments.length || 0}}</text>
+    </view>
+    <view class="stat-item">
+      <text class="stat-icon">⭐</text>
+      <text class="stat-num">{{detail.favorites || 0}}</text>
+    </view>
+  </view>
+
+  <view class="action-bar">
+    <view class="action-item {{isLiked ? 'active' : ''}}" bindtap="onToggleLike">
+      <text class="action-icon">{{isLiked ? '❤️' : '🤍'}}</text>
+      <text class="action-text">{{isLiked ? '已赞' : '点赞'}}</text>
+    </view>
+    <view class="action-item {{isFavorited ? 'active' : ''}}" bindtap="onToggleFavorite">
+      <text class="action-icon">{{isFavorited ? '⭐' : '☆'}}</text>
+      <text class="action-text">{{isFavorited ? '已收藏' : '收藏'}}</text>
+    </view>
+    <button class="action-item share-btn" open-type="share">
+      <text class="action-icon">🔗</text>
+      <text class="action-text">分享</text>
+    </button>
+  </view>
+
+  <view class="comments-section">
+    <view class="section-title">评论 ({{detail.comments.length || 0}})</view>
+    <view class="comment-list" wx:if="{{detail.comments.length > 0}}">
+      <view class="comment-card" wx:for="{{detail.comments}}" wx:key="id">
+        <image class="comment-avatar" src="{{item.isAnonymous ? '/assets/images/default-avatar.png' : item.authorAvatar || '/assets/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="comment-body">
+          <view class="comment-header">
+            <text class="comment-author">{{item.isAnonymous ? '🎭 匿名用户' : item.authorName}}</text>
+            <text class="comment-time">{{item.timeText}}</text>
+          </view>
+          <text class="comment-content">{{item.content}}</text>
+          <view class="comment-footer">
+            <view class="comment-like" bindtap="onCommentLike" data-id="{{item.id}}">
+              <text class="comment-like-icon">{{item.isLiked ? '❤️' : '🤍'}}</text>
+              <text class="comment-like-num" wx:if="{{item.likes > 0}}">{{item.likes}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="no-comments" wx:else>
+      <text class="no-comments-text">暂无评论，快来抢沙发</text>
+    </view>
+  </view>
+
+  <view class="comment-bar">
+    <view class="comment-input-wrap">
+      <input class="comment-input" placeholder="写评论..." value="{{commentText}}" bindinput="onCommentInput" bindconfirm="onSubmitComment" confirm-type="send" />
+    </view>
+    <view class="comment-anonymous {{commentAnonymous ? 'active' : ''}}" bindtap="onToggleCommentAnonymous">
+      <text class="anonymous-icon">🎭</text>
+    </view>
+    <view class="comment-send" bindtap="onSubmitComment">发送</view>
+  </view>
+
+  <view class="report-mask {{showReportPicker ? 'show' : ''}}" catchtap="onHideReport"></view>
+  <view class="report-picker {{showReportPicker ? 'show' : ''}}">
+    <view class="picker-header">
+      <text class="picker-title">举报原因</text>
+      <text class="picker-close" bindtap="onHideReport">取消</text>
+    </view>
+    <view class="picker-body">
+      <view class="report-item" wx:for="{{reportReasons}}" wx:key="value" bindtap="onReport" data-value="{{item.value}}">
+        <text class="report-label">{{item.label}}</text>
+        <text class="report-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+</view>
+
+<view class="page empty-page {{darkMode ? 'dark' : ''}}" wx:else>
+  <text class="empty-text">帖子不存在或已删除</text>
+</view>

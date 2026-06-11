@@ -35,7 +35,13 @@ const STORAGE_KEYS = {
   CANTEEN_REVIEWS: 'canteenReviews',
   DISH_REVIEWS: 'dishReviews',
   FAVORITE_CANTEENS: 'favoriteCanteens',
-  FAVORITE_DISHES: 'favoriteDishes'
+  FAVORITE_DISHES: 'favoriteDishes',
+  FORUM_POST_LIST: 'forumPostList',
+  FORUM_COMMENTS: 'forumComments',
+  FORUM_LIKES: 'forumLikes',
+  FORUM_REPORTS: 'forumReports',
+  FORUM_BANNED_USERS: 'forumBannedUsers',
+  FORUM_TOPIC_STATS: 'forumTopicStats'
 };
 
 /**

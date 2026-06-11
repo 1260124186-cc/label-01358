@@ -53,7 +53,11 @@
     "pages/carpool-detail/index",
     "pages/canteen/index",
     "pages/canteen/detail",
-    "pages/canteen/dish-detail"
+    "pages/canteen/dish-detail",
+    "pages/forum/index/index",
+    "pages/forum/publish/index",
+    "pages/forum/detail/index",
+    "pages/forum/topics/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

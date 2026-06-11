@@ -423,6 +423,56 @@ const RENTAL_SORT_OPTIONS = [
   { value: 'views', label: '浏览量', field: 'views', order: 'desc' }
 ];
 
+const FORUM_POST_TYPES = [
+  { value: 'qa', label: '问答', icon: '❓', color: '#3B82F6' },
+  { value: 'rant', label: '吐槽', icon: '😤', color: '#EF4444' },
+  { value: 'experience', label: '经验分享', icon: '💡', color: '#F59E0B' },
+  { value: 'lost_help', label: '失物求助', icon: '🔍', color: '#8B5CF6' },
+  { value: 'trade', label: '交易讨论', icon: '💰', color: '#10B981' }
+];
+
+const FORUM_FEED_TABS = [
+  { value: 'recommend', label: '推荐' },
+  { value: 'latest', label: '最新' },
+  { value: 'hot', label: '热门' }
+];
+
+const FORUM_TOPIC_LIST = [
+  { value: 'postgraduate', label: '考研', icon: '🎓', postCount: 0, color: '#FF6B6B' },
+  { value: 'course_selection', label: '选课', icon: '📚', postCount: 0, color: '#4ECDC4' },
+  { value: 'canteen', label: '食堂', icon: '🍜', postCount: 0, color: '#F59E0B' },
+  { value: 'dorm', label: '宿舍', icon: '🏠', postCount: 0, color: '#8B5CF6' },
+  { value: 'job', label: '求职', icon: '💼', postCount: 0, color: '#3B82F6' },
+  { value: 'love', label: '恋爱', icon: '💕', postCount: 0, color: '#EC4899' },
+  { value: 'exam', label: '考试', icon: '📝', postCount: 0, color: '#EF4444' },
+  { value: 'club', label: '社团', icon: '🎭', postCount: 0, color: '#14B8A6' },
+  { value: 'sports', label: '运动', icon: '🏃', postCount: 0, color: '#22C55E' },
+  { value: 'game', label: '游戏', icon: '🎮', postCount: 0, color: '#6366F1' },
+  { value: 'travel', label: '出行', icon: '✈️', postCount: 0, color: '#0EA5E9' },
+  { value: 'emotion', label: '心情', icon: '🌈', postCount: 0, color: '#F472B6' }
+];
+
+const FORUM_REPORT_REASONS = [
+  { value: 'spam', label: '垃圾广告' },
+  { value: 'abuse', label: '辱骂攻击' },
+  { value: 'porn', label: '色情低俗' },
+  { value: 'fraud', label: '欺诈信息' },
+  { value: 'privacy', label: '隐私泄露' },
+  { value: 'other', label: '其他原因' }
+];
+
+const SENSITIVE_WORDS = [
+  '违禁品', '代考', '替考', '作弊器', '假证',
+  '刷单', '传销', '赌博', '高利贷',
+  '约炮', '裸聊'
+];
+
+const FORUM_SORT_OPTIONS = [
+  { value: 'recommend', label: '推荐', field: 'hotScore', order: 'desc' },
+  { value: 'latest', label: '最新', field: 'createTime', order: 'desc' },
+  { value: 'hot', label: '热门', field: 'hotScore', order: 'desc' }
+];
+
 function getLabelByValue(list, value) {
   const item = list.find(i => i.value === value);
   return item ? item.label : value;
@@ -483,5 +533,11 @@ module.exports = {
   CANTEEN_TIME_SEGMENTS,
   DISH_TAGS,
   DISH_TAG_MAP,
+  FORUM_POST_TYPES,
+  FORUM_FEED_TABS,
+  FORUM_TOPIC_LIST,
+  FORUM_REPORT_REASONS,
+  SENSITIVE_WORDS,
+  FORUM_SORT_OPTIONS,
   getLabelByValue
 };
