@@ -1,7 +1,7 @@
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
 <view class="page {{darkMode ? 'dark' : ''}}">
   <view class="feed-tabs">
-    <view class="feed-tab {{currentTab === tab.value ? 'active' : ''}}" wx:for="{{feedTabs}}" wx:key="value" bindtap="onTabChange" data-tab="{{tab.value}}">{{tab.label}}</view>
+    <view class="feed-tab {{currentTab === tab.value ? 'active' : ''}}" wx:for="{{feedTabs}}" wx:for-item="tab" wx:key="value" bindtap="onTabChange" data-tab="{{tab.value}}">{{tab.label}}</view>
   </view>
 
   <scroll-view class="type-filter" scroll-x="{{true}}">

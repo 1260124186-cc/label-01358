@@ -9,7 +9,7 @@
   background-color: var(--color-bg-card);
   padding: 12rpx 16rpx;
   border-bottom: 1rpx solid var(--color-border-light);
-  position: sticky;
+  position: relative;
   top: 0;
   z-index: 100;
 }
