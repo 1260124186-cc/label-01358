@@ -1,0 +1,257 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header-section">
+    <view class="header-bg"></view>
+    <view class="header-content">
+      <view class="header-title">
+        <text class="header-icon">🤖</text>
+        <text class="header-text">智能匹配中心</text>
+      </view>
+      <view class="header-desc">AI自动匹配失物与招领信息，帮您快速找回物品</view>
+    </view>
+  </view>
+
+  <view class="stats-section" wx:if="{{statistics}}">
+    <view class="stats-card">
+      <view class="stat-item">
+        <text class="stat-value">{{statistics.lostCount}}</text>
+        <text class="stat-label">寻物启事</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item">
+        <text class="stat-value">{{statistics.foundCount}}</text>
+        <text class="stat-label">失物招领</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item highlight">
+        <text class="stat-value">{{total}}</text>
+        <text class="stat-label">匹配对</text>
+      </view>
+    </view>
+    
+    <view class="level-stats">
+      <view class="level-stat excellent">
+        <text class="level-icon">🔥</text>
+        <text class="level-count">{{statistics.excellent}}</text>
+        <text class="level-label">极高度</text>
+      </view>
+      <view class="level-stat high">
+        <text class="level-icon">⭐</text>
+        <text class="level-count">{{statistics.high}}</text>
+        <text class="level-label">高度</text>
+      </view>
+      <view class="level-stat medium">
+        <text class="level-icon">🔍</text>
+        <text class="level-count">{{statistics.medium}}</text>
+        <text class="level-label">中度</text>
+      </view>
+      <view class="level-stat low">
+        <text class="level-icon">📌</text>
+        <text class="level-count">{{statistics.low}}</text>
+        <text class="level-label">低度</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="filter-section">
+    <scroll-view class="tab-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+      <view class="tabs">
+        <view 
+          class="tab {{activeTab === 'all' ? 'active' : ''}}"
+          bindtap="onTabChange"
+          data-tab="all"
+        >
+          全部 ({{allMatches.length}})
+        </view>
+        <view 
+          class="tab {{activeTab === 'excellent' ? 'active' : ''}}"
+          bindtap="onTabChange"
+          data-tab="excellent"
+        >
+          🔥 极高度 ({{excellentMatches.length}})
+        </view>
+        <view 
+          class="tab {{activeTab === 'high' ? 'active' : ''}}"
+          bindtap="onTabChange"
+          data-tab="high"
+        >
+          ⭐ 高度 ({{highMatches.length}})
+        </view>
+        <view 
+          class="tab {{activeTab === 'medium' ? 'active' : ''}}"
+          bindtap="onTabChange"
+          data-tab="medium"
+        >
+          🔍 中度 ({{mediumMatches.length}})
+        </view>
+        <view 
+          class="tab {{activeTab === 'low' ? 'active' : ''}}"
+          bindtap="onTabChange"
+          data-tab="low"
+        >
+          📌 低度 ({{lowMatches.length}})
+        </view>
+      </view>
+    </scroll-view>
+    
+    <view class="filter-actions">
+      <view class="sort-btn" bindtap="onToggleFilter">
+        <text class="sort-icon">⚙️</text>
+        <text>筛选</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="filter-panel" wx:if="{{showFilter}}">
+    <view class="filter-title">最低匹配度</view>
+    <view class="score-options">
+      <view 
+        class="score-option {{minScore === 0 ? 'active' : ''}}"
+        bindtap="onFilterScore"
+        data-score="0"
+      >全部</view>
+      <view 
+        class="score-option {{minScore === 30 ? 'active' : ''}}"
+        bindtap="onFilterScore"
+        data-score="30"
+      >30分以上</view>
+      <view 
+        class="score-option {{minScore === 50 ? 'active' : ''}}"
+        bindtap="onFilterScore"
+        data-score="50"
+      >50分以上</view>
+      <view 
+        class="score-option {{minScore === 70 ? 'active' : ''}}"
+        bindtap="onFilterScore"
+        data-score="70"
+      >70分以上</view>
+    </view>
+  </view>
+
+  <scroll-view 
+    class="match-list"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{loading}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="matches-container" wx:if="{{!loading && currentMatches.length > 0}}">
+      <view 
+        class="match-card"
+        wx:for="{{currentMatches}}"
+        wx:key="lostItemId"
+        data-match="{{item}}"
+        bindtap="onViewMatchDetail"
+      >
+        <view class="match-header">
+          <view class="match-level" style="background: {{item.levelInfo.bgColor}}; color: {{item.levelInfo.color}};">
+            <text class="level-icon">{{item.levelInfo.icon}}</text>
+            <text>{{item.levelInfo.label}}</text>
+          </view>
+          <view class="match-score">
+            <text class="score-value">{{item.score}}</text>
+            <text class="score-label">匹配分</text>
+          </view>
+        </view>
+
+        <view class="match-items">
+          <view class="match-item lost" catchtap="onViewLostItem" data-id="{{item.lostItem.id}}">
+            <view class="item-type-badge lost">寻物</view>
+            <image 
+              class="item-image" 
+              src="{{item.lostItem.images[0] || '/assets/images/empty.png'}}" 
+              mode="aspectFill"
+            />
+            <view class="item-info">
+              <text class="item-title">{{item.lostItem.title}}</text>
+              <text class="item-desc">{{item.lostItem.description}}</text>
+              <view class="item-meta">
+                <text class="meta-tag">{{item.lostItem.itemTypeText}}</text>
+                <text class="meta-tag">{{item.lostItem.locationText}}</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="match-vs">
+            <text class="vs-text">VS</text>
+            <text class="vs-icon">⚡</text>
+          </view>
+
+          <view class="match-item found" catchtap="onViewFoundItem" data-id="{{item.foundItem.id}}">
+            <view class="item-type-badge found">招领</view>
+            <image 
+              class="item-image" 
+              src="{{item.foundItem.images[0] || '/assets/images/empty.png'}}" 
+              mode="aspectFill"
+            />
+            <view class="item-info">
+              <text class="item-title">{{item.foundItem.title}}</text>
+              <text class="item-desc">{{item.foundItem.description}}</text>
+              <view class="item-meta">
+                <text class="meta-tag">{{item.foundItem.itemTypeText}}</text>
+                <text class="meta-tag">{{item.foundItem.locationText}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="match-tags" wx:if="{{item.details.colors.details && item.details.colors.details.matchedColors && item.details.colors.details.matchedColors.length > 0}}">
+          <text class="match-tag-label">匹配特征：</text>
+          <text 
+            class="match-tag color"
+            wx:for="{{item.details.colors.details.matchedColors}}"
+            wx:for-item="color"
+            wx:key="value"
+          >{{color.label}}</text>
+          <text 
+            class="match-tag brand"
+            wx:for="{{item.details.brands.details.matchedBrands}}"
+            wx:for-item="brand"
+            wx:key="value"
+          >{{brand.label}}</text>
+        </view>
+
+        <view class="match-actions">
+          <view class="action-btn compare" catchtap="onCompareItems" data-lost-id="{{item.lostItem.id}}" data-found-id="{{item.foundItem.id}}">
+            <text class="action-icon">📊</text>
+            <text>一键对比</text>
+          </view>
+          <view class="action-btn contact-lost" catchtap="onContactLostOwner" data-match="{{item}}">
+            <text class="action-icon">📞</text>
+            <text>联系失主</text>
+          </view>
+          <view class="action-btn contact-found" catchtap="onContactFoundOwner" data-match="{{item}}">
+            <text class="action-icon">📞</text>
+            <text>联系拾主</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{!loading && currentMatches.length === 0}}">
+      <text class="empty-icon">🔍</text>
+      <text class="empty-title">暂无匹配结果</text>
+      <text class="empty-desc">{{activeTab === 'all' ? '还没有找到匹配的失物与招领信息' : '该等级暂无匹配结果'}}</text>
+      <view class="empty-actions">
+        <btn type="primary" size="medium" bind:click="goToPublish">
+          发布信息
+        </btn>
+        <btn type="default" size="medium" bind:click="goToLostFound">
+          查看列表
+        </btn>
+      </view>
+    </view>
+
+    <view class="loading-state" wx:if="{{loading}}">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">AI正在匹配中...</text>
+    </view>
+  </scroll-view>
+
+  <view class="quick-actions">
+    <view class="quick-btn publish" bindtap="goToPublish">
+      <text class="quick-icon">+</text>
+      <text class="quick-text">发布</text>
+    </view>
+  </view>
+</view>

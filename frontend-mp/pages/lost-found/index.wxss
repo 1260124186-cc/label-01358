@@ -75,8 +75,145 @@
   height: calc(100vh - 100rpx);
 }
 
+/* ==================== 智能匹配入口 ==================== */
+.smart-match-entry {
+  margin: 20rpx;
+  padding: 24rpx;
+  background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #A78BFA 100%);
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 8rpx 24rpx rgba(99, 102, 241, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.smart-match-entry:active {
+  transform: scale(0.98);
+}
+
+.entry-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.entry-icon {
+  width: 80rpx;
+  height: 80rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  margin-right: 20rpx;
+}
+
+.entry-info {
+  flex: 1;
+}
+
+.entry-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin-bottom: 6rpx;
+}
+
+.entry-desc {
+  display: block;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.entry-right {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.entry-stats {
+  display: flex;
+  align-items: center;
+}
+
+.stat-badge {
+  padding: 6rpx 16rpx;
+  border-radius: 16rpx;
+  font-size: 22rpx;
+  font-weight: 600;
+}
+
+.stat-badge.excellent {
+  background: rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+}
+
+.stat-badge.high {
+  background: rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+}
+
+.entry-arrow {
+  font-size: 40rpx;
+  color: rgba(255, 255, 255, 0.8);
+  margin-left: 8rpx;
+}
+
+/* ==================== 匹配徽章 ==================== */
+.match-badge {
+  display: flex;
+  align-items: center;
+  padding: 6rpx 14rpx;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+  border-radius: 12rpx;
+  margin-right: auto;
+  margin-left: 16rpx;
+}
+
+.match-icon {
+  font-size: 20rpx;
+  margin-right: 6rpx;
+}
+
+.match-count {
+  font-size: 20rpx;
+  color: #6366F1;
+  font-weight: 600;
+}
+
+/* ==================== 匹配推荐 ==================== */
+.match-recommend {
+  margin-top: 12rpx;
+  padding: 12rpx 16rpx;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(139, 92, 246, 0.08) 100%);
+  border-radius: 12rpx;
+  border-left: 4rpx solid #6366F1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.recommend-label {
+  font-size: 22rpx;
+  color: #6366F1;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.recommend-text {
+  font-size: 22rpx;
+  color: var(--color-text-secondary);
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .list-container {
-  padding: 20rpx;
+  padding: 0 20rpx 20rpx;
 }
 
 /* ==================== 卡片样式 ==================== */

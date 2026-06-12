@@ -103,6 +103,63 @@
     </view>
   </view>
 
+  <!-- 智能匹配推荐 -->
+  <view class="match-section" wx:if="{{hasRelatedMatches}}">
+    <view class="section-header">
+      <view class="section-title">
+        <text class="title-icon">🤖</text>
+        AI智能匹配推荐
+      </view>
+      <view class="section-action" bindtap="goToMatchCenter">
+        <text class="action-text">查看全部</text>
+        <text class="action-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="match-list">
+      <view
+        class="match-item"
+        wx:for="{{relatedMatches}}"
+        wx:key="item.id"
+        hover-class="match-item-hover"
+      >
+        <view class="match-main" bindtap="onMatchItemTap" data-item="{{item.item}}">
+          <image
+            wx:if="{{item.item.images && item.item.images.length > 0}}"
+            class="match-image"
+            src="{{item.item.images[0]}}"
+            mode="aspectFill"
+          />
+          <view class="match-info">
+            <view class="match-header">
+              <view class="match-type {{item.item.type === 'lost' ? 'type-lost' : 'type-found'}}">
+                {{item.item.type === 'lost' ? '寻物' : '招领'}}
+              </view>
+              <view class="match-score-badge" style="background: {{item.levelInfo.bgColor}}; color: {{item.levelInfo.color}};">
+                {{item.score}}分 · {{item.levelInfo.label}}
+              </view>
+            </view>
+            <text class="match-title">{{item.item.title}}</text>
+            <view class="match-meta">
+              <text class="meta-item">📍 {{item.item.locationText}}</text>
+              <text class="meta-item">🕐 {{item.item.timeText}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="match-actions">
+          <view
+            class="compare-btn"
+            catchtap="onCompare"
+            data-match="{{item}}"
+          >
+            <text class="compare-icon">📊</text>
+            <text class="compare-text">一键对比</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
   <!-- 联系方式 -->
   <view class="contact-section">
     <view class="section-title">联系方式</view>
@@ -119,69 +176,6 @@
     <view class="closed-tip" wx:if="{{detail.isClosed}}">
       <text class="closed-icon">✅</text>
       <text class="closed-text">此信息已{{statusInfo.label}}，暂不支持联系</text>
-    </view>
-  </view>
-
-  <!-- 评论区 -->
-  <view class="comment-section">
-    <view class="section-title">
-      评论
-      <text class="comment-count" wx:if="{{comments.length > 0}}">({{comments.length}})</text>
-    </view>
-
-    <!-- 评论输入框 -->
-    <view class="comment-input-wrap">
-      <input
-        class="comment-input"
-        placeholder="{{detail.isClosed ? '此信息已关闭，无法评论' : '说点什么...'}}"
-        value="{{commentInput}}"
-        bindinput="onCommentInput"
-        confirm-type="send"
-        bindconfirm="onSubmitComment"
-        disabled="{{detail.isClosed}}"
-        maxlength="500"
-      />
-      <view
-        class="comment-submit {{commentInput && !detail.isClosed ? 'active' : ''}}"
-        bindtap="onSubmitComment"
-      >
-        发送
-      </view>
-    </view>
-
-    <!-- 评论列表 -->
-    <view class="comment-list" wx:if="{{comments.length > 0}}">
-      <view
-        class="comment-item"
-        wx:for="{{comments}}"
-        wx:key="id"
-      >
-        <image
-          class="comment-avatar"
-          src="{{item.userAvatar || '/assets/images/default-avatar.png'}}"
-          mode="aspectFill"
-        />
-        <view class="comment-content">
-          <view class="comment-header">
-            <text class="comment-name">{{item.userName}}</text>
-            <text class="comment-time">{{item.timeText}}</text>
-          </view>
-          <text class="comment-text">{{item.content}}</text>
-        </view>
-        <view
-          class="comment-delete"
-          wx:if="{{item.canDelete}}"
-          bindtap="onDeleteComment"
-          data-comment-id="{{item.id}}"
-        >
-          删除
-        </view>
-      </view>
-    </view>
-
-    <!-- 空状态 -->
-    <view class="comment-empty" wx:else>
-      <text class="comment-empty-text">暂无评论，快来抢沙发～</text>
     </view>
   </view>
 

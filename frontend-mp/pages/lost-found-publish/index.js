@@ -2,6 +2,7 @@ const dataService = require('../../services/data');
 const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
+const aiService = require('../../services/aiImageRecognition');
 const { mixPage } = require('../../utils/withTheme');
 
 mixPage({
@@ -32,7 +33,17 @@ mixPage({
     submitting: false,
     showPOIPicker: false,
     poiList: [],
-    poiSearchKeyword: ''
+    poiSearchKeyword: '',
+    enableAIRecognition: true,
+    aiRecognizing: false,
+    aiRecognitionResult: null,
+    aiTags: {
+      colors: [],
+      brands: [],
+      category: null
+    },
+    showAIPanel: false,
+    aiRecognitionProgress: 0
   },
 
   onShow() {
@@ -94,6 +105,7 @@ mixPage({
         contact: item.contact || '',
         phone: item.phone || ''
       },
+      aiTags: item.aiTags || { colors: [], brands: [], category: null },
       itemTypeIndex,
       locationIndex,
       itemTypeText,
@@ -218,13 +230,149 @@ mixPage({
       const tempFiles = await fileUtil.chooseImage(3 - this.data.formData.images.length);
       if (tempFiles.length > 0) {
         const images = [...this.data.formData.images, ...tempFiles];
+        const newImages = images.slice(0, 3);
         this.setData({
-          'formData.images': images.slice(0, 3)
+          'formData.images': newImages
         });
+
+        if (this.data.enableAIRecognition && newImages.length > 0) {
+          this.startAIRecognition(newImages);
+        }
       }
     } catch (e) {
       util.showError('选择图片失败');
     }
+  },
+
+  onToggleAIRecognition() {
+    this.setData({
+      enableAIRecognition: !this.data.enableAIRecognition
+    });
+
+    if (this.data.enableAIRecognition && this.data.formData.images.length > 0 && !this.data.aiTags.colors.length) {
+      this.startAIRecognition(this.data.formData.images);
+    }
+  },
+
+  onToggleAIPanel() {
+    this.setData({
+      showAIPanel: !this.data.showAIPanel
+    });
+  },
+
+  async startAIRecognition(images) {
+    if (!images || images.length === 0) {
+      util.showToast('请先上传图片');
+      return;
+    }
+
+    this.setData({
+      aiRecognizing: true,
+      aiRecognitionProgress: 0,
+      aiRecognitionResult: null
+    });
+
+    try {
+      const progressInterval = setInterval(() => {
+        this.setData({
+          aiRecognitionProgress: Math.min(90, this.data.aiRecognitionProgress + 10)
+        });
+      }, 200);
+
+      const result = await aiService.recognizeMultipleImages(images, this.data.formData);
+
+      clearInterval(progressInterval);
+      this.setData({
+        aiRecognitionProgress: 100
+      });
+
+      if (result.success) {
+        const newTags = {
+          colors: result.tags.colors || [],
+          brands: result.tags.brands || [],
+          category: result.tags.category || null
+        };
+
+        let updates = {
+          aiRecognizing: false,
+          aiRecognitionResult: result,
+          aiTags: newTags,
+          showAIPanel: true
+        };
+
+        if (newTags.category && !this.data.formData.itemType) {
+          const itemTypeIndex = this.data.itemTypes.findIndex(t => t.value === newTags.category.value);
+          if (itemTypeIndex > -1) {
+            updates['formData.itemType'] = newTags.category.value;
+            updates.itemTypeIndex = itemTypeIndex;
+            updates.itemTypeText = newTags.category.label;
+          }
+        }
+
+        this.setData(updates);
+        util.showSuccess('AI识别完成');
+      } else {
+        this.setData({
+          aiRecognizing: false
+        });
+        util.showError(result.message || 'AI识别失败');
+      }
+    } catch (e) {
+      this.setData({
+        aiRecognizing: false
+      });
+      util.showError('AI识别失败，请重试');
+    }
+  },
+
+  onReRecognize() {
+    if (this.data.formData.images.length > 0) {
+      this.startAIRecognition(this.data.formData.images);
+    }
+  },
+
+  onApplyTag(e) {
+    const { type, value, label } = e.currentTarget.dataset;
+
+    if (type === 'category' && value) {
+      const itemTypeIndex = this.data.itemTypes.findIndex(t => t.value === value);
+      if (itemTypeIndex > -1) {
+        this.setData({
+          'formData.itemType': value,
+          itemTypeIndex,
+          itemTypeText: label
+        });
+        util.showToast(`已应用物品类型：${label}`);
+      }
+    } else if (type === 'color' || type === 'brand') {
+      const currentDesc = this.data.formData.description || '';
+      const tagText = label;
+      if (!currentDesc.includes(tagText)) {
+        const newDesc = currentDesc ? `${currentDesc} ${tagText}` : tagText;
+        this.setData({
+          'formData.description': newDesc
+        });
+        util.showToast(`已添加到描述：${label}`);
+      } else {
+        util.showToast('标签已在描述中');
+      }
+    }
+  },
+
+  onClearAITags() {
+    wx.showModal({
+      title: '确认清除',
+      content: '确定要清除所有AI识别标签吗？',
+      success: (res) => {
+        if (res.confirm) {
+          this.setData({
+            aiTags: { colors: [], brands: [], category: null },
+            aiRecognitionResult: null
+          });
+          util.showToast('已清除标签');
+        }
+      }
+    });
   },
 
   onDeleteImage(e) {
@@ -234,6 +382,15 @@ mixPage({
     this.setData({
       'formData.images': images
     });
+
+    if (images.length > 0 && this.data.enableAIRecognition) {
+      this.startAIRecognition(images);
+    } else if (images.length === 0) {
+      this.setData({
+        aiTags: { colors: [], brands: [], category: null },
+        aiRecognitionResult: null
+      });
+    }
   },
 
   validateForm() {
@@ -307,7 +464,8 @@ mixPage({
 
       const data = {
         ...this.data.formData,
-        images: savedImages
+        images: savedImages,
+        aiTags: this.data.aiTags
       };
 
       let result;

@@ -40,6 +40,25 @@
       loading="{{true}}"
     />
 
+    <view class="smart-match-entry" wx:if="{{!showSkeleton && smartMatchStats}}" bindtap="goToMatchCenter">
+      <view class="entry-left">
+        <view class="entry-icon">🤖</view>
+        <view class="entry-info">
+          <text class="entry-title">AI智能匹配中心</text>
+          <text class="entry-desc">已为您找到 {{smartMatchStats.total}} 个潜在匹配</text>
+        </view>
+      </view>
+      <view class="entry-right">
+        <view class="entry-stats" wx:if="{{smartMatchStats.excellent > 0}}">
+          <text class="stat-badge excellent">🔥 {{smartMatchStats.excellent}}</text>
+        </view>
+        <view class="entry-stats" wx:if="{{smartMatchStats.high > 0}}">
+          <text class="stat-badge high">⭐ {{smartMatchStats.high}}</text>
+        </view>
+        <text class="entry-arrow">›</text>
+      </view>
+    </view>
+
     <view class="list-container" wx:if="{{!showSkeleton && list.length > 0}}">
       <view
         class="item-card"
@@ -53,6 +72,10 @@
           <view class="item-type {{item.type === 'lost' ? 'type-lost' : 'type-found'}}">
             {{item.type === 'lost' ? '寻物' : '招领'}}
           </view>
+          <view class="match-badge" wx:if="{{item.matchCount > 0}}">
+            <text class="match-icon">🔗</text>
+            <text class="match-count">{{item.matchCount}}个匹配</text>
+          </view>
           <text class="item-time">{{item.timeText}}</text>
         </view>
         <view class="item-body">
@@ -62,6 +85,10 @@
             <view class="item-tags">
               <text class="item-tag">{{item.itemTypeText}}</text>
               <text class="item-tag">{{item.locationText}}</text>
+            </view>
+            <view class="match-recommend" wx:if="{{item.topMatch && item.matchCount > 0}}">
+              <text class="recommend-label">💡 智能推荐：</text>
+              <text class="recommend-text">发现{{item.type === 'lost' ? '招领' : '寻物'}}「{{item.topMatch.item.title}}」匹配度 {{item.topMatch.score}}分</text>
             </view>
           </view>
           <image

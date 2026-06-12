@@ -1,9 +1,19 @@
 const dataService = require('../../services/data');
-const userService = require('../../services/userService');
+const matcherService = require('../../services/lostFoundMatcher');
 const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
 const { mixPage } = require('../../utils/withTheme');
+
+function getMatchLevelInfo(level) {
+  const levels = {
+    excellent: { label: '极高度匹配', color: '#10B981', bgColor: 'rgba(16, 185, 129, 0.1)' },
+    high: { label: '高度匹配', color: '#F59E0B', bgColor: 'rgba(245, 158, 11, 0.1)' },
+    medium: { label: '中度匹配', color: '#6366F1', bgColor: 'rgba(99, 102, 241, 0.1)' },
+    low: { label: '低度匹配', color: '#9CA3AF', bgColor: 'rgba(156, 163, 175, 0.1)' }
+  };
+  return levels[level] || levels.low;
+}
 
 mixPage({
   data: {
@@ -15,10 +25,8 @@ mixPage({
     isPublisher: false,
     statusInfo: null,
     maskedPhone: '',
-    comments: [],
-    commentInput: '',
-    isAdmin: false,
-    currentUserId: ''
+    relatedMatches: [],
+    hasRelatedMatches: false
   },
 
   onLoad(options) {
@@ -32,8 +40,6 @@ mixPage({
     if (this.data.id) {
       this.checkFavorite();
       this.checkIsPublisher();
-      this.loadUserInfo();
-      this.loadComments();
     }
   },
 
@@ -72,11 +78,44 @@ mixPage({
       // 加载关联的 POI 信息
       this.loadLocationPOI(detail);
 
+      // 加载相关匹配推荐
+      this.loadRelatedMatches(detail);
+
       // 添加到浏览历史
       dataService.addHistory(detail, 'lostFound');
 
       // 检查收藏状态
       this.checkFavorite();
+    }
+  },
+
+  loadRelatedMatches(item) {
+    try {
+      const result = matcherService.findMatchesForItem(item, {
+        minScore: 40,
+        limit: 5
+      });
+
+      const formattedMatches = result.matches.map(match => {
+        const levelInfo = getMatchLevelInfo(match.matchLevel);
+        return {
+          ...match,
+          levelInfo,
+          item: {
+            ...match.item,
+            timeText: util.relativeTime(match.item.createTime),
+            itemTypeText: constants.getLabelByValue(constants.ITEM_TYPES, match.item.itemType),
+            locationText: constants.getLabelByValue(constants.LOCATIONS, match.item.location)
+          }
+        };
+      });
+
+      this.setData({
+        relatedMatches: formattedMatches,
+        hasRelatedMatches: formattedMatches.length > 0
+      });
+    } catch (e) {
+      // ignore
     }
   },
 
@@ -235,128 +274,22 @@ mixPage({
     });
   },
 
-  loadUserInfo() {
-    const app = getApp();
-    const userInfo = app.globalData.userInfo || {};
-    const currentUserId = userInfo.id || '';
-    const isAdmin = userService.isCurrentUserAdmin();
-    this.setData({ currentUserId, isAdmin });
+  onMatchItemTap(e) {
+    const { item } = e.currentTarget.dataset;
+    this.goToDetail(`/pages/lost-found-detail/index?id=${item.id}`);
   },
 
-  loadComments() {
-    const { id } = this.data;
-    if (!id) return;
-
-    const comments = dataService.getLostFoundComments(id);
-    const formattedComments = comments.map(comment => ({
-      ...comment,
-      timeText: util.relativeTime(comment.createTime),
-      canDelete: this.canDeleteComment(comment)
-    }));
-
-    this.setData({ comments: formattedComments });
-  },
-
-  canDeleteComment(comment) {
-    const { currentUserId, isPublisher, isAdmin } = this.data;
-    if (!currentUserId) return false;
-    if (comment.userId === currentUserId) return true;
-    if (isPublisher) return true;
-    if (isAdmin) return true;
-    return false;
-  },
-
-  onCommentInput(e) {
-    this.setData({ commentInput: e.detail.value });
-  },
-
-  onSubmitComment() {
-    if (!util.checkLogin()) {
-      return;
-    }
-
-    const { id, commentInput, detail } = this.data;
-
-    if (detail && detail.isClosed) {
-      util.showToast('此信息已关闭，无法评论');
-      return;
-    }
-
-    if (!commentInput || !commentInput.trim()) {
-      util.showToast('请输入评论内容');
-      return;
-    }
-
-    const result = dataService.addLostFoundComment(id, commentInput.trim());
-
-    if (result.success) {
-      this.setData({ commentInput: '' });
-      this.loadComments();
-      util.showSuccess('评论成功');
-    } else {
-      util.showError(result.message || '评论失败');
-    }
-  },
-
-  onDeleteComment(e) {
-    const { commentId } = e.currentTarget.dataset;
-    const { id, comments } = this.data;
-
-    const comment = comments.find(c => c.id === commentId);
-    if (!comment) return;
-
-    if (!this.canDeleteComment(comment)) {
-      util.showError('您没有权限删除此评论');
-      return;
-    }
-
-    wx.showModal({
-      title: '删除评论',
-      content: '确定要删除这条评论吗？',
-      confirmColor: '#EF4444',
-      success: (res) => {
-        if (res.confirm) {
-          const success = dataService.deleteLostFoundComment(id, commentId);
-          if (success) {
-            this.loadComments();
-            util.showSuccess('已删除');
-          } else {
-            util.showError('删除失败');
-          }
-        }
-      }
-    });
-  },
-
-  onShareAppMessage() {
+  onCompare(e) {
+    const { match } = e.currentTarget.dataset;
     const { detail } = this.data;
-    if (detail) {
-      const typeText = detail.type === 'lost' ? '寻物启事' : '失物招领';
-      const imageUrl = detail.images && detail.images[0] ? detail.images[0] : '';
-      return {
-        title: `【${typeText}】${detail.title}`,
-        path: `/pages/lost-found-detail/index?id=${detail.id}`,
-        imageUrl
-      };
-    }
-    return {
-      title: '失物招领 - 校园失物信息平台',
-      path: '/pages/lost-found/index'
-    };
+
+    const lostId = detail.type === 'lost' ? detail.id : match.item.id;
+    const foundId = detail.type === 'found' ? detail.id : match.item.id;
+
+    util.navigateTo(`/pages/lost-found-compare/index?lostId=${lostId}&foundId=${foundId}`);
   },
 
-  onShareTimeline() {
-    const { detail } = this.data;
-    if (detail) {
-      const typeText = detail.type === 'lost' ? '寻物启事' : '失物招领';
-      const imageUrl = detail.images && detail.images[0] ? detail.images[0] : '';
-      return {
-        title: `【${typeText}】${detail.title}`,
-        imageUrl
-      };
-    }
-    return {
-      title: '失物招领 - 校园失物信息平台'
-    };
+  goToMatchCenter() {
+    util.navigateTo('/pages/lost-found-match/index');
   }
 });

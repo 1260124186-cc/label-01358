@@ -1114,7 +1114,31 @@ const MOCK_LOST_FOUND = [
     userAvatar: '',
     images: ['https://picsum.photos/seed/wallet/600/600'],
     reward: '500元酬金',
-    status: 'active'
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'black', label: '黑色', confidence: 0.95 }],
+      brands: [],
+      category: { value: 'wallet', label: '钱包', confidence: 0.88 }
+    }
+  },
+  {
+    type: 'found',
+    title: '捡到黑色钱包',
+    description: '在图书馆二楼卫生间门口捡到一个黑色钱包，内有证件和现金若干。请失主携带有效证件前来认领。',
+    itemType: 'card',
+    location: 'library',
+    date: '2026-06-10',
+    contact: '刘同学',
+    phone: '13800138010',
+    userName: '拾金不昧小刘',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/wallet2/600/600'],
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'black', label: '黑色', confidence: 0.92 }],
+      brands: [],
+      category: { value: 'wallet', label: '钱包', confidence: 0.85 }
+    }
   },
   {
     type: 'found',
@@ -1128,7 +1152,12 @@ const MOCK_LOST_FOUND = [
     userName: '热心小王',
     userAvatar: '',
     images: ['https://picsum.photos/seed/keys/600/600'],
-    status: 'claimed'
+    status: 'claimed',
+    aiTags: {
+      colors: [{ value: 'silver', label: '银色', confidence: 0.8 }],
+      brands: [],
+      category: { value: 'keys', label: '钥匙', confidence: 0.9 }
+    }
   },
   {
     type: 'lost',
@@ -1143,7 +1172,304 @@ const MOCK_LOST_FOUND = [
     userAvatar: '',
     images: ['https://picsum.photos/seed/laptop/600/600'],
     reward: '1000元酬金',
-    status: 'returned'
+    status: 'returned',
+    aiTags: {
+      colors: [{ value: 'silver', label: '银色', confidence: 0.9 }, { value: 'blue', label: '蓝色', confidence: 0.6 }],
+      brands: [{ value: 'apple', label: 'Apple', confidence: 0.95 }],
+      category: { value: 'laptop', label: '笔记本电脑', confidence: 0.92 }
+    }
+  },
+  {
+    type: 'found',
+    title: '捡到一台银色苹果笔记本电脑',
+    description: '在教学楼B栋自习室捡到一台银色MacBook Pro，电脑外壳有轻微划痕。请失主描述电脑特征后认领。',
+    itemType: 'electronics',
+    location: 'classroom',
+    date: '2026-06-08',
+    contact: '赵同学',
+    phone: '13800138011',
+    userName: '好学小赵',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/laptop2/600/600'],
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'silver', label: '银色', confidence: 0.88 }],
+      brands: [{ value: 'apple', label: 'Apple', confidence: 0.92 }],
+      category: { value: 'laptop', label: '笔记本电脑', confidence: 0.9 }
+    }
+  },
+  {
+    type: 'lost',
+    title: '丢失黑色iPhone手机',
+    description: '在操场跑步时丢失黑色iPhone 14 Pro一部，手机壳是蓝色的。手机内有重要照片和资料，求好心人归还，必有重谢！',
+    itemType: 'electronics',
+    location: 'playground',
+    date: '2026-06-11',
+    contact: '陈同学',
+    phone: '13800138004',
+    userName: '丢手机的小陈',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/iphone/600/600'],
+    reward: '800元酬金',
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'black', label: '黑色', confidence: 0.95 }, { value: 'blue', label: '蓝色', confidence: 0.7 }],
+      brands: [{ value: 'apple', label: 'Apple', confidence: 0.9 }],
+      category: { value: 'phone', label: '手机', confidence: 0.93 }
+    }
+  },
+  {
+    type: 'found',
+    title: '捡到一部黑色手机',
+    description: '在操场看台上捡到一部黑色手机，好像是iPhone。手机已经没电了，充好电后等待失主联系。',
+    itemType: 'electronics',
+    location: 'playground',
+    date: '2026-06-11',
+    contact: '孙同学',
+    phone: '13800138012',
+    userName: '运动达人小孙',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/phone2/600/600'],
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'black', label: '黑色', confidence: 0.88 }],
+      brands: [{ value: 'apple', label: 'Apple', confidence: 0.75 }],
+      category: { value: 'phone', label: '手机', confidence: 0.9 }
+    }
+  },
+  {
+    type: 'lost',
+    title: '寻找蓝色水壶',
+    description: '昨天在体育馆丢失一个蓝色Nike运动水壶，壶身有白色logo。用了很久有感情了，希望能找回！',
+    itemType: 'daily',
+    location: 'gym',
+    date: '2026-06-09',
+    contact: '周同学',
+    phone: '13800138005',
+    userName: '爱运动的小周',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/bottle/600/600'],
+    reward: '100元酬金',
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'blue', label: '蓝色', confidence: 0.92 }, { value: 'white', label: '白色', confidence: 0.7 }],
+      brands: [{ value: 'nike', label: 'Nike', confidence: 0.85 }],
+      category: { value: 'bottle', label: '水壶', confidence: 0.88 }
+    }
+  },
+  {
+    type: 'found',
+    title: '捡到蓝色运动水壶',
+    description: '在体育馆更衣室捡到一个蓝色运动水壶，上面有Nike的标志。看起来挺新的，希望失主快点来认领。',
+    itemType: 'daily',
+    location: 'gym',
+    date: '2026-06-09',
+    contact: '吴同学',
+    phone: '13800138013',
+    userName: '健身小吴',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/bottle2/600/600'],
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'blue', label: '蓝色', confidence: 0.9 }],
+      brands: [{ value: 'nike', label: 'Nike', confidence: 0.88 }],
+      category: { value: 'bottle', label: '水壶', confidence: 0.85 }
+    }
+  },
+  {
+    type: 'lost',
+    title: '丢失棕色双肩包',
+    description: '在图书馆一楼大厅丢失棕色Adidas双肩包一个，包内有课本、笔记本和一副耳机。对我很重要，求好心人归还！',
+    itemType: 'bag',
+    location: 'library',
+    date: '2026-06-07',
+    contact: '郑同学',
+    phone: '13800138006',
+    userName: '考研党小郑',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/backpack/600/600'],
+    reward: '300元酬金',
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'brown', label: '棕色', confidence: 0.9 }],
+      brands: [{ value: 'adidas', label: 'Adidas', confidence: 0.85 }],
+      category: { value: 'backpack', label: '双肩包', confidence: 0.92 }
+    }
+  },
+  {
+    type: 'found',
+    title: '捡到棕色双肩包',
+    description: '在图书馆角落发现一个棕色双肩包，看样子是阿迪达斯的。已经交给图书馆服务台了，失主可以去认领。',
+    itemType: 'bag',
+    location: 'library',
+    date: '2026-06-07',
+    contact: '冯同学',
+    phone: '13800138014',
+    userName: '爱学习的小冯',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/backpack2/600/600'],
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'brown', label: '棕色', confidence: 0.87 }],
+      brands: [{ value: 'adidas', label: 'Adidas', confidence: 0.8 }],
+      category: { value: 'backpack', label: '双肩包', confidence: 0.9 }
+    }
+  },
+  {
+    type: 'lost',
+    title: '寻找红色雨伞',
+    description: '今天下雨在食堂丢失一把红色长柄雨伞，伞面上有白色小花图案。是妈妈送我的礼物，非常重要！',
+    itemType: 'daily',
+    location: 'canteen',
+    date: '2026-06-12',
+    contact: '许同学',
+    phone: '13800138007',
+    userName: '念旧的小许',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/umbrella/600/600'],
+    reward: '50元酬金',
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'red', label: '红色', confidence: 0.95 }, { value: 'white', label: '白色', confidence: 0.65 }],
+      brands: [],
+      category: { value: 'umbrella', label: '雨伞', confidence: 0.9 }
+    }
+  },
+  {
+    type: 'found',
+    title: '捡到一把红色雨伞',
+    description: '在食堂门口捡到一把红色长柄伞，看起来挺好看的。下雨天丢伞的人肯定很着急，赶快来认领吧！',
+    itemType: 'daily',
+    location: 'canteen',
+    date: '2026-06-12',
+    contact: '蒋同学',
+    phone: '13800138015',
+    userName: '热心小蒋',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/umbrella2/600/600'],
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'red', label: '红色', confidence: 0.92 }],
+      brands: [],
+      category: { value: 'umbrella', label: '雨伞', confidence: 0.88 }
+    }
+  },
+  {
+    type: 'lost',
+    title: '丢失白色无线耳机',
+    description: '在教学楼走廊丢失一副白色AirPods Pro，充电盒上有贴纸。刚买不久，非常心疼，求好心人归还！',
+    itemType: 'electronics',
+    location: 'classroom',
+    date: '2026-06-06',
+    contact: '蔡同学',
+    phone: '13800138008',
+    userName: '音乐爱好者小蔡',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/airpods/600/600'],
+    reward: '400元酬金',
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'white', label: '白色', confidence: 0.93 }],
+      brands: [{ value: 'apple', label: 'Apple', confidence: 0.88 }],
+      category: { value: 'earphones', label: '耳机', confidence: 0.9 }
+    }
+  },
+  {
+    type: 'found',
+    title: '捡到白色耳机',
+    description: '在教学楼卫生间洗手台捡到一副白色无线耳机，看起来像是AirPods。已经妥善保管，失主请联系。',
+    itemType: 'electronics',
+    location: 'classroom',
+    date: '2026-06-06',
+    contact: '贾同学',
+    phone: '13800138016',
+    userName: '细心的小贾',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/earphones2/600/600'],
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'white', label: '白色', confidence: 0.9 }],
+      brands: [{ value: 'apple', label: 'Apple', confidence: 0.78 }],
+      category: { value: 'earphones', label: '耳机', confidence: 0.87 }
+    }
+  },
+  {
+    type: 'lost',
+    title: '寻找绿色校园卡',
+    description: '昨天在宿舍区丢失绿色校园卡一张，卡号2023xxxx。补办很麻烦，希望捡到的同学能还给我，谢谢！',
+    itemType: 'card',
+    location: 'dormitory',
+    date: '2026-06-10',
+    contact: '丁同学',
+    phone: '13800138009',
+    userName: '马大哈小丁',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/card/600/600'],
+    reward: '20元酬金',
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'green', label: '绿色', confidence: 0.95 }],
+      brands: [],
+      category: { value: 'card', label: '卡片证件', confidence: 0.92 }
+    }
+  },
+  {
+    type: 'found',
+    title: '捡到一张校园卡',
+    description: '在宿舍区楼下捡到一张校园卡，看起来是绿色的。已经交到宿管阿姨那里了，失主可以去认领。',
+    itemType: 'card',
+    location: 'dormitory',
+    date: '2026-06-10',
+    contact: '魏同学',
+    phone: '13800138017',
+    userName: '好邻居小魏',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/card2/600/600'],
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'green', label: '绿色', confidence: 0.9 }],
+      brands: [],
+      category: { value: 'card', label: '卡片证件', confidence: 0.88 }
+    }
+  },
+  {
+    type: 'lost',
+    title: '丢失黑色眼镜',
+    description: '在实验楼丢失一副黑色框眼镜，品牌是雷朋。度数很高，没有眼镜生活不能自理，求归还！',
+    itemType: 'other',
+    location: 'laboratory',
+    date: '2026-06-05',
+    contact: '薛同学',
+    phone: '13800138018',
+    userName: '高度近视小薛',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/glasses/600/600'],
+    reward: '200元酬金',
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'black', label: '黑色', confidence: 0.92 }],
+      brands: [{ value: 'rayban', label: 'Ray-Ban', confidence: 0.8 }],
+      category: { value: 'glasses', label: '眼镜', confidence: 0.9 }
+    }
+  },
+  {
+    type: 'found',
+    title: '捡到一副黑框眼镜',
+    description: '在实验楼教室捡到一副黑色边框的眼镜，看起来挺贵的。已经放在实验室管理处了。',
+    itemType: 'other',
+    location: 'laboratory',
+    date: '2026-06-05',
+    contact: '叶同学',
+    phone: '13800138019',
+    userName: '实验达人小叶',
+    userAvatar: '',
+    images: ['https://picsum.photos/seed/glasses2/600/600'],
+    status: 'active',
+    aiTags: {
+      colors: [{ value: 'black', label: '黑色', confidence: 0.88 }],
+      brands: [],
+      category: { value: 'glasses', label: '眼镜', confidence: 0.85 }
+    }
   }
 ];
 
@@ -1153,102 +1479,24 @@ const MOCK_MARKET_ITEMS = [
     description: '自用iPhone 13 Pro，256G远峰蓝色，九成新，无磕碰，电池健康度92%。配件齐全，包装盒都在。',
     category: 'electronics',
     price: 4500,
-    originalPrice: 7999,
     images: ['https://picsum.photos/seed/iphone/600/600'],
-    contact: '张同学',
-    phone: '13800138004',
-    userId: 'user_1',
-    userName: '张同学',
-    status: 'selling',
-    views: 328,
-    latitude: 39.9042,
-    longitude: 116.4074,
-    address: '图书馆'
+    contact: '13800138004'
   },
   {
     title: '高等数学教材 第七版',
     description: '同济大学高等数学教材上下册，九成新，有少量笔记。考研复习必备。',
     category: 'book',
     price: 35,
-    originalPrice: 88,
     images: ['https://picsum.photos/seed/mathbook/600/600'],
-    contact: '李同学',
-    phone: '13800138005',
-    userId: 'user_2',
-    userName: '李同学',
-    status: 'selling',
-    views: 156,
-    latitude: 39.9065,
-    longitude: 116.4075,
-    address: '食堂'
+    contact: '13800138005'
   },
   {
     title: '小米空气净化器2S',
     description: '毕业出小米空气净化器2S，使用两年，功能正常，滤芯刚换过。适合宿舍使用。',
     category: 'daily',
     price: 300,
-    originalPrice: 699,
     images: ['https://picsum.photos/seed/purifier/600/600'],
-    contact: '王同学',
-    phone: '13800138006',
-    userId: 'user_3',
-    userName: '王同学',
-    status: 'reserved',
-    views: 245,
-    latitude: 39.9070,
-    longitude: 116.4050,
-    address: '宿舍区'
-  },
-  {
-    title: 'iPad Air 5 64G WiFi版',
-    description: 'iPad Air 5，64G WiFi版，深空灰色，购买于去年，成色95新，平时主要用来看网课，现闲置出售。送保护套和充电器。',
-    category: 'electronics',
-    price: 2800,
-    originalPrice: 4799,
-    images: ['https://picsum.photos/seed/ipad/600/600'],
-    contact: '陈同学',
-    phone: '13800138007',
-    userId: 'user_4',
-    userName: '陈同学',
-    status: 'selling',
-    views: 512,
-    latitude: 39.9040,
-    longitude: 116.4085,
-    address: '教学楼'
-  },
-  {
-    title: '考研英语真题全套',
-    description: '考研英语一历年真题，2010-2025年全套，含答案解析，部分做过笔记，适合2026考研的同学。',
-    category: 'book',
-    price: 45,
-    originalPrice: 128,
-    images: ['https://picsum.photos/seed/englishbook/600/600'],
-    contact: '刘同学',
-    phone: '13800138008',
-    userId: 'user_5',
-    userName: '刘同学',
-    status: 'sold',
-    views: 89,
-    latitude: 39.9055,
-    longitude: 116.4060,
-    address: '实验楼'
-  },
-  {
-    title: 'Nike Air Max 运动鞋 42码',
-    description: 'Nike Air Max 正品，42码，黑白配色，只穿过几次，鞋底几乎无磨损，因买大了半码所以出售。',
-    category: 'sports',
-    price: 350,
-    originalPrice: 899,
-    images: ['https://picsum.photos/seed/sneakers/600/600'],
-    contact: '赵同学',
-    phone: '13800138009',
-    userId: 'user_6',
-    userName: '赵同学',
-    status: 'selling',
-    views: 178,
-    latitude: 39.9075,
-    longitude: 116.4085,
-    address: '操场'
+    contact: '13800138006'
   }
 ];
 

@@ -18,6 +18,8 @@
     "pages/lost-found/index",
     "pages/lost-found-publish/index",
     "pages/lost-found-detail/index",
+    "pages/lost-found-match/index",
+    "pages/lost-found-compare/index",
     "pages/my-lost-found/index",
     "pages/market/index",
     "pages/market-publish/index",

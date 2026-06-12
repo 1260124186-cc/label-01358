@@ -1,0 +1,287 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header-section" wx:if="{{matchResult}}">
+    <view class="header-bg"></view>
+    <view class="header-content">
+      <view class="score-display">
+        <view class="score-circle" style="background: conic-gradient({{matchResult.levelInfo.color}} {{matchResult.scorePercentage * 3.6}}deg, var(--color-border) 0deg);">
+          <view class="score-inner">
+            <text class="score-value">{{matchResult.score}}</text>
+            <text class="score-label">匹配分</text>
+          </view>
+        </view>
+        <view class="level-info">
+          <view class="level-badge" style="background: {{matchResult.levelInfo.bgColor}}; color: {{matchResult.levelInfo.color}};">
+            <text class="level-icon">{{matchResult.levelInfo.icon}}</text>
+            <text>{{matchResult.levelInfo.label}}</text>
+          </view>
+          <text class="level-desc">{{matchResult.levelInfo.description}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="loading-state" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载对比数据中...</text>
+  </view>
+
+  <scroll-view class="content" scroll-y="{{true}}" wx:if="{{!loading && lostItem && foundItem}}">
+    <view class="items-compare">
+      <view class="item-card lost">
+        <view class="item-header lost">
+          <text class="item-type-icon">🔴</text>
+          <text class="item-type-text">寻物启事</text>
+        </view>
+        
+        <swiper 
+          class="image-swiper" 
+          indicator-dots="{{lostItem.images && lostItem.images.length > 1}}"
+          autoplay="{{false}}"
+          current="{{lostImageIndex}}"
+          bindchange="onChangeLostImage"
+        >
+          <swiper-item wx:for="{{lostItem.images}}" wx:key="*this">
+            <image 
+              class="item-image" 
+              src="{{item}}" 
+              mode="aspectFill"
+              data-index="{{index}}"
+              bindtap="onPreviewLostImage"
+            />
+          </swiper-item>
+        </swiper>
+        <view class="image-placeholder" wx:if="{{!lostItem.images || lostItem.images.length === 0}}">
+          <text class="placeholder-icon">📷</text>
+          <text class="placeholder-text">暂无图片</text>
+        </view>
+
+        <view class="item-info">
+          <text class="item-title">{{lostItem.title}}</text>
+          <text class="item-desc">{{lostItem.description}}</text>
+          
+          <view class="item-meta">
+            <view class="meta-row">
+              <text class="meta-icon">📅</text>
+              <text class="meta-label">丢失日期</text>
+              <text class="meta-value">{{lostItem.date || '未填写'}}</text>
+            </view>
+            <view class="meta-row">
+              <text class="meta-icon">📍</text>
+              <text class="meta-label">丢失地点</text>
+              <text class="meta-value">{{lostItem.locationText}}</text>
+            </view>
+            <view class="meta-row">
+              <text class="meta-icon">📦</text>
+              <text class="meta-label">物品类型</text>
+              <text class="meta-value">{{lostItem.itemTypeText}}</text>
+            </view>
+          </view>
+
+          <view class="ai-tags-section" wx:if="{{lostItem.categoryTag || lostItem.colorTags.length > 0 || lostItem.brandTags.length > 0}}">
+            <view class="tags-header">
+              <text class="tags-icon">🤖</text>
+              <text class="tags-title">AI识别标签</text>
+            </view>
+            
+            <view class="tag-group" wx:if="{{lostItem.categoryTag}}">
+              <text class="tag-group-label">品类</text>
+              <view class="tag-item category">
+                <text class="tag-value">{{lostItem.categoryTag.label}}</text>
+                <text class="tag-confidence">{{lostItem.categoryTag.confidenceText}}</text>
+              </view>
+            </view>
+
+            <view class="tag-group" wx:if="{{lostItem.colorTags.length > 0}}">
+              <text class="tag-group-label">颜色</text>
+              <view class="tag-list">
+                <view class="tag-item color" wx:for="{{lostItem.colorTags}}" wx:key="value">
+                  <text class="tag-value">{{item.label}}</text>
+                  <text class="tag-confidence">{{item.confidenceText}}</text>
+                </view>
+              </view>
+            </view>
+
+            <view class="tag-group" wx:if="{{lostItem.brandTags.length > 0}}">
+              <text class="tag-group-label">品牌</text>
+              <view class="tag-list">
+                <view class="tag-item brand" wx:for="{{lostItem.brandTags}}" wx:key="value">
+                  <text class="tag-value">{{item.label}}</text>
+                  <text class="tag-confidence">{{item.confidenceText}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="item-actions">
+          <view class="action-btn primary" bindtap="onViewLostDetail">
+            <text>查看详情</text>
+          </view>
+          <view class="action-btn call" bindtap="onCallLostOwner">
+            <text>📞 联系失主</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="vs-divider">
+        <view class="vs-line"></view>
+        <view class="vs-badge">
+          <text class="vs-text">VS</text>
+        </view>
+        <view class="vs-line"></view>
+      </view>
+
+      <view class="item-card found">
+        <view class="item-header found">
+          <text class="item-type-icon">🟢</text>
+          <text class="item-type-text">失物招领</text>
+        </view>
+        
+        <swiper 
+          class="image-swiper" 
+          indicator-dots="{{foundItem.images && foundItem.images.length > 1}}"
+          autoplay="{{false}}"
+          current="{{foundImageIndex}}"
+          bindchange="onChangeFoundImage"
+        >
+          <swiper-item wx:for="{{foundItem.images}}" wx:key="*this">
+            <image 
+              class="item-image" 
+              src="{{item}}" 
+              mode="aspectFill"
+              data-index="{{index}}"
+              bindtap="onPreviewFoundImage"
+            />
+          </swiper-item>
+        </swiper>
+        <view class="image-placeholder" wx:if="{{!foundItem.images || foundItem.images.length === 0}}">
+          <text class="placeholder-icon">📷</text>
+          <text class="placeholder-text">暂无图片</text>
+        </view>
+
+        <view class="item-info">
+          <text class="item-title">{{foundItem.title}}</text>
+          <text class="item-desc">{{foundItem.description}}</text>
+          
+          <view class="item-meta">
+            <view class="meta-row">
+              <text class="meta-icon">📅</text>
+              <text class="meta-label">拾获日期</text>
+              <text class="meta-value">{{foundItem.date || '未填写'}}</text>
+            </view>
+            <view class="meta-row">
+              <text class="meta-icon">📍</text>
+              <text class="meta-label">拾获地点</text>
+              <text class="meta-value">{{foundItem.locationText}}</text>
+            </view>
+            <view class="meta-row">
+              <text class="meta-icon">📦</text>
+              <text class="meta-label">物品类型</text>
+              <text class="meta-value">{{foundItem.itemTypeText}}</text>
+            </view>
+          </view>
+
+          <view class="ai-tags-section" wx:if="{{foundItem.categoryTag || foundItem.colorTags.length > 0 || foundItem.brandTags.length > 0}}">
+            <view class="tags-header">
+              <text class="tags-icon">🤖</text>
+              <text class="tags-title">AI识别标签</text>
+            </view>
+            
+            <view class="tag-group" wx:if="{{foundItem.categoryTag}}">
+              <text class="tag-group-label">品类</text>
+              <view class="tag-item category">
+                <text class="tag-value">{{foundItem.categoryTag.label}}</text>
+                <text class="tag-confidence">{{foundItem.categoryTag.confidenceText}}</text>
+              </view>
+            </view>
+
+            <view class="tag-group" wx:if="{{foundItem.colorTags.length > 0}}">
+              <text class="tag-group-label">颜色</text>
+              <view class="tag-list">
+                <view class="tag-item color" wx:for="{{foundItem.colorTags}}" wx:key="value">
+                  <text class="tag-value">{{item.label}}</text>
+                  <text class="tag-confidence">{{item.confidenceText}}</text>
+                </view>
+              </view>
+            </view>
+
+            <view class="tag-group" wx:if="{{foundItem.brandTags.length > 0}}">
+              <text class="tag-group-label">品牌</text>
+              <view class="tag-list">
+                <view class="tag-item brand" wx:for="{{foundItem.brandTags}}" wx:key="value">
+                  <text class="tag-value">{{item.label}}</text>
+                  <text class="tag-confidence">{{item.confidenceText}}</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+
+        <view class="item-actions">
+          <view class="action-btn primary" bindtap="onViewFoundDetail">
+            <text>查看详情</text>
+          </view>
+          <view class="action-btn call" bindtap="onCallFoundOwner">
+            <text>📞 联系拾主</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="score-analysis-section" wx:if="{{matchResult}}">
+      <view class="section-header">
+        <text class="section-icon">📊</text>
+        <text class="section-title">匹配度分析</text>
+      </view>
+
+      <view class="score-bars">
+        <view class="score-bar-item" wx:for="{{matchResult.scoreDetails}}" wx:key="key">
+          <view class="bar-header">
+            <text class="bar-label">{{item.label}}</text>
+            <text class="bar-score">{{item.score}}/{{item.weight}}</text>
+          </view>
+          <view class="bar-track">
+            <view class="bar-fill" style="width: {{item.percentage}}%; background: {{item.percentage >= 80 ? '#10B981' : item.percentage >= 50 ? '#F59E0B' : '#EF4444'}};"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="comparison-section" wx:if="{{comparison}}">
+      <view class="section-header">
+        <text class="section-icon">📋</text>
+        <text class="section-title">详细对比</text>
+      </view>
+
+      <view class="comparison-table">
+        <view class="comparison-row header">
+          <text class="comparison-cell field">对比项</text>
+          <text class="comparison-cell lost">寻物启事</text>
+          <text class="comparison-cell found">失物招领</text>
+        </view>
+        <view 
+          class="comparison-row {{item.matched ? 'matched' : ''}}" 
+          wx:for="{{comparison.comparison}}" 
+          wx:key="field"
+        >
+          <text class="comparison-cell field">{{item.field}}</text>
+          <text class="comparison-cell lost">{{item.lost}}</text>
+          <text class="comparison-cell found">{{item.found}}</text>
+          <view class="match-indicator {{item.matched ? 'yes' : 'no'}}">
+            <text>{{item.matched ? '✓' : '✗'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-actions">
+      <view class="bottom-btn secondary" bindtap="onBackToMatch">
+        <text>🔙 返回匹配中心</text>
+      </view>
+      <button class="bottom-btn share" open-type="share">
+        <text>📤 分享对比</text>
+      </button>
+    </view>
+  </scroll-view>
+</view>

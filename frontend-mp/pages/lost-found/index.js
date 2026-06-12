@@ -1,4 +1,5 @@
 const dataService = require('../../services/data');
+const matcherService = require('../../services/lostFoundMatcher');
 const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
@@ -11,14 +12,35 @@ let pageOptions = {
     currentItemType: '',
     currentItemTypeText: '',
     itemTypes: constants.ITEM_TYPES,
-    showItemTypePicker: false
+    showItemTypePicker: false,
+    smartMatchStats: null
   },
 
   onLoad() {
     this._initFilters();
+    this.loadSmartMatchStats();
   },
 
   onShow() {
+    this.loadSmartMatchStats();
+  },
+
+  loadSmartMatchStats() {
+    try {
+      const result = matcherService.findLostFoundMatches({
+        minScore: 30,
+        limit: 10
+      });
+      this.setData({
+        smartMatchStats: {
+          total: result.total,
+          excellent: result.statistics.excellent,
+          high: result.statistics.high
+        }
+      });
+    } catch (e) {
+      // ignore
+    }
   },
 
   _initFilters() {
@@ -34,6 +56,7 @@ let pageOptions = {
 
   onRefresh() {
     this.refreshList();
+    this.loadSmartMatchStats();
   },
 
   onLoadMore() {
@@ -79,6 +102,10 @@ let pageOptions = {
     util.navigateTo('/pages/lost-found-publish/index');
   },
 
+  goToMatchCenter() {
+    util.navigateTo('/pages/lost-found-match/index');
+  },
+
   stopPropagation() {
   }
 };
@@ -102,11 +129,18 @@ pageOptions = mixinList(pageOptions, {
     });
   },
   formatItem: function(item) {
+    const matchResult = matcherService.findMatchesForItem(item, {
+      minScore: 40,
+      limit: 3
+    });
+
     return {
       ...item,
       timeText: util.relativeTime(item.createTime),
       itemTypeText: constants.getLabelByValue(constants.ITEM_TYPES, item.itemType),
-      locationText: constants.getLabelByValue(constants.LOCATIONS, item.location)
+      locationText: constants.getLabelByValue(constants.LOCATIONS, item.location),
+      matchCount: matchResult.total,
+      topMatch: matchResult.matches[0] || null
     };
   }
 });
