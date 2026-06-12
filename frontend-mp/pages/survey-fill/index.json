@@ -2,5 +2,7 @@
   "navigationBarTitleText": "填写问卷",
   "usingComponents": {
     "btn": "/components/btn/index"
-  }
+  },
+  "enableShareAppMessage": true,
+  "enableShareTimeline": true
 }

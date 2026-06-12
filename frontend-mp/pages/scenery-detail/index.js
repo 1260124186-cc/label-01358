@@ -190,5 +190,17 @@ mixPage({
       title: '校园风光',
       path: '/pages/scenery/index'
     };
+  },
+
+  onShareTimeline() {
+    if (this.data.scenery) {
+      return {
+        title: `${this.data.scenery.title} - 校园风光`,
+        imageUrl: this.data.scenery.image
+      };
+    }
+    return {
+      title: '校园风光'
+    };
   }
 });

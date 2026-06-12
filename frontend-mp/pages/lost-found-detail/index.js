@@ -326,5 +326,37 @@ mixPage({
         }
       }
     });
+  },
+
+  onShareAppMessage() {
+    const { detail } = this.data;
+    if (detail) {
+      const typeText = detail.type === 'lost' ? '寻物启事' : '失物招领';
+      const imageUrl = detail.images && detail.images[0] ? detail.images[0] : '';
+      return {
+        title: `【${typeText}】${detail.title}`,
+        path: `/pages/lost-found-detail/index?id=${detail.id}`,
+        imageUrl
+      };
+    }
+    return {
+      title: '失物招领 - 校园失物信息平台',
+      path: '/pages/lost-found/index'
+    };
+  },
+
+  onShareTimeline() {
+    const { detail } = this.data;
+    if (detail) {
+      const typeText = detail.type === 'lost' ? '寻物启事' : '失物招领';
+      const imageUrl = detail.images && detail.images[0] ? detail.images[0] : '';
+      return {
+        title: `【${typeText}】${detail.title}`,
+        imageUrl
+      };
+    }
+    return {
+      title: '失物招领 - 校园失物信息平台'
+    };
   }
 });

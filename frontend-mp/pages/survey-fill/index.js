@@ -185,5 +185,33 @@ mixPage({
 
   onViewResult() {
     util.navigateTo(`/pages/survey-result/index?id=${this.data.surveyId}`);
+  },
+
+  onShareAppMessage() {
+    const { survey, surveyId } = this.data;
+    if (survey && survey.status !== 'closed') {
+      return {
+        title: `【问卷】${survey.title}`,
+        path: `/pages/survey-fill/index?id=${surveyId}`,
+        imageUrl: ''
+      };
+    }
+    return {
+      title: '校园问卷调研',
+      path: '/pages/survey-list/index'
+    };
+  },
+
+  onShareTimeline() {
+    const { survey } = this.data;
+    if (survey && survey.status !== 'closed') {
+      return {
+        title: `【问卷】${survey.title}`,
+        imageUrl: ''
+      };
+    }
+    return {
+      title: '校园问卷调研'
+    };
   }
 });

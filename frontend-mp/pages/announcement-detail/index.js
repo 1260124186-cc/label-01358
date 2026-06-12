@@ -29,5 +29,33 @@ mixPage({
         title: detail.title.substring(0, 10) + (detail.title.length > 10 ? '...' : '')
       });
     }
+  },
+
+  onShareAppMessage() {
+    const { detail } = this.data;
+    if (detail) {
+      return {
+        title: `【公告】${detail.title}`,
+        path: `/pages/announcement-detail/index?id=${detail.id}`,
+        imageUrl: detail.image || ''
+      };
+    }
+    return {
+      title: '校园公告',
+      path: '/pages/broadcast/index'
+    };
+  },
+
+  onShareTimeline() {
+    const { detail } = this.data;
+    if (detail) {
+      return {
+        title: `【公告】${detail.title}`,
+        imageUrl: detail.image || ''
+      };
+    }
+    return {
+      title: '校园公告'
+    };
   }
 });
