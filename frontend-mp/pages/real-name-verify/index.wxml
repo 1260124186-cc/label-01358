@@ -13,7 +13,7 @@
         <block wx:if="{{verifyStatus.status === 'approved'}}">已认证</block>
         <block wx:elif="{{verifyStatus.status === 'pending'}}">审核中</block>
         <block wx:elif="{{verifyStatus.status === 'rejected'}}">认证失败</block>
-        <block wx:else">待审核</block>
+        <block wx:else>待审核</block>
       </text>
       <text class="status-desc" wx:if="{{verifyStatus.status === 'approved'}}">
         您的实名认证已通过，享受更多平台权益

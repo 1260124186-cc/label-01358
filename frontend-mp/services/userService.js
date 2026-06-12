@@ -131,7 +131,7 @@ function registerUser(userData) {
  */
 function loginUser(account, password) {
   const user = getUserByAccount(account);
-  
+
   if (!user) {
     return { success: false, message: '账号或密码错误' };
   }
@@ -174,7 +174,7 @@ function loginUser(account, password) {
 function updateUserInfo(userId, updates) {
   const users = getUserList();
   const userIndex = users.findIndex(u => u.id === userId);
-  
+
   if (userIndex === -1) {
     return { success: false, message: '用户不存在' };
   }
@@ -210,7 +210,7 @@ function updateUserInfo(userId, updates) {
 function changePassword(userId, oldPassword, newPassword) {
   const users = getUserList();
   const userIndex = users.findIndex(u => u.id === userId);
-  
+
   if (userIndex === -1) {
     return { success: false, message: '用户不存在' };
   }
@@ -266,7 +266,7 @@ function submitRealNameVerify(userId, realNameInfo) {
   }
 
   const existingVerify = storage.get(STORAGE_KEYS.USER_REAL_NAME_VERIFY) || {};
-  
+
   existingVerify[userId] = {
     userId,
     realName: realName.trim(),
@@ -294,9 +294,11 @@ function submitRealNameVerify(userId, realNameInfo) {
     storage.set(STORAGE_KEYS.USERS, users);
   }
 
+  const updatedUser = sanitizeUserInfo(users[userIndex] || getUserById(userId));
+
   logUserBehavior(userId, 'submit_real_name_verify', { studentId });
 
-  return { success: true, message: '实名认证已提交，等待审核' };
+  return { success: true, user: updatedUser, message: '实名认证已提交，等待审核' };
 }
 
 /**
@@ -350,7 +352,7 @@ function getCreditLevel(score) {
 function updateCreditScore(userId, change, reason) {
   const users = getUserList();
   const userIndex = users.findIndex(u => u.id === userId);
-  
+
   if (userIndex === -1) {
     return { success: false, message: '用户不存在' };
   }
@@ -403,16 +405,16 @@ function getCreditScoreHistory(userId) {
 function submitReport(reportData) {
   const app = getApp();
   const currentUser = app.globalData.userInfo || {};
-  
-  const { 
-    reporterId: paramReporterId, 
+
+  const {
+    reporterId: paramReporterId,
     reporterName: paramReporterName,
-    targetType, 
-    targetId, 
+    targetType,
+    targetId,
     targetTitle,
-    targetUserId, 
-    reportType, 
-    description, 
+    targetUserId,
+    reportType,
+    description,
     images,
     contactInfo,
     anonymous
@@ -436,8 +438,8 @@ function submitReport(reportData) {
   const reports = storage.getList(STORAGE_KEYS.REPORTS);
 
   const existingReport = reports.find(
-    r => r.targetType === targetType && 
-         r.targetId === targetId && 
+    r => r.targetType === targetType &&
+         r.targetId === targetId &&
          r.reporterId === reporterId
   );
 
@@ -479,13 +481,13 @@ function submitReport(reportData) {
  */
 function getReportList(userId = null) {
   const reports = storage.getList(STORAGE_KEYS.REPORTS);
-  
+
   if (userId) {
     return reports
       .filter(r => r.reporterId === userId)
       .sort((a, b) => b.createTime - a.createTime);
   }
-  
+
   return reports.sort((a, b) => b.createTime - a.createTime);
 }
 
@@ -534,7 +536,7 @@ function removeFromBlacklist(userId, blockedUserId) {
   const userBlacklist = blacklist[userId] || [];
 
   const newBlacklist = userBlacklist.filter(b => b.blockedUserId !== blockedUserId);
-  
+
   if (newBlacklist.length === userBlacklist.length) {
     return { success: false, message: '该用户不在黑名单中' };
   }
@@ -597,7 +599,7 @@ function getUserPublications(userId, type = 'all') {
 
   if (type === 'all' || type === 'scenery') {
     const sceneryList = storage.getList('sceneryList') || [];
-    result.scenery = sceneryList.filter(item => 
+    result.scenery = sceneryList.filter(item =>
       item.uploader && item.uploader.id === userId
     );
   }
@@ -611,7 +613,7 @@ function getUserPublications(userId, type = 'all') {
  */
 function getUserStats(userId) {
   const publications = getUserPublications(userId);
-  
+
   const lostFoundCount = publications.lostFound.length;
   const marketCount = publications.market.length;
   const forumCount = publications.forum.length;
@@ -629,8 +631,8 @@ function getUserStats(userId) {
     forumCount,
     sceneryCount,
     completedDeals,
-    successRate: totalPublications > 0 
-      ? Math.round((completedDeals / totalPublications) * 100) 
+    successRate: totalPublications > 0
+      ? Math.round((completedDeals / totalPublications) * 100)
       : 0
   };
 }
@@ -641,7 +643,7 @@ function getUserStats(userId) {
  */
 function sanitizeUserInfo(user) {
   if (!user) return null;
-  
+
   return {
     id: user.id,
     account: user.account,
@@ -675,7 +677,7 @@ function sanitizeUserInfo(user) {
  */
 function logUserBehavior(userId, action, data = {}) {
   const logs = storage.getList(STORAGE_KEYS.USER_BEHAVIOR_LOG);
-  
+
   logs.unshift({
     id: util.generateId(),
     userId,
@@ -693,7 +695,7 @@ function logUserBehavior(userId, action, data = {}) {
 function initLegacyUsers() {
   const users = getUserList();
   const hasLegacyFormat = users.some(u => u.password && !u.passwordHash);
-  
+
   if (hasLegacyFormat) {
     const updatedUsers = users.map(user => {
       if (user.password && !user.passwordHash) {
@@ -714,7 +716,7 @@ function initLegacyUsers() {
       }
       return user;
     });
-    
+
     storage.set(STORAGE_KEYS.USERS, updatedUsers);
   }
 }
