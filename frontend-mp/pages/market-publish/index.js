@@ -28,7 +28,9 @@ mixPage({
     submitting: false,
     marketLocations: constants.MARKET_LOCATIONS,
     showLocationPicker: false,
-    locationTip: ''
+    locationTip: '',
+    formattedLatitude: '',
+    formattedLongitude: ''
   },
 
   onLoad(options) {
@@ -65,7 +67,9 @@ mixPage({
         address: item.address || ''
       },
       categoryIndex,
-      categoryText
+      categoryText,
+      formattedLatitude: item.latitude ? item.latitude.toFixed(4) : '',
+      formattedLongitude: item.longitude ? item.longitude.toFixed(4) : ''
     });
   },
 
@@ -92,6 +96,13 @@ mixPage({
     });
   },
 
+  updateFormattedCoords(latitude, longitude) {
+    this.setData({
+      formattedLatitude: latitude ? latitude.toFixed(4) : '',
+      formattedLongitude: longitude ? longitude.toFixed(4) : ''
+    });
+  },
+
   openChooseLocation() {
     wx.chooseLocation({
       success: (res) => {
@@ -101,6 +112,7 @@ mixPage({
           'formData.address': res.address || res.name,
           locationTip: ''
         });
+        this.updateFormattedCoords(res.latitude, res.longitude);
       },
       fail: (err) => {
         if (err.errMsg && err.errMsg.includes('auth deny')) {
@@ -132,6 +144,7 @@ mixPage({
         showLocationPicker: false,
         locationTip: ''
       });
+      this.updateFormattedCoords(location.latitude, location.longitude);
     }
   },
 
@@ -140,7 +153,9 @@ mixPage({
       'formData.latitude': null,
       'formData.longitude': null,
       'formData.address': '',
-      locationTip: ''
+      locationTip: '',
+      formattedLatitude: '',
+      formattedLongitude: ''
     });
   },
 

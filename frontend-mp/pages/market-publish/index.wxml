@@ -124,8 +124,8 @@
           <view class="location-icon selected">📍</view>
           <view class="location-content">
             <text class="location-address">{{formData.address}}</text>
-            <text class="location-coord" wx:if="{{formData.latitude && formData.longitude}}">
-              经度: {{formData.longitude.toFixed(4)}} · 纬度: {{formData.latitude.toFixed(4)}}
+            <text class="location-coord" wx:if="{{formattedLatitude && formattedLongitude}}">
+              经度: {{formattedLongitude}} · 纬度: {{formattedLatitude}}
             </text>
           </view>
           <view class="location-clear" catchtap="onClearLocation">
@@ -192,7 +192,7 @@
           <view class="location-option-main">
             <text class="location-option-label">{{item.label}}</text>
             <text class="location-option-coord" wx:if="{{item.latitude && item.longitude}}">
-              {{item.latitude.toFixed(4)}}, {{item.longitude.toFixed(4)}}
+              {{item.latitude}}, {{item.longitude}}
             </text>
           </view>
         </view>
