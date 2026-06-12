@@ -4204,6 +4204,138 @@ function clearClassReminders() {
   return storage.set(STORAGE_KEYS.CLASS_REMINDERS, []);
 }
 
+// ==================== 失物招领评论 ====================
+
+function getLostFoundComments(itemId) {
+  const commentsMap = storage.get(STORAGE_KEYS.LOST_FOUND_COMMENTS) || {};
+  const comments = commentsMap[itemId] || [];
+  return comments.sort((a, b) => b.createTime - a.createTime);
+}
+
+function addLostFoundComment(itemId, content) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || '';
+  const userName = userInfo.nickName || '匿名用户';
+  const userAvatar = userInfo.avatarUrl || '';
+
+  if (!userId) {
+    return { success: false, message: '请先登录' };
+  }
+
+  if (!content || !content.trim()) {
+    return { success: false, message: '评论内容不能为空' };
+  }
+
+  const item = getLostFoundDetail(itemId);
+  if (!item) {
+    return { success: false, message: '信息不存在' };
+  }
+
+  const comment = {
+    id: util.generateId(),
+    itemId,
+    content: content.trim(),
+    userId,
+    userName,
+    userAvatar,
+    createTime: Date.now()
+  };
+
+  const commentsMap = storage.get(STORAGE_KEYS.LOST_FOUND_COMMENTS) || {};
+  const itemComments = commentsMap[itemId] || [];
+  itemComments.unshift(comment);
+  commentsMap[itemId] = itemComments;
+  storage.set(STORAGE_KEYS.LOST_FOUND_COMMENTS, commentsMap);
+
+  return { success: true, data: comment };
+}
+
+function deleteLostFoundComment(itemId, commentId) {
+  const commentsMap = storage.get(STORAGE_KEYS.LOST_FOUND_COMMENTS) || {};
+  const itemComments = commentsMap[itemId] || [];
+  const newComments = itemComments.filter(c => c.id !== commentId);
+
+  if (newComments.length === itemComments.length) {
+    return false;
+  }
+
+  commentsMap[itemId] = newComments;
+  storage.set(STORAGE_KEYS.LOST_FOUND_COMMENTS, commentsMap);
+  return true;
+}
+
+function getLostFoundCommentCount(itemId) {
+  const commentsMap = storage.get(STORAGE_KEYS.LOST_FOUND_COMMENTS) || {};
+  return (commentsMap[itemId] || []).length;
+}
+
+// ==================== 二手市场评论 ====================
+
+function getMarketComments(itemId) {
+  const commentsMap = storage.get(STORAGE_KEYS.MARKET_COMMENTS) || {};
+  const comments = commentsMap[itemId] || [];
+  return comments.sort((a, b) => b.createTime - a.createTime);
+}
+
+function addMarketComment(itemId, content) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || '';
+  const userName = userInfo.nickName || '匿名用户';
+  const userAvatar = userInfo.avatarUrl || '';
+
+  if (!userId) {
+    return { success: false, message: '请先登录' };
+  }
+
+  if (!content || !content.trim()) {
+    return { success: false, message: '评论内容不能为空' };
+  }
+
+  const item = getMarketDetail(itemId);
+  if (!item) {
+    return { success: false, message: '商品不存在' };
+  }
+
+  const comment = {
+    id: util.generateId(),
+    itemId,
+    content: content.trim(),
+    userId,
+    userName,
+    userAvatar,
+    createTime: Date.now()
+  };
+
+  const commentsMap = storage.get(STORAGE_KEYS.MARKET_COMMENTS) || {};
+  const itemComments = commentsMap[itemId] || [];
+  itemComments.unshift(comment);
+  commentsMap[itemId] = itemComments;
+  storage.set(STORAGE_KEYS.MARKET_COMMENTS, commentsMap);
+
+  return { success: true, data: comment };
+}
+
+function deleteMarketComment(itemId, commentId) {
+  const commentsMap = storage.get(STORAGE_KEYS.MARKET_COMMENTS) || {};
+  const itemComments = commentsMap[itemId] || [];
+  const newComments = itemComments.filter(c => c.id !== commentId);
+
+  if (newComments.length === itemComments.length) {
+    return false;
+  }
+
+  commentsMap[itemId] = newComments;
+  storage.set(STORAGE_KEYS.MARKET_COMMENTS, commentsMap);
+  return true;
+}
+
+function getMarketCommentCount(itemId) {
+  const commentsMap = storage.get(STORAGE_KEYS.MARKET_COMMENTS) || {};
+  return (commentsMap[itemId] || []).length;
+}
+
 module.exports = {
   paginateList,
 
@@ -4214,6 +4346,10 @@ module.exports = {
   updateLostFound,
   deleteLostFound,
   getMyLostFoundList,
+  getLostFoundComments,
+  addLostFoundComment,
+  deleteLostFoundComment,
+  getLostFoundCommentCount,
 
   getMarketList,
   getMarketDetail,
@@ -4222,6 +4358,10 @@ module.exports = {
   deleteMarketItem,
   increaseMarketViews,
   getMyMarketList,
+  getMarketComments,
+  addMarketComment,
+  deleteMarketComment,
+  getMarketCommentCount,
 
   getFavorites,
   addFavorite,

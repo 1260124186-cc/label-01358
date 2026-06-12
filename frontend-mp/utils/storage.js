@@ -74,7 +74,9 @@ const STORAGE_KEYS = {
   ANNOUNCEMENTS: 'announcements',
   CAMPUS_NEWS: 'campusNews',
   BROADCAST_PROGRAMS: 'broadcastPrograms',
-  SCENERY_MANAGE: 'sceneryManage'
+  SCENERY_MANAGE: 'sceneryManage',
+  LOST_FOUND_COMMENTS: 'lostFoundComments',
+  MARKET_COMMENTS: 'marketComments'
 };
 
 /**

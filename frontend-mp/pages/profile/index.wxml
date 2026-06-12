@@ -115,9 +115,9 @@
   <view class="menu-section" aria-label="主题色选择">
     <view class="section-title">主题色</view>
     <view class="color-scheme-list">
-      <view
-        class="color-scheme-item {{colorScheme === item.value ? 'active' : ''}}"
-        wx:for="{{colorSchemes}}"
+      <view 
+        class="color-scheme-item {{colorScheme === item.value ? 'active' : ''}}" 
+        wx:for="{{colorSchemes}}" 
         wx:key="value"
         bindtap="onColorSchemeChange"
         data-scheme="{{item.value}}"

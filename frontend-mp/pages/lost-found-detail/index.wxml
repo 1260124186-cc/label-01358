@@ -122,6 +122,69 @@
     </view>
   </view>
 
+  <!-- 评论区 -->
+  <view class="comment-section">
+    <view class="section-title">
+      评论
+      <text class="comment-count" wx:if="{{comments.length > 0}}">({{comments.length}})</text>
+    </view>
+
+    <!-- 评论输入框 -->
+    <view class="comment-input-wrap">
+      <input
+        class="comment-input"
+        placeholder="{{detail.isClosed ? '此信息已关闭，无法评论' : '说点什么...'}}"
+        value="{{commentInput}}"
+        bindinput="onCommentInput"
+        confirm-type="send"
+        bindconfirm="onSubmitComment"
+        disabled="{{detail.isClosed}}"
+        maxlength="500"
+      />
+      <view
+        class="comment-submit {{commentInput && !detail.isClosed ? 'active' : ''}}"
+        bindtap="onSubmitComment"
+      >
+        发送
+      </view>
+    </view>
+
+    <!-- 评论列表 -->
+    <view class="comment-list" wx:if="{{comments.length > 0}}">
+      <view
+        class="comment-item"
+        wx:for="{{comments}}"
+        wx:key="id"
+      >
+        <image
+          class="comment-avatar"
+          src="{{item.userAvatar || '/assets/images/default-avatar.png'}}"
+          mode="aspectFill"
+        />
+        <view class="comment-content">
+          <view class="comment-header">
+            <text class="comment-name">{{item.userName}}</text>
+            <text class="comment-time">{{item.timeText}}</text>
+          </view>
+          <text class="comment-text">{{item.content}}</text>
+        </view>
+        <view
+          class="comment-delete"
+          wx:if="{{item.canDelete}}"
+          bindtap="onDeleteComment"
+          data-comment-id="{{item.id}}"
+        >
+          删除
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="comment-empty" wx:else>
+      <text class="comment-empty-text">暂无评论，快来抢沙发～</text>
+    </view>
+  </view>
+
   <!-- 发布者操作 -->
   <view class="publisher-actions" wx:if="{{isPublisher && !detail.isClosed}}">
     <btn type="danger" size="large" block="{{true}}" bind:click="onCloseLostFound">

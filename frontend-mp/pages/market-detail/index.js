@@ -1,5 +1,6 @@
 const app = getApp();
 const dataService = require('../../services/data');
+const userService = require('../../services/userService');
 const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
@@ -19,7 +20,11 @@ mixPage({
       { value: 'selling', label: '在售', desc: '商品正在出售中' },
       { value: 'reserved', label: '已预订', desc: '商品已被预订，暂不出售' },
       { value: 'sold', label: '已售出', desc: '商品已成功售出' }
-    ]
+    ],
+    comments: [],
+    commentInput: '',
+    isAdmin: false,
+    currentUserId: ''
   },
 
   onLoad(options) {
@@ -67,7 +72,105 @@ mixPage({
 
       // 检查收藏状态
       this.checkFavorite();
+
+      // 加载用户信息
+      this.loadUserInfo();
+
+      // 加载评论
+      this.loadComments();
     }
+  },
+
+  loadUserInfo() {
+    const userInfo = app.globalData.userInfo || {};
+    const currentUserId = userInfo.id || '';
+    const isAdmin = userService.isCurrentUserAdmin();
+    this.setData({ currentUserId, isAdmin });
+  },
+
+  loadComments() {
+    const { id } = this.data;
+    if (!id) return;
+
+    const comments = dataService.getMarketComments(id);
+    const formattedComments = comments.map(comment => ({
+      ...comment,
+      timeText: util.relativeTime(comment.createTime),
+      canDelete: this.canDeleteComment(comment)
+    }));
+
+    this.setData({ comments: formattedComments });
+  },
+
+  canDeleteComment(comment) {
+    const { currentUserId, isOwner, isAdmin } = this.data;
+    if (!currentUserId) return false;
+    if (comment.userId === currentUserId) return true;
+    if (isOwner) return true;
+    if (isAdmin) return true;
+    return false;
+  },
+
+  onCommentInput(e) {
+    this.setData({ commentInput: e.detail.value });
+  },
+
+  onSubmitComment() {
+    if (!util.checkLogin()) {
+      return;
+    }
+
+    const { id, commentInput, detail } = this.data;
+
+    if (detail && detail.status === 'sold') {
+      util.showToast('商品已售出，无法评论');
+      return;
+    }
+
+    if (!commentInput || !commentInput.trim()) {
+      util.showToast('请输入评论内容');
+      return;
+    }
+
+    const result = dataService.addMarketComment(id, commentInput.trim());
+
+    if (result.success) {
+      this.setData({ commentInput: '' });
+      this.loadComments();
+      util.showSuccess('评论成功');
+    } else {
+      util.showError(result.message || '评论失败');
+    }
+  },
+
+  onDeleteComment(e) {
+    const { commentId } = e.currentTarget.dataset;
+    const { id, comments } = this.data;
+
+    const comment = comments.find(c => c.id === commentId);
+    if (!comment) return;
+
+    if (!this.canDeleteComment(comment)) {
+      util.showError('您没有权限删除此评论');
+      return;
+    }
+
+    wx.showModal({
+      title: '删除评论',
+      content: '确定要删除这条评论吗？',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          const success = dataService.deleteMarketComment(id, commentId);
+          if (success) {
+            this.loadComments();
+            util.showSuccess('已删除');
+          } else {
+            util.showError('删除失败');
+          }
+        }
+      }
+    });
   },
 
   calculateDiscount(price, originalPrice) {

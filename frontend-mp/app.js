@@ -288,7 +288,8 @@ App({
           lastLoginTime: Date.now(),
           status: 'active',
           publishCount: 5,
-          dealCount: 3
+          dealCount: 3,
+          isAdmin: true
         };
         users.push(testUser);
         storage.set(storage.STORAGE_KEYS.USERS, users);

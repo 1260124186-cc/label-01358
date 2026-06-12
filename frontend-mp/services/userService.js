@@ -300,6 +300,30 @@ function submitRealNameVerify(userId, realNameInfo) {
 }
 
 /**
+ * 检查用户是否为管理员
+ * @param {string} userId - 用户ID
+ * @returns {boolean}
+ */
+function isAdmin(userId) {
+  if (!userId) return false;
+  const user = getUserById(userId);
+  if (!user) return false;
+  if (user.isAdmin) return true;
+  if (user.account === 'admin') return true;
+  return false;
+}
+
+/**
+ * 检查当前登录用户是否为管理员
+ * @returns {boolean}
+ */
+function isCurrentUserAdmin() {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  return isAdmin(userInfo.id);
+}
+
+/**
  * 获取用户实名认证状态
  * @param {string} userId - 用户ID
  */
@@ -638,7 +662,8 @@ function sanitizeUserInfo(user) {
     lastLoginTime: user.lastLoginTime,
     status: user.status,
     publishCount: user.publishCount,
-    dealCount: user.dealCount
+    dealCount: user.dealCount,
+    isAdmin: user.isAdmin || false
   };
 }
 
@@ -721,5 +746,7 @@ module.exports = {
   getUserStats,
   sanitizeUserInfo,
   logUserBehavior,
-  initLegacyUsers
+  initLegacyUsers,
+  isAdmin,
+  isCurrentUserAdmin
 };
