@@ -8,6 +8,7 @@ mixPage({
     darkMode: false,
     categories: constants.SCENERY_CATEGORIES,
     activeCategory: 'all',
+    activeCategoryLabel: '全部',
     collections: [],
     sceneryList: [],
     filteredList: [],
@@ -24,6 +25,13 @@ mixPage({
     this.loadData();
   },
 
+  getCategoryLabel(value) {
+    const category = constants.SCENERY_CATEGORIES.find(function(c) {
+      return c.value === value;
+    });
+    return category ? category.label : '全部';
+  },
+
   loadData() {
     const sceneryList = mockData.SCENERY_LIST
       .filter(item => item.reviewStatus === 'approved')
@@ -31,7 +39,9 @@ mixPage({
         ...item,
         image: item.image || '/assets/images/default-scenery.png',
         categoryInfo: constants.SCENERY_CATEGORY_MAP[item.category],
-        seasonInfo: constants.SCENERY_SEASONS.find(s => s.value === item.season)
+        seasonInfo: constants.SCENERY_SEASONS.find(function(s) {
+          return s.value === item.season;
+        })
       }));
 
     const collections = mockData.SCENERY_COLLECTIONS.slice(0, 4);
@@ -39,7 +49,8 @@ mixPage({
     this.setData({
       sceneryList,
       collections,
-      filteredList: sceneryList
+      filteredList: sceneryList,
+      activeCategoryLabel: this.getCategoryLabel(this.data.activeCategory)
     });
   },
 
@@ -47,11 +58,14 @@ mixPage({
     const { value } = e.currentTarget.dataset;
     const filteredList = value === 'all'
       ? this.data.sceneryList
-      : this.data.sceneryList.filter(item => item.category === value);
+      : this.data.sceneryList.filter(function(item) {
+        return item.category === value;
+      });
 
     this.setData({
       activeCategory: value,
-      filteredList
+      filteredList,
+      activeCategoryLabel: this.getCategoryLabel(value)
     });
   },
 
@@ -67,10 +81,12 @@ mixPage({
 
   onCollectionTap(e) {
     const { id } = e.currentTarget.dataset;
-    const collection = mockData.SCENERY_COLLECTIONS.find(c => c.id === id);
+    const collection = mockData.SCENERY_COLLECTIONS.find(function(c) {
+      return c.id === id;
+    });
     if (!collection) return;
 
-    const collectionItems = this.data.sceneryList.filter(item => {
+    const collectionItems = this.data.sceneryList.filter(function(item) {
       if (collection.type === 'season') {
         return item.season === collection.season;
       }

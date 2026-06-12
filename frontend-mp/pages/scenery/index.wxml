@@ -72,7 +72,7 @@
     <view class="section-header">
       <view class="section-title-wrap">
         <view class="section-icon"></view>
-        <text class="section-title">{{categories[activeCategory === 'all' ? 0 : categories.findIndex(c => c.value === activeCategory)].label}}风光</text>
+        <text class="section-title">{{activeCategoryLabel}}风光</text>
       </view>
       <text class="section-count">共{{filteredList.length}}张</text>
     </view>
