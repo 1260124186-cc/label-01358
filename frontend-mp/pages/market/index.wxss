@@ -52,30 +52,81 @@
   box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
 }
 
-.filter-price {
+.filter-buttons {
+  display: flex;
+  align-items: center;
+  margin-left: 12rpx;
+  flex-shrink: 0;
+}
+
+.filter-btn {
   display: flex;
   align-items: center;
   padding: 14rpx 20rpx;
-  margin-left: 16rpx;
+  margin-left: 8rpx;
   background-color: var(--color-bg-input);
   border-radius: var(--radius-full);
   flex-shrink: 0;
   transition: all var(--transition-fast);
 }
 
-.filter-price:active {
+.filter-btn:active {
   background-color: var(--color-border);
 }
 
-.price-text {
-  font-size: 26rpx;
-  color: var(--color-text-secondary);
-  margin-right: 8rpx;
+.filter-btn.active {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 107, 0.3);
 }
 
-.price-arrow {
+.filter-btn.active .filter-btn-text,
+.filter-btn.active .filter-btn-arrow,
+.filter-btn.active .filter-btn-icon {
+  color: #FFFFFF;
+}
+
+.filter-btn-text {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+}
+
+.filter-btn-arrow {
   font-size: 20rpx;
   color: var(--color-text-muted);
+  margin-left: 6rpx;
+}
+
+.filter-btn-icon {
+  font-size: 24rpx;
+  margin-right: 4rpx;
+}
+
+/* 定位提示 */
+.location-tip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 24rpx 16rpx;
+  padding: 16rpx 24rpx;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+  border-radius: var(--radius-lg);
+  border: 1rpx solid rgba(245, 158, 11, 0.2);
+}
+
+.location-tip-text {
+  font-size: 24rpx;
+  color: #D97706;
+  flex: 1;
+}
+
+.location-tip-action {
+  font-size: 24rpx;
+  color: var(--color-primary);
+  font-weight: 600;
+  padding: 8rpx 16rpx;
+  background-color: rgba(255, 107, 107, 0.1);
+  border-radius: var(--radius-md);
+  margin-left: 16rpx;
 }
 
 /* ==================== 学习资料入口 ==================== */
@@ -260,20 +311,35 @@
 
 .goods-bottom {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
 }
 
 .goods-price {
   font-size: 36rpx;
   font-weight: 800;
   color: var(--color-primary);
+  margin-bottom: 8rpx;
 }
 
 .goods-price::before {
   content: '¥';
   font-size: 24rpx;
   font-weight: 600;
+}
+
+.goods-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.goods-distance {
+  font-size: 22rpx;
+  color: #10B981;
+  background-color: rgba(16, 185, 129, 0.1);
+  padding: 4rpx 10rpx;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
 }
 
 .goods-views {

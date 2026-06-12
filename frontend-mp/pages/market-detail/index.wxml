@@ -136,6 +136,41 @@
     </view>
   </view>
 
+  <!-- 交易地点 -->
+  <view class="location-section" wx:if="{{detail.hasLocation}}">
+    <view class="section-title">交易地点</view>
+    <view class="location-card">
+      <view class="location-header" bindtap="onNavigateToLocation">
+        <view class="location-info">
+          <view class="location-icon-wrap">
+            <text class="location-icon">📍</text>
+          </view>
+          <view class="location-text-wrap">
+            <text class="location-name">{{detail.address}}</text>
+            <text class="location-hint">点击查看地图并导航</text>
+          </view>
+        </view>
+        <view class="location-nav-btn">
+          <text class="nav-icon">🧭</text>
+          <text class="nav-text">导航</text>
+        </view>
+      </view>
+      <view class="map-container" bindtap="onMapTap">
+        <map
+          wx:if="{{detail.latitude && detail.longitude}}"
+          class="map-view"
+          latitude="{{detail.latitude}}"
+          longitude="{{detail.longitude}}"
+          markers="{{markers}}"
+          scale="{{mapScale}}"
+          show-location="{{false}}"
+          enable-zoom="{{true}}"
+          enable-scroll="{{true}}"
+        />
+      </view>
+    </view>
+  </view>
+
   <!-- 联系方式 -->
   <view class="contact-section">
     <view class="section-title">卖家信息</view>

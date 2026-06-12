@@ -16,6 +16,7 @@ let volunteerInitialized = false;
 let canteenInitialized = false;
 let canteenReviewsInitialized = false;
 let dishReviewsInitialized = false;
+let marketInitialized = false;
 
 function initVolunteerData() {
   if (volunteerInitialized) return;
@@ -239,12 +240,44 @@ function deleteLostFound(id) {
   return success;
 }
 
+// ==================== 距离计算工具 ====================
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  if (!lat1 || !lon1 || !lat2 || !lon2) return Infinity;
+  const R = 6371000;
+  const toRad = (deg) => deg * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 // ==================== 二手市场 ====================
+
+function initMarketData() {
+  if (marketInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.MARKET_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const items = mockData.MOCK_MARKET_ITEMS.map((item, index) => ({
+      id: 'mock_market_' + index + '_' + now,
+      ...item,
+      createTime: now - (index + 1) * 86400000,
+      updateTime: now - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.MARKET_LIST, items);
+  }
+  marketInitialized = true;
+}
 
 /**
  * 获取二手商品列表
  */
 function getMarketList(filters = {}) {
+  initMarketData();
   let list = storage.getList(STORAGE_KEYS.MARKET_LIST);
 
   if (filters.category) {
@@ -271,6 +304,27 @@ function getMarketList(filters = {}) {
 
   list = filterByKeyword(list, filters.keyword, ['title', 'description']);
 
+  if (filters.userLatitude && filters.userLongitude) {
+    list = list.map(item => ({
+      ...item,
+      _distance: calculateDistance(
+        filters.userLatitude,
+        filters.userLongitude,
+        item.latitude,
+        item.longitude
+      )
+    }));
+
+    if (filters.minDistance !== undefined) {
+      list = list.filter(item => item._distance >= filters.minDistance);
+    }
+    if (filters.maxDistance !== undefined && filters.maxDistance !== Infinity) {
+      list = list.filter(item => item._distance <= filters.maxDistance);
+    }
+
+    list = list.sort((a, b) => (a._distance || Infinity) - (b._distance || Infinity));
+  }
+
   return list;
 }
 
@@ -278,6 +332,7 @@ function getMarketList(filters = {}) {
  * 获取二手商品详情
  */
 function getMarketDetail(id) {
+  initMarketData();
   const list = storage.getList(STORAGE_KEYS.MARKET_LIST);
   return list.find(item => item.id === id) || null;
 }
@@ -286,6 +341,7 @@ function getMarketDetail(id) {
  * 发布二手商品
  */
 function publishMarketItem(data) {
+  initMarketData();
   const app = getApp();
   const userInfo = app.globalData.userInfo || {};
 
@@ -309,6 +365,7 @@ function publishMarketItem(data) {
  * 获取我的二手商品列表
  */
 function getMyMarketList(userId, status = '') {
+  initMarketData();
   let list = storage.getList(STORAGE_KEYS.MARKET_LIST);
   list = list.filter(item => item.userId === userId);
   if (status && status !== 'all') {
@@ -4338,6 +4395,7 @@ function getMarketCommentCount(itemId) {
 
 module.exports = {
   paginateList,
+  calculateDistance,
 
   getLostFoundList,
   getLostFoundListPaged,

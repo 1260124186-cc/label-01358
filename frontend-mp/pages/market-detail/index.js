@@ -24,7 +24,9 @@ mixPage({
     comments: [],
     commentInput: '',
     isAdmin: false,
-    currentUserId: ''
+    currentUserId: '',
+    markers: [],
+    mapScale: 16
   },
 
   onLoad(options) {
@@ -46,6 +48,7 @@ mixPage({
     if (detail) {
       const discountText = this.calculateDiscount(detail.price, detail.originalPrice);
       const saveText = this.calculateSave(detail.price, detail.originalPrice);
+      const hasLocation = detail.latitude !== undefined && detail.longitude !== undefined && detail.address;
       const formattedDetail = {
         ...detail,
         priceText: util.formatPrice(detail.price),
@@ -56,8 +59,31 @@ mixPage({
         viewsText: this.formatViews(detail.views),
         timeText: util.relativeTime(detail.createTime),
         categoryText: constants.getLabelByValue(constants.MARKET_CATEGORIES, detail.category),
-        statusText: constants.getLabelByValue(constants.MARKET_STATUS, detail.status)
+        statusText: constants.getLabelByValue(constants.MARKET_STATUS, detail.status),
+        hasLocation
       };
+
+      let markers = [];
+      if (hasLocation) {
+        markers = [{
+          id: 0,
+          latitude: detail.latitude,
+          longitude: detail.longitude,
+          width: 36,
+          height: 36,
+          callout: {
+            content: detail.address,
+            color: '#333333',
+            fontSize: 12,
+            borderRadius: 6,
+            bgColor: '#FFFFFF',
+            padding: 6,
+            display: 'ALWAYS',
+            textAlign: 'center'
+          }
+        }];
+      }
+      this.setData({ markers });
 
       const userInfo = app.globalData.userInfo || {};
       const isOwner = userInfo.id && detail.userId === userInfo.id;
@@ -241,6 +267,58 @@ mixPage({
         // 用户取消或失败
       }
     });
+  },
+
+  onNavigateToLocation() {
+    const { detail } = this.data;
+    if (!detail || !detail.hasLocation) {
+      util.showToast('暂无位置信息');
+      return;
+    }
+
+    wx.getSetting({
+      success: (res) => {
+        if (res.authSetting['scope.userLocation'] === false) {
+          wx.showModal({
+            title: '需要定位权限',
+            content: '导航功能需要获取您的位置信息，是否前往设置开启？',
+            confirmText: '去设置',
+            success: (modalRes) => {
+              if (modalRes.confirm) {
+                wx.openSetting();
+              }
+            }
+          });
+          return;
+        }
+        this.openLocation();
+      },
+      fail: () => {
+        this.openLocation();
+      }
+    });
+  },
+
+  openLocation() {
+    const { detail } = this.data;
+    if (!detail) return;
+
+    wx.openLocation({
+      latitude: detail.latitude,
+      longitude: detail.longitude,
+      name: detail.title || '交易地点',
+      address: detail.address,
+      scale: 16,
+      fail: (err) => {
+        if (err.errMsg && err.errMsg.includes('auth deny')) {
+          util.showToast('请授权后使用导航功能');
+        }
+      }
+    });
+  },
+
+  onMapTap() {
+    this.onNavigateToLocation();
   },
 
   onReport() {

@@ -108,6 +108,34 @@
       </view>
     </view>
 
+    <!-- 交易地点 -->
+    <view class="form-section">
+      <view class="section-title">交易地点（选填）</view>
+      <view class="form-card">
+        <view class="location-wrap" bindtap="onChooseLocation" wx:if="{{!formData.address}}">
+          <view class="location-icon">📍</view>
+          <view class="location-content">
+            <text class="location-label">选择精确位置</text>
+            <text class="location-desc">授权后可在地图上选择交易地点</text>
+          </view>
+          <text class="location-arrow">›</text>
+        </view>
+        <view class="location-selected" wx:else>
+          <view class="location-icon selected">📍</view>
+          <view class="location-content">
+            <text class="location-address">{{formData.address}}</text>
+            <text class="location-coord" wx:if="{{formData.latitude && formData.longitude}}">
+              经度: {{formData.longitude.toFixed(4)}} · 纬度: {{formData.latitude.toFixed(4)}}
+            </text>
+          </view>
+          <view class="location-clear" catchtap="onClearLocation">
+            <text class="clear-icon">×</text>
+          </view>
+        </view>
+        <text class="location-tip" wx:if="{{locationTip}}">{{locationTip}}</text>
+      </view>
+    </view>
+
     <!-- 联系方式 -->
     <view class="form-section">
       <view class="section-title">联系方式</view>
@@ -145,4 +173,30 @@
       </btn>
     </view>
   </form>
+
+  <!-- 地点选择弹窗 -->
+  <view class="picker-mask {{showLocationPicker ? 'show' : ''}}" bindtap="onHideLocationPicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择常用地点</text>
+        <text class="picker-close" bindtap="onHideLocationPicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option"
+          wx:for="{{marketLocations}}"
+          wx:key="value"
+          bindtap="onLocationSelect"
+          data-value="{{item.value}}"
+        >
+          <view class="location-option-main">
+            <text class="location-option-label">{{item.label}}</text>
+            <text class="location-option-coord" wx:if="{{item.latitude && item.longitude}}">
+              {{item.latitude.toFixed(4)}}, {{item.longitude.toFixed(4)}}
+            </text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
 </view>

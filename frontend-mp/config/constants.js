@@ -54,6 +54,27 @@ const PRICE_RANGES = [
   { value: '500+', label: '500元以上', min: 500, max: Infinity }
 ];
 
+const MARKET_LOCATIONS = [
+  { value: 'library', label: '图书馆', latitude: 39.9042, longitude: 116.4074 },
+  { value: 'canteen', label: '食堂', latitude: 39.9065, longitude: 116.4075 },
+  { value: 'teaching_building', label: '教学楼', latitude: 39.9040, longitude: 116.4085 },
+  { value: 'dormitory', label: '宿舍区', latitude: 39.9070, longitude: 116.4050 },
+  { value: 'stadium', label: '操场', latitude: 39.9075, longitude: 116.4085 },
+  { value: 'lab', label: '实验楼', latitude: 39.9055, longitude: 116.4060 },
+  { value: 'office', label: '行政楼', latitude: 39.9048, longitude: 116.4055 },
+  { value: 'tech_building', label: '科技楼', latitude: 39.9055, longitude: 116.4060 },
+  { value: 'main_gate', label: '校门口', latitude: 39.9030, longitude: 116.4060 },
+  { value: 'other', label: '其他地点', latitude: 39.9042, longitude: 116.4074 }
+];
+
+const MARKET_DISTANCE_RANGES = [
+  { value: '', label: '不限距离', min: 0, max: Infinity },
+  { value: '0-500', label: '500米内', min: 0, max: 500 },
+  { value: '500-1000', label: '500米-1公里', min: 500, max: 1000 },
+  { value: '1000-2000', label: '1-2公里', min: 1000, max: 2000 },
+  { value: '2000+', label: '2公里以上', min: 2000, max: Infinity }
+];
+
 const SORT_OPTIONS = [
   { value: 'latest', label: '最新', field: 'createTime', order: 'desc' },
   { value: 'price_asc', label: '价格低到高', field: 'price', order: 'asc' },
@@ -865,6 +886,8 @@ module.exports = {
   LOCATIONS,
   MARKET_CATEGORIES,
   PRICE_RANGES,
+  MARKET_LOCATIONS,
+  MARKET_DISTANCE_RANGES,
   SORT_OPTIONS,
   TIME_RANGES,
   SEARCH_TABS,

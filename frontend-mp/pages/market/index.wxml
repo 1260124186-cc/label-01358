@@ -18,10 +18,22 @@
         >{{item.label}}</view>
       </view>
     </scroll-view>
-    <view class="filter-price" bindtap="onShowPricePicker">
-      <text class="price-text">{{currentPriceText || '价格'}}</text>
-      <text class="price-arrow">▼</text>
+    <view class="filter-buttons">
+      <view class="filter-btn" bindtap="onShowPricePicker">
+        <text class="filter-btn-text">{{currentPriceText || '价格'}}</text>
+        <text class="filter-btn-arrow">▼</text>
+      </view>
+      <view class="filter-btn {{currentDistanceRange ? 'active' : ''}}" bindtap="onShowDistancePicker">
+        <text class="filter-btn-icon">📍</text>
+        <text class="filter-btn-text">{{currentDistanceText || '附近'}}</text>
+      </view>
     </view>
+  </view>
+
+  <!-- 定位提示 -->
+  <view class="location-tip" wx:if="{{locationTip}}">
+    <text class="location-tip-text">{{locationTip}}</text>
+    <text class="location-tip-action" bindtap="requestLocationAuth">去开启</text>
   </view>
 
   <!-- 学习资料入口 - 图书分类互补 -->
@@ -72,7 +84,12 @@
             <text class="goods-desc">{{item.description}}</text>
             <view class="goods-bottom">
               <text class="goods-price">¥{{item.priceText}}</text>
-              <text class="goods-views">{{item.views}}浏览</text>
+              <view class="goods-meta">
+                <text class="goods-distance" wx:if="{{item.hasDistance}}">
+                  📍{{item.distanceText}}
+                </text>
+                <text class="goods-views">{{item.views}}浏览</text>
+              </view>
             </view>
           </view>
         </view>
@@ -111,6 +128,33 @@
           wx:for="{{priceRanges}}"
           wx:key="value"
           bindtap="onPriceSelect"
+          data-value="{{item.value}}"
+          data-min="{{item.min}}"
+          data-max="{{item.max}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 距离选择器 -->
+  <view class="picker-mask {{showDistancePicker ? 'show' : ''}}" bindtap="onHideDistancePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择距离范围</text>
+        <text class="picker-close" bindtap="onHideDistancePicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentDistanceRange === '' ? 'active' : ''}}"
+          bindtap="onDistanceSelect"
+          data-value=""
+        >不限距离</view>
+        <view
+          class="picker-option {{currentDistanceRange === item.value ? 'active' : ''}}"
+          wx:for="{{distanceRanges}}"
+          wx:key="value"
+          wx:if="{{item.value !== ''}}"
+          bindtap="onDistanceSelect"
           data-value="{{item.value}}"
           data-min="{{item.min}}"
           data-max="{{item.max}}"

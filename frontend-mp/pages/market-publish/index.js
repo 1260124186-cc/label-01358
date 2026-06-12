@@ -17,12 +17,18 @@ mixPage({
       description: '',
       images: [],
       contact: '',
-      phone: ''
+      phone: '',
+      latitude: null,
+      longitude: null,
+      address: ''
     },
     categories: constants.MARKET_CATEGORIES,
     categoryIndex: -1,
     categoryText: '',
-    submitting: false
+    submitting: false,
+    marketLocations: constants.MARKET_LOCATIONS,
+    showLocationPicker: false,
+    locationTip: ''
   },
 
   onLoad(options) {
@@ -53,11 +59,92 @@ mixPage({
         description: item.description || '',
         images: item.images || [],
         contact: item.contact || '',
-        phone: item.phone || ''
+        phone: item.phone || '',
+        latitude: item.latitude !== undefined ? item.latitude : null,
+        longitude: item.longitude !== undefined ? item.longitude : null,
+        address: item.address || ''
       },
       categoryIndex,
       categoryText
     });
+  },
+
+  onChooseLocation() {
+    wx.getSetting({
+      success: (res) => {
+        if (res.authSetting['scope.userLocation'] === false) {
+          this.showFallbackPicker();
+          return;
+        }
+        wx.authorize({
+          scope: 'scope.userLocation',
+          success: () => {
+            this.openChooseLocation();
+          },
+          fail: () => {
+            this.showFallbackPicker();
+          }
+        });
+      },
+      fail: () => {
+        this.showFallbackPicker();
+      }
+    });
+  },
+
+  openChooseLocation() {
+    wx.chooseLocation({
+      success: (res) => {
+        this.setData({
+          'formData.latitude': res.latitude,
+          'formData.longitude': res.longitude,
+          'formData.address': res.address || res.name,
+          locationTip: ''
+        });
+      },
+      fail: (err) => {
+        if (err.errMsg && err.errMsg.includes('auth deny')) {
+          this.showFallbackPicker();
+        }
+      }
+    });
+  },
+
+  showFallbackPicker() {
+    this.setData({
+      showLocationPicker: true,
+      locationTip: '您未授权定位，可选择常用地点'
+    });
+  },
+
+  onHideLocationPicker() {
+    this.setData({ showLocationPicker: false });
+  },
+
+  onLocationSelect(e) {
+    const { value } = e.currentTarget.dataset;
+    const location = this.data.marketLocations.find(l => l.value === value);
+    if (location) {
+      this.setData({
+        'formData.latitude': location.latitude,
+        'formData.longitude': location.longitude,
+        'formData.address': location.label,
+        showLocationPicker: false,
+        locationTip: ''
+      });
+    }
+  },
+
+  onClearLocation() {
+    this.setData({
+      'formData.latitude': null,
+      'formData.longitude': null,
+      'formData.address': '',
+      locationTip: ''
+    });
+  },
+
+  stopPropagation() {
   },
 
   onInputChange(e) {

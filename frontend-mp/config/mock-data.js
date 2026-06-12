@@ -1160,7 +1160,10 @@ const MOCK_MARKET_ITEMS = [
     userId: 'user_1',
     userName: '张同学',
     status: 'selling',
-    views: 328
+    views: 328,
+    latitude: 39.9042,
+    longitude: 116.4074,
+    address: '图书馆'
   },
   {
     title: '高等数学教材 第七版',
@@ -1174,7 +1177,10 @@ const MOCK_MARKET_ITEMS = [
     userId: 'user_2',
     userName: '李同学',
     status: 'selling',
-    views: 156
+    views: 156,
+    latitude: 39.9065,
+    longitude: 116.4075,
+    address: '食堂'
   },
   {
     title: '小米空气净化器2S',
@@ -1188,7 +1194,10 @@ const MOCK_MARKET_ITEMS = [
     userId: 'user_3',
     userName: '王同学',
     status: 'reserved',
-    views: 245
+    views: 245,
+    latitude: 39.9070,
+    longitude: 116.4050,
+    address: '宿舍区'
   },
   {
     title: 'iPad Air 5 64G WiFi版',
@@ -1202,7 +1211,10 @@ const MOCK_MARKET_ITEMS = [
     userId: 'user_4',
     userName: '陈同学',
     status: 'selling',
-    views: 512
+    views: 512,
+    latitude: 39.9040,
+    longitude: 116.4085,
+    address: '教学楼'
   },
   {
     title: '考研英语真题全套',
@@ -1216,7 +1228,10 @@ const MOCK_MARKET_ITEMS = [
     userId: 'user_5',
     userName: '刘同学',
     status: 'sold',
-    views: 89
+    views: 89,
+    latitude: 39.9055,
+    longitude: 116.4060,
+    address: '实验楼'
   },
   {
     title: 'Nike Air Max 运动鞋 42码',
@@ -1230,7 +1245,10 @@ const MOCK_MARKET_ITEMS = [
     userId: 'user_6',
     userName: '赵同学',
     status: 'selling',
-    views: 178
+    views: 178,
+    latitude: 39.9075,
+    longitude: 116.4085,
+    address: '操场'
   }
 ];
 
