@@ -17,6 +17,7 @@ mixPage({
     genderOptions: ['未知', '男', '女'],
     genderIndex: 0,
     today: '',
+    regionText: '',
     saving: false
   },
 
@@ -30,6 +31,7 @@ mixPage({
 
   loadUserInfo() {
     const userInfo = app.globalData.userInfo || {};
+    const region = userInfo.region || [];
 
     this.setData({
       formData: {
@@ -37,10 +39,11 @@ mixPage({
         nickName: userInfo.nickName || '',
         gender: userInfo.gender,
         birthday: userInfo.birthday || '',
-        region: userInfo.region || [],
+        region: region,
         signature: userInfo.signature || ''
       },
-      genderIndex: userInfo.gender || 0
+      genderIndex: userInfo.gender || 0,
+      regionText: region.length > 0 ? region.join(' ') : ''
     });
   },
 
@@ -87,8 +90,10 @@ mixPage({
   },
 
   onRegionChange(e) {
+    const region = e.detail.value;
     this.setData({
-      'formData.region': e.detail.value
+      'formData.region': region,
+      regionText: region.length > 0 ? region.join(' ') : ''
     });
   },
 

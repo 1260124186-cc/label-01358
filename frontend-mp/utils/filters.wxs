@@ -1,0 +1,141 @@
+var formatFullTime = function (ts) {
+  if (!ts) return '-';
+  var d = getDate(ts);
+  var year = d.getFullYear();
+  var month = padZero(d.getMonth() + 1);
+  var day = padZero(d.getDate());
+  var hour = padZero(d.getHours());
+  var minute = padZero(d.getMinutes());
+  return year + '-' + month + '-' + day + ' ' + hour + ':' + minute;
+};
+
+var formatShortTime = function (ts) {
+  if (!ts) return '';
+  var d = getDate(ts);
+  var month = d.getMonth() + 1;
+  var day = d.getDate();
+  var hour = padZero(d.getHours());
+  var minute = padZero(d.getMinutes());
+  return month + '/' + day + ' ' + hour + ':' + minute;
+};
+
+var formatMoney = function (cents) {
+  if (cents === undefined || cents === null) return '0.00';
+  var yuan = cents / 100;
+  return yuan.toFixed(2);
+};
+
+var padZero = function (n) {
+  if (n < 10) return '0' + n;
+  return '' + n;
+};
+
+var getStatusInfo = function (statusMap, status) {
+  if (!statusMap) return { label: '', icon: '', color: '' };
+  var info = statusMap[status];
+  if (!info) return { label: status, icon: '', color: '#999' };
+  return info;
+};
+
+var countVerified = function (tickets) {
+  if (!tickets || tickets.length === 0) return 0;
+  var count = 0;
+  for (var i = 0; i < tickets.length; i++) {
+    if (tickets[i].verified) count++;
+  }
+  return count;
+};
+
+var countUnverified = function (tickets) {
+  if (!tickets || tickets.length === 0) return 0;
+  var count = 0;
+  for (var i = 0; i < tickets.length; i++) {
+    if (!tickets[i].verified) count++;
+  }
+  return count;
+};
+
+var hasUnverified = function (tickets) {
+  if (!tickets) return false;
+  for (var i = 0; i < tickets.length; i++) {
+    if (!tickets[i].verified) return true;
+  }
+  return false;
+};
+
+var formatCheckInText = function (checkedIn, checkInTime) {
+  if (checkedIn) {
+    return '✓ 已签到 · ' + formatFullTime(checkInTime);
+  }
+  return '○ 未签到';
+};
+
+var formatHours = function (hours) {
+  if (hours === undefined || hours === null) return '0';
+  var rounded = Math.round(hours * 10) / 10;
+  return '' + rounded;
+};
+
+var getLabel = function (options, value) {
+  if (!options || !value) return '';
+  for (var i = 0; i < options.length; i++) {
+    if (options[i].value === value) return options[i].label;
+  }
+  return '';
+};
+
+var getIcon = function (options, value) {
+  if (!options || !value) return '';
+  for (var i = 0; i < options.length; i++) {
+    if (options[i].value === value) return options[i].icon;
+  }
+  return '';
+};
+
+var getColor = function (options, value) {
+  if (!options || !value) return '';
+  for (var i = 0; i < options.length; i++) {
+    if (options[i].value === value) return options[i].color;
+  }
+  return '';
+};
+
+var getIconLabel = function (options, value) {
+  if (!options || !value) return '';
+  for (var i = 0; i < options.length; i++) {
+    if (options[i].value === value) return options[i].icon + ' ' + options[i].label;
+  }
+  return '';
+};
+
+var formatPercent = function (confidence) {
+  if (!confidence) return '0';
+  return '' + Math.round(confidence * 100);
+};
+
+var includesValue = function (arr, value) {
+  if (!arr) return false;
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i] === value) return true;
+  }
+  return false;
+};
+
+module.exports = {
+  formatFullTime: formatFullTime,
+  formatShortTime: formatShortTime,
+  formatMoney: formatMoney,
+  padZero: padZero,
+  getStatusInfo: getStatusInfo,
+  countVerified: countVerified,
+  countUnverified: countUnverified,
+  hasUnverified: hasUnverified,
+  formatCheckInText: formatCheckInText,
+  formatHours: formatHours,
+  getLabel: getLabel,
+  getIcon: getIcon,
+  getColor: getColor,
+  getIconLabel: getIconLabel,
+  includesValue: includesValue,
+  formatPercent: formatPercent
+};

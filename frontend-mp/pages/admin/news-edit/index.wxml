@@ -146,15 +146,15 @@
     <view class="form-item">
       <text class="form-label">发布时间</text>
       <view class="datetime-row">
-        <picker mode="date" value="{{publishTimeText.substring(0, 10)}}" bindchange="onDateChange">
+        <picker mode="date" value="{{publishDate}}" bindchange="onDateChange">
           <view class="datetime-btn">
-            <text>{{publishTimeText.substring(0, 10)}}</text>
+            <text>{{publishDate}}</text>
             <text class="arrow">›</text>
           </view>
         </picker>
-        <picker mode="time" value="{{publishTimeText.substring(11, 16)}}" bindchange="onTimeChange">
+        <picker mode="time" value="{{publishTimePart}}" bindchange="onTimeChange">
           <view class="datetime-btn">
-            <text>{{publishTimeText.substring(11, 16)}}</text>
+            <text>{{publishTimePart}}</text>
             <text class="arrow">›</text>
           </view>
         </picker>

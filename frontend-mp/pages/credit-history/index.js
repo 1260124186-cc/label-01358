@@ -54,7 +54,9 @@ Page({
         timeText: util.relativeTime(item.createTime),
         dateText: util.formatDate(item.createTime),
         changeClass: item.change > 0 ? 'positive' : item.change < 0 ? 'negative' : 'neutral',
-        changeText: item.change > 0 ? `+${item.change}` : item.change.toString()
+        changeText: item.change > 0 ? `+${item.change}` : item.change.toString(),
+        typeIcon: this.getChangeTypeIcon(item.type),
+        typeLabel: this.getChangeTypeLabel(item.type)
       }));
 
       const stats = this.calculateStats(history);

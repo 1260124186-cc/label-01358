@@ -1,3 +1,4 @@
+<wxs src="../../utils/filters.wxs" module="f" />
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
 <view class="page {{darkMode ? 'dark' : ''}}">
   <view class="search-section">
@@ -12,7 +13,7 @@
       />
     </view>
     <view class="filter-btn" bindtap="onStatusFilterTap">
-      <text class="filter-text">{{selectedStatus ? (statusOptions.find(s => s.value === selectedStatus) ? statusOptions.find(s => s.value === selectedStatus).label : '状态') : '状态筛选'}}</text>
+      <text class="filter-text">{{selectedStatus ? (f.getLabel(statusOptions, selectedStatus) || '状态') : '状态筛选'}}</text>
     </view>
   </view>
 

@@ -21,9 +21,16 @@ Page({
     ticketStats: { sold: 0, verified: 0, refunded: 0, revenue: 0 },
     registrations: [],
     orders: [],
+    orderVerifiedCounts: {},
+    orderUnverifiedCounts: {},
+    orderHasUnverified: {},
     showDetailModal: false,
     selectedItem: null,
-    selectedType: 'registration'
+    selectedType: 'registration',
+    selectedVerifiedCount: 0,
+    selectedUnverifiedCount: 0,
+    selectedHasUnverified: false,
+    statusMap: {}
   },
 
   onLoad(options) {
@@ -49,7 +56,28 @@ Page({
       .filter(o => o.activityId === this.data.activityId)
       .sort((a, b) => b.createdAt - a.createdAt);
 
-    this.setData({ activity, ticketStats, registrations: sortedRegs, orders });
+    const orderVerifiedCounts = {};
+    const orderUnverifiedCounts = {};
+    const orderHasUnverified = {};
+    orders.forEach(o => {
+      const tickets = o.tickets || [];
+      let vc = 0, uc = 0;
+      tickets.forEach(t => { t.verified ? vc++ : uc++; });
+      orderVerifiedCounts[o.orderId] = vc;
+      orderUnverifiedCounts[o.orderId] = uc;
+      orderHasUnverified[o.orderId] = uc > 0;
+    });
+
+    this.setData({
+      activity,
+      ticketStats,
+      registrations: sortedRegs,
+      orders,
+      orderVerifiedCounts,
+      orderUnverifiedCounts,
+      orderHasUnverified,
+      statusMap: TICKET_ORDER_STATUS_MAP
+    });
   },
 
   onBack() {
@@ -80,10 +108,16 @@ Page({
   onShowOrderDetail(e) {
     const { orderId } = e.currentTarget.dataset;
     const item = this.data.orders.find(o => o.orderId === orderId);
+    const tickets = item && item.tickets ? item.tickets : [];
+    let vc = 0, uc = 0;
+    tickets.forEach(t => { t.verified ? vc++ : uc++; });
     this.setData({
       showDetailModal: true,
       selectedItem: item,
-      selectedType: 'order'
+      selectedType: 'order',
+      selectedVerifiedCount: vc,
+      selectedUnverifiedCount: uc,
+      selectedHasUnverified: uc > 0
     });
   },
 

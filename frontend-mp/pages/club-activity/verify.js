@@ -102,21 +102,5 @@ Page({
 
   onCloseVerify() {
     this.setData({ showVerifyModal: false, verifyResult: null });
-  },
-
-  formatDate(ts) {
-    if (!ts) return '';
-    const d = new Date(ts);
-    return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}:${d.getSeconds().toString().padStart(2, '0')}`;
-  },
-
-  formatActivityTime(ts) {
-    if (!ts) return '';
-    const d = new Date(ts);
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const day = d.getDate().toString().padStart(2, '0');
-    const hh = d.getHours().toString().padStart(2, '0');
-    const mm = d.getMinutes().toString().padStart(2, '0');
-    return `${month}-${day} ${hh}:${mm}`;
   }
 });

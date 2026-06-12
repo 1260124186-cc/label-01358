@@ -1,3 +1,5 @@
+<wxs src="../../utils/filters.wxs" module="f" />
+
 <view class="page {{isDark ? 'dark' : ''}}">
   <view class="page-header">
     <view class="header-inner">
@@ -13,7 +15,7 @@
     <view class="activity-info" wx:if="{{activity}}">
       <view class="ai-title">{{activity.title}}</view>
       <view class="ai-meta">
-        <text class="ai-item">🕐 {{formatFullTime(activity.startAt)}}</text>
+        <text class="ai-item">🕐 {{f.formatFullTime(activity.startAt)}}</text>
       </view>
     </view>
 
@@ -47,7 +49,7 @@
         <view class="sc-sub">余 {{ticketStats.sold - ticketStats.verified}}</view>
       </view>
       <view class="stat-card" wx:if="{{!activity.isFreeTicket}}">
-        <view class="sc-num money">¥{{formatMoney(ticketStats.revenue)}}</view>
+        <view class="sc-num money">¥{{f.formatMoney(ticketStats.revenue)}}</view>
         <view class="sc-label">总收入</view>
         <view class="sc-sub">退票 {{ticketStats.refunded}}</view>
       </view>
@@ -95,7 +97,7 @@
         </view>
         <view class="mb-info">
           <text class="mb-info-item">专业：{{item.major || '-'}}</text>
-          <text class="mb-time">{{formatShortTime(item.registeredAt)}}</text>
+          <text class="mb-time">{{f.formatShortTime(item.registeredAt)}}</text>
         </view>
       </view>
       <view
@@ -122,8 +124,8 @@
     >
       <view class="oc-header">
         <view class="oc-no">#{{item.orderId}}</view>
-        <view class="oc-status" style="color: {{TICKET_ORDER_STATUS_MAP[item.status].color}}">
-          {{TICKET_ORDER_STATUS_MAP[item.status].icon}} {{TICKET_ORDER_STATUS_MAP[item.status].label}}
+        <view class="oc-status" style="color: {{statusMap[item.status].color}}">
+          {{statusMap[item.status].icon}} {{statusMap[item.status].label}}
         </view>
       </view>
       <view class="oc-body">
@@ -141,18 +143,18 @@
         </view>
         <view class="oc-row">
           <text class="oc-label">实付</text>
-          <text class="oc-value money">¥{{formatMoney(item.totalAmount)}}</text>
+          <text class="oc-value money">¥{{f.formatMoney(item.totalAmount)}}</text>
         </view>
         <view class="oc-row">
           <text class="oc-label">购票时间</text>
-          <text class="oc-value time">{{formatShortTime(item.createdAt)}}</text>
+          <text class="oc-value time">{{f.formatShortTime(item.createdAt)}}</text>
         </view>
         <view wx:if="{{item.status === 'paid' && !item.isFree}}" class="oc-verify-row">
           <text class="oc-label">已验</text>
-          <text class="oc-value">{{item.tickets.filter(t => t.verified).length}} / {{item.tickets.length}}</text>
+          <text class="oc-value">{{orderVerifiedCounts[item.orderId]}} / {{item.tickets.length}}</text>
         </view>
       </view>
-      <view wx:if="{{item.status === 'paid' && !item.isFree && item.tickets.filter(t => !t.verified).length > 0}}" class="oc-footer">
+      <view wx:if="{{item.status === 'paid' && !item.isFree && orderHasUnverified[item.orderId]}}" class="oc-footer">
         <view
           class="verify-btn"
           data-order-id="{{item.orderId}}"
@@ -192,12 +194,12 @@
           </view>
           <view class="detail-row">
             <text class="dr-label">报名时间</text>
-            <text class="dr-value">{{formatFullTime(selectedItem.registeredAt)}}</text>
+            <text class="dr-value">{{f.formatFullTime(selectedItem.registeredAt)}}</text>
           </view>
           <view class="detail-row highlight">
             <text class="dr-label">签到状态</text>
             <text class="dr-value status-text {{selectedItem.checkedIn ? 'success' : 'warn'}}">
-              {{selectedItem.checkedIn ? ('✓ 已签到 · ' + formatFullTime(selectedItem.checkInTime)) : '○ 未签到'}}
+              {{f.formatCheckInText(selectedItem.checkedIn, selectedItem.checkInTime)}}
             </text>
           </view>
         </view>
@@ -223,8 +225,8 @@
           </view>
           <view class="detail-row">
             <text class="dr-label">订单状态</text>
-            <text class="dr-value" style="color: {{TICKET_ORDER_STATUS_MAP[selectedItem.status].color}}">
-              {{TICKET_ORDER_STATUS_MAP[selectedItem.status].icon}} {{TICKET_ORDER_STATUS_MAP[selectedItem.status].label}}
+            <text class="dr-value" style="color: {{statusMap[selectedItem.status].color}}">
+              {{statusMap[selectedItem.status].icon}} {{statusMap[selectedItem.status].label}}
             </text>
           </view>
           <view class="detail-row">
@@ -233,11 +235,11 @@
           </view>
           <view class="detail-row">
             <text class="dr-label">单价</text>
-            <text class="dr-value">¥{{formatMoney(selectedItem.unitPrice)}}</text>
+            <text class="dr-value">¥{{f.formatMoney(selectedItem.unitPrice)}}</text>
           </view>
           <view class="detail-row highlight">
             <text class="dr-label">实付金额</text>
-            <text class="dr-value money-text">¥{{formatMoney(selectedItem.totalAmount)}}</text>
+            <text class="dr-value money-text">¥{{f.formatMoney(selectedItem.totalAmount)}}</text>
           </view>
           <view class="detail-row">
             <text class="dr-label">支付方式</text>
@@ -245,7 +247,7 @@
           </view>
           <view class="detail-row">
             <text class="dr-label">购票时间</text>
-            <text class="dr-value">{{formatFullTime(selectedItem.createdAt)}}</text>
+            <text class="dr-value">{{f.formatFullTime(selectedItem.createdAt)}}</text>
           </view>
         </view>
 
@@ -260,7 +262,7 @@
             <view class="ti-left">
               <view class="ti-code">{{ticket.ticketCode}}</view>
               <view class="ti-time" wx:if="{{ticket.verified}}">
-                验票于 {{formatFullTime(ticket.verifiedAt)}}
+                验票于 {{f.formatFullTime(ticket.verifiedAt)}}
               </view>
             </view>
             <view class="ti-status {{ticket.verified ? 'done' : 'todo'}}">
@@ -273,7 +275,7 @@
           <view class="section-title-sm">退票信息</view>
           <view class="detail-row">
             <text class="dr-label">退票金额</text>
-            <text class="dr-value success-text">¥{{formatMoney(selectedItem.refundAmount || selectedItem.totalAmount)}}</text>
+            <text class="dr-value success-text">¥{{f.formatMoney(selectedItem.refundAmount || selectedItem.totalAmount)}}</text>
           </view>
           <view class="detail-row">
             <text class="dr-label">退票原因</text>
@@ -281,7 +283,7 @@
           </view>
           <view class="detail-row">
             <text class="dr-label">退票时间</text>
-            <text class="dr-value">{{formatFullTime(selectedItem.refundedAt) || '-'}}</text>
+            <text class="dr-value">{{selectedItem.refundedAt ? f.formatFullTime(selectedItem.refundedAt) : '-'}}</text>
           </view>
         </view>
       </view>

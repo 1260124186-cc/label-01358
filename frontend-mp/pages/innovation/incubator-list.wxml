@@ -1,3 +1,4 @@
+<wxs src="../../utils/filters.wxs" module="f" />
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
 <view class="page {{darkMode ? 'dark' : ''}}">
   <view class="search-section">
@@ -12,7 +13,7 @@
       />
     </view>
     <view class="filter-btn" bindtap="onTypeFilterTap">
-      <text class="filter-text">{{selectedType ? (typeOptions.find(t => t.value === selectedType) ? typeOptions.find(t => t.value === selectedType).label : '类型') : '类型筛选'}}</text>
+      <text class="filter-text">{{selectedType ? (f.getLabel(typeOptions, selectedType) || '类型') : '类型筛选'}}</text>
     </view>
   </view>
 

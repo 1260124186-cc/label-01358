@@ -1,3 +1,4 @@
+<wxs src="../../utils/filters.wxs" module="f" />
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
 <view class="page {{darkMode ? 'dark' : ''}}">
   <scroll-view class="form-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
@@ -34,7 +35,7 @@
         <text class="form-label">项目领域 <text class="required">*</text></text>
         <view class="form-picker" bindtap="onFieldPickerTap">
           <text class="picker-value {{form.field ? '' : 'placeholder'}}">
-            {{form.field ? (fieldOptions.find(f => f.value === form.field) ? fieldOptions.find(f => f.value === form.field).icon + ' ' + fieldOptions.find(f => f.value === form.field).label : '请选择') : '请选择项目领域'}}
+            {{form.field ? (f.getIconLabel(fieldOptions, form.field) || '请选择') : '请选择项目领域'}}
           </text>
           <text class="picker-arrow">›</text>
         </view>
@@ -44,7 +45,7 @@
         <text class="form-label">项目阶段</text>
         <view class="form-picker" bindtap="onStagePickerTap">
           <text class="picker-value">
-            {{stageOptions.find(s => s.value === form.stage) ? stageOptions.find(s => s.value === form.stage).icon + ' ' + stageOptions.find(s => s.value === form.stage).label : ''}}
+            {{f.getIconLabel(stageOptions, form.stage)}}
           </text>
           <text class="picker-arrow">›</text>
         </view>
@@ -59,7 +60,7 @@
         <text class="form-label">融资轮次</text>
         <view class="form-picker" bindtap="onFinancingPickerTap">
           <text class="picker-value">
-            {{financingOptions.find(f => f.value === form.financingStage) ? financingOptions.find(f => f.value === form.financingStage).icon + ' ' + financingOptions.find(f => f.value === form.financingStage).label : '暂无融资需求'}}
+            {{f.getIconLabel(financingOptions, form.financingStage) || '暂无融资需求'}}
           </text>
           <text class="picker-arrow">›</text>
         </view>
@@ -120,7 +121,7 @@
           <view class="team-info">
             <view class="team-name-row">
               <text class="team-name">{{item.name}}</text>
-              <view class="team-role-tag">{{roleOptions.find(r => r.value === item.role) ? roleOptions.find(r => r.value === item.role).label : ''}}</view>
+              <view class="team-role-tag">{{f.getLabel(roleOptions, item.role)}}</view>
             </view>
             <text class="team-major">{{item.major}}</text>
             <text class="team-grade">{{item.grade}}级</text>
@@ -149,9 +150,9 @@
           wx:for="{{form.recruitingRoles}}"
           wx:key="index"
           wx:for-item="roleValue"
-          style="background: {{roleOptions.find(r => r.value === roleValue) ? roleOptions.find(r => r.value === roleValue).color + '15' : ''}}; color: {{roleOptions.find(r => r.value === roleValue) ? roleOptions.find(r => r.value === roleValue).color : ''}}"
+          style="background: {{f.getColor(roleOptions, roleValue)}}15; color: {{f.getColor(roleOptions, roleValue)}}"
         >
-          {{roleOptions.find(r => r.value === roleValue) ? roleOptions.find(r => r.value === roleValue).icon + ' ' + roleOptions.find(r => r.value === roleValue).label : ''}}
+          {{f.getIconLabel(roleOptions, roleValue)}}
         </view>
       </view>
       <view class="form-item" wx:if="{{form.recruitingRoles.length > 0}}">
@@ -361,7 +362,7 @@
       </view>
       <view class="picker-options">
         <view
-          class="picker-option {{form.recruitingRoles.indexOf(item.value) > -1 ? 'active' : ''}}"
+          class="picker-option {{f.includesValue(form.recruitingRoles, item.value) ? 'active' : ''}}"
           wx:for="{{roleOptions}}"
           wx:key="value"
           bindtap="onRecruitingToggle"
@@ -369,7 +370,7 @@
         >
           <text class="option-icon">{{item.icon}}</text>
           <text class="option-label">{{item.label}}</text>
-          <text class="option-check" wx:if="{{form.recruitingRoles.indexOf(item.value) > -1}}">✓</text>
+          <text class="option-check" wx:if="{{f.includesValue(form.recruitingRoles, item.value)}}">✓</text>
         </view>
       </view>
     </view>
@@ -397,7 +398,7 @@
           <text class="form-label">角色 <text class="required">*</text></text>
           <view class="form-picker" bindtap="onRolePickerTap">
             <text class="picker-value {{teamForm.role ? '' : 'placeholder'}}">
-              {{teamForm.role ? (roleOptions.find(r => r.value === teamForm.role) ? roleOptions.find(r => r.value === teamForm.role).icon + ' ' + roleOptions.find(r => r.value === teamForm.role).label : '') : '请选择角色'}}
+              {{teamForm.role ? (f.getIconLabel(roleOptions, teamForm.role) || '请选择角色') : '请选择角色'}}
             </text>
             <text class="picker-arrow">›</text>
           </view>

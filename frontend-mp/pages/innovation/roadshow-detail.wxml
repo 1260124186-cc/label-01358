@@ -91,7 +91,7 @@
         </view>
         <view class="judges-list">
           <view class="judge-item" wx:for="{{roadshow.judges}}" wx:key="index">
-            <view class="judge-avatar">{{item.name.charAt(0)}}</view>
+            <view class="judge-avatar">{{item.name[0]}}</view>
             <view class="judge-info">
               <text class="judge-name">{{item.name}}</text>
               <text class="judge-title">{{item.title}}</text>

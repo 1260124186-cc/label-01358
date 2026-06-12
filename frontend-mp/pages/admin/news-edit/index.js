@@ -24,10 +24,20 @@ mixPage({
     statusList: constants.PUBLISH_STATUS,
     statusIndex: 1,
     publishTimeText: '',
+    publishDate: '',
+    publishTimePart: '',
     publishTime: Date.now(),
     showCategoryPicker: false,
     showStatusPicker: false,
     submitting: false
+  },
+
+  _updatePublishParts(text) {
+    return {
+      publishTimeText: text,
+      publishDate: text ? text.substring(0, 10) : '',
+      publishTimePart: text ? text.substring(11, 16) : ''
+    };
   },
 
   onLoad(options) {
@@ -42,7 +52,7 @@ mixPage({
       wx.setNavigationBarTitle({ title: '新增动态' });
       this.setData({
         category: categories[0] ? categories[0].value : 'notice',
-        publishTimeText: util.formatTime(Date.now(), 'YYYY-MM-DD HH:mm')
+        ...this._updatePublishParts(util.formatTime(Date.now(), 'YYYY-MM-DD HH:mm'))
       });
     }
   },
@@ -65,7 +75,7 @@ mixPage({
         status: detail.status,
         statusIndex: statusIndex >= 0 ? statusIndex : 1,
         publishTime: detail.publishTime,
-        publishTimeText: util.formatTime(detail.publishTime, 'YYYY-MM-DD HH:mm')
+        ...this._updatePublishParts(util.formatTime(detail.publishTime, 'YYYY-MM-DD HH:mm'))
       });
     }
   },
@@ -211,7 +221,7 @@ mixPage({
     const timestamp = new Date(dateTime.replace(/-/g, '/')).getTime();
     this.setData({
       publishTime: timestamp,
-      publishTimeText: util.formatTime(timestamp, 'YYYY-MM-DD HH:mm')
+      ...this._updatePublishParts(util.formatTime(timestamp, 'YYYY-MM-DD HH:mm'))
     });
   },
 
@@ -222,7 +232,7 @@ mixPage({
     const timestamp = new Date(dateTime.replace(/-/g, '/')).getTime();
     this.setData({
       publishTime: timestamp,
-      publishTimeText: util.formatTime(timestamp, 'YYYY-MM-DD HH:mm')
+      ...this._updatePublishParts(util.formatTime(timestamp, 'YYYY-MM-DD HH:mm'))
     });
   },
 

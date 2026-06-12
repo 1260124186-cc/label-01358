@@ -1,3 +1,5 @@
+<wxs src="../../utils/filters.wxs" module="f" />
+
 <view class="page {{isDark ? 'dark' : ''}}">
   <view class="header">
     <view class="header-inner">
@@ -5,7 +7,7 @@
       <view class="wallet-card">
         <view class="wallet-left">
           <view class="wallet-label">钱包余额</view>
-          <view class="wallet-balance">¥{{formatMoney(wallet.balance)}}</view>
+          <view class="wallet-balance">¥{{f.formatMoney(wallet.balance)}}</view>
         </view>
         <view class="wallet-right">
           <view class="wallet-icon">💰</view>
@@ -39,8 +41,8 @@
     >
       <view class="order-header">
         <view class="order-no">订单号：{{item.orderId}}</view>
-        <view class="order-status" style="color: {{TICKET_ORDER_STATUS_MAP[item.status].color}}">
-          {{TICKET_ORDER_STATUS_MAP[item.status].icon}} {{TICKET_ORDER_STATUS_MAP[item.status].label}}
+        <view class="order-status" style="color: {{statusMap[item.status].color}}">
+          {{statusMap[item.status].icon}} {{statusMap[item.status].label}}
         </view>
       </view>
 
@@ -65,7 +67,7 @@
           <view class="activity-meta">
             <view class="meta-line">
               <text class="meta-icon">🕐</text>
-              <text class="meta-text">{{formatActivityStart(item.activityStartAt)}}</text>
+              <text class="meta-text">{{f.formatFullTime(item.activityStartAt)}}</text>
             </view>
             <view class="meta-line">
               <text class="meta-icon">📍</text>
@@ -82,8 +84,8 @@
       <view class="order-footer">
         <view class="order-total">
           <text class="total-label">实付：</text>
-          <text class="total-value">¥{{formatMoney(item.totalAmount)}}</text>
-          <text class="time-label"> · {{formatDate(item.createdAt)}}</text>
+          <text class="total-value">¥{{f.formatMoney(item.totalAmount)}}</text>
+          <text class="time-label"> · {{f.formatShortTime(item.createdAt)}}</text>
         </view>
         <view class="order-actions">
           <view
@@ -147,7 +149,7 @@
 
         <view class="ticket-info-box">
           <text class="qr-activity">活动：{{selectedOrder.activityTitle}}</text>
-          <text class="qr-time">时间：{{formatActivityStart(selectedOrder.activityStartAt)}}</text>
+          <text class="qr-time">时间：{{f.formatFullTime(selectedOrder.activityStartAt)}}</text>
           <text class="qr-location">地点：{{selectedOrder.location || '线上活动'}}</text>
           <text class="qr-user">持票人：{{selectedOrder.buyerName}} ({{selectedOrder.buyerStudentNo}})</text>
         </view>
@@ -168,19 +170,19 @@
         <view class="refund-summary">
           <view class="rs-row">
             <text class="rs-label">原支付金额</text>
-            <text class="rs-value">¥{{formatMoney(refundCalc.originalAmount)}}</text>
+            <text class="rs-value">¥{{f.formatMoney(refundCalc.originalAmount)}}</text>
           </view>
           <view wx:if="{{refundCalc.fee > 0}}" class="rs-row">
             <text class="rs-label">{{refundCalc.fee > 0 ? '扣除手续费' : ''}}</text>
-            <text class="rs-value" wx:if="{{refundCalc.fee > 0}}">-¥{{formatMoney(refundCalc.fee)}}</text>
+            <text class="rs-value" wx:if="{{refundCalc.fee > 0}}">-¥{{f.formatMoney(refundCalc.fee)}}</text>
           </view>
           <view class="rs-row highlight">
             <text class="rs-label">可退金额</text>
-            <text class="rs-value big">¥{{formatMoney(refundCalc.refundAmount)}}</text>
+            <text class="rs-value big">¥{{f.formatMoney(refundCalc.refundAmount)}}</text>
           </view>
           <view class="rs-reason-box">
             <text class="rsr-text">{{refundCalc.ruleDesc}}</text>
-            <text class="rsr-hours">{{refundCalc.canRefund ? '距活动开始还有 ' + (refundCalc.hoursUntilStart / 1).toFixed(1) + ' 小时' : ''}}</text>
+            <text class="rsr-hours">{{refundCalc.canRefund ? '距活动开始还有 ' + f.formatHours(refundCalc.hoursUntilStart) + ' 小时' : ''}}</text>
           </view>
         </view>
 

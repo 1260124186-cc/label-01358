@@ -1,3 +1,4 @@
+<wxs src="../../utils/filters.wxs" module="f" />
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
 <view class="page {{darkMode ? 'dark' : ''}}">
   <!-- 搜索栏 -->
@@ -67,7 +68,7 @@
       </view>
       <view class="filter-btn" bindtap="onFieldFilterTap">
         <text class="filter-icon">📁</text>
-        <text class="filter-text">{{selectedField ? (fieldOptions.find(f => f.value === selectedField) ? fieldOptions.find(f => f.value === selectedField).label : '领域') : '领域'}}</text>
+        <text class="filter-text">{{selectedField ? (f.getLabel(fieldOptions, selectedField) || '领域') : '领域'}}</text>
       </view>
     </view>
 
@@ -155,7 +156,7 @@
       <view class="sub-tab-item active">推荐导师</view>
       <view class="filter-btn" bindtap="onMentorFilterTap">
         <text class="filter-icon">👔</text>
-        <text class="filter-text">{{selectedMentorTitle ? (mentorTitleOptions.find(t => t.value === selectedMentorTitle) ? mentorTitleOptions.find(t => t.value === selectedMentorTitle).label : '职称') : '职称'}}</text>
+        <text class="filter-text">{{selectedMentorTitle ? (f.getLabel(mentorTitleOptions, selectedMentorTitle) || '职称') : '职称'}}</text>
       </view>
     </view>
 
@@ -259,7 +260,7 @@
     <view class="sub-tabs">
       <view class="filter-btn" bindtap="onPolicyFilterTap">
         <text class="filter-icon">📋</text>
-        <text class="filter-text">{{selectedPolicyType ? (policyTypeOptions.find(t => t.value === selectedPolicyType) ? policyTypeOptions.find(t => t.value === selectedPolicyType).label : '政策类型') : '政策类型'}}</text>
+        <text class="filter-text">{{selectedPolicyType ? (f.getLabel(policyTypeOptions, selectedPolicyType) || '政策类型') : '政策类型'}}</text>
       </view>
     </view>
 
@@ -304,7 +305,7 @@
       <view class="section-header">
         <text class="section-title">孵化器推荐</text>
         <view class="filter-btn small" bindtap="onIncubatorFilterTap">
-          {{selectedIncubatorType ? (incubatorTypeOptions.find(t => t.value === selectedIncubatorType) ? incubatorTypeOptions.find(t => t.value === selectedIncubatorType).label : '筛选') : '筛选'}}
+          {{selectedIncubatorType ? (f.getLabel(incubatorTypeOptions, selectedIncubatorType) || '筛选') : '筛选'}}
         </view>
       </view>
 

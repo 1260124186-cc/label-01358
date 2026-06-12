@@ -89,13 +89,13 @@
       <view class="history-item" wx:for="{{creditHistory}}" wx:key="id">
         <view class="item-left">
           <view class="item-icon">
-            <text>{{getChangeTypeIcon(item.type)}}</text>
+            <text>{{item.typeIcon}}</text>
           </view>
           <view class="timeline-dot" wx:if="{{index < creditHistory.length - 1}}"></view>
         </view>
         <view class="item-content">
           <view class="item-header">
-            <text class="item-title">{{getChangeTypeLabel(item.type)}}</text>
+            <text class="item-title">{{item.typeLabel}}</text>
             <text class="item-change {{item.changeClass}}">{{item.changeText}}</text>
           </view>
           <text class="item-desc" wx:if="{{item.description}}">{{item.description}}</text>

@@ -1,3 +1,4 @@
+<wxs src="../../utils/filters.wxs" module="f" />
 <view class="page {{isDark ? 'dark' : ''}}">
   <view class="page-header">
     <view class="header-inner">
@@ -9,7 +10,7 @@
     </view>
     <view class="activity-bar" wx:if="{{activity}}">
       <view class="ab-title">{{activity.title}}</view>
-      <view class="ab-time">{{formatActivityTime(activity.startAt)}}</view>
+      <view class="ab-time">{{f.formatFullTime(activity.startAt)}}</view>
     </view>
   </view>
 
@@ -66,7 +67,7 @@
       <view class="log-body">
         <view class="log-code">{{item.ticketCode}}</view>
         <view class="log-user">{{item.buyerName}} · {{item.buyerStudentNo}}</view>
-        <view class="log-time">{{formatDate(item.verifiedAt)}}</view>
+        <view class="log-time">{{f.formatShortTime(item.verifiedAt)}}</view>
       </view>
     </view>
   </view>

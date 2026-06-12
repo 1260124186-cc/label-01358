@@ -197,7 +197,7 @@
       />
     </view>
     <view class="modal-footer">
-      <view class="submit-btn {{reviewContent.trim() ? 'active' : ''}}" bindtap="onSubmitReview">
+      <view class="submit-btn {{reviewContent ? 'active' : ''}}" bindtap="onSubmitReview">
         提交评价
       </view>
     </view>

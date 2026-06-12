@@ -72,7 +72,7 @@
           bindchange="onRegionChange"
         >
           <view class="form-picker">
-            <text class="picker-text {{formData.region && formData.region.length > 0 ? '' : 'placeholder'}}">{{formData.region && formData.region.length > 0 ? formData.region.join(' ') : '请选择地区'}}</text>
+            <text class="picker-text {{regionText ? '' : 'placeholder'}}">{{regionText || '请选择地区'}}</text>
             <text class="picker-arrow">›</text>
           </view>
         </picker>

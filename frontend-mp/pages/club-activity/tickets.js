@@ -20,10 +20,12 @@ Page({
     selectedTicketIndex: 0,
     showRefundModal: false,
     refundCalc: null,
-    refundReason: ''
+    refundReason: '',
+    statusMap: {}
   },
 
   onLoad() {
+    this.setData({ statusMap: TICKET_ORDER_STATUS_MAP });
     this.initData();
   },
 

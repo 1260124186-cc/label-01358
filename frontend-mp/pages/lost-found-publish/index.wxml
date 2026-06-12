@@ -1,3 +1,4 @@
+<wxs src="../../utils/filters.wxs" module="f" />
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
 <view class="page {{darkMode ? 'dark' : ''}}">
   <form bindsubmit="onSubmit">
@@ -173,7 +174,7 @@
             <view class="ai-result-title">
               <text class="ai-result-icon">✨</text>
               <text>AI识别结果</text>
-              <text class="ai-confidence">置信度 {{aiRecognitionResult ? (aiRecognitionResult.confidence * 100).toFixed(0) : 0}}%</text>
+              <text class="ai-confidence">置信度 {{aiRecognitionResult ? f.formatPercent(aiRecognitionResult.confidence) : 0}}%</text>
             </view>
             <text class="ai-toggle {{showAIPanel ? 'expanded' : ''}}">▼</text>
           </view>
@@ -190,7 +191,7 @@
                   data-label="{{aiTags.category.label}}"
                 >
                   <text class="tag-text">{{aiTags.category.label}}</text>
-                  <text class="tag-confidence">{{(aiTags.category.confidence * 100).toFixed(0)}}%</text>
+                  <text class="tag-confidence">{{f.formatPercent(aiTags.category.confidence)}}%</text>
                   <text class="tag-apply">应用</text>
                 </view>
               </view>
@@ -209,7 +210,7 @@
                   data-label="{{item.label}}"
                 >
                   <text class="tag-text">{{item.label}}</text>
-                  <text class="tag-confidence">{{(item.confidence * 100).toFixed(0)}}%</text>
+                  <text class="tag-confidence">{{f.formatPercent(item.confidence)}}%</text>
                   <text class="tag-apply">使用</text>
                 </view>
               </view>
@@ -228,7 +229,7 @@
                   data-label="{{item.label}}"
                 >
                   <text class="tag-text">{{item.label}}</text>
-                  <text class="tag-confidence">{{(item.confidence * 100).toFixed(0)}}%</text>
+                  <text class="tag-confidence">{{f.formatPercent(item.confidence)}}%</text>
                   <text class="tag-apply">使用</text>
                 </view>
               </view>

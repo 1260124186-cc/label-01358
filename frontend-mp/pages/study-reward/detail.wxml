@@ -119,7 +119,7 @@
         bindconfirm="onSubmitReply"
       />
     </view>
-    <view class="send-btn {{replyContent.trim() ? 'active' : ''}}" bindtap="onSubmitReply">
+    <view class="send-btn {{replyContent ? 'active' : ''}}" bindtap="onSubmitReply">
       发送
     </view>
     <button
