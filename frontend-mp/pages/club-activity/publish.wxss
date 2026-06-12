@@ -333,3 +333,34 @@
 .page.dark .submit-btn {
   box-shadow: 0 8rpx 24rpx rgba(255, 138, 138, 0.25);
 }
+
+.refund-label {
+  font-size: var(--font-md);
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.refund-desc {
+  font-size: var(--font-xs);
+  color: var(--color-text-tertiary);
+  margin-top: 4rpx;
+}
+
+.picker-value {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  height: auto;
+  min-height: 88rpx;
+  padding: 16rpx 24rpx;
+  gap: 4rpx;
+}
+
+.picker-value.small {
+  flex-direction: row;
+  align-items: center;
+  min-height: 80rpx;
+  height: 80rpx;
+  padding: 0 20rpx;
+  justify-content: space-between;
+}

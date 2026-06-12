@@ -119,6 +119,11 @@ mixPage({
     util.navigateTo('/pages/club-activity/calendar');
   },
 
+  onGoTickets() {
+    if (!util.checkLogin()) return;
+    util.navigateTo('/pages/club-activity/tickets');
+  },
+
   onClubs() {
     util.navigateTo('/pages/club/index');
   },

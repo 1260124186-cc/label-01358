@@ -1,0 +1,142 @@
+<view class="page {{isDark ? 'dark' : ''}}">
+  <view class="page-header">
+    <view class="header-inner">
+      <view class="back-btn" bindtap="onBack">
+        <text class="back-icon">←</text>
+      </view>
+      <view class="header-title">验票扫码</view>
+      <view class="header-placeholder"></view>
+    </view>
+    <view class="activity-bar" wx:if="{{activity}}">
+      <view class="ab-title">{{activity.title}}</view>
+      <view class="ab-time">{{formatActivityTime(activity.startAt)}}</view>
+    </view>
+  </view>
+
+  <view class="stats-wrap">
+    <view class="stats-card">
+      <view class="stat-block">
+        <view class="stat-num">{{stats.sold}}</view>
+        <view class="stat-label">已售出</view>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-block">
+        <view class="stat-num verified">{{stats.verified}}</view>
+        <view class="stat-label">已验票</view>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-block">
+        <view class="stat-num pending">{{stats.sold - stats.verified}}</view>
+        <view class="stat-label">待验票</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="action-wrap">
+    <view class="scan-card" bindtap="onScanQR">
+      <view class="scan-icon">📷</view>
+      <view class="scan-title">扫码验票</view>
+      <view class="scan-desc">使用摄像头扫描电子票二维码</view>
+      <view class="scan-hint">点击开始</view>
+    </view>
+
+    <view class="input-card" bindtap="onInputTicket">
+      <view class="input-icon">⌨️</view>
+      <view class="input-title">手动输入票码</view>
+      <view class="input-desc">无法扫码时输入TK-开头的票码</view>
+    </view>
+  </view>
+
+  <view class="logs-section">
+    <view class="section-header">
+      <view class="section-title">验票记录</view>
+      <view class="section-count">共 {{verifyLogs.length}} 条</view>
+    </view>
+
+    <view wx:if="{{verifyLogs.length === 0}}" class="empty-state">
+      <view class="empty-icon">🔍</view>
+      <view class="empty-text">暂无验票记录</view>
+      <view class="empty-sub">扫码或输入票码开始验票</view>
+    </view>
+
+    <view wx:for="{{verifyLogs}}" wx:key="ticketCode" class="log-item">
+      <view class="log-left">
+        <view class="log-icon success">✓</view>
+      </view>
+      <view class="log-body">
+        <view class="log-code">{{item.ticketCode}}</view>
+        <view class="log-user">{{item.buyerName}} · {{item.buyerStudentNo}}</view>
+        <view class="log-time">{{formatDate(item.verifiedAt)}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showVerifyModal}}" class="modal-mask show" catchtap="onCloseVerify">
+    <view class="modal-content" catchtap="">
+      <view wx:if="{{verifyResult.success}}" class="vr-success">
+        <view class="vr-icon success-icon">✅</view>
+        <view class="vr-title">验票成功</view>
+      </view>
+      <view wx:else class="vr-fail">
+        <view class="vr-icon fail-icon">❌</view>
+        <view class="vr-title fail">验票失败</view>
+      </view>
+
+      <view class="vr-ticket-card">
+        <view class="vrt-row">
+          <text class="vrt-label">票码</text>
+          <text class="vrt-value code">{{verifyResult.ticketCode}}</text>
+        </view>
+        <view wx:if="{{verifyResult.success}}">
+          <view class="vrt-row">
+            <text class="vrt-label">持票人</text>
+            <text class="vrt-value">{{verifyResult.buyerName}}</text>
+          </view>
+          <view class="vrt-row">
+            <text class="vrt-label">学号</text>
+            <text class="vrt-value">{{verifyResult.buyerStudentNo}}</text>
+          </view>
+          <view class="vrt-row">
+            <text class="vrt-label">购票数量</text>
+            <text class="vrt-value">{{verifyResult.quantity}} 张</text>
+          </view>
+          <view class="vrt-row" wx:if="{{verifyResult.orderId}}">
+            <text class="vrt-label">第几张</text>
+            <text class="vrt-value">第 {{verifyResult.ticketIndex + 1}} / {{verifyResult.totalTickets}} 张</text>
+          </view>
+        </view>
+        <view wx:else class="vr-error-box">
+          <text class="vr-error-text">{{verifyResult.message || '未知错误'}}</text>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn confirm" catchtap="onCloseVerify">我知道了</button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showTicketInput}}" class="modal-mask show" catchtap="onCloseInput">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <view class="modal-title">手动输入票码</view>
+        <view class="modal-close" catchtap="onCloseInput">×</view>
+      </view>
+      <view class="modal-body">
+        <view class="input-hint">请输入 TK- 开头的票码，例如：TK-A1B2C3D4</view>
+        <input
+          class="code-input"
+          placeholder="TK-XXXXXXXX"
+          maxlength="16"
+          value="{{ticketInput}}"
+          bindinput="onTicketCodeInput"
+          focus
+        />
+      </view>
+      <view class="modal-footer">
+        <button class="modal-btn cancel" catchtap="onCloseInput">取消</button>
+        <button class="modal-btn confirm" catchtap="onConfirmTicketInput">确认验票</button>
+      </view>
+    </view>
+  </view>
+</view>

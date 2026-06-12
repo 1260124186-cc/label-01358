@@ -13,6 +13,12 @@
           <view class="status-badge" style="background-color: {{statusColor}}20; color: {{statusColor}}">
             {{statusLabel}}
           </view>
+          <view class="ticket-badge" wx:if="{{ticketInfo && !ticketInfo.isFree}}">
+            <text class="ticket-price">¥{{ticketInfo.ticketPrice}}</text>
+          </view>
+          <view class="ticket-badge free" wx:elif="{{ticketInfo && ticketInfo.isFree}}">
+            <text class="ticket-price">免费</text>
+          </view>
         </view>
         <text class="activity-title">{{activity.title}}</text>
         <view class="meta-row">
@@ -54,6 +60,74 @@
           <text wx:if="{{isCheckedIn}}" class="badge-checkedin">✓ 已签到</text>
           <text wx:else class="badge-registered">✓ 已报名</text>
         </text>
+      </view>
+    </view>
+
+    <view class="card organizer-card" wx:if="{{isOrganizer}}">
+      <view class="organizer-actions">
+        <view class="organizer-action" bindtap="onNavToScanVerify">
+          <text class="oa-icon">📷</text>
+          <text class="oa-text">扫码验票</text>
+        </view>
+        <view class="organizer-action" bindtap="onNavToManage">
+          <text class="oa-icon">📊</text>
+          <text class="oa-text">报名管理</text>
+        </view>
+      </view>
+      <view class="stats-row" wx:if="{{ticketStats}}">
+        <view class="stat-item">
+          <text class="stat-num">{{ticketStats.soldCount}}</text>
+          <text class="stat-label">已售</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">{{ticketStats.verifiedCount}}</text>
+          <text class="stat-label">已验</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">{{ticketStats.refundedCount}}</text>
+          <text class="stat-label">退票</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">¥{{ticketStats.netRevenue}}</text>
+          <text class="stat-label">收入</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card" wx:if="{{ticketInfo && !ticketInfo.isFree}}">
+      <view class="card-title">
+        <text class="title-icon">🎟️</text>
+        票务信息
+      </view>
+      <view class="info-list">
+        <view class="info-item">
+          <text class="info-icon">💳</text>
+          <view class="info-content">
+            <text class="info-label">票价</text>
+            <text class="info-value price">¥{{ticketInfo.ticketPrice}} / 张</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">📦</text>
+          <view class="info-content">
+            <text class="info-label">库存</text>
+            <text class="info-value">{{ticketInfo.remainingStock}} / {{ticketInfo.stock}} 张</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">🕒</text>
+          <view class="info-content">
+            <text class="info-label">售票时间</text>
+            <text class="info-value">{{ticketInfo.salesStartText}} 至 {{ticketInfo.salesEndText}}</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">↩️</text>
+          <view class="info-content">
+            <text class="info-label">退票规则</text>
+            <text class="info-value">{{refundRuleDesc}}</text>
+          </view>
+        </view>
       </view>
     </view>
 
@@ -125,6 +199,31 @@
       </view>
     </view>
 
+    <view class="card" wx:if="{{userActiveOrder && userActiveOrder.tickets && userActiveOrder.tickets.length > 0}}">
+      <view class="card-title">
+        <text class="title-icon">🎫</text>
+        我的电子票
+      </view>
+      <view class="ticket-preview" bindtap="onShowUserOrder">
+        <view class="tp-header">
+          <text class="tp-title">{{activity.title}}</text>
+          <text class="tp-count">{{userActiveOrder.tickets.length}}张</text>
+        </view>
+        <view class="tp-meta">
+          <text class="tp-time">{{userActiveOrder.activityTimeText}}</text>
+          <text class="tp-location">{{activity.location}}</text>
+        </view>
+        <view class="tp-footer">
+          <text class="tp-hint">点击查看电子票二维码 ›</text>
+        </view>
+      </view>
+      <view class="refund-entry" wx:if="{{userActiveOrder.status === 'paid'}}" bindtap="onRequestRefund">
+        <text class="re-icon">↩️</text>
+        <text class="re-text">申请退票</text>
+        <text class="re-arrow">›</text>
+      </view>
+    </view>
+
     <view class="card" wx:if="{{canCheckIn && isCheckInDay}}">
       <view class="card-title">
         <text class="title-icon">✅</text>
@@ -169,13 +268,33 @@
   </scroll-view>
 
   <view class="bottom-bar">
-    <block wx:if="{{canRegister}}">
-      <button class="action-btn register" bindtap="onRegister">
-        <text class="btn-icon">📝</text>
-        <text>立即报名</text>
+    <block wx:if="{{isOrganizer}}">
+      <button class="action-btn organizer" bindtap="onNavToScanVerify">
+        <text class="btn-icon">📷</text>
+        <text>扫码验票</text>
+      </button>
+      <button class="action-btn secondary" bindtap="onNavToManage">
+        <text class="btn-icon">📊</text>
+        <text>报名管理</text>
       </button>
     </block>
-    <block wx:elif="{{canCancel}}">
+    <block wx:elif="{{userActiveOrder && userActiveOrder.status === 'paid'}}">
+      <button class="action-btn ticket" bindtap="onShowUserOrder">
+        <text class="btn-icon">🎫</text>
+        <text>查看电子票</text>
+      </button>
+      <button class="action-btn cancel" bindtap="onRequestRefund">
+        <text class="btn-icon">↩️</text>
+        <text>申请退票</text>
+      </button>
+    </block>
+    <block wx:elif="{{canRegister}}">
+      <button class="action-btn register" bindtap="onRegister">
+        <text class="btn-icon">{{ticketInfo && !ticketInfo.isFree ? '🎟️' : '📝'}}</text>
+        <text>{{ticketInfo && !ticketInfo.isFree ? '立即购票' : '立即报名'}}</text>
+      </button>
+    </block>
+    <block wx:elif="{{canCancel && !userActiveOrder}}">
       <button class="action-btn cancel" bindtap="onCancel">
         <text class="btn-icon">✕</text>
         <text>取消报名</text>
@@ -191,12 +310,108 @@
       <button class="action-btn disabled" disabled="{{true}}">
         <text wx:if="{{isFull}}">名额已满</text>
         <text wx:elif="{{isCheckedIn}}">已签到</text>
+        <text wx:elif="{{userActiveOrder && userActiveOrder.status === 'checked_in'}}">已验票</text>
+        <text wx:elif="{{userActiveOrder && userActiveOrder.status === 'refunded'}}">已退票</text>
         <text wx:elif="{{statusValue === 'ended'}}">活动已结束</text>
         <text wx:elif="{{statusValue === 'cancelled'}}">活动已取消</text>
         <text wx:elif="{{statusValue === 'ongoing' && isRegistered}}">活动进行中</text>
         <text wx:else>已截止报名</text>
       </button>
     </block>
+  </view>
+
+  <view class="modal-mask {{showBuyModal ? 'show' : ''}}" catchtap="onCloseBuy">
+    <view class="modal-content buy-modal" catchtap="preventBubble">
+      <view class="modal-header">
+        <text class="modal-title">购买门票</text>
+        <text class="modal-close" bindtap="onCloseBuy">×</text>
+      </view>
+      <view class="modal-body">
+        <view class="buy-activity">{{activity.title}}</view>
+        <view class="buy-price-row">
+          <text class="bpr-label">单价</text>
+          <text class="bpr-value">¥{{ticketInfo.ticketPrice}} / 张</text>
+        </view>
+        <view class="quantity-row">
+          <text class="qty-label">数量</text>
+          <view class="qty-stepper">
+            <view class="qty-btn" bindtap="onQuantityMinus">−</view>
+            <input
+              class="qty-input"
+              type="number"
+              value="{{buyQuantity}}"
+              bindblur="onQuantityChange"
+            />
+            <view class="qty-btn plus" bindtap="onQuantityPlus">+</view>
+          </view>
+          <text class="qty-max">最多{{maxQuantity}}张</text>
+        </view>
+        <view class="buy-summary">
+          <view class="bs-row">
+            <text class="bs-label">合计</text>
+            <text class="bs-value total">¥{{ticketInfo.ticketPrice * buyQuantity}}</text>
+          </view>
+          <view class="bs-row wallet">
+            <text class="bs-label">余额</text>
+            <text class="bs-value">¥{{walletBalance}}</text>
+          </view>
+        </view>
+        <view class="buy-notice">
+          <text class="bn-title">退票规则：</text>
+          <text class="bn-desc">{{refundRuleDesc}}</text>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="modal-btn cancel" bindtap="onCloseBuy">取消</button>
+        <button class="modal-btn confirm" bindtap="onConfirmBuy">
+          余额支付 ¥{{ticketInfo.ticketPrice * buyQuantity}}
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{showTicketDetailModal ? 'show' : ''}}" catchtap="onCloseTicketDetail">
+    <view class="qr-modal ticket-modal" catchtap="preventBubble">
+      <view class="qr-header">
+        <text class="qr-title">电子票</text>
+        <text class="qr-close" bindtap="onCloseTicketDetail">×</text>
+      </view>
+      <view class="qr-body">
+        <view class="ticket-tabs" wx:if="{{userActiveOrder && userActiveOrder.tickets.length > 1}}">
+          <view
+            class="tt-tab {{selectedTicketIndex === index ? 'active' : ''}}"
+            wx:for="{{userActiveOrder.tickets}}"
+            wx:key="code"
+            bindtap="onTicketSwitch"
+            data-index="{{index}}"
+          >第{{index + 1}}张</view>
+        </view>
+        <block wx:if="{{userActiveOrder && userActiveOrder.tickets[selectedTicketIndex]}}">
+          <view class="qr-code-wrap big">
+            <view class="qr-code-placeholder ticket-qr">
+              <text class="qr-big-icon">🎟️</text>
+              <text class="qr-label">电子票二维码</text>
+              <view class="qr-code-display">{{userActiveOrder.tickets[selectedTicketIndex].code}}</view>
+              <text class="qr-desc">请向工作人员出示扫码验票</text>
+              <view class="qr-status {{userActiveOrder.tickets[selectedTicketIndex].verified ? 'verified' : ''}}">
+                {{userActiveOrder.tickets[selectedTicketIndex].verified ? '✓ 已验票' : '待验票'}}
+              </view>
+            </view>
+          </view>
+          <view class="ticket-code-row" bindtap="onCopyTicketCode" data-code="{{userActiveOrder.tickets[selectedTicketIndex].code}}">
+            <text class="tcr-label">票码：</text>
+            <text class="tcr-value">{{userActiveOrder.tickets[selectedTicketIndex].code}}</text>
+            <text class="tcr-copy">复制</text>
+          </view>
+        </block>
+        <view class="qr-info ticket-info-box">
+          <text class="qr-activity">{{activity.title}}</text>
+          <text class="qr-time">{{activity.activityTimeText}}</text>
+          <text class="qr-location">{{activity.location}}</text>
+          <text class="qr-user">持票人：{{userActiveOrder.userName}}</text>
+        </view>
+      </view>
+    </view>
   </view>
 
   <view class="modal-mask {{showCheckInModal ? 'show' : ''}}" catchtap="onCloseCheckIn">
@@ -242,6 +457,47 @@
           <text class="qr-activity">{{activity.title}}</text>
           <text class="qr-time">{{activity.activityTimeText}}</text>
         </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{showRefundModal ? 'show' : ''}}" catchtap="onCloseRefund">
+    <view class="modal-content refund-modal" catchtap="preventBubble">
+      <view class="modal-header">
+        <text class="modal-title">申请退票</text>
+        <text class="modal-close" bindtap="onCloseRefund">×</text>
+      </view>
+      <view class="modal-body">
+        <view class="refund-summary">
+          <view class="rs-row">
+            <text class="rs-label">原订单金额</text>
+            <text class="rs-value">¥{{refundCalc.originalAmount || 0}}</text>
+          </view>
+          <view class="rs-row highlight">
+            <text class="rs-label">预计退款</text>
+            <text class="rs-value big">¥{{refundCalc.refundAmount || 0}}</text>
+          </view>
+          <view class="rs-reason-box">
+            <text class="rsr-text">{{refundCalc.reason || ''}}</text>
+            <text class="rsr-hours" wx:if="{{refundCalc.hoursBeforeStart > 0}}">
+              距活动开始还有 {{refundCalc.hoursBeforeStart}} 小时
+            </text>
+          </view>
+        </view>
+        <view class="refund-reason-input">
+          <text class="rri-label">退票原因（选填）</text>
+          <textarea
+            class="rri-textarea"
+            placeholder="请输入退票原因..."
+            value="{{refundReason}}"
+            bindinput="onRefundReasonInput"
+            maxlength="200"
+          />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="modal-btn cancel" bindtap="onCloseRefund">取消</button>
+        <button class="modal-btn confirm refund-btn" bindtap="onConfirmRefund">确认退票</button>
       </view>
     </view>
   </view>

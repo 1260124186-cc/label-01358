@@ -1,0 +1,213 @@
+<view class="page {{isDark ? 'dark' : ''}}">
+  <view class="header">
+    <view class="header-inner">
+      <view class="page-title">我的票务</view>
+      <view class="wallet-card">
+        <view class="wallet-left">
+          <view class="wallet-label">钱包余额</view>
+          <view class="wallet-balance">¥{{formatMoney(wallet.balance)}}</view>
+        </view>
+        <view class="wallet-right">
+          <view class="wallet-icon">💰</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tabs-bar">
+    <view class="tabs-scroll">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="value"
+        class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onTabChange"
+      >
+        {{item.label}}
+        <view wx:if="{{item.count}}" class="tab-count">{{item.count}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="order-list">
+    <view
+      wx:for="{{filteredOrders}}"
+      wx:key="orderId"
+      class="order-card"
+      data-order-id="{{item.orderId}}"
+      bindtap="onOrderTap"
+    >
+      <view class="order-header">
+        <view class="order-no">订单号：{{item.orderId}}</view>
+        <view class="order-status" style="color: {{TICKET_ORDER_STATUS_MAP[item.status].color}}">
+          {{TICKET_ORDER_STATUS_MAP[item.status].icon}} {{TICKET_ORDER_STATUS_MAP[item.status].label}}
+        </view>
+      </view>
+
+      <view class="order-body">
+        <view
+          class="cover-mini"
+          data-activity-id="{{item.activityId}}"
+          catchtap="onGoToActivity"
+        >
+          <image wx:if="{{item.cover}}" class="cover-img" src="{{item.cover}}" mode="aspectFill"/>
+          <view wx:else class="cover-placeholder">
+            <view class="cover-ph-icon">📅</view>
+          </view>
+        </view>
+
+        <view class="info-wrap">
+          <view
+            class="activity-title"
+            data-activity-id="{{item.activityId}}"
+            catchtap="onGoToActivity"
+          >{{item.activityTitle}}</view>
+          <view class="activity-meta">
+            <view class="meta-line">
+              <text class="meta-icon">🕐</text>
+              <text class="meta-text">{{formatActivityStart(item.activityStartAt)}}</text>
+            </view>
+            <view class="meta-line">
+              <text class="meta-icon">📍</text>
+              <text class="meta-text">{{item.location || '线上活动'}}</text>
+            </view>
+            <view class="meta-line">
+              <text class="meta-icon">🎫</text>
+              <text class="meta-text">{{item.quantity}} 张票</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="order-footer">
+        <view class="order-total">
+          <text class="total-label">实付：</text>
+          <text class="total-value">¥{{formatMoney(item.totalAmount)}}</text>
+          <text class="time-label"> · {{formatDate(item.createdAt)}}</text>
+        </view>
+        <view class="order-actions">
+          <view
+            wx:if="{{item.status === 'paid' && !item.isFree}}"
+            class="btn-ghost"
+            data-order-id="{{item.orderId}}"
+            catchtap="onOpenRefund"
+          >申请退票</view>
+          <view
+            wx:if="{{item.status === 'paid' || item.status === 'refund_pending'}}"
+            class="btn-primary"
+            data-order-id="{{item.orderId}}"
+            catchtap="onShowTicket"
+          >查看电子票</view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{filteredOrders.length === 0}}" class="empty-block">
+      <view class="empty-icon">🎫</view>
+      <view class="empty-text">暂无相关票务订单</view>
+      <view class="empty-sub">去看看有趣的活动吧～</view>
+    </view>
+  </view>
+
+  <view wx:if="{{showTicketModal}}" class="modal-mask show" catchtap="onCloseTicket">
+    <view class="modal-content ticket-modal" catchtap="">
+      <view class="modal-header">
+        <view class="modal-title">电子票</view>
+        <view class="modal-close" catchtap="onCloseTicket">×</view>
+      </view>
+      <view class="modal-body">
+        <view wx:if="{{selectedOrder.tickets.length > 1}}" class="ticket-tabs">
+          <view
+            wx:for="{{selectedOrder.tickets}}"
+            wx:key="ticketCode"
+            wx:for-index="idx"
+            class="tt-tab {{selectedTicketIndex === idx ? 'active' : ''}}"
+            data-index="{{idx}}"
+            catchtap="onSwitchTicket"
+          >第{{idx + 1}}张</view>
+        </view>
+
+        <view class="qr-code-wrap big">
+          <view class="qr-code-placeholder ticket-qr">
+            <view class="qr-big-icon">🎫</view>
+            <view class="qr-label">电子票二维码</view>
+            <view class="qr-code-display">{{selectedOrder.tickets[selectedTicketIndex].ticketCode}}</view>
+            <view class="qr-desc">请向工作人员出示此码验票</view>
+            <view class="qr-status {{selectedOrder.tickets[selectedTicketIndex].verified ? 'verified' : ''}}">
+              {{selectedOrder.tickets[selectedTicketIndex].verified ? '✓ 已验票' : '● 待验票'}}
+            </view>
+          </view>
+        </view>
+
+        <view class="ticket-code-row">
+          <text class="tcr-label">票码：</text>
+          <text class="tcr-value">{{selectedOrder.tickets[selectedTicketIndex].ticketCode}}</text>
+          <view class="tcr-copy" catchtap="onCopyCode">复制</view>
+        </view>
+
+        <view class="ticket-info-box">
+          <text class="qr-activity">活动：{{selectedOrder.activityTitle}}</text>
+          <text class="qr-time">时间：{{formatActivityStart(selectedOrder.activityStartAt)}}</text>
+          <text class="qr-location">地点：{{selectedOrder.location || '线上活动'}}</text>
+          <text class="qr-user">持票人：{{selectedOrder.buyerName}} ({{selectedOrder.buyerStudentNo}})</text>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="modal-btn confirm" catchtap="onCloseTicket">我知道了</button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showRefundModal}}" class="modal-mask show" catchtap="onCloseRefund">
+    <view class="modal-content refund-modal" catchtap="">
+      <view class="modal-header">
+        <view class="modal-title">申请退票</view>
+        <view class="modal-close" catchtap="onCloseRefund">×</view>
+      </view>
+      <view class="modal-body">
+        <view class="refund-summary">
+          <view class="rs-row">
+            <text class="rs-label">原支付金额</text>
+            <text class="rs-value">¥{{formatMoney(refundCalc.originalAmount)}}</text>
+          </view>
+          <view wx:if="{{refundCalc.fee > 0}}" class="rs-row">
+            <text class="rs-label">{{refundCalc.fee > 0 ? '扣除手续费' : ''}}</text>
+            <text class="rs-value" wx:if="{{refundCalc.fee > 0}}">-¥{{formatMoney(refundCalc.fee)}}</text>
+          </view>
+          <view class="rs-row highlight">
+            <text class="rs-label">可退金额</text>
+            <text class="rs-value big">¥{{formatMoney(refundCalc.refundAmount)}}</text>
+          </view>
+          <view class="rs-reason-box">
+            <text class="rsr-text">{{refundCalc.ruleDesc}}</text>
+            <text class="rsr-hours">{{refundCalc.canRefund ? '距活动开始还有 ' + (refundCalc.hoursUntilStart / 1).toFixed(1) + ' 小时' : ''}}</text>
+          </view>
+        </view>
+
+        <view wx:if="{{!refundCalc.canRefund}}" class="buy-notice">
+          <view class="bn-title">⚠️ 无法退票</view>
+          <view class="bn-desc">{{refundCalc.message}}</view>
+        </view>
+
+        <view wx:if="{{refundCalc.canRefund}}" class="refund-reason-input">
+          <text class="rri-label">退票原因（选填）</text>
+          <textarea
+            class="rri-textarea"
+            placeholder="请输入退票原因..."
+            maxlength="200"
+            value="{{refundReason}}"
+            bindinput="onRefundReasonInput"
+          />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <button class="modal-btn cancel" catchtap="onCloseRefund">取消</button>
+        <button
+          class="modal-btn refund-btn"
+          disabled="{{!refundCalc.canRefund}}"
+          catchtap="onConfirmRefund"
+        >确认退票</button>
+      </view>
+    </view>
+  </view>
+</view>

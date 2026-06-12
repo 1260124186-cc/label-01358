@@ -3538,6 +3538,447 @@ function getClubActivitiesByDate(year, month) {
   return result;
 }
 
+// ==================== 票务系统模块 ====================
+
+function generateTicketCode() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = 'TK-';
+  for (let i = 0; i < 10; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}
+
+function generateQRContent(orderId, ticketCode, activityId) {
+  return JSON.stringify({
+    o: orderId,
+    t: ticketCode,
+    a: activityId,
+    ts: Date.now()
+  });
+}
+
+function getUserWallet() {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+  const wallets = storage.get(STORAGE_KEYS.USER_WALLET) || {};
+  if (!wallets[userId]) {
+    wallets[userId] = { balance: 1000, frozen: 0, updateTime: Date.now() };
+    storage.set(STORAGE_KEYS.USER_WALLET, wallets);
+  }
+  return wallets[userId];
+}
+
+function updateWalletBalance(amount, type = 'deduct') {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+  const wallets = storage.get(STORAGE_KEYS.USER_WALLET) || {};
+  if (!wallets[userId]) {
+    wallets[userId] = { balance: 1000, frozen: 0, updateTime: Date.now() };
+  }
+  const wallet = wallets[userId];
+  if (type === 'deduct') {
+    if (wallet.balance < amount) {
+      return { success: false, message: '余额不足' };
+    }
+    wallet.balance -= amount;
+  } else if (type === 'add') {
+    wallet.balance += amount;
+  }
+  wallet.updateTime = Date.now();
+  wallets[userId] = wallet;
+  storage.set(STORAGE_KEYS.USER_WALLET, wallets);
+  return { success: true, balance: wallet.balance };
+}
+
+function getActivityTicketInfo(activityId) {
+  const activity = getClubActivityDetail(activityId);
+  if (!activity) return null;
+  const orders = storage.getList(STORAGE_KEYS.TICKET_ORDER_LIST).filter(
+    o => o.activityId === activityId && ['paid', 'checked_in'].includes(o.status)
+  );
+  const soldCount = orders.reduce((sum, o) => sum + (o.quantity || 1), 0);
+  const stock = activity.ticketStock !== undefined ? activity.ticketStock : (activity.capacity || 0);
+  const salesStart = activity.ticketSalesStart || activity.createTime;
+  const salesEnd = activity.ticketSalesEnd || activity.deadline;
+  const now = Date.now();
+  return {
+    ...activity,
+    soldCount,
+    remainingStock: Math.max(0, stock - soldCount),
+    stock,
+    isOnSale: now >= new Date(salesStart).getTime() && now <= new Date(salesEnd).getTime(),
+    salesStart,
+    salesEnd,
+    ticketPrice: activity.ticketPrice !== undefined ? activity.ticketPrice : (activity.fee || 0),
+    isFree: (activity.ticketPrice !== undefined ? activity.ticketPrice : (activity.fee || 0)) === 0,
+    refundRule: activity.refundRule || 'no_refund'
+  };
+}
+
+function createTicketOrder(activityId, quantity = 1, payMethod = 'balance') {
+  initClubData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+
+  const ticketInfo = getActivityTicketInfo(activityId);
+  if (!ticketInfo) return { success: false, message: '活动不存在' };
+
+  if (!ticketInfo.isOnSale && !ticketInfo.isFree) {
+    return { success: false, message: '不在售票时间范围内' };
+  }
+  if (ticketInfo.remainingStock < quantity) {
+    return { success: false, message: '库存不足，剩余' + ticketInfo.remainingStock + '张' };
+  }
+
+  const existingPaid = storage.getList(STORAGE_KEYS.TICKET_ORDER_LIST).filter(
+    o => o.activityId === activityId && o.userId === userId && ['paid', 'checked_in'].includes(o.status)
+  );
+  const existingQty = existingPaid.reduce((sum, o) => sum + (o.quantity || 1), 0);
+  if (existingQty + quantity > 5) {
+    return { success: false, message: '每人最多购买5张票' };
+  }
+
+  const pricePerTicket = ticketInfo.ticketPrice || 0;
+  const totalAmount = pricePerTicket * quantity;
+
+  if (totalAmount > 0 && payMethod === 'balance') {
+    const wallet = getUserWallet();
+    if (wallet.balance < totalAmount) {
+      return { success: false, message: '余额不足，请充值', needRecharge: true };
+    }
+    const payResult = updateWalletBalance(totalAmount, 'deduct');
+    if (!payResult.success) {
+      return { success: false, message: payResult.message };
+    }
+  }
+
+  const tickets = [];
+  for (let i = 0; i < quantity; i++) {
+    const code = generateTicketCode();
+    tickets.push({
+      code,
+      qrContent: generateQRContent('', code, activityId),
+      verified: false,
+      verifiedTime: null
+    });
+  }
+
+  const order = {
+    id: 'order_' + util.generateId(),
+    userId,
+    userName: userInfo.nickName || '同学',
+    userAvatar: userInfo.avatarUrl || '',
+    userPhone: userInfo.phone || '',
+    activityId,
+    activityTitle: ticketInfo.title,
+    activityCover: ticketInfo.cover,
+    activityTime: ticketInfo.activityTime,
+    activityLocation: ticketInfo.location,
+    organizerName: ticketInfo.organizerName || ticketInfo.clubName,
+    organizerPhone: ticketInfo.organizerPhone || '',
+    pricePerTicket,
+    quantity,
+    totalAmount,
+    payMethod: totalAmount > 0 ? payMethod : 'free',
+    status: totalAmount > 0 ? 'paid' : 'paid',
+    tickets,
+    refundRule: ticketInfo.refundRule || 'no_refund',
+    createTime: Date.now(),
+    payTime: Date.now(),
+    updateTime: Date.now(),
+    refundTime: null,
+    refundAmount: 0,
+    refundReason: ''
+  };
+
+  tickets.forEach(t => {
+    t.qrContent = generateQRContent(order.id, t.code, activityId);
+  });
+
+  storage.addToList(STORAGE_KEYS.TICKET_ORDER_LIST, order);
+
+  const activity = getClubActivityDetail(activityId);
+  const registrations = activity.registrations || [];
+  if (!registrations.some(r => r.userId === userId)) {
+    registrations.push({
+      id: 'reg_' + util.generateId(),
+      userId,
+      userName: userInfo.nickName || '同学',
+      userAvatar: userInfo.avatarUrl || '',
+      status: 'registered',
+      registerTime: Date.now(),
+      orderId: order.id,
+      ticketCount: quantity
+    });
+    storage.updateInList(STORAGE_KEYS.CLUB_ACTIVITY_LIST, activityId, {
+      registrations,
+      updateTime: Date.now()
+    });
+  }
+
+  return { success: true, order };
+}
+
+function getTicketOrderList(filters = {}) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+  let list = storage.getList(STORAGE_KEYS.TICKET_ORDER_LIST);
+
+  if (filters.role !== 'organizer') {
+    list = list.filter(o => o.userId === userId);
+  } else if (filters.activityId) {
+    list = list.filter(o => o.activityId === filters.activityId);
+  }
+
+  if (filters.status && filters.status !== 'all') {
+    list = list.filter(o => o.status === filters.status);
+  }
+
+  if (filters.activityId && filters.role !== 'organizer') {
+    list = list.filter(o => o.activityId === filters.activityId);
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getTicketOrderDetail(orderId) {
+  const list = storage.getList(STORAGE_KEYS.TICKET_ORDER_LIST);
+  return list.find(o => o.id === orderId) || null;
+}
+
+function calculateRefund(orderId) {
+  const order = getTicketOrderDetail(orderId);
+  if (!order) return { success: false, message: '订单不存在' };
+  if (!['paid'].includes(order.status)) {
+    return { success: false, message: '该订单状态不可退票' };
+  }
+
+  const now = Date.now();
+  const activityStart = new Date(order.activityTime).getTime();
+  const hoursBeforeStart = (activityStart - now) / (1000 * 60 * 60);
+
+  const refundRules = constants.TICKET_REFUND_RULES;
+  const rule = refundRules.find(r => r.value === order.refundRule) || refundRules[0];
+  let refundAmount = 0;
+  let canRefund = false;
+  let reason = '';
+
+  switch (order.refundRule) {
+    case 'no_refund':
+      canRefund = false;
+      reason = '该活动不支持退票';
+      break;
+    case 'before_24h':
+      canRefund = hoursBeforeStart >= 24;
+      refundAmount = canRefund ? order.totalAmount : 0;
+      reason = canRefund ? '活动开始前24小时以上，全额退款' : '距离活动开始不足24小时，不可退票';
+      break;
+    case 'before_48h':
+      canRefund = hoursBeforeStart >= 48;
+      refundAmount = canRefund ? order.totalAmount : 0;
+      reason = canRefund ? '活动开始前48小时以上，全额退款' : '距离活动开始不足48小时，不可退票';
+      break;
+    case 'before_24h_partial':
+      if (hoursBeforeStart >= 24) {
+        canRefund = true;
+        refundAmount = order.totalAmount;
+        reason = '活动开始前24小时以上，全额退款';
+      } else if (hoursBeforeStart > 0) {
+        canRefund = true;
+        refundAmount = Math.floor(order.totalAmount * 0.5);
+        reason = '距离活动开始不足24小时，退还50%';
+      } else {
+        canRefund = false;
+        reason = '活动已开始，不可退票';
+      }
+      break;
+    case 'flexible':
+      canRefund = hoursBeforeStart > 0;
+      refundAmount = canRefund ? Math.floor(order.totalAmount * 0.9) : 0;
+      reason = canRefund ? '扣除10%手续费后退款' : '活动已开始，不可退票';
+      break;
+    default:
+      canRefund = false;
+      reason = '未知退票规则';
+  }
+
+  return {
+    success: true,
+    canRefund,
+    refundAmount,
+    originalAmount: order.totalAmount,
+    hoursBeforeStart: Math.round(hoursBeforeStart * 10) / 10,
+    ruleDesc: rule.desc,
+    reason
+  };
+}
+
+function requestRefund(orderId, reason = '') {
+  const calcResult = calculateRefund(orderId);
+  if (!calcResult.success) return calcResult;
+  if (!calcResult.canRefund) {
+    return { success: false, message: calcResult.reason };
+  }
+
+  const order = getTicketOrderDetail(orderId);
+  if (order.totalAmount > 0 && calcResult.refundAmount > 0) {
+    updateWalletBalance(calcResult.refundAmount, 'add');
+  }
+
+  const success = storage.updateInList(STORAGE_KEYS.TICKET_ORDER_LIST, orderId, {
+    status: 'refunded',
+    refundAmount: calcResult.refundAmount,
+    refundReason: reason,
+    refundTime: Date.now(),
+    updateTime: Date.now()
+  });
+
+  if (success) {
+    const app = getApp();
+    const userInfo = app.globalData.userInfo || {};
+    const userId = userInfo.id || 'test_user';
+    const activity = getClubActivityDetail(order.activityId);
+    if (activity) {
+      const registrations = (activity.registrations || []).filter(r => r.userId !== userId || r.orderId !== orderId);
+      storage.updateInList(STORAGE_KEYS.CLUB_ACTIVITY_LIST, order.activityId, {
+        registrations,
+        updateTime: Date.now()
+      });
+    }
+  }
+
+  return success ? { success: true, refundAmount: calcResult.refundAmount } : { success: false, message: '退票失败' };
+}
+
+function verifyTicketByCode(ticketCode, activityId) {
+  const orders = storage.getList(STORAGE_KEYS.TICKET_ORDER_LIST).filter(o => o.activityId === activityId);
+  let matchedOrder = null;
+  let matchedTicket = null;
+  let ticketIndex = -1;
+
+  for (const order of orders) {
+    const idx = (order.tickets || []).findIndex(t => t.code === ticketCode);
+    if (idx > -1) {
+      matchedOrder = order;
+      matchedTicket = order.tickets[idx];
+      ticketIndex = idx;
+      break;
+    }
+  }
+
+  if (!matchedOrder || !matchedTicket) {
+    return { success: false, message: '票码无效，请核对' };
+  }
+  if (!['paid', 'checked_in'].includes(matchedOrder.status)) {
+    return { success: false, message: '订单状态异常：' + (constants.TICKET_ORDER_STATUS_MAP[matchedOrder.status]?.label || matchedOrder.status) };
+  }
+  if (matchedTicket.verified) {
+    return {
+      success: false,
+      message: '该票已验票，请勿重复验票',
+      alreadyVerified: true,
+      verifyTime: matchedTicket.verifiedTime,
+      order: matchedOrder
+    };
+  }
+
+  const now = Date.now();
+  const activityStart = new Date(matchedOrder.activityTime).getTime();
+  const activityEnd = activityStart + 4 * 60 * 60 * 1000;
+  if (now < activityStart - 2 * 60 * 60 * 1000) {
+    return { success: false, message: '验票时间未到，请提前2小时内验票' };
+  }
+
+  matchedOrder.tickets[ticketIndex].verified = true;
+  matchedOrder.tickets[ticketIndex].verifiedTime = now;
+  const allVerified = matchedOrder.tickets.every(t => t.verified);
+  matchedOrder.status = allVerified ? 'checked_in' : 'paid';
+  matchedOrder.updateTime = now;
+
+  storage.updateInList(STORAGE_KEYS.TICKET_ORDER_LIST, matchedOrder.id, matchedOrder);
+
+  const activity = getClubActivityDetail(activityId);
+  if (activity) {
+    const registrations = activity.registrations || [];
+    const regIdx = registrations.findIndex(r => r.userId === matchedOrder.userId);
+    if (regIdx > -1) {
+      registrations[regIdx].checkedIn = true;
+      registrations[regIdx].checkinTime = now;
+      storage.updateInList(STORAGE_KEYS.CLUB_ACTIVITY_LIST, activityId, {
+        registrations,
+        updateTime: now
+      });
+    }
+  }
+
+  storage.addToList(STORAGE_KEYS.TICKET_VERIFY_LOG, {
+    id: 'vlog_' + util.generateId(),
+    ticketCode,
+    orderId: matchedOrder.id,
+    activityId,
+    userId: matchedOrder.userId,
+    userName: matchedOrder.userName,
+    verifyTime: now,
+    status: 'success'
+  });
+
+  return {
+    success: true,
+    message: '验票成功',
+    order: matchedOrder,
+    ticket: matchedOrder.tickets[ticketIndex]
+  };
+}
+
+function verifyTicketByQR(qrContent, activityId) {
+  try {
+    const data = JSON.parse(qrContent);
+    if (!data || !data.t) {
+      return { success: false, message: '二维码内容无效' };
+    }
+    if (activityId && data.a && data.a !== activityId) {
+      return { success: false, message: '该票不属于此活动' };
+    }
+    return verifyTicketByCode(data.t, data.a || activityId);
+  } catch (e) {
+    return verifyTicketByCode(qrContent, activityId);
+  }
+}
+
+function getActivityTicketStats(activityId) {
+  const activity = getActivityTicketInfo(activityId);
+  if (!activity) return null;
+  const orders = storage.getList(STORAGE_KEYS.TICKET_ORDER_LIST).filter(o => o.activityId === activityId);
+  const paidOrders = orders.filter(o => ['paid', 'checked_in'].includes(o.status));
+  const verifiedCount = paidOrders.reduce((sum, o) => sum + (o.tickets || []).filter(t => t.verified).length, 0);
+  const refundedOrders = orders.filter(o => o.status === 'refunded');
+  const totalRevenue = paidOrders.reduce((sum, o) => sum + o.totalAmount, 0);
+  const refundedAmount = refundedOrders.reduce((sum, o) => sum + (o.refundAmount || 0), 0);
+  return {
+    stock: activity.stock,
+    soldCount: activity.soldCount,
+    remainingStock: activity.remainingStock,
+    paidOrderCount: paidOrders.length,
+    verifiedCount,
+    refundedCount: refundedOrders.length,
+    totalRevenue,
+    refundedAmount,
+    netRevenue: totalRevenue - refundedAmount,
+    attendRate: activity.soldCount > 0 ? Math.round(verifiedCount / activity.soldCount * 100) : 0
+  };
+}
+
+function getUserOrdersByActivity(activityId, userId) {
+  return storage.getList(STORAGE_KEYS.TICKET_ORDER_LIST).filter(
+    o => o.activityId === activityId && o.userId === userId
+  ).sort((a, b) => b.createTime - a.createTime);
+}
+
 let mapDataInitialized = false;
 
 function initMapData() {
@@ -4424,6 +4865,20 @@ module.exports = {
   isUserRegisteredForActivity,
   getClubActivityRegistrations,
   getClubActivitiesByDate,
+
+  generateTicketCode,
+  getUserWallet,
+  updateWalletBalance,
+  getActivityTicketInfo,
+  createTicketOrder,
+  getTicketOrderList,
+  getTicketOrderDetail,
+  calculateRefund,
+  requestRefund,
+  verifyTicketByCode,
+  verifyTicketByQR,
+  getActivityTicketStats,
+  getUserOrdersByActivity,
 
   initMapData,
   getPOIList,

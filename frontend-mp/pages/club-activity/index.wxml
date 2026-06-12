@@ -134,6 +134,11 @@
         <text class="bottom-btn-text">日历</text>
       </view>
       <view class="bottom-divider"></view>
+      <view class="bottom-btn" bindtap="onGoTickets">
+        <text class="bottom-btn-icon">🎫</text>
+        <text class="bottom-btn-text">票务</text>
+      </view>
+      <view class="bottom-divider"></view>
       <view class="bottom-btn bottom-btn-primary" bindtap="onPublish">
         <text class="bottom-btn-icon">➕</text>
         <text class="bottom-btn-text">发布活动</text>

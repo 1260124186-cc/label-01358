@@ -147,20 +147,101 @@
             data-field="capacity"
           />
         </view>
+      </view>
+
+      <view class="form-card">
+        <view class="card-title">票务设置</view>
 
         <view class="form-item row">
-          <view class="label">活动费用</view>
+          <view class="label">免费活动</view>
+          <switch
+            checked="{{formData.isFreeTicket}}"
+            bindchange="onToggleFree"
+            color="#10B981"
+          />
+        </view>
+
+        <block wx:if="{{!formData.isFreeTicket}}">
+          <view class="form-item row">
+            <view class="label required">票价</view>
+            <view style="display:flex;align-items:center;gap:8rpx;">
+              <input
+                class="input small"
+                type="digit"
+                placeholder="0.00"
+                value="{{formData.ticketPrice}}"
+                bindinput="onInputChange"
+                data-field="ticketPrice"
+              />
+              <text class="unit">元/张</text>
+            </view>
+          </view>
+        </block>
+
+        <view class="form-item row">
+          <view class="label">票务库存</view>
           <view style="display:flex;align-items:center;gap:8rpx;">
             <input
               class="input small"
-              type="digit"
-              placeholder="0"
-              value="{{formData.fee}}"
+              type="number"
+              placeholder="默认等于人数上限"
+              value="{{formData.ticketStock}}"
               bindinput="onInputChange"
-              data-field="fee"
+              data-field="ticketStock"
             />
-            <text class="unit">元</text>
+            <text class="unit">张</text>
           </view>
+        </view>
+
+        <block wx:if="{{!formData.isFreeTicket}}">
+          <view class="form-item row">
+            <view class="label">售票开始</view>
+            <view class="date-time-wrap">
+              <picker mode="date" value="{{formData.ticketSalesStartDate}}" bindchange="onTicketSalesStartDateChange">
+                <view class="picker-value small {{!formData.ticketSalesStartDate ? 'placeholder' : ''}}">
+                  {{formData.ticketSalesStartDate || '日期'}} <text class="arrow">›</text>
+                </view>
+              </picker>
+              <picker mode="time" value="{{formData.ticketSalesStartTime}}" bindchange="onTicketSalesStartTimeChange">
+                <view class="picker-value small {{!formData.ticketSalesStartTime ? 'placeholder' : ''}}">
+                  {{formData.ticketSalesStartTime || '时间'}} <text class="arrow">›</text>
+                </view>
+              </picker>
+            </view>
+          </view>
+
+          <view class="form-item row">
+            <view class="label">售票结束</view>
+            <view class="date-time-wrap">
+              <picker mode="date" value="{{formData.ticketSalesEndDate}}" bindchange="onTicketSalesEndDateChange">
+                <view class="picker-value small {{!formData.ticketSalesEndDate ? 'placeholder' : ''}}">
+                  {{formData.ticketSalesEndDate || '日期'}} <text class="arrow">›</text>
+                </view>
+              </picker>
+              <picker mode="time" value="{{formData.ticketSalesEndTime}}" bindchange="onTicketSalesEndTimeChange">
+                <view class="picker-value small {{!formData.ticketSalesEndTime ? 'placeholder' : ''}}">
+                  {{formData.ticketSalesEndTime || '时间'}} <text class="arrow">›</text>
+                </view>
+              </picker>
+            </view>
+          </view>
+        </block>
+
+        <view class="form-item">
+          <view class="label">退票规则</view>
+          <picker
+            mode="selector"
+            range="{{refundRules}}"
+            range-key="label"
+            value="{{refundRuleIndex}}"
+            bindchange="onRefundRuleChange"
+          >
+            <view class="picker-value">
+              <view class="refund-label">{{refundRules[refundRuleIndex].label}}</view>
+              <view class="refund-desc">{{refundRules[refundRuleIndex].desc}}</view>
+              <text class="arrow">›</text>
+            </view>
+          </picker>
         </view>
       </view>
 

@@ -24,14 +24,24 @@ mixPage({
       fee: 0,
       tags: [],
       organizerName: '',
-      organizerPhone: ''
+      organizerPhone: '',
+      isFreeTicket: true,
+      ticketPrice: '',
+      ticketStock: '',
+      ticketSalesStartDate: '',
+      ticketSalesStartTime: '',
+      ticketSalesEndDate: '',
+      ticketSalesEndTime: '',
+      refundRule: 'no_refund'
     },
     categories: constants.CLUB_ACTIVITY_CATEGORIES,
     categoryIndex: -1,
     clubList: [],
     clubIndex: -1,
     submitting: false,
-    tagInput: ''
+    tagInput: '',
+    refundRules: constants.TICKET_REFUND_RULES,
+    refundRuleIndex: 0
   },
 
   onLoad() {
@@ -85,6 +95,35 @@ mixPage({
   },
   onDeadlineTimeChange(e) {
     this.setData({ 'formData.deadlineTime': e.detail.value });
+  },
+
+  onToggleFree(e) {
+    const isFree = e.detail.value;
+    this.setData({
+      'formData.isFreeTicket': isFree,
+      'formData.ticketPrice': isFree ? '0' : this.data.formData.ticketPrice || ''
+    });
+  },
+
+  onTicketSalesStartDateChange(e) {
+    this.setData({ 'formData.ticketSalesStartDate': e.detail.value });
+  },
+  onTicketSalesStartTimeChange(e) {
+    this.setData({ 'formData.ticketSalesStartTime': e.detail.value });
+  },
+  onTicketSalesEndDateChange(e) {
+    this.setData({ 'formData.ticketSalesEndDate': e.detail.value });
+  },
+  onTicketSalesEndTimeChange(e) {
+    this.setData({ 'formData.ticketSalesEndTime': e.detail.value });
+  },
+
+  onRefundRuleChange(e) {
+    const index = e.detail.value;
+    this.setData({
+      refundRuleIndex: index,
+      'formData.refundRule': this.data.refundRules[index].value
+    });
   },
 
   onTagInput(e) {
@@ -190,6 +229,38 @@ mixPage({
       return false;
     }
 
+    if (!formData.isFreeTicket) {
+      if (!formData.ticketPrice || parseFloat(formData.ticketPrice) < 0) {
+        util.showToast('请输入有效的票价');
+        return false;
+      }
+    }
+    if (formData.ticketStock !== undefined && formData.ticketStock !== '') {
+      if (Number(formData.ticketStock) <= 0) {
+        util.showToast('库存必须大于0');
+        return false;
+      }
+      if (Number(formData.ticketStock) > Number(formData.capacity)) {
+        util.showToast('库存不能超过人数上限');
+        return false;
+      }
+    }
+    if (!formData.isFreeTicket) {
+      if (formData.ticketSalesStartDate && formData.ticketSalesStartTime
+          && formData.ticketSalesEndDate && formData.ticketSalesEndTime) {
+        const salesStartMs = new Date(formData.ticketSalesStartDate + ' ' + formData.ticketSalesStartTime).getTime();
+        const salesEndMs = new Date(formData.ticketSalesEndDate + ' ' + formData.ticketSalesEndTime).getTime();
+        if (salesEndMs <= salesStartMs) {
+          util.showToast('售票结束时间必须晚于开始时间');
+          return false;
+        }
+        if (salesEndMs > deadlineMs) {
+          util.showToast('售票结束时间不能晚于报名截止');
+          return false;
+        }
+      }
+    }
+
     return true;
   },
 
@@ -201,6 +272,15 @@ mixPage({
 
     try {
       const { formData } = this.data;
+      const ticketPrice = formData.isFreeTicket ? 0 : (parseFloat(formData.ticketPrice) || 0);
+      const ticketStock = formData.ticketStock ? Number(formData.ticketStock) : Number(formData.capacity);
+      const ticketSalesStart = (formData.ticketSalesStartDate && formData.ticketSalesStartTime)
+        ? formData.ticketSalesStartDate + ' ' + formData.ticketSalesStartTime
+        : null;
+      const ticketSalesEnd = (formData.ticketSalesEndDate && formData.ticketSalesEndTime)
+        ? formData.ticketSalesEndDate + ' ' + formData.ticketSalesEndTime
+        : (formData.deadlineDate + ' ' + formData.deadlineTime);
+
       const submitData = {
         title: formData.title.trim(),
         clubId: formData.clubId,
@@ -213,12 +293,18 @@ mixPage({
         location: formData.location.trim(),
         capacity: Number(formData.capacity),
         deadline: formData.deadlineDate + ' ' + formData.deadlineTime,
-        fee: Number(formData.fee) || 0,
+        fee: ticketPrice,
         tags: formData.tags,
         organizerName: formData.organizerName.trim() || '管理员',
         organizerPhone: formData.organizerPhone.trim(),
         images: [formData.cover],
-        checkInCode: 'CHECKIN-' + Date.now().toString(36).toUpperCase()
+        checkInCode: 'CHECKIN-' + Date.now().toString(36).toUpperCase(),
+        isFreeTicket: formData.isFreeTicket,
+        ticketPrice,
+        ticketStock,
+        ticketSalesStart,
+        ticketSalesEnd,
+        refundRule: formData.refundRule || 'no_refund'
       };
 
       const result = dataService.publishClubActivity(submitData);

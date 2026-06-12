@@ -875,6 +875,50 @@ const ADMIN_MODULES = [
   { id: 'scenery', name: '风光管理', icon: '🏞️', color: '#8B5CF6', desc: '管理校园风光图片' }
 ];
 
+const TICKET_REFUND_RULES = [
+  { value: 'no_refund', label: '不可退票', desc: '购票后不支持退票', hours: 0, rate: 0 },
+  { value: 'before_24h', label: '活动前24小时可退', desc: '活动开始前24小时前可全额退票', hours: 24, rate: 100 },
+  { value: 'before_48h', label: '活动前48小时可退', desc: '活动开始前48小时前可全额退票', hours: 48, rate: 100 },
+  { value: 'before_24h_partial', label: '24h前全额/内半价', desc: '24小时前全额退，24小时内退50%', hours: 24, rate: 50 },
+  { value: 'flexible', label: '随时可退(扣手续费)', desc: '随时可退，扣10%手续费', hours: 0, rate: 90 }
+];
+
+const TICKET_ORDER_STATUS = [
+  { value: 'pending', label: '待支付', color: '#F59E0B', icon: '⏳' },
+  { value: 'paid', label: '已支付', color: '#3B82F6', icon: '✅' },
+  { value: 'refund_pending', label: '退票审核中', color: '#8B5CF6', icon: '🔄' },
+  { value: 'refunded', label: '已退票', color: '#6B7280', icon: '↩️' },
+  { value: 'refund_rejected', label: '退票被拒', color: '#EF4444', icon: '❌' },
+  { value: 'checked_in', label: '已验票', color: '#10B981', icon: '🎫' },
+  { value: 'cancelled', label: '已取消', color: '#9CA3AF', icon: '✕' }
+];
+
+const TICKET_ORDER_STATUS_MAP = TICKET_ORDER_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const TICKET_ORDER_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'paid', label: '待使用' },
+  { value: 'checked_in', label: '已验票' },
+  { value: 'refunded', label: '已退票' }
+];
+
+const TICKET_PAY_METHODS = [
+  { value: 'balance', label: '余额支付', icon: '💰' },
+  { value: 'wechat', label: '微信支付', icon: '💚' }
+];
+
+const CLUB_ACTIVITY_TABS_EXTENDED = [
+  { value: 'all', label: '全部活动' },
+  { value: 'ongoing', label: '进行中' },
+  { value: 'upcoming', label: '即将开始' },
+  { value: 'ended', label: '已结束' },
+  { value: 'my', label: '我报名的' },
+  { value: 'my_tickets', label: '我的票务' }
+];
+
 module.exports = {
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
@@ -988,5 +1032,11 @@ module.exports = {
   getLabelByValue,
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
-  ADMIN_MODULES
+  ADMIN_MODULES,
+  TICKET_REFUND_RULES,
+  TICKET_ORDER_STATUS,
+  TICKET_ORDER_STATUS_MAP,
+  TICKET_ORDER_TABS,
+  TICKET_PAY_METHODS,
+  CLUB_ACTIVITY_TABS_EXTENDED
 };

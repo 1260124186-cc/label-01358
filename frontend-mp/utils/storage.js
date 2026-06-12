@@ -76,7 +76,10 @@ const STORAGE_KEYS = {
   BROADCAST_PROGRAMS: 'broadcastPrograms',
   SCENERY_MANAGE: 'sceneryManage',
   LOST_FOUND_COMMENTS: 'lostFoundComments',
-  MARKET_COMMENTS: 'marketComments'
+  MARKET_COMMENTS: 'marketComments',
+  TICKET_ORDER_LIST: 'ticketOrderList',
+  TICKET_VERIFY_LOG: 'ticketVerifyLog',
+  USER_WALLET: 'userWallet'
 };
 
 /**

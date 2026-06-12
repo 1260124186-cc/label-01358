@@ -1,0 +1,294 @@
+<view class="page {{isDark ? 'dark' : ''}}">
+  <view class="page-header">
+    <view class="header-inner">
+      <view class="back-btn" bindtap="onBack">
+        <text class="back-icon">←</text>
+      </view>
+      <view class="header-title">活动管理</view>
+      <view class="export-btn" bindtap="onExportData">
+        <text class="export-icon">📋</text>
+      </view>
+    </view>
+
+    <view class="activity-info" wx:if="{{activity}}">
+      <view class="ai-title">{{activity.title}}</view>
+      <view class="ai-meta">
+        <text class="ai-item">🕐 {{formatFullTime(activity.startAt)}}</text>
+      </view>
+    </view>
+
+    <view class="quick-actions">
+      <view class="qa-item" bindtap="onGoVerify">
+        <view class="qa-icon">📷</view>
+        <view class="qa-text">扫码验票</view>
+      </view>
+      <view class="qa-item" bindtap="onExportData">
+        <view class="qa-icon">📤</view>
+        <view class="qa-text">导出数据</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="stats-section">
+    <view class="stats-row">
+      <view class="stat-card">
+        <view class="sc-num">{{registrations.length}}</view>
+        <view class="sc-label">报名人数</view>
+        <view class="sc-sub">/{{activity.capacity || '不限'}}</view>
+      </view>
+      <view class="stat-card" wx:if="{{!activity.isFreeTicket}}">
+        <view class="sc-num ticket">{{ticketStats.sold}}</view>
+        <view class="sc-label">已售/库存</view>
+        <view class="sc-sub">/{{activity.ticketStock || 0}}</view>
+      </view>
+      <view class="stat-card" wx:if="{{!activity.isFreeTicket}}">
+        <view class="sc-num verify">{{ticketStats.verified}}</view>
+        <view class="sc-label">已验票</view>
+        <view class="sc-sub">余 {{ticketStats.sold - ticketStats.verified}}</view>
+      </view>
+      <view class="stat-card" wx:if="{{!activity.isFreeTicket}}">
+        <view class="sc-num money">¥{{formatMoney(ticketStats.revenue)}}</view>
+        <view class="sc-label">总收入</view>
+        <view class="sc-sub">退票 {{ticketStats.refunded}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="view-toggle">
+    <view
+      wx:for="{{viewTabs}}"
+      wx:key="value"
+      class="vt-tab {{currentView === item.value ? 'active' : ''}}"
+      data-value="{{item.value}}"
+      bindtap="onSwitchView"
+    >
+      <text class="vt-text">{{item.label}}</text>
+      <text class="vt-count">{{item.value === 'registrations' ? registrations.length : orders.length}}</text>
+    </view>
+  </view>
+
+  <view class="list-wrap" wx:if="{{currentView === 'registrations'}}">
+    <view wx:if="{{registrations.length === 0}}" class="empty-state">
+      <view class="empty-icon">👥</view>
+      <view class="empty-text">暂无报名人员</view>
+    </view>
+
+    <view
+      wx:for="{{registrations}}"
+      wx:key="userId"
+      class="member-card"
+      data-user-id="{{item.userId}}"
+      bindtap="onShowRegistrationDetail"
+    >
+      <view class="member-left">
+        <view class="avatar-mini">{{item.userName ? item.userName[0] : '?'}}</view>
+      </view>
+      <view class="member-body">
+        <view class="mb-row">
+          <view class="mb-name">{{item.userName}}</view>
+          <view class="mb-status {{item.checkedIn ? 'checked' : 'pending'}}">
+            {{item.checkedIn ? '✓ 已签到' : '○ 未签到'}}
+          </view>
+        </view>
+        <view class="mb-info">
+          <text class="mb-info-item">学号：{{item.studentNo || '-'}}</text>
+        </view>
+        <view class="mb-info">
+          <text class="mb-info-item">专业：{{item.major || '-'}}</text>
+          <text class="mb-time">{{formatShortTime(item.registeredAt)}}</text>
+        </view>
+      </view>
+      <view
+        class="action-mini {{item.checkedIn ? 'undo' : 'do'}}"
+        data-user-id="{{item.userId}}"
+        catchtap="onToggleCheckIn"
+      >{{item.checkedIn ? '撤销' : '签到'}}</view>
+    </view>
+  </view>
+
+  <view class="list-wrap" wx:if="{{currentView === 'orders'}}">
+    <view wx:if="{{orders.length === 0}}" class="empty-state">
+      <view class="empty-icon">🎫</view>
+      <view class="empty-text">暂无购票订单</view>
+      <view class="empty-sub">{{activity.isFreeTicket ? '免费活动无需购票' : '活动开始后会有购票数据'}}</view>
+    </view>
+
+    <view
+      wx:for="{{orders}}"
+      wx:key="orderId"
+      class="order-card"
+      data-order-id="{{item.orderId}}"
+      bindtap="onShowOrderDetail"
+    >
+      <view class="oc-header">
+        <view class="oc-no">#{{item.orderId}}</view>
+        <view class="oc-status" style="color: {{TICKET_ORDER_STATUS_MAP[item.status].color}}">
+          {{TICKET_ORDER_STATUS_MAP[item.status].icon}} {{TICKET_ORDER_STATUS_MAP[item.status].label}}
+        </view>
+      </view>
+      <view class="oc-body">
+        <view class="oc-row">
+          <text class="oc-label">购票人</text>
+          <text class="oc-value">{{item.buyerName}}</text>
+        </view>
+        <view class="oc-row">
+          <text class="oc-label">学号</text>
+          <text class="oc-value">{{item.buyerStudentNo}}</text>
+        </view>
+        <view class="oc-row">
+          <text class="oc-label">数量</text>
+          <text class="oc-value">{{item.quantity}} 张</text>
+        </view>
+        <view class="oc-row">
+          <text class="oc-label">实付</text>
+          <text class="oc-value money">¥{{formatMoney(item.totalAmount)}}</text>
+        </view>
+        <view class="oc-row">
+          <text class="oc-label">购票时间</text>
+          <text class="oc-value time">{{formatShortTime(item.createdAt)}}</text>
+        </view>
+        <view wx:if="{{item.status === 'paid' && !item.isFree}}" class="oc-verify-row">
+          <text class="oc-label">已验</text>
+          <text class="oc-value">{{item.tickets.filter(t => t.verified).length}} / {{item.tickets.length}}</text>
+        </view>
+      </view>
+      <view wx:if="{{item.status === 'paid' && !item.isFree && item.tickets.filter(t => !t.verified).length > 0}}" class="oc-footer">
+        <view
+          class="verify-btn"
+          data-order-id="{{item.orderId}}"
+          catchtap="onManualVerify"
+        >标记验票 1 张</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showDetailModal}}" class="modal-mask show" catchtap="onCloseDetail">
+    <view class="modal-content detail-modal" catchtap="">
+      <view class="modal-header">
+        <view class="modal-title">{{selectedType === 'registration' ? '报名者详情' : '订单详情'}}</view>
+        <view class="modal-close" catchtap="onCloseDetail">×</view>
+      </view>
+      <view class="modal-body" wx:if="{{selectedType === 'registration'}}">
+        <view class="detail-section">
+          <view class="detail-row">
+            <text class="dr-label">姓名</text>
+            <text class="dr-value">{{selectedItem.userName}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">学号</text>
+            <text class="dr-value">{{selectedItem.studentNo || '-'}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">专业/院系</text>
+            <text class="dr-value">{{selectedItem.major || '-'}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">用户ID</text>
+            <text class="dr-value mono">{{selectedItem.userId}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">联系方式</text>
+            <text class="dr-value">{{selectedItem.phone || '-'}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">报名时间</text>
+            <text class="dr-value">{{formatFullTime(selectedItem.registeredAt)}}</text>
+          </view>
+          <view class="detail-row highlight">
+            <text class="dr-label">签到状态</text>
+            <text class="dr-value status-text {{selectedItem.checkedIn ? 'success' : 'warn'}}">
+              {{selectedItem.checkedIn ? ('✓ 已签到 · ' + formatFullTime(selectedItem.checkInTime)) : '○ 未签到'}}
+            </text>
+          </view>
+        </view>
+      </view>
+
+      <view class="modal-body" wx:if="{{selectedType === 'order'}}">
+        <view class="detail-section">
+          <view class="detail-row">
+            <text class="dr-label">订单号</text>
+            <text class="dr-value mono">{{selectedItem.orderId}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">购票人</text>
+            <text class="dr-value">{{selectedItem.buyerName}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">学号</text>
+            <text class="dr-value">{{selectedItem.buyerStudentNo}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">用户ID</text>
+            <text class="dr-value mono">{{selectedItem.userId}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">订单状态</text>
+            <text class="dr-value" style="color: {{TICKET_ORDER_STATUS_MAP[selectedItem.status].color}}">
+              {{TICKET_ORDER_STATUS_MAP[selectedItem.status].icon}} {{TICKET_ORDER_STATUS_MAP[selectedItem.status].label}}
+            </text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">购买数量</text>
+            <text class="dr-value">{{selectedItem.quantity}} 张</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">单价</text>
+            <text class="dr-value">¥{{formatMoney(selectedItem.unitPrice)}}</text>
+          </view>
+          <view class="detail-row highlight">
+            <text class="dr-label">实付金额</text>
+            <text class="dr-value money-text">¥{{formatMoney(selectedItem.totalAmount)}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">支付方式</text>
+            <text class="dr-value">钱包余额</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">购票时间</text>
+            <text class="dr-value">{{formatFullTime(selectedItem.createdAt)}}</text>
+          </view>
+        </view>
+
+        <view class="tickets-section" wx:if="{{selectedItem.tickets && selectedItem.tickets.length > 0}}">
+          <view class="section-title-sm">电子票明细</view>
+          <view
+            wx:for="{{selectedItem.tickets}}"
+            wx:key="ticketCode"
+            wx:for-item="ticket"
+            class="ticket-item"
+          >
+            <view class="ti-left">
+              <view class="ti-code">{{ticket.ticketCode}}</view>
+              <view class="ti-time" wx:if="{{ticket.verified}}">
+                验票于 {{formatFullTime(ticket.verifiedAt)}}
+              </view>
+            </view>
+            <view class="ti-status {{ticket.verified ? 'done' : 'todo'}}">
+              {{ticket.verified ? '已验' : '待验'}}
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{selectedItem.status === 'refunded' || selectedItem.refundAmount}}" class="refund-section">
+          <view class="section-title-sm">退票信息</view>
+          <view class="detail-row">
+            <text class="dr-label">退票金额</text>
+            <text class="dr-value success-text">¥{{formatMoney(selectedItem.refundAmount || selectedItem.totalAmount)}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">退票原因</text>
+            <text class="dr-value">{{selectedItem.refundReason || '个人原因'}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="dr-label">退票时间</text>
+            <text class="dr-value">{{formatFullTime(selectedItem.refundedAt) || '-'}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <button class="modal-btn confirm" catchtap="onCloseDetail">关闭</button>
+      </view>
+    </view>
+  </view>
+</view>
