@@ -27,9 +27,9 @@
   padding-right: 16rpx;
 }
 
-.filter-tabs > * { margin-right: 12rpx; }
+.filter-tabs > view { margin-right: 12rpx; }
 
-.filter-tabs > *:last-child { margin-right: 0; }
+.filter-tabs > view:last-child { margin-right: 0; }
 
 .filter-tab {
   display: inline-block;
@@ -152,9 +152,9 @@
   flex: 1;
 }
 
-.study-entry-content > * { margin-right: 16rpx; }
+.study-entry-content > view { margin-right: 16rpx; }
 
-.study-entry-content > *:last-child { margin-right: 0; }
+.study-entry-content > view:last-child { margin-right: 0; }
 
 .study-entry-icon {
   font-size: 48rpx;
@@ -167,9 +167,9 @@
   flex-direction: column;
 }
 
-.study-entry-info > * { margin-bottom: 6rpx; }
+.study-entry-info > view { margin-bottom: 6rpx; }
 
-.study-entry-info > *:last-child { margin-bottom: 0; }
+.study-entry-info > view:last-child { margin-bottom: 0; }
 
 .study-entry-title {
   font-size: 30rpx;
@@ -190,9 +190,9 @@
   border-radius: var(--radius-full);
 }
 
-.study-entry-action > * { margin-right: 4rpx; }
+.study-entry-action > view { margin-right: 4rpx; }
 
-.study-entry-action > *:last-child { margin-right: 0; }
+.study-entry-action > view:last-child { margin-right: 0; }
 
 .entry-btn-text {
   font-size: 24rpx;
@@ -227,7 +227,7 @@
 
 .goods-grid { margin-right: -16rpx; margin-bottom: -16rpx; }
 
-.goods-grid > * { margin-right: 16rpx; margin-bottom: 16rpx; }
+.goods-grid > view { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .goods-card {
   width: calc(50% - 8rpx);

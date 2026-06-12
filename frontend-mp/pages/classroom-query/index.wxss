@@ -24,9 +24,9 @@
   margin-bottom: 20rpx;
 }
 
-.filter-row > * { margin-right: 20rpx; }
+.filter-row > view { margin-right: 20rpx; }
 
-.filter-row > *:last-child { margin-right: 0; }
+.filter-row > view:last-child { margin-right: 0; }
 
 .filter-item {
   flex: 1;
@@ -171,9 +171,9 @@
   flex-direction: column;
 }
 
-.classroom-list > * { margin-bottom: 20rpx; }
+.classroom-list > view { margin-bottom: 20rpx; }
 
-.classroom-list > *:last-child { margin-bottom: 0; }
+.classroom-list > view:last-child { margin-bottom: 0; }
 
 .classroom-card {
   background-color: var(--color-bg-card);
@@ -300,9 +300,9 @@
   margin-bottom: 12rpx;
 }
 
-.facility-icons > * { margin-right: 8rpx; }
+.facility-icons > view { margin-right: 8rpx; }
 
-.facility-icons > *:last-child { margin-right: 0; }
+.facility-icons > view:last-child { margin-right: 0; }
 
 .facility-icon {
   width: 48rpx;
@@ -352,9 +352,9 @@
   display: flex;
 }
 
-.legend > * { margin-right: 24rpx; }
+.legend > view { margin-right: 24rpx; }
 
-.legend > *:last-child { margin-right: 0; }
+.legend > view:last-child { margin-right: 0; }
 
 .legend-item {
   display: flex;
@@ -390,7 +390,7 @@
 
 .schedule-grid { margin-right: -12rpx; margin-bottom: -12rpx; }
 
-.schedule-grid > * { margin-right: 12rpx; margin-bottom: 12rpx; width: calc(20% - 12rpx); }
+.schedule-grid > view { margin-right: 12rpx; margin-bottom: 12rpx; width: calc(20% - 12rpx); }
 
 .schedule-cell {
   display: flex;

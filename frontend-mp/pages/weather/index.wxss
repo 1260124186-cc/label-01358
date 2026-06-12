@@ -164,7 +164,7 @@
 
 .weather-info-row { margin-right: -24rpx; margin-bottom: -24rpx; }
 
-.weather-info-row > * { margin-right: 24rpx; margin-bottom: 24rpx; }
+.weather-info-row > view { margin-right: 24rpx; margin-bottom: 24rpx; }
 
 .weather-info-item {
   display: flex;
@@ -289,7 +289,7 @@
 
 .aqi-details { margin-right: -24rpx; margin-bottom: -24rpx; }
 
-.aqi-details > * { margin-right: 24rpx; margin-bottom: 24rpx; width: calc(50% - 24rpx); }
+.aqi-details > view { margin-right: 24rpx; margin-bottom: 24rpx; width: calc(50% - 24rpx); }
 
 .aqi-detail-item {
   display: flex;
@@ -467,9 +467,9 @@
   padding-right: 32rpx;
 }
 
-.forecast-list > * { margin-right: 20rpx; }
+.forecast-list > view { margin-right: 20rpx; }
 
-.forecast-list > *:last-child { margin-right: 0; }
+.forecast-list > view:last-child { margin-right: 0; }
 
 .forecast-item {
   display: inline-flex;
@@ -671,9 +671,9 @@
   flex-direction: column;
 }
 
-.alert-list > * { margin-bottom: 24rpx; }
+.alert-list > view { margin-bottom: 24rpx; }
 
-.alert-list > *:last-child { margin-bottom: 0; }
+.alert-list > view:last-child { margin-bottom: 0; }
 
 .alert-item {
   width: 100%;

@@ -22,9 +22,9 @@
   flex-direction: column;
 }
 
-.points-info > * { margin-bottom: 4rpx; }
+.points-info > view { margin-bottom: 4rpx; }
 
-.points-info > *:last-child { margin-bottom: 0; }
+.points-info > view:last-child { margin-bottom: 0; }
 
 .points-label {
   font-size: 24rpx;
@@ -148,7 +148,7 @@
 
 .points-quick-select { margin-right: -15rpx; margin-bottom: -15rpx; }
 
-.points-quick-select > * { margin-right: 15rpx; margin-bottom: 15rpx; }
+.points-quick-select > view { margin-right: 15rpx; margin-bottom: 15rpx; }
 
 .points-option {
   padding: 15rpx 30rpx;
@@ -183,9 +183,9 @@
   margin-top: 12rpx;
 }
 
-.points-warning > * { margin-right: 8rpx; }
+.points-warning > view { margin-right: 8rpx; }
 
-.points-warning > *:last-child { margin-right: 0; }
+.points-warning > view:last-child { margin-right: 0; }
 
 .warning-icon {
   font-size: 24rpx;
@@ -241,9 +241,9 @@
   margin-bottom: 12rpx;
 }
 
-.notice-header > * { margin-right: 10rpx; }
+.notice-header > view { margin-right: 10rpx; }
 
-.notice-header > *:last-child { margin-right: 0; }
+.notice-header > view:last-child { margin-right: 0; }
 
 .notice-icon {
   font-size: 28rpx;

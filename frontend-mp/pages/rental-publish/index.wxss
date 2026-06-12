@@ -42,7 +42,7 @@
 
 .image-uploader { margin-right: -16rpx; margin-bottom: -16rpx; }
 
-.image-uploader > * { margin-right: 16rpx; margin-bottom: 16rpx; }
+.image-uploader > view { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .page.dark .image-uploader {
   background-color: #1A1D29;
@@ -217,9 +217,9 @@
   display: flex;
 }
 
-.form-row > * { margin-right: 24rpx; }
+.form-row > view { margin-right: 24rpx; }
 
-.form-row > *:last-child { margin-right: 0; }
+.form-row > view:last-child { margin-right: 0; }
 
 .flex-1 {
   flex: 1;
@@ -234,7 +234,7 @@
 
 .selector-group { margin-right: -16rpx; margin-bottom: -16rpx; }
 
-.selector-group > * { margin-right: 16rpx; margin-bottom: 16rpx; }
+.selector-group > view { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .selector-item {
   padding: 12rpx 28rpx;
@@ -272,7 +272,7 @@
 
 .facility-grid { margin-right: -20rpx; margin-bottom: -20rpx; }
 
-.facility-grid > * { margin-right: 20rpx; margin-bottom: 20rpx; }
+.facility-grid > view { margin-right: 20rpx; margin-bottom: 20rpx; }
 
 .page.dark .facility-grid {
   background-color: #1A1D29;

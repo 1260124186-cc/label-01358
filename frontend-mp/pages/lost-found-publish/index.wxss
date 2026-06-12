@@ -22,9 +22,9 @@
   display: flex;
 }
 
-.type-selector > * { margin-right: 20rpx; }
+.type-selector > view { margin-right: 20rpx; }
 
-.type-selector > *:last-child { margin-right: 0; }
+.type-selector > view:last-child { margin-right: 0; }
 
 .type-option {
   flex: 1;
@@ -168,7 +168,7 @@
 
 .image-list { margin-right: -16rpx; margin-bottom: -16rpx; }
 
-.image-list > * { margin-right: 16rpx; margin-bottom: 16rpx; }
+.image-list > view { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .image-item {
   position: relative;
@@ -245,9 +245,9 @@
   align-items: center;
 }
 
-.location-selector > * { margin-right: 16rpx; }
+.location-selector > view { margin-right: 16rpx; }
 
-.location-selector > *:last-child { margin-right: 0; }
+.location-selector > view:last-child { margin-right: 0; }
 
 .location-selector .form-picker {
   flex: 1;
@@ -262,9 +262,9 @@
   flex-shrink: 0;
 }
 
-.map-location-btn > * { margin-right: 8rpx; }
+.map-location-btn > view { margin-right: 8rpx; }
 
-.map-location-btn > *:last-child { margin-right: 0; }
+.map-location-btn > view:last-child { margin-right: 0; }
 
 .map-icon {
   font-size: 28rpx;
@@ -285,9 +285,9 @@
   flex: 1;
 }
 
-.poi-location-card > * { margin-right: 20rpx; }
+.poi-location-card > view { margin-right: 20rpx; }
 
-.poi-location-card > *:last-child { margin-right: 0; }
+.poi-location-card > view:last-child { margin-right: 0; }
 
 .page.dark .poi-location-card {
   background: rgba(59, 130, 246, 0.1);
@@ -339,9 +339,9 @@
   flex-shrink: 0;
 }
 
-.poi-location-action > * { margin-right: 4rpx; }
+.poi-location-action > view { margin-right: 4rpx; }
 
-.poi-location-action > *:last-child { margin-right: 0; }
+.poi-location-action > view:last-child { margin-right: 0; }
 
 .poi-location-action text {
   font-size: 24rpx;
@@ -431,9 +431,9 @@
   border-radius: 16rpx;
 }
 
-.picker-search > * { margin-right: 16rpx; }
+.picker-search > view { margin-right: 16rpx; }
 
-.picker-search > *:last-child { margin-right: 0; }
+.picker-search > view:last-child { margin-right: 0; }
 
 .page.dark .picker-search {
   background: #2D3142;
@@ -465,9 +465,9 @@
   border-bottom: 1rpx solid #F0F2F5;
 }
 
-.picker-item > * { margin-right: 20rpx; }
+.picker-item > view { margin-right: 20rpx; }
 
-.picker-item > *:last-child { margin-right: 0; }
+.picker-item > view:last-child { margin-right: 0; }
 
 .page.dark .picker-item {
   border-bottom-color: #2D3142;

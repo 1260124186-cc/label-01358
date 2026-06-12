@@ -162,9 +162,9 @@
   margin-bottom: 48rpx;
 }
 
-.dot-indicators > * { margin-right: 16rpx; }
+.dot-indicators > view { margin-right: 16rpx; }
 
-.dot-indicators > *:last-child { margin-right: 0; }
+.dot-indicators > view:last-child { margin-right: 0; }
 
 .dot {
   width: 16rpx;

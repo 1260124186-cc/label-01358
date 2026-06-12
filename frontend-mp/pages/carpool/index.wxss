@@ -113,9 +113,9 @@
   padding: 0 20rpx;
 }
 
-.filter-row > * { margin-right: 16rpx; }
+.filter-row > view { margin-right: 16rpx; }
 
-.filter-row > *:last-child { margin-right: 0; }
+.filter-row > view:last-child { margin-right: 0; }
 
 .filter-chip {
   display: inline-flex;
@@ -285,7 +285,7 @@
 
 .card-info { margin-right: -20rpx; margin-bottom: -20rpx; }
 
-.card-info > * { margin-right: 20rpx; margin-bottom: 20rpx; }
+.card-info > view { margin-right: 20rpx; margin-bottom: 20rpx; }
 
 .info-item {
   display: flex;
@@ -343,9 +343,9 @@
   align-items: center;
 }
 
-.card-meta > * { margin-right: 12rpx; }
+.card-meta > view { margin-right: 12rpx; }
 
-.card-meta > *:last-child { margin-right: 0; }
+.card-meta > view:last-child { margin-right: 0; }
 
 .verified-tag {
   padding: 4rpx 12rpx;

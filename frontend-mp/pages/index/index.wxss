@@ -327,7 +327,7 @@
 
 .quick-grid { margin-right: -16rpx; margin-bottom: -16rpx; }
 
-.quick-grid > * { margin-right: 16rpx; margin-bottom: 16rpx; }
+.quick-grid > view { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .quick-item {
   flex: 1 1 calc(33.333% - 12rpx);

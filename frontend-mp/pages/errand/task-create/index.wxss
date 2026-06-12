@@ -20,9 +20,9 @@
   display: flex;
 }
 
-.type-list > * { margin-right: 20rpx; }
+.type-list > view { margin-right: 20rpx; }
 
-.type-list > *:last-child { margin-right: 0; }
+.type-list > view:last-child { margin-right: 0; }
 
 .type-card {
   display: inline-flex;
@@ -37,9 +37,9 @@
   flex-shrink: 0;
 }
 
-.type-card > * { margin-bottom: 10rpx; }
+.type-card > view { margin-bottom: 10rpx; }
 
-.type-card > *:last-child { margin-bottom: 0; }
+.type-card > view:last-child { margin-bottom: 0; }
 
 .task-create-page.dark .type-card {
   background: #1A1D28;
@@ -116,9 +116,9 @@
   margin-bottom: 16rpx;
 }
 
-.form-label > * { margin-right: 8rpx; }
+.form-label > view { margin-right: 8rpx; }
 
-.form-label > *:last-child { margin-right: 0; }
+.form-label > view:last-child { margin-right: 0; }
 
 .label-icon {
   font-size: 28rpx;
@@ -213,7 +213,7 @@
 
 .bounty-options { margin-right: -16rpx; margin-bottom: -16rpx; }
 
-.bounty-options > * { margin-right: 16rpx; margin-bottom: 16rpx; }
+.bounty-options > view { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .bounty-item {
   padding: 12rpx 28rpx;
@@ -250,9 +250,9 @@
   display: flex;
 }
 
-.deadline-row > * { margin-right: 16rpx; }
+.deadline-row > view { margin-right: 16rpx; }
 
-.deadline-row > *:last-child { margin-right: 0; }
+.deadline-row > view:last-child { margin-right: 0; }
 
 .deadline-picker {
   flex: 1;
@@ -267,9 +267,9 @@
   align-items: center;
 }
 
-.address-row > * { margin-right: 16rpx; }
+.address-row > view { margin-right: 16rpx; }
 
-.address-row > *:last-child { margin-right: 0; }
+.address-row > view:last-child { margin-right: 0; }
 
 .address-book-btn {
   padding: 0 24rpx;
@@ -317,9 +317,9 @@
   flex-direction: column;
 }
 
-.submit-info > * { margin-bottom: 4rpx; }
+.submit-info > view { margin-bottom: 4rpx; }
 
-.submit-info > *:last-child { margin-bottom: 0; }
+.submit-info > view:last-child { margin-bottom: 0; }
 
 .submit-escrow {
   font-size: 22rpx;
@@ -427,9 +427,9 @@
   transition: background 0.2s;
 }
 
-.picker-item > * { margin-right: 16rpx; }
+.picker-item > view { margin-right: 16rpx; }
 
-.picker-item > *:last-child { margin-right: 0; }
+.picker-item > view:last-child { margin-right: 0; }
 
 .picker-item:active {
   background: #f5f5f5;

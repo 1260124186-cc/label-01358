@@ -22,9 +22,9 @@
   display: flex;
 }
 
-.filter-tabs > * { margin-right: 12rpx; }
+.filter-tabs > view { margin-right: 12rpx; }
 
-.filter-tabs > *:last-child { margin-right: 0; }
+.filter-tabs > view:last-child { margin-right: 0; }
 
 .filter-tab {
   padding: 14rpx 28rpx;
@@ -163,7 +163,7 @@
 
 .item-tags { margin-right: -10rpx; margin-bottom: -10rpx; }
 
-.item-tags > * { margin-right: 10rpx; margin-bottom: 10rpx; }
+.item-tags > view { margin-right: 10rpx; margin-bottom: 10rpx; }
 
 .item-tag {
   padding: 6rpx 14rpx;
@@ -340,9 +340,9 @@
   align-items: center;
 }
 
-.load-more-loading > * { margin-right: 16rpx; }
+.load-more-loading > view { margin-right: 16rpx; }
 
-.load-more-loading > *:last-child { margin-right: 0; }
+.load-more-loading > view:last-child { margin-right: 0; }
 
 .loading-spinner {
   width: 32rpx;

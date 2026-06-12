@@ -23,9 +23,9 @@
   align-items: center;
 }
 
-.search-row > * { margin-right: 20rpx; }
+.search-row > view { margin-right: 20rpx; }
 
-.search-row > *:last-child { margin-right: 0; }
+.search-row > view:last-child { margin-right: 0; }
 
 .search-box {
   flex: 1;
@@ -165,9 +165,9 @@
   padding: 0 20rpx;
 }
 
-.type-tabs > * { margin-right: 12rpx; }
+.type-tabs > view { margin-right: 12rpx; }
 
-.type-tabs > *:last-child { margin-right: 0; }
+.type-tabs > view:last-child { margin-right: 0; }
 
 .type-tab {
   display: inline-flex;
@@ -219,9 +219,9 @@
   padding: 0 20rpx;
 }
 
-.filter-row > * { margin-right: 16rpx; }
+.filter-row > view { margin-right: 16rpx; }
 
-.filter-row > *:last-child { margin-right: 0; }
+.filter-row > view:last-child { margin-right: 0; }
 
 .filter-chip {
   display: inline-flex;
@@ -468,9 +468,9 @@
   align-items: center;
 }
 
-.footer-right > * { margin-right: 16rpx; }
+.footer-right > view { margin-right: 16rpx; }
 
-.footer-right > *:last-child { margin-right: 0; }
+.footer-right > view:last-child { margin-right: 0; }
 
 .publisher-info {
   display: flex;

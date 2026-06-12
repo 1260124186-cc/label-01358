@@ -245,7 +245,7 @@
 
 .info-tags { margin-right: -12rpx; margin-bottom: -12rpx; }
 
-.info-tags > * { margin-right: 12rpx; margin-bottom: 12rpx; }
+.info-tags > view { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .info-tag {
   padding: 8rpx 20rpx;

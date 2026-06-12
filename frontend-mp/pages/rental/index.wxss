@@ -113,9 +113,9 @@
   padding: 0 20rpx;
 }
 
-.filter-row > * { margin-right: 16rpx; }
+.filter-row > view { margin-right: 16rpx; }
 
-.filter-row > *:last-child { margin-right: 0; }
+.filter-row > view:last-child { margin-right: 0; }
 
 .filter-chip {
   display: inline-flex;
@@ -196,7 +196,7 @@
 
 .house-tags { margin-right: -12rpx; margin-bottom: -12rpx; }
 
-.house-tags > * { margin-right: 12rpx; margin-bottom: 12rpx; }
+.house-tags > view { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .house-tag {
   padding: 6rpx 16rpx;
@@ -288,7 +288,7 @@
 
 .house-meta { margin-right: -8rpx; margin-bottom: -8rpx; }
 
-.house-meta > * { margin-right: 8rpx; margin-bottom: 8rpx; }
+.house-meta > view { margin-right: 8rpx; margin-bottom: 8rpx; }
 
 .house-type,
 .house-area,
@@ -320,7 +320,7 @@
 
 .house-facilities { margin-right: -12rpx; margin-bottom: -12rpx; }
 
-.house-facilities > * { margin-right: 12rpx; margin-bottom: 12rpx; }
+.house-facilities > view { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .facility-tag {
   padding: 6rpx 16rpx;
@@ -374,9 +374,9 @@
   display: flex;
 }
 
-.house-footer-info > * { margin-right: 16rpx; }
+.house-footer-info > view { margin-right: 16rpx; }
 
-.house-footer-info > *:last-child { margin-right: 0; }
+.house-footer-info > view:last-child { margin-right: 0; }
 
 .house-views,
 .house-time {
@@ -433,9 +433,9 @@
   display: flex;
 }
 
-.compare-actions > * { margin-right: 20rpx; }
+.compare-actions > view { margin-right: 20rpx; }
 
-.compare-actions > *:last-child { margin-right: 0; }
+.compare-actions > view:last-child { margin-right: 0; }
 
 .clear-compare-btn {
   padding: 16rpx 30rpx;

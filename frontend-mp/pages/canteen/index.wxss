@@ -113,9 +113,9 @@
   padding-right: 24rpx;
 }
 
-.recommend-list > * { margin-right: 20rpx; }
+.recommend-list > view { margin-right: 20rpx; }
 
-.recommend-list > *:last-child { margin-right: 0; }
+.recommend-list > view:last-child { margin-right: 0; }
 
 .dish-card {
   width: 320rpx;
@@ -252,9 +252,9 @@
   padding-right: 24rpx;
 }
 
-.new-dishes-list > * { margin-right: 16rpx; }
+.new-dishes-list > view { margin-right: 16rpx; }
 
-.new-dishes-list > *:last-child { margin-right: 0; }
+.new-dishes-list > view:last-child { margin-right: 0; }
 
 .new-dish-card {
   width: 240rpx;
@@ -353,9 +353,9 @@
   flex-direction: column;
 }
 
-.canteen-list > * { margin-bottom: 20rpx; }
+.canteen-list > view { margin-bottom: 20rpx; }
 
-.canteen-list > *:last-child { margin-bottom: 0; }
+.canteen-list > view:last-child { margin-bottom: 0; }
 
 .canteen-card {
   background-color: var(--color-bg-card);
@@ -501,9 +501,9 @@
   border-radius: var(--radius-lg);
 }
 
-.canteen-hours > * { margin-right: 12rpx; }
+.canteen-hours > view { margin-right: 12rpx; }
 
-.canteen-hours > *:last-child { margin-right: 0; }
+.canteen-hours > view:last-child { margin-right: 0; }
 
 .hour-item {
   flex: 1;

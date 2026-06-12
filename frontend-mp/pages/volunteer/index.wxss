@@ -24,9 +24,9 @@
   align-items: center;
 }
 
-.tab-bar > * { margin-right: 40rpx; }
+.tab-bar > view { margin-right: 40rpx; }
 
-.tab-bar > *:last-child { margin-right: 0; }
+.tab-bar > view:last-child { margin-right: 0; }
 
 .tab-item {
   display: inline-flex;
@@ -77,9 +77,9 @@
   padding-right: 16rpx;
 }
 
-.category-chips > * { margin-right: 16rpx; }
+.category-chips > view { margin-right: 16rpx; }
 
-.category-chips > *:last-child { margin-right: 0; }
+.category-chips > view:last-child { margin-right: 0; }
 
 .category-chip {
   display: inline-flex;
@@ -210,9 +210,9 @@
   flex-direction: column;
 }
 
-.card-info > * { margin-bottom: 10rpx; }
+.card-info > view { margin-bottom: 10rpx; }
 
-.card-info > *:last-child { margin-bottom: 0; }
+.card-info > view:last-child { margin-bottom: 0; }
 
 .info-row {
   display: flex;

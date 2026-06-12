@@ -24,9 +24,9 @@
   margin-bottom: var(--spacing-md);
 }
 
-.category-row > * { margin-right: var(--spacing-sm); }
+.category-row > view { margin-right: var(--spacing-sm); }
 
-.category-row > *:last-child { margin-right: 0; }
+.category-row > view:last-child { margin-right: 0; }
 
 .category-tag {
   display: inline-flex;
@@ -37,9 +37,9 @@
   font-weight: 500;
 }
 
-.category-tag > * { margin-right: 6rpx; }
+.category-tag > view { margin-right: 6rpx; }
 
-.category-tag > *:last-child { margin-right: 0; }
+.category-tag > view:last-child { margin-right: 0; }
 
 .category-icon {
   font-size: var(--font-md);
@@ -103,9 +103,9 @@
   flex-direction: column;
 }
 
-.info-content > * { margin-bottom: 4rpx; }
+.info-content > view { margin-bottom: 4rpx; }
 
-.info-content > *:last-child { margin-bottom: 0; }
+.info-content > view:last-child { margin-bottom: 0; }
 
 .info-label {
   font-size: var(--font-sm);
@@ -132,9 +132,9 @@
   align-items: center;
 }
 
-.contact-row > * { margin-right: var(--spacing-md); }
+.contact-row > view { margin-right: var(--spacing-md); }
 
-.contact-row > *:last-child { margin-right: 0; }
+.contact-row > view:last-child { margin-right: 0; }
 
 .phone-link {
   font-size: var(--font-base);
@@ -154,9 +154,9 @@
   flex-direction: column;
 }
 
-.registration-list > * { margin-bottom: var(--spacing-sm); }
+.registration-list > view { margin-bottom: var(--spacing-sm); }
 
-.registration-list > *:last-child { margin-bottom: 0; }
+.registration-list > view:last-child { margin-bottom: 0; }
 
 .registration-item {
   display: flex;
@@ -166,9 +166,9 @@
   border-radius: var(--radius-md);
 }
 
-.registration-item > * { margin-right: var(--spacing-md); }
+.registration-item > view { margin-right: var(--spacing-md); }
 
-.registration-item > *:last-child { margin-right: 0; }
+.registration-item > view:last-child { margin-right: 0; }
 
 .reg-avatar {
   width: 60rpx;
@@ -224,9 +224,9 @@
   z-index: 100;
 }
 
-.action-bar > * { margin-right: var(--spacing-md); }
+.action-bar > view { margin-right: var(--spacing-md); }
 
-.action-bar > *:last-child { margin-right: 0; }
+.action-bar > view:last-child { margin-right: 0; }
 
 .action-btn {
   display: flex;

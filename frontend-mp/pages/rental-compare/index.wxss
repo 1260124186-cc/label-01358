@@ -32,9 +32,9 @@
   align-items: center;
 }
 
-.header-left > * { margin-right: 16rpx; }
+.header-left > view { margin-right: 16rpx; }
 
-.header-left > *:last-child { margin-right: 0; }
+.header-left > view:last-child { margin-right: 0; }
 
 .header-title {
   font-size: 34rpx;
@@ -345,9 +345,9 @@
   text-align: left;
 }
 
-.house-type-badge > * { margin-right: 8rpx; }
+.house-type-badge > view { margin-right: 8rpx; }
 
-.house-type-badge > *:last-child { margin-right: 0; }
+.house-type-badge > view:last-child { margin-right: 0; }
 
 .badge-dot {
   width: 12rpx;
@@ -363,9 +363,9 @@
   width: 100%;
 }
 
-.cell-content > * { margin-bottom: 8rpx; }
+.cell-content > view { margin-bottom: 8rpx; }
 
-.cell-content > *:last-child { margin-bottom: 0; }
+.cell-content > view:last-child { margin-bottom: 0; }
 
 .cell-text {
   font-size: 26rpx;
@@ -429,7 +429,7 @@
 
 .facilities-grid { margin-right: -12rpx; margin-bottom: -12rpx; }
 
-.facilities-grid > * { margin-right: 12rpx; margin-bottom: 12rpx; width: calc(50% - 12rpx); }
+.facilities-grid > view { margin-right: 12rpx; margin-bottom: 12rpx; width: calc(50% - 12rpx); }
 
 .facility-chip {
   display: flex;
@@ -512,9 +512,9 @@
   border-top: 1rpx solid #FDE68A;
 }
 
-.compare-tip > * { margin-right: 12rpx; }
+.compare-tip > view { margin-right: 12rpx; }
 
-.compare-tip > *:last-child { margin-right: 0; }
+.compare-tip > view:last-child { margin-right: 0; }
 
 .page.dark .compare-tip {
   background-color: rgba(245, 158, 11, 0.08);

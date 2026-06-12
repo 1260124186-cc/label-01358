@@ -124,7 +124,7 @@
 
 .color-list { margin-right: -12rpx; margin-bottom: -12rpx; }
 
-.color-list > * { margin-right: 12rpx; margin-bottom: 12rpx; }
+.color-list > view { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .color-item {
   width: 52rpx;

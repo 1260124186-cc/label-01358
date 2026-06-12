@@ -103,9 +103,9 @@
   backdrop-filter: blur(10px);
 }
 
-.direction-indicator > * { margin-right: 12rpx; }
+.direction-indicator > view { margin-right: 12rpx; }
 
-.direction-indicator > *:last-child { margin-right: 0; }
+.direction-indicator > view:last-child { margin-right: 0; }
 
 .direction-icon {
   font-size: 32rpx;
@@ -174,9 +174,9 @@
   box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.4);
 }
 
-.ar-poi-card > * { margin-right: 12rpx; }
+.ar-poi-card > view { margin-right: 12rpx; }
 
-.ar-poi-card > *:last-child { margin-right: 0; }
+.ar-poi-card > view:last-child { margin-right: 0; }
 
 .ar-poi-icon {
   width: 48rpx;
@@ -302,9 +302,9 @@
   align-items: center;
 }
 
-.panel-toggle > * { margin-right: 8rpx; }
+.panel-toggle > view { margin-right: 8rpx; }
 
-.panel-toggle > *:last-child { margin-right: 0; }
+.panel-toggle > view:last-child { margin-right: 0; }
 
 .panel-toggle text {
   font-size: 24rpx;
@@ -326,9 +326,9 @@
   padding-bottom: 8rpx;
 }
 
-.poi-list > * { margin-right: 16rpx; }
+.poi-list > view { margin-right: 16rpx; }
 
-.poi-list > *:last-child { margin-right: 0; }
+.poi-list > view:last-child { margin-right: 0; }
 
 .poi-item {
   display: flex;
@@ -342,9 +342,9 @@
   transition: all 0.3s ease;
 }
 
-.poi-item > * { margin-right: 16rpx; }
+.poi-item > view { margin-right: 16rpx; }
 
-.poi-item > *:last-child { margin-right: 0; }
+.poi-item > view:last-child { margin-right: 0; }
 
 .poi-item.active {
   background: rgba(59, 130, 246, 0.2);
@@ -385,9 +385,9 @@
   display: flex;
 }
 
-.poi-meta > * { margin-right: 16rpx; }
+.poi-meta > view { margin-right: 16rpx; }
 
-.poi-meta > *:last-child { margin-right: 0; }
+.poi-meta > view:last-child { margin-right: 0; }
 
 .poi-distance {
   font-size: 22rpx;
@@ -431,9 +431,9 @@
   transition: background 0.3s ease;
 }
 
-.action-btn > * { margin-bottom: 8rpx; }
+.action-btn > view { margin-bottom: 8rpx; }
 
-.action-btn > *:last-child { margin-bottom: 0; }
+.action-btn > view:last-child { margin-bottom: 0; }
 
 .action-btn:active {
   background: rgba(255, 255, 255, 0.1);

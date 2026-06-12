@@ -34,7 +34,7 @@
   background-color: var(--color-bg-page);
 }
 
-.image-add > * {
+.image-add > view {
   position: absolute;
 }
 

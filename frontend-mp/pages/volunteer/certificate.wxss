@@ -262,9 +262,9 @@
   align-items: flex-end;
 }
 
-.cert-sign > * { margin-bottom: 8rpx; }
+.cert-sign > view { margin-bottom: 8rpx; }
 
-.cert-sign > *:last-child { margin-bottom: 0; }
+.cert-sign > view:last-child { margin-bottom: 0; }
 
 .cert-sign-org {
   font-size: 26rpx;
@@ -333,9 +333,9 @@
   z-index: 50;
 }
 
-.bottom-actions > * { margin-right: 20rpx; }
+.bottom-actions > view { margin-right: 20rpx; }
 
-.bottom-actions > *:last-child { margin-right: 0; }
+.bottom-actions > view:last-child { margin-right: 0; }
 
 .dark .bottom-actions {
   box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.3);

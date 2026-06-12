@@ -58,9 +58,9 @@
   flex-direction: column;
 }
 
-.hero-user-info > * { margin-bottom: 10rpx; }
+.hero-user-info > view { margin-bottom: 10rpx; }
 
-.hero-user-info > *:last-child { margin-bottom: 0; }
+.hero-user-info > view:last-child { margin-bottom: 0; }
 
 .hero-name {
   font-size: 32rpx;
@@ -134,7 +134,7 @@
 
 .stats-grid { margin-right: -16rpx; margin-bottom: -16rpx; }
 
-.stats-grid > * { margin-right: 16rpx; margin-bottom: 16rpx; width: calc(50% - 16rpx); }
+.stats-grid > view { margin-right: 16rpx; margin-bottom: 16rpx; width: calc(50% - 16rpx); }
 
 .stats-item {
   display: flex;
@@ -221,9 +221,9 @@
   flex-direction: column;
 }
 
-.violation-list > * { margin-bottom: 12rpx; }
+.violation-list > view { margin-bottom: 12rpx; }
 
-.violation-list > *:last-child { margin-bottom: 0; }
+.violation-list > view:last-child { margin-bottom: 0; }
 
 .violation-card {
   display: flex;
@@ -286,9 +286,9 @@
   flex-direction: column;
 }
 
-.order-list > * { margin-bottom: 12rpx; }
+.order-list > view { margin-bottom: 12rpx; }
 
-.order-list > *:last-child { margin-bottom: 0; }
+.order-list > view:last-child { margin-bottom: 0; }
 
 .order-card {
   display: flex;
@@ -325,9 +325,9 @@
   min-width: 0;
 }
 
-.order-info > * { margin-bottom: 4rpx; }
+.order-info > view { margin-bottom: 4rpx; }
 
-.order-info > *:last-child { margin-bottom: 0; }
+.order-info > view:last-child { margin-bottom: 0; }
 
 .order-title {
   font-size: 28rpx;
@@ -351,17 +351,17 @@
   flex-shrink: 0;
 }
 
-.order-right > * { margin-bottom: 6rpx; }
+.order-right > view { margin-bottom: 6rpx; }
 
-.order-right > *:last-child { margin-bottom: 0; }
+.order-right > view:last-child { margin-bottom: 0; }
 
 .order-rating {
   display: flex;
 }
 
-.order-rating > * { margin-right: 2rpx; }
+.order-rating > view { margin-right: 2rpx; }
 
-.order-rating > *:last-child { margin-right: 0; }
+.order-rating > view:last-child { margin-right: 0; }
 
 .order-star {
   font-size: 22rpx;

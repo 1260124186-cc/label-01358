@@ -23,9 +23,9 @@
   padding-right: 16rpx;
 }
 
-.category-tabs > * { margin-right: 16rpx; }
+.category-tabs > view { margin-right: 16rpx; }
 
-.category-tabs > *:last-child { margin-right: 0; }
+.category-tabs > view:last-child { margin-right: 0; }
 
 .category-tab {
   display: inline-flex;
@@ -236,7 +236,7 @@
 
 .shop-tags { margin-right: -12rpx; margin-bottom: -12rpx; }
 
-.shop-tags > * { margin-right: 12rpx; margin-bottom: 12rpx; }
+.shop-tags > view { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .shop-desc {
   font-size: var(--font-sm);

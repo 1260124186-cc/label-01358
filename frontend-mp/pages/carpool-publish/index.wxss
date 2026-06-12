@@ -39,9 +39,9 @@
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
 }
 
-.type-selector > * { margin-right: 20rpx; }
+.type-selector > view { margin-right: 20rpx; }
 
-.type-selector > *:last-child { margin-right: 0; }
+.type-selector > view:last-child { margin-right: 0; }
 
 .page.dark .type-selector {
   background-color: #1A1D29;
@@ -201,7 +201,7 @@
 
 .seats-selector { margin-right: -16rpx; margin-bottom: -16rpx; }
 
-.seats-selector > * { margin-right: 16rpx; margin-bottom: 16rpx; }
+.seats-selector > view { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .seats-item {
   padding: 12rpx 28rpx;

@@ -300,9 +300,9 @@
   margin-bottom: 32rpx;
 }
 
-.exam-list > * { margin-bottom: 24rpx; }
+.exam-list > view { margin-bottom: 24rpx; }
 
-.exam-list > *:last-child { margin-bottom: 0; }
+.exam-list > view:last-child { margin-bottom: 0; }
 
 .exam-card {
   position: relative;
@@ -462,7 +462,7 @@
 
 .exam-info-row { margin-right: -24rpx; margin-bottom: -24rpx; }
 
-.exam-info-row > * { margin-right: 24rpx; margin-bottom: 24rpx; }
+.exam-info-row > view { margin-right: 24rpx; margin-bottom: 24rpx; }
 
 .exam-info-row:last-of-type {
   margin-bottom: 20rpx;
@@ -581,9 +581,9 @@
   flex-direction: column;
 }
 
-.tips-list > * { margin-bottom: 14rpx; }
+.tips-list > view { margin-bottom: 14rpx; }
 
-.tips-list > *:last-child { margin-bottom: 0; }
+.tips-list > view:last-child { margin-bottom: 0; }
 
 .tips-item {
   display: flex;

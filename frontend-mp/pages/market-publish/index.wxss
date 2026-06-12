@@ -32,7 +32,7 @@
 
 .image-list { margin-right: -16rpx; margin-bottom: -16rpx; }
 
-.image-list > * { margin-right: 16rpx; margin-bottom: 16rpx; }
+.image-list > view { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .image-item {
   position: relative;

@@ -63,9 +63,9 @@
   padding: 24rpx 24rpx 16rpx;
 }
 
-.week-switcher > * { margin-right: 32rpx; }
+.week-switcher > view { margin-right: 32rpx; }
 
-.week-switcher > *:last-child { margin-right: 0; }
+.week-switcher > view:last-child { margin-right: 0; }
 
 .week-nav-btn {
   width: 64rpx;
@@ -360,9 +360,9 @@
   flex-direction: column;
 }
 
-.day-course-list > * { margin-bottom: 20rpx; }
+.day-course-list > view { margin-bottom: 20rpx; }
 
-.day-course-list > *:last-child { margin-bottom: 0; }
+.day-course-list > view:last-child { margin-bottom: 0; }
 
 .day-course-card {
   display: flex;
@@ -413,9 +413,9 @@
   flex-direction: column;
 }
 
-.course-info-col > * { margin-bottom: 12rpx; }
+.course-info-col > view { margin-bottom: 12rpx; }
 
-.course-info-col > *:last-child { margin-bottom: 0; }
+.course-info-col > view:last-child { margin-bottom: 0; }
 
 .course-title {
   font-size: 32rpx;
@@ -430,7 +430,7 @@
 
 .course-info-row { margin-right: -24rpx; margin-bottom: -24rpx; }
 
-.course-info-row > * { margin-right: 24rpx; margin-bottom: 24rpx; }
+.course-info-row > view { margin-right: 24rpx; margin-bottom: 24rpx; }
 
 .course-info-item {
   display: flex;
@@ -686,9 +686,9 @@
   padding: 24rpx 32rpx 32rpx;
 }
 
-.modal-footer > * { margin-right: 20rpx; }
+.modal-footer > view { margin-right: 20rpx; }
 
-.modal-footer > *:last-child { margin-right: 0; }
+.modal-footer > view:last-child { margin-right: 0; }
 
 .modal-btn {
   flex: 1;
@@ -702,9 +702,9 @@
   transition: all var(--transition-fast);
 }
 
-.modal-btn > * { margin-right: 8rpx; }
+.modal-btn > view { margin-right: 8rpx; }
 
-.modal-btn > *:last-child { margin-right: 0; }
+.modal-btn > view:last-child { margin-right: 0; }
 
 .modal-btn:active {
   transform: scale(0.96);

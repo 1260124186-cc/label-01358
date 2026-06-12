@@ -45,9 +45,9 @@
   margin-bottom: 30rpx;
 }
 
-.list-content > * { margin-bottom: 16rpx; }
+.list-content > view { margin-bottom: 16rpx; }
 
-.list-content > *:last-child { margin-bottom: 0; }
+.list-content > view:last-child { margin-bottom: 0; }
 
 .address-card {
   background: #fff;
@@ -84,9 +84,9 @@
   margin-bottom: 10rpx;
 }
 
-.card-name-row > * { margin-right: 12rpx; }
+.card-name-row > view { margin-right: 12rpx; }
 
-.card-name-row > *:last-child { margin-right: 0; }
+.card-name-row > view:last-child { margin-right: 0; }
 
 .card-name {
   font-size: 30rpx;
@@ -133,9 +133,9 @@
   border-top: 1rpx solid #f5f5f5;
 }
 
-.card-actions > * { margin-right: 16rpx; }
+.card-actions > view { margin-right: 16rpx; }
 
-.card-actions > *:last-child { margin-right: 0; }
+.card-actions > view:last-child { margin-right: 0; }
 
 .address-page.dark .card-actions {
   border-top-color: #2E3348;
@@ -186,9 +186,9 @@
   transition: all 0.2s;
 }
 
-.add-btn > * { margin-right: 12rpx; }
+.add-btn > view { margin-right: 12rpx; }
 
-.add-btn > *:last-child { margin-right: 0; }
+.add-btn > view:last-child { margin-right: 0; }
 
 .address-page.dark .add-btn {
   background: #1A1D28;
@@ -308,9 +308,9 @@
   margin-top: 30rpx;
 }
 
-.form-actions > * { margin-right: 20rpx; }
+.form-actions > view { margin-right: 20rpx; }
 
-.form-actions > *:last-child { margin-right: 0; }
+.form-actions > view:last-child { margin-right: 0; }
 
 .form-btn {
   flex: 1;

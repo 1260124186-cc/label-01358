@@ -25,9 +25,9 @@
   flex-direction: column;
 }
 
-.author-info > * { margin-bottom: 4rpx; }
+.author-info > view { margin-bottom: 4rpx; }
 
-.author-info > *:last-child { margin-bottom: 0; }
+.author-info > view:last-child { margin-bottom: 0; }
 
 .author-name {
   font-size: var(--font-md);
@@ -45,9 +45,9 @@
   align-items: center;
 }
 
-.author-actions > * { margin-right: var(--spacing-sm); }
+.author-actions > view { margin-right: var(--spacing-sm); }
 
-.author-actions > *:last-child { margin-right: 0; }
+.author-actions > view:last-child { margin-right: 0; }
 
 .follow-btn {
   padding: 8rpx 24rpx;
@@ -113,9 +113,9 @@
   transition: background-color var(--transition-fast);
 }
 
-.more-option > * { margin-right: 12rpx; }
+.more-option > view { margin-right: 12rpx; }
 
-.more-option > *:last-child { margin-right: 0; }
+.more-option > view:last-child { margin-right: 0; }
 
 .more-option:active {
   background-color: var(--color-bg-input);
@@ -175,7 +175,7 @@
 
 .post-images { margin-right: -8rpx; margin-bottom: -8rpx; }
 
-.post-images > * { margin-right: 8rpx; margin-bottom: 8rpx; }
+.post-images > view { margin-right: 8rpx; margin-bottom: 8rpx; }
 
 .post-images .post-img {
   border-radius: var(--radius-lg);
@@ -219,7 +219,7 @@
 
 .post-topics { margin-right: -8rpx; margin-bottom: -8rpx; }
 
-.post-topics > * { margin-right: 8rpx; margin-bottom: 8rpx; }
+.post-topics > view { margin-right: 8rpx; margin-bottom: 8rpx; }
 
 .post-topic {
   font-size: var(--font-xs);
@@ -238,18 +238,18 @@
   margin-top: 16rpx;
 }
 
-.stats-bar > * { margin-right: var(--spacing-xl); }
+.stats-bar > view { margin-right: var(--spacing-xl); }
 
-.stats-bar > *:last-child { margin-right: 0; }
+.stats-bar > view:last-child { margin-right: 0; }
 
 .stat-item {
   display: flex;
   align-items: center;
 }
 
-.stat-item > * { margin-right: 6rpx; }
+.stat-item > view { margin-right: 6rpx; }
 
-.stat-item > *:last-child { margin-right: 0; }
+.stat-item > view:last-child { margin-right: 0; }
 
 .stat-icon {
   font-size: var(--font-sm);
@@ -280,9 +280,9 @@
   transition: all var(--transition-fast);
 }
 
-.action-item > * { margin-bottom: 6rpx; }
+.action-item > view { margin-bottom: 6rpx; }
 
-.action-item > *:last-child { margin-bottom: 0; }
+.action-item > view:last-child { margin-bottom: 0; }
 
 .action-item:active {
   transform: scale(0.96);
@@ -403,9 +403,9 @@
   transition: all var(--transition-fast);
 }
 
-.comment-like > * { margin-right: 6rpx; }
+.comment-like > view { margin-right: 6rpx; }
 
-.comment-like > *:last-child { margin-right: 0; }
+.comment-like > view:last-child { margin-right: 0; }
 
 .comment-like:active {
   transform: scale(0.96);
@@ -445,9 +445,9 @@
   z-index: 100;
 }
 
-.comment-bar > * { margin-right: var(--spacing-sm); }
+.comment-bar > view { margin-right: var(--spacing-sm); }
 
-.comment-bar > *:last-child { margin-right: 0; }
+.comment-bar > view:last-child { margin-right: 0; }
 
 .comment-input-wrap {
   flex: 1;

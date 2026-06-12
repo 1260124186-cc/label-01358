@@ -33,9 +33,9 @@
   padding: 16rpx 0;
 }
 
-.result-stats > * { margin-right: 40rpx; }
+.result-stats > view { margin-right: 40rpx; }
 
-.result-stats > *:last-child { margin-right: 0; }
+.result-stats > view:last-child { margin-right: 0; }
 
 .stat-item {
   display: flex;
@@ -43,9 +43,9 @@
   align-items: center;
 }
 
-.stat-item > * { margin-bottom: 6rpx; }
+.stat-item > view { margin-bottom: 6rpx; }
 
-.stat-item > *:last-child { margin-bottom: 0; }
+.stat-item > view:last-child { margin-bottom: 0; }
 
 .stat-value {
   font-size: 40rpx;
@@ -109,7 +109,7 @@
 
 .stat-question-header { margin-right: -10rpx; margin-bottom: -10rpx; }
 
-.stat-question-header > * { margin-right: 10rpx; margin-bottom: 10rpx; }
+.stat-question-header > view { margin-right: 10rpx; margin-bottom: 10rpx; }
 
 .stat-index {
   min-width: 36rpx;
@@ -176,16 +176,16 @@
 
 .legend { margin-right: -12rpx; margin-bottom: -12rpx; }
 
-.legend > * { margin-right: 12rpx; margin-bottom: 12rpx; }
+.legend > view { margin-right: 12rpx; margin-bottom: 12rpx; }
 
 .legend-item {
   display: flex;
   align-items: center;
 }
 
-.legend-item > * { margin-right: 8rpx; }
+.legend-item > view { margin-right: 8rpx; }
 
-.legend-item > *:last-child { margin-right: 0; }
+.legend-item > view:last-child { margin-right: 0; }
 
 .legend-dot {
   width: 20rpx;
@@ -219,18 +219,18 @@
   flex-direction: column;
 }
 
-.progress-list > * { margin-bottom: 16rpx; }
+.progress-list > view { margin-bottom: 16rpx; }
 
-.progress-list > *:last-child { margin-bottom: 0; }
+.progress-list > view:last-child { margin-bottom: 0; }
 
 .progress-item {
   display: flex;
   flex-direction: column;
 }
 
-.progress-item > * { margin-bottom: 8rpx; }
+.progress-item > view { margin-bottom: 8rpx; }
 
-.progress-item > *:last-child { margin-bottom: 0; }
+.progress-item > view:last-child { margin-bottom: 0; }
 
 .progress-label-row {
   display: flex;
@@ -274,9 +274,9 @@
   flex-direction: column;
 }
 
-.fill-responses > * { margin-bottom: 12rpx; }
+.fill-responses > view { margin-bottom: 12rpx; }
 
-.fill-responses > *:last-child { margin-bottom: 0; }
+.fill-responses > view:last-child { margin-bottom: 0; }
 
 .fill-response-item {
   display: flex;
@@ -286,9 +286,9 @@
   border-radius: var(--radius-md);
 }
 
-.fill-response-item > * { margin-right: 12rpx; }
+.fill-response-item > view { margin-right: 12rpx; }
 
-.fill-response-item > *:last-child { margin-right: 0; }
+.fill-response-item > view:last-child { margin-right: 0; }
 
 .response-avatar {
   width: 48rpx;

@@ -121,9 +121,9 @@
   flex-direction: column;
 }
 
-.phones-list > * { margin-bottom: 16rpx; }
+.phones-list > view { margin-bottom: 16rpx; }
 
-.phones-list > *:last-child { margin-bottom: 0; }
+.phones-list > view:last-child { margin-bottom: 0; }
 
 .phone-item {
   display: flex;

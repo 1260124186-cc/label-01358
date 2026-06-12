@@ -35,9 +35,9 @@
   border-bottom: 1rpx solid #f0f0f0;
 }
 
-.section-header > * { margin-right: 10rpx; }
+.section-header > view { margin-right: 10rpx; }
 
-.section-header > *:last-child { margin-right: 0; }
+.section-header > view:last-child { margin-right: 0; }
 
 .publish-page.dark .section-header {
   border-bottom-color: #0f3460;
@@ -148,9 +148,9 @@
   display: flex;
 }
 
-.datetime-row > * { margin-right: 15rpx; }
+.datetime-row > view { margin-right: 15rpx; }
 
-.datetime-row > *:last-child { margin-right: 0; }
+.datetime-row > view:last-child { margin-right: 0; }
 
 .datetime-picker {
   flex: 1;

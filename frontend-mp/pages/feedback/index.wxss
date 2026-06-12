@@ -26,9 +26,9 @@
   padding-bottom: 4rpx;
 }
 
-.type-pills > * { margin-right: 16rpx; }
+.type-pills > view { margin-right: 16rpx; }
 
-.type-pills > *:last-child { margin-right: 0; }
+.type-pills > view:last-child { margin-right: 0; }
 
 .type-pill {
   display: inline-flex;
@@ -103,7 +103,7 @@
 
 .image-grid { margin-right: -16rpx; margin-bottom: -16rpx; }
 
-.image-grid > * { margin-right: 16rpx; margin-bottom: 16rpx; }
+.image-grid > view { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .image-item {
   position: relative;

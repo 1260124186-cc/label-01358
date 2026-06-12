@@ -10,9 +10,9 @@
   position: relative;
 }
 
-.poi-header > * { margin-right: 24rpx; }
+.poi-header > view { margin-right: 24rpx; }
 
-.poi-header > *:last-child { margin-right: 0; }
+.poi-header > view:last-child { margin-right: 0; }
 
 .poi-icon-wrap {
   width: 100rpx;
@@ -81,9 +81,9 @@
   margin-bottom: 20rpx;
 }
 
-.section-title > * { margin-right: 12rpx; }
+.section-title > view { margin-right: 12rpx; }
 
-.section-title > *:last-child { margin-right: 0; }
+.section-title > view:last-child { margin-right: 0; }
 
 .title-icon {
   font-size: 32rpx;
@@ -170,7 +170,7 @@
 
 .facilities-wrap { margin-right: -16rpx; margin-bottom: -16rpx; }
 
-.facilities-wrap > * { margin-right: 16rpx; margin-bottom: 16rpx; }
+.facilities-wrap > view { margin-right: 16rpx; margin-bottom: 16rpx; }
 
 .facility-tag {
   background: #F0F7FF;
@@ -217,9 +217,9 @@
   justify-content: center;
 }
 
-.map-placeholder > * { margin-bottom: 16rpx; }
+.map-placeholder > view { margin-bottom: 16rpx; }
 
-.map-placeholder > *:last-child { margin-bottom: 0; }
+.map-placeholder > view:last-child { margin-bottom: 0; }
 
 .map-placeholder-icon {
   font-size: 64rpx;
@@ -260,9 +260,9 @@
   padding: 8rpx 0;
 }
 
-.nearby-list > * { margin-right: 20rpx; }
+.nearby-list > view { margin-right: 20rpx; }
 
-.nearby-list > *:last-child { margin-right: 0; }
+.nearby-list > view:last-child { margin-right: 0; }
 
 .nearby-item {
   width: 180rpx;
@@ -275,9 +275,9 @@
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
 }
 
-.nearby-item > * { margin-bottom: 12rpx; }
+.nearby-item > view { margin-bottom: 12rpx; }
 
-.nearby-item > *:last-child { margin-bottom: 0; }
+.nearby-item > view:last-child { margin-bottom: 0; }
 
 .page.dark .nearby-item {
   background: #1E2230;
@@ -327,9 +327,9 @@
   box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.08);
 }
 
-.bottom-actions > * { margin-right: 16rpx; }
+.bottom-actions > view { margin-right: 16rpx; }
 
-.bottom-actions > *:last-child { margin-right: 0; }
+.bottom-actions > view:last-child { margin-right: 0; }
 
 .page.dark .bottom-actions {
   background: #1E2230;
@@ -344,9 +344,9 @@
   justify-content: center;
 }
 
-.action-btn > * { margin-right: 8rpx; }
+.action-btn > view { margin-right: 8rpx; }
 
-.action-btn > *:last-child { margin-right: 0; }
+.action-btn > view:last-child { margin-right: 0; }
 
 .action-btn.secondary {
   background: #F0F2F5;
