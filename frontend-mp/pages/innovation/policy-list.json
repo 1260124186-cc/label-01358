@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "政策服务",
+  "usingComponents": {
+    "btn": "/components/btn/index",
+    "empty": "/components/empty/index"
+  }
+}

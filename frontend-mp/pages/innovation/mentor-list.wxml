@@ -1,0 +1,85 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="search-section">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索导师姓名、研究方向..."
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        placeholder-class="search-placeholder"
+      />
+    </view>
+    <view class="filter-btn" bindtap="onTitleFilterTap">
+      <text class="filter-text">{{selectedTitle ? (titleOptions.find(t => t.value === selectedTitle) ? titleOptions.find(t => t.value === selectedTitle).label : '职称') : '职称筛选'}}</text>
+    </view>
+  </view>
+
+  <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="mentor-list" wx:if="{{filteredMentors.length > 0}}">
+      <view
+        class="mentor-card"
+        wx:for="{{filteredMentors}}"
+        wx:key="id"
+        bindtap="onMentorTap"
+        data-id="{{item.id}}"
+      >
+        <view class="mentor-avatar">
+          <image class="avatar-img" src="{{item.avatar}}" mode="aspectFill"/>
+          <view class="mentor-badge" style="background: {{item.titleInfo.color}}">
+            {{item.titleInfo.label}}
+          </view>
+        </view>
+        <view class="mentor-info">
+          <view class="mentor-name-row">
+            <text class="mentor-name">{{item.name}}</text>
+            <view class="mentor-rating">
+              <text>⭐</text>
+              <text class="rating-value">{{item.rating}}</text>
+            </view>
+          </view>
+          <text class="mentor-dept">{{item.department}}</text>
+          <text class="mentor-research">研究方向：{{item.researchAreasText}}</text>
+          <view class="mentor-stats">
+            <text class="stat">指导 {{item.mentoringCount}} 个项目</text>
+            <text class="stat">成功案例 {{item.successProjects}} 个</text>
+            <text class="stat">可约 {{item.availableSlots}} 个</text>
+          </view>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+    <empty wx:else text="暂无导师信息" icon="👨‍🏫"/>
+  </scroll-view>
+
+  <!-- 职称筛选弹窗 -->
+  <view class="picker-mask {{showTitleFilter ? 'show' : ''}}" bindtap="onCloseFilter">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择职称</text>
+        <text class="picker-clear" bindtap="onClearTitleFilter">清除</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{selectedTitle === item.value ? 'active' : ''}}"
+          wx:for="{{titleOptions}}"
+          wx:key="value"
+          bindtap="onTitleSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{selectedTitle === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

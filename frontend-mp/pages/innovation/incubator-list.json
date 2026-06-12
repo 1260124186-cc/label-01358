@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "孵化器",
+  "usingComponents": {
+    "btn": "/components/btn/index",
+    "empty": "/components/empty/index"
+  }
+}

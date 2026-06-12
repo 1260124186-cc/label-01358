@@ -1,0 +1,444 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 搜索栏 -->
+  <view class="search-section">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索项目、导师、活动、政策..."
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        placeholder-class="search-placeholder"
+      />
+    </view>
+  </view>
+
+  <!-- 快捷入口导航 -->
+  <view class="quick-nav">
+    <view class="nav-item" bindtap="onPublishTap">
+      <view class="nav-icon">📝</view>
+      <text class="nav-label">发布项目</text>
+    </view>
+    <view class="nav-item" bindtap="onViewMentorsTap">
+      <view class="nav-icon">👨‍🏫</view>
+      <text class="nav-label">导师预约</text>
+    </view>
+    <view class="nav-item" bindtap="onViewRoadshowsTap">
+      <view class="nav-icon">📢</view>
+      <text class="nav-label">路演活动</text>
+    </view>
+    <view class="nav-item" bindtap="onViewPoliciesTap">
+      <view class="nav-icon">📋</view>
+      <text class="nav-label">政策服务</text>
+    </view>
+    <view class="nav-item" bindtap="onViewIncubatorsTap">
+      <view class="nav-icon">🏢</view>
+      <text class="nav-label">孵化器</text>
+    </view>
+  </view>
+
+  <!-- 主标签栏 -->
+  <view class="main-tabs">
+    <view
+      class="main-tab-item {{activeTab === item.value ? 'active' : ''}}"
+      wx:for="{{mainTabs}}"
+      wx:key="value"
+      bindtap="onTabChange"
+      data-value="{{item.value}}"
+    >
+      <text class="tab-icon">{{item.icon}}</text>
+      <text class="tab-label">{{item.label}}</text>
+    </view>
+  </view>
+
+  <!-- 项目展示标签页 -->
+  <view class="tab-content" wx:if="{{activeTab === 'projects'}}">
+    <!-- 项目子标签 -->
+    <view class="sub-tabs">
+      <view
+        class="sub-tab-item {{projectTab === item.value ? 'active' : ''}}"
+        wx:for="{{projectTabs}}"
+        wx:key="value"
+        bindtap="onProjectTabChange"
+        data-value="{{item.value}}"
+      >
+        {{item.label}}
+      </view>
+      <view class="filter-btn" bindtap="onFieldFilterTap">
+        <text class="filter-icon">📁</text>
+        <text class="filter-text">{{selectedField ? (fieldOptions.find(f => f.value === selectedField) ? fieldOptions.find(f => f.value === selectedField).label : '领域') : '领域'}}</text>
+      </view>
+    </view>
+
+    <!-- 发布按钮 -->
+    <view class="publish-section">
+      <btn type="primary" size="medium" bind:click="onPublishTap">
+        <text class="publish-icon">➕</text>
+        发布项目
+      </btn>
+    </view>
+
+    <!-- 项目列表 -->
+    <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="project-list" wx:if="{{filteredProjects.length > 0}}">
+        <view
+          class="project-card"
+          wx:for="{{filteredProjects}}"
+          wx:key="id"
+          bindtap="onProjectTap"
+          data-id="{{item.id}}"
+        >
+          <view class="project-header">
+            <view class="project-tags">
+              <view class="tag" style="background: {{item.fieldInfo.color}}15; color: {{item.fieldInfo.color}}">
+                {{item.fieldInfo.icon}} {{item.fieldInfo.label}}
+              </view>
+              <view class="tag" style="background: {{item.stageInfo.color}}15; color: {{item.stageInfo.color}}">
+                {{item.stageInfo.icon}} {{item.stageInfo.label}}
+              </view>
+              <view class="tag status-tag" style="color: {{item.statusInfo.color}}; border-color: {{item.statusInfo.color}}">
+                {{item.statusInfo.label}}
+              </view>
+            </view>
+            <view class="project-meta">
+              <text class="meta-text">👁 {{item.views}}</text>
+              <text class="meta-text">👍 {{item.likes}}</text>
+            </view>
+          </view>
+          
+          <view class="project-title">{{item.title}}</view>
+          <view class="project-desc">{{item.description}}</view>
+
+          <view class="project-highlights" wx:if="{{item.highlights.length > 0}}">
+            <text class="highlight-item" wx:for="{{item.highlights}}" wx:key="index" wx:for-item="h">
+              ✨ {{h}}
+            </text>
+          </view>
+
+          <view class="project-footer">
+            <view class="financing-info" wx:if="{{item.financingInfo && item.financingStage !== 'none'}}">
+              <text class="financing-label">融资需求</text>
+              <text class="financing-value" style="color: {{item.financingInfo.color}}">
+                {{item.financingInfo.label}} {{item.financingAmount || ''}}
+              </text>
+            </view>
+            <view class="team-size">
+              <text class="team-icon">👥</text>
+              <text class="team-count">{{item.team.length}}人</text>
+            </view>
+          </view>
+
+          <view class="recruiting-section" wx:if="{{item.recruitingRoleInfos.length > 0}}">
+            <text class="recruiting-label">急招：</text>
+            <view
+              class="recruiting-tag"
+              wx:for="{{item.recruitingRoleInfos}}"
+              wx:key="value"
+              wx:for-item="role"
+              style="background: {{role.color}}15; color: {{role.color}}"
+            >
+              {{role.icon}} {{role.label}}
+            </view>
+          </view>
+
+          <view class="project-time">{{item.formattedTime}}</view>
+        </view>
+      </view>
+      <empty wx:else text="暂无项目，快来发布第一个吧！" icon="🚀"/>
+    </scroll-view>
+  </view>
+
+  <!-- 导师预约标签页 -->
+  <view class="tab-content" wx:if="{{activeTab === 'mentors'}}">
+    <view class="sub-tabs">
+      <view class="sub-tab-item active">推荐导师</view>
+      <view class="filter-btn" bindtap="onMentorFilterTap">
+        <text class="filter-icon">👔</text>
+        <text class="filter-text">{{selectedMentorTitle ? (mentorTitleOptions.find(t => t.value === selectedMentorTitle) ? mentorTitleOptions.find(t => t.value === selectedMentorTitle).label : '职称') : '职称'}}</text>
+      </view>
+    </view>
+
+    <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="mentor-list" wx:if="{{filteredMentors.length > 0}}">
+        <view
+          class="mentor-card"
+          wx:for="{{filteredMentors}}"
+          wx:key="id"
+          bindtap="onMentorTap"
+          data-id="{{item.id}}"
+        >
+          <view class="mentor-avatar">
+            <image class="avatar-img" src="{{item.avatar}}" mode="aspectFill"/>
+            <view class="mentor-badge" style="background: {{item.titleInfo.color}}">
+              {{item.titleInfo.label}}
+            </view>
+          </view>
+          <view class="mentor-info">
+            <view class="mentor-name-row">
+              <text class="mentor-name">{{item.name}}</text>
+              <view class="mentor-rating">
+                <text class="star">⭐</text>
+                <text class="rating-value">{{item.rating}}</text>
+              </view>
+            </view>
+            <text class="mentor-dept">{{item.department}}</text>
+            <text class="mentor-research">研究方向：{{item.researchAreasText}}</text>
+            <view class="mentor-stats">
+              <text class="stat-item">指导项目 {{item.mentoringCount}} 个</text>
+              <text class="stat-item">成功案例 {{item.successProjects}} 个</text>
+              <text class="stat-item">可约 {{item.availableSlots}} 个</text>
+            </view>
+          </view>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+      <empty wx:else text="暂无导师信息" icon="👨‍🏫"/>
+    </scroll-view>
+
+    <view class="view-more-section" bindtap="onViewMentorsTap">
+      <text class="view-more-text">查看全部导师</text>
+      <text class="view-more-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 路演活动标签页 -->
+  <view class="tab-content" wx:if="{{activeTab === 'roadshows'}}">
+    <view class="sub-tabs">
+      <view class="sub-tab-item active">路演活动</view>
+    </view>
+
+    <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="roadshow-list" wx:if="{{filteredRoadshows.length > 0}}">
+        <view
+          class="roadshow-card"
+          wx:for="{{filteredRoadshows}}"
+          wx:key="id"
+          bindtap="onRoadshowTap"
+          data-id="{{item.id}}"
+        >
+          <view class="roadshow-cover">
+            <image class="cover-img" src="{{item.coverImage}}" mode="aspectFill"/>
+            <view class="roadshow-status" style="background: {{item.statusInfo.color}}">
+              {{item.statusInfo.label}}
+            </view>
+          </view>
+          <view class="roadshow-content">
+            <view class="roadshow-title-row">
+              <text class="roadshow-title">{{item.title}}</text>
+              <text class="roadshow-subtitle">{{item.subtitle}}</text>
+            </view>
+            <view class="roadshow-info">
+              <text class="info-item">📅 {{item.formattedDate}} {{item.startTime}}</text>
+              <text class="info-item">📍 {{item.location}}</text>
+            </view>
+            <view class="roadshow-progress">
+              <view class="progress-bar">
+                <view class="progress-fill" style="width: {{item.progress}}%"></view>
+              </view>
+              <text class="progress-text">{{item.registeredCount}}/{{item.maxParticipants}} 人已报名</text>
+            </view>
+            <view class="roadshow-footer">
+              <text class="organizer">主办方：{{item.organizer}}</text>
+              <text class="views">👁 {{item.views}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <empty wx:else text="暂无路演活动" icon="📢"/>
+    </scroll-view>
+
+    <view class="view-more-section" bindtap="onViewRoadshowsTap">
+      <text class="view-more-text">查看全部活动</text>
+      <text class="view-more-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 政策服务标签页 -->
+  <view class="tab-content" wx:if="{{activeTab === 'policies'}}">
+    <view class="sub-tabs">
+      <view class="filter-btn" bindtap="onPolicyFilterTap">
+        <text class="filter-icon">📋</text>
+        <text class="filter-text">{{selectedPolicyType ? (policyTypeOptions.find(t => t.value === selectedPolicyType) ? policyTypeOptions.find(t => t.value === selectedPolicyType).label : '政策类型') : '政策类型'}}</text>
+      </view>
+    </view>
+
+    <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <!-- 政策列表 -->
+      <view class="section-header">
+        <text class="section-title">政策资讯</text>
+        <view class="section-more" bindtap="onViewPoliciesTap">
+          更多 ›
+        </view>
+      </view>
+
+      <view class="policy-list" wx:if="{{filteredPolicies.length > 0}}">
+        <view
+          class="policy-card"
+          wx:for="{{filteredPolicies}}"
+          wx:key="id"
+          bindtap="onPolicyTap"
+          data-id="{{item.id}}"
+        >
+          <view class="policy-icon" style="background: {{item.typeInfo.color}}15;">
+            <text style="color: {{item.typeInfo.color}}">{{item.typeInfo.icon}}</text>
+          </view>
+          <view class="policy-content">
+            <view class="policy-title">{{item.title}}</view>
+            <text class="policy-summary">{{item.summary}}</text>
+            <view class="policy-footer">
+              <view class="policy-tags">
+                <text class="policy-tag" wx:for="{{item.tags}}" wx:key="index" wx:for-item="tag">{{tag}}</text>
+              </view>
+              <text class="policy-date">{{item.formattedDate}}</text>
+            </view>
+          </view>
+          <view class="policy-favorite" wx:if="{{item.isFavorite}}">
+            <text>⭐</text>
+          </view>
+        </view>
+      </view>
+      <empty wx:else text="暂无政策信息" icon="📋"/>
+
+      <!-- 孵化器列表 -->
+      <view class="section-header">
+        <text class="section-title">孵化器推荐</text>
+        <view class="filter-btn small" bindtap="onIncubatorFilterTap">
+          {{selectedIncubatorType ? (incubatorTypeOptions.find(t => t.value === selectedIncubatorType) ? incubatorTypeOptions.find(t => t.value === selectedIncubatorType).label : '筛选') : '筛选'}}
+        </view>
+      </view>
+
+      <view class="incubator-list" wx:if="{{filteredIncubators.length > 0}}">
+        <view
+          class="incubator-card"
+          wx:for="{{filteredIncubators}}"
+          wx:key="id"
+          bindtap="onIncubatorTap"
+          data-id="{{item.id}}"
+        >
+          <image class="incubator-img" src="{{item.images[0]}}" mode="aspectFill"/>
+          <view class="incubator-info">
+            <view class="incubator-name-row">
+              <text class="incubator-name">{{item.name}}</text>
+              <view class="incubator-level" style="background: {{item.typeInfo.color}}15; color: {{item.typeInfo.color}}">
+                {{item.typeInfo.icon}} {{item.level}}
+              </view>
+            </view>
+            <text class="incubator-type">{{item.typeInfo.label}}</text>
+            <view class="incubator-stats">
+              <text class="stat">在孵 {{item.inCubatedCount}} 家</text>
+              <text class="stat">毕业 {{item.graduatedCount}} 家</text>
+              <text class="stat">⭐ {{item.rating}}</text>
+            </view>
+            <text class="incubator-address">📍 {{item.address}} · {{item.distance}}</text>
+          </view>
+        </view>
+      </view>
+      <empty wx:if="{{filteredIncubators.length === 0}}" text="暂无孵化器信息" icon="🏢"/>
+
+      <view class="view-more-section" bindtap="onViewIncubatorsTap">
+        <text class="view-more-text">查看全部孵化器</text>
+        <text class="view-more-arrow">›</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 领域筛选弹窗 -->
+  <view class="picker-mask {{showFieldFilter ? 'show' : ''}}" bindtap="onCloseFilter">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择领域</text>
+        <text class="picker-clear" bindtap="onClearFieldFilter">清除</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{selectedField === item.value ? 'active' : ''}}"
+          wx:for="{{fieldOptions}}"
+          wx:key="value"
+          bindtap="onFieldSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{selectedField === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 导师职称筛选弹窗 -->
+  <view class="picker-mask {{showMentorFilter ? 'show' : ''}}" bindtap="onCloseFilter">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择职称</text>
+        <text class="picker-clear" bindtap="onClearMentorFilter">清除</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{selectedMentorTitle === item.value ? 'active' : ''}}"
+          wx:for="{{mentorTitleOptions}}"
+          wx:key="value"
+          bindtap="onMentorTitleSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{selectedMentorTitle === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 政策类型筛选弹窗 -->
+  <view class="picker-mask {{showPolicyFilter ? 'show' : ''}}" bindtap="onCloseFilter">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择政策类型</text>
+        <text class="picker-clear" bindtap="onClearPolicyFilter">清除</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{selectedPolicyType === item.value ? 'active' : ''}}"
+          wx:for="{{policyTypeOptions}}"
+          wx:key="value"
+          bindtap="onPolicyTypeSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{selectedPolicyType === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 孵化器类型筛选弹窗 -->
+  <view class="picker-mask {{showIncubatorFilter ? 'show' : ''}}" bindtap="onCloseFilter">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择孵化器类型</text>
+        <text class="picker-clear" bindtap="onClearIncubatorFilter">清除</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{selectedIncubatorType === item.value ? 'active' : ''}}"
+          wx:for="{{incubatorTypeOptions}}"
+          wx:key="value"
+          bindtap="onIncubatorTypeSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{selectedIncubatorType === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

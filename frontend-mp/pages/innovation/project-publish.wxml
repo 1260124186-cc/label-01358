@@ -1,0 +1,443 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="form-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <!-- 基本信息 -->
+    <view class="form-section">
+      <view class="section-title">📋 基本信息</view>
+      
+      <view class="form-item">
+        <text class="form-label">项目名称 <text class="required">*</text></text>
+        <input
+          class="form-input"
+          placeholder="请输入项目名称（5-50个字符）"
+          value="{{form.title}}"
+          data-field="title"
+          bindinput="onInputChange"
+          maxlength="50"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">项目简介 <text class="required">*</text></text>
+        <textarea
+          class="form-textarea"
+          placeholder="请输入项目简介（20-500个字符）"
+          value="{{form.description}}"
+          data-field="description"
+          bindinput="onInputChange"
+          maxlength="500"
+          auto-height="{{true}}"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">项目领域 <text class="required">*</text></text>
+        <view class="form-picker" bindtap="onFieldPickerTap">
+          <text class="picker-value {{form.field ? '' : 'placeholder'}}">
+            {{form.field ? (fieldOptions.find(f => f.value === form.field) ? fieldOptions.find(f => f.value === form.field).icon + ' ' + fieldOptions.find(f => f.value === form.field).label : '请选择') : '请选择项目领域'}}
+          </text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">项目阶段</text>
+        <view class="form-picker" bindtap="onStagePickerTap">
+          <text class="picker-value">
+            {{stageOptions.find(s => s.value === form.stage) ? stageOptions.find(s => s.value === form.stage).icon + ' ' + stageOptions.find(s => s.value === form.stage).label : ''}}
+          </text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 融资信息 -->
+    <view class="form-section">
+      <view class="section-title">💰 融资信息</view>
+      
+      <view class="form-item">
+        <text class="form-label">融资轮次</text>
+        <view class="form-picker" bindtap="onFinancingPickerTap">
+          <text class="picker-value">
+            {{financingOptions.find(f => f.value === form.financingStage) ? financingOptions.find(f => f.value === form.financingStage).icon + ' ' + financingOptions.find(f => f.value === form.financingStage).label : '暂无融资需求'}}
+          </text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </view>
+
+      <view class="form-item" wx:if="{{form.financingStage !== 'none'}}">
+        <text class="form-label">融资金额</text>
+        <input
+          class="form-input"
+          placeholder="例如：500万"
+          value="{{form.financingAmount}}"
+          data-field="financingAmount"
+          bindinput="onInputChange"
+        />
+      </view>
+
+      <view class="form-item" wx:if="{{form.financingStage !== 'none'}}">
+        <text class="form-label">资金用途</text>
+        <textarea
+          class="form-textarea"
+          placeholder="请简要说明资金用途"
+          value="{{form.financingPurpose}}"
+          data-field="financingPurpose"
+          bindinput="onInputChange"
+          maxlength="200"
+          auto-height="{{true}}"
+        />
+      </view>
+    </view>
+
+    <!-- 项目亮点 -->
+    <view class="form-section">
+      <view class="section-title">✨ 项目亮点</view>
+      <view class="highlights-input-row">
+        <input
+          class="highlight-input"
+          placeholder="添加项目亮点（最多5个）"
+          value="{{highlightInput}}"
+          bindinput="onHighlightInput"
+          bindconfirm="onAddHighlight"
+        />
+        <view class="add-highlight-btn" bindtap="onAddHighlight">添加</view>
+      </view>
+      <view class="highlights-list" wx:if="{{form.highlights.length > 0}}">
+        <view class="highlight-tag" wx:for="{{form.highlights}}" wx:key="index">
+          <text class="highlight-text">{{item}}</text>
+          <view class="highlight-remove" bindtap="onRemoveHighlight" data-index="{{index}}">×</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 团队成员 -->
+    <view class="form-section">
+      <view class="section-title">👥 团队成员 <text class="required">*</text></view>
+      <view class="team-list" wx:if="{{form.team.length > 0}}">
+        <view class="team-card" wx:for="{{form.team}}" wx:key="id">
+          <image class="team-avatar" src="{{item.avatar}}" mode="aspectFill"/>
+          <view class="team-info">
+            <view class="team-name-row">
+              <text class="team-name">{{item.name}}</text>
+              <view class="team-role-tag">{{roleOptions.find(r => r.value === item.role) ? roleOptions.find(r => r.value === item.role).label : ''}}</view>
+            </view>
+            <text class="team-major">{{item.major}}</text>
+            <text class="team-grade">{{item.grade}}级</text>
+          </view>
+          <view class="team-remove" bindtap="onRemoveTeam" data-index="{{index}}">×</view>
+        </view>
+      </view>
+      <view class="add-team-btn" bindtap="onAddTeamTap">
+        <text class="add-icon">+</text>
+        <text>添加团队成员</text>
+      </view>
+    </view>
+
+    <!-- 招募信息 -->
+    <view class="form-section">
+      <view class="section-title">🎯 招募队友</view>
+      <view class="form-picker" bindtap="onRecruitingPickerTap">
+        <text class="picker-value {{form.recruitingRoles.length > 0 ? '' : 'placeholder'}}">
+          {{form.recruitingRoles.length > 0 ? '已选 ' + form.recruitingRoles.length + ' 个角色' : '点击选择需要招募的角色'}}
+        </text>
+        <text class="picker-arrow">›</text>
+      </view>
+      <view class="selected-roles" wx:if="{{form.recruitingRoles.length > 0}}">
+        <view
+          class="role-tag"
+          wx:for="{{form.recruitingRoles}}"
+          wx:key="index"
+          wx:for-item="roleValue"
+          style="background: {{roleOptions.find(r => r.value === roleValue) ? roleOptions.find(r => r.value === roleValue).color + '15' : ''}}; color: {{roleOptions.find(r => r.value === roleValue) ? roleOptions.find(r => r.value === roleValue).color : ''}}"
+        >
+          {{roleOptions.find(r => r.value === roleValue) ? roleOptions.find(r => r.value === roleValue).icon + ' ' + roleOptions.find(r => r.value === roleValue).label : ''}}
+        </view>
+      </view>
+      <view class="form-item" wx:if="{{form.recruitingRoles.length > 0}}">
+        <text class="form-label">招募说明</text>
+        <textarea
+          class="form-textarea"
+          placeholder="请描述您对招募队友的要求和期望"
+          value="{{form.recruitmentIntro}}"
+          data-field="recruitmentIntro"
+          bindinput="onInputChange"
+          maxlength="300"
+          auto-height="{{true}}"
+        />
+      </view>
+    </view>
+
+    <!-- 项目详情 -->
+    <view class="form-section">
+      <view class="section-title">📝 项目详情</view>
+      <textarea
+        class="form-textarea large"
+        placeholder="请详细描述您的项目，包括市场分析、商业模式、竞争优势等"
+        value="{{form.detailedDescription}}"
+        data-field="detailedDescription"
+        bindinput="onInputChange"
+        maxlength="2000"
+        auto-height="{{true}}"
+      />
+    </view>
+
+    <!-- 项目图片 -->
+    <view class="form-section">
+      <view class="section-title">🖼 项目图片</view>
+      <view class="image-upload-grid">
+        <view
+          class="image-item"
+          wx:for="{{form.images}}"
+          wx:key="index"
+        >
+          <image class="uploaded-img" src="{{item}}" mode="aspectFill"/>
+          <view class="remove-img-btn" bindtap="onRemoveImage" data-index="{{index}}">×</view>
+        </view>
+        <view class="add-image-btn" bindtap="onChooseImage" wx:if="{{form.images.length < 9}}">
+          <text class="add-img-icon">+</text>
+          <text class="add-img-text">添加图片</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="form-section">
+      <view class="section-title">📞 联系方式 <text class="required">*</text></view>
+      
+      <view class="form-item">
+        <text class="form-label">联系人 <text class="required">*</text></text>
+        <input
+          class="form-input"
+          placeholder="请输入联系人姓名"
+          value="{{form.contactPerson}}"
+          data-field="contactPerson"
+          bindinput="onInputChange"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">联系电话 <text class="required">*</text></text>
+        <input
+          class="form-input"
+          type="number"
+          placeholder="请输入联系电话"
+          value="{{form.contactPhone}}"
+          data-field="contactPhone"
+          bindinput="onInputChange"
+          maxlength="11"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">电子邮箱</text>
+        <input
+          class="form-input"
+          type="email"
+          placeholder="请输入电子邮箱"
+          value="{{form.contactEmail}}"
+          data-field="contactEmail"
+          bindinput="onInputChange"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">微信号</text>
+        <input
+          class="form-input"
+          placeholder="请输入微信号"
+          value="{{form.wechatId}}"
+          data-field="wechatId"
+          bindinput="onInputChange"
+        />
+      </view>
+    </view>
+
+    <view class="form-footer">
+      <btn type="primary" size="large" block="{{true}}" bind:click="onSubmit" loading="{{submitting}}">
+        {{isEdit ? '保存修改' : '发布项目'}}
+      </btn>
+    </view>
+  </scroll-view>
+
+  <!-- 领域选择弹窗 -->
+  <view class="picker-mask {{showFieldPicker ? 'show' : ''}}" bindtap="onClosePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择项目领域</text>
+        <view class="picker-close" bindtap="onClosePicker">✕</view>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{form.field === item.value ? 'active' : ''}}"
+          wx:for="{{fieldOptions}}"
+          wx:key="value"
+          bindtap="onFieldSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{form.field === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 阶段选择弹窗 -->
+  <view class="picker-mask {{showStagePicker ? 'show' : ''}}" bindtap="onClosePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择项目阶段</text>
+        <view class="picker-close" bindtap="onClosePicker">✕</view>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{form.stage === item.value ? 'active' : ''}}"
+          wx:for="{{stageOptions}}"
+          wx:key="value"
+          bindtap="onStageSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{form.stage === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 融资选择弹窗 -->
+  <view class="picker-mask {{showFinancingPicker ? 'show' : ''}}" bindtap="onClosePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择融资轮次</text>
+        <view class="picker-close" bindtap="onClosePicker">✕</view>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{form.financingStage === item.value ? 'active' : ''}}"
+          wx:for="{{financingOptions}}"
+          wx:key="value"
+          bindtap="onFinancingSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{form.financingStage === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 角色选择弹窗 -->
+  <view class="picker-mask {{showRolePicker ? 'show' : ''}}" bindtap="onClosePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择角色</text>
+        <view class="picker-close" bindtap="onClosePicker">✕</view>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{teamForm.role === item.value ? 'active' : ''}}"
+          wx:for="{{roleOptions}}"
+          wx:key="value"
+          bindtap="onRoleSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{teamForm.role === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 招募角色选择弹窗 -->
+  <view class="picker-mask {{showRecruitingPicker ? 'show' : ''}}" bindtap="onClosePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择招募角色</text>
+        <view class="picker-close" bindtap="onCloseRecruitingPicker">✓ 完成</view>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{form.recruitingRoles.indexOf(item.value) > -1 ? 'active' : ''}}"
+          wx:for="{{roleOptions}}"
+          wx:key="value"
+          bindtap="onRecruitingToggle"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{form.recruitingRoles.indexOf(item.value) > -1}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 添加团队成员弹窗 -->
+  <view class="picker-mask {{showAddTeamModal ? 'show' : ''}}" bindtap="onCloseAddTeamModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">添加团队成员</text>
+        <view class="modal-close" bindtap="onCloseAddTeamModal">✕</view>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">姓名 <text class="required">*</text></text>
+          <input
+            class="form-input"
+            placeholder="请输入姓名"
+            value="{{teamForm.name}}"
+            data-field="name"
+            bindinput="onTeamInputChange"
+          />
+        </view>
+        <view class="form-item">
+          <text class="form-label">角色 <text class="required">*</text></text>
+          <view class="form-picker" bindtap="onRolePickerTap">
+            <text class="picker-value {{teamForm.role ? '' : 'placeholder'}}">
+              {{teamForm.role ? (roleOptions.find(r => r.value === teamForm.role) ? roleOptions.find(r => r.value === teamForm.role).icon + ' ' + roleOptions.find(r => r.value === teamForm.role).label : '') : '请选择角色'}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">专业 <text class="required">*</text></text>
+          <input
+            class="form-input"
+            placeholder="请输入专业"
+            value="{{teamForm.major}}"
+            data-field="major"
+            bindinput="onTeamInputChange"
+          />
+        </view>
+        <view class="form-item">
+          <text class="form-label">年级 <text class="required">*</text></text>
+          <input
+            class="form-input"
+            placeholder="例如：2021"
+            value="{{teamForm.grade}}"
+            data-field="grade"
+            bindinput="onTeamInputChange"
+            maxlength="4"
+          />
+        </view>
+        <view class="form-item">
+          <text class="form-label">技能特长</text>
+          <input
+            class="form-input"
+            placeholder="请输入技能特长"
+            value="{{teamForm.skills}}"
+            data-field="skills"
+            bindinput="onTeamInputChange"
+          />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <btn type="default" size="medium" bind:click="onCloseAddTeamModal">取消</btn>
+        <btn type="primary" size="medium" bind:click="onConfirmAddTeam">确认添加</btn>
+      </view>
+    </view>
+  </view>
+</view>

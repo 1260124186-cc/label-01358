@@ -5408,6 +5408,491 @@ const MOCK_COURSE_SETTINGS = {
   enableReminder: true
 };
 
+const MOCK_INNOVATION_PROJECTS = [
+  {
+    title: '智慧校园生活服务平台',
+    description: '整合校园内各类服务资源，为师生提供一站式的校园生活服务，包括失物招领、二手交易、校园风光、学习资料等功能模块。',
+    field: 'internet',
+    stage: 'early',
+    financingStage: 'a_round',
+    financingAmount: '500万',
+    team: [
+      { name: '张明', role: 'frontend', avatar: '', major: '计算机科学与技术', grade: '大三' },
+      { name: '李华', role: 'backend', avatar: '', major: '软件工程', grade: '大三' },
+      { name: '王芳', role: 'ui_ux', avatar: '', major: '数字媒体艺术', grade: '大二' }
+    ],
+    recruitingRoles: ['product', 'marketing', 'operation'],
+    highlights: ['已获得省级创新创业大赛金奖', '累计用户5000+', '与3家企业达成合作意向'],
+    images: ['https://picsum.photos/seed/innoproj1/800/500', 'https://picsum.photos/seed/innoproj1-2/800/500'],
+    contact: '张明',
+    phone: '13800138001',
+    wechat: 'zhangming_tech',
+    email: 'zhangming@campus.edu.cn',
+    bpUrl: '',
+    status: 'active',
+    views: 1256,
+    likes: 89
+  },
+  {
+    title: 'AI 智能辅导机器人',
+    description: '基于大语言模型的智能教育辅导机器人，能够为学生提供个性化的学习辅导、作业答疑、知识讲解等服务。',
+    field: 'ai',
+    stage: 'mvp',
+    financingStage: 'angel',
+    financingAmount: '200万',
+    team: [
+      { name: '刘伟', role: 'algorithm', avatar: '', major: '人工智能', grade: '研二' },
+      { name: '陈静', role: 'product', avatar: '', major: '教育技术学', grade: '研一' }
+    ],
+    recruitingRoles: ['frontend', 'backend', 'operation'],
+    highlights: ['已完成MVP开发', '与2所中学达成试点合作', '获得学校创业基金支持'],
+    images: ['https://picsum.photos/seed/innoproj2/800/500'],
+    contact: '刘伟',
+    phone: '13800138002',
+    wechat: 'liuwei_ai',
+    email: 'liuwei@campus.edu.cn',
+    bpUrl: '',
+    status: 'active',
+    views: 987,
+    likes: 67
+  },
+  {
+    title: '环保智能垃圾分类箱',
+    description: '基于物联网和人工智能技术的智能垃圾分类设备，能够自动识别垃圾类型并进行分类投放，同时提供积分奖励机制。',
+    field: 'hardware',
+    stage: 'idea',
+    financingStage: 'pre_a',
+    financingAmount: '300万',
+    team: [
+      { name: '赵强', role: 'backend', avatar: '', major: '物联网工程', grade: '大四' },
+      { name: '孙丽', role: 'marketing', avatar: '', major: '市场营销', grade: '大三' }
+    ],
+    recruitingRoles: ['hardware', 'algorithm', 'finance'],
+    highlights: ['已申请3项发明专利', '获得环保部门关注', '原型机测试效果良好'],
+    images: ['https://picsum.photos/seed/innoproj3/800/500'],
+    contact: '赵强',
+    phone: '13800138003',
+    wechat: 'zhaoqiang_iot',
+    email: 'zhaoqiang@campus.edu.cn',
+    bpUrl: '',
+    status: 'active',
+    views: 756,
+    likes: 45
+  },
+  {
+    title: '基于合成生物学的新型药物研发',
+    description: '利用合成生物学技术，开发新型的抗癌药物和抗生素，通过改造微生物来生产高效、低成本的药物分子。',
+    field: 'biomedical',
+    stage: 'early',
+    financingStage: 'a_round',
+    financingAmount: '800万',
+    team: [
+      { name: '周涛', role: 'other', avatar: '', major: '生物工程', grade: '博二' },
+      { name: '吴敏', role: 'finance', avatar: '', major: '金融学', grade: '研二' }
+    ],
+    recruitingRoles: ['backend', 'ui_ux', 'hr'],
+    highlights: ['已发表SCI论文2篇', '与附属医院达成合作', '初步实验数据优异'],
+    images: ['https://picsum.photos/seed/innoproj4/800/500'],
+    contact: '周涛',
+    phone: '13800138004',
+    wechat: 'zhoutao_bio',
+    email: 'zhoutao@campus.edu.cn',
+    bpUrl: '',
+    status: 'active',
+    views: 1123,
+    likes: 78
+  },
+  {
+    title: '非遗文化数字传承平台',
+    description: '运用VR/AR、数字孪生等技术，对非物质文化遗产进行数字化保护和传播，打造沉浸式的文化体验平台。',
+    field: 'cultural_creative',
+    stage: 'mvp',
+    financingStage: 'none',
+    financingAmount: '',
+    team: [
+      { name: '郑雪', role: 'ui_ux', avatar: '', major: '数字媒体艺术', grade: '研三' },
+      { name: '王磊', role: 'mobile', avatar: '', major: '计算机科学与技术', grade: '大四' }
+    ],
+    recruitingRoles: ['product', 'marketing', 'operation'],
+    highlights: ['与3个非遗传承人签约', '获得文化部门立项支持', 'VR内容制作50+小时'],
+    images: ['https://picsum.photos/seed/innoproj5/800/500'],
+    contact: '郑雪',
+    phone: '13800138005',
+    wechat: 'zhengxue_vr',
+    email: 'zhengxue@campus.edu.cn',
+    bpUrl: '',
+    status: 'active',
+    views: 834,
+    likes: 92
+  }
+];
+
+const MOCK_INNOVATION_MENTORS = [
+  {
+    name: '张建国',
+    title: 'professor',
+    department: '计算机科学与技术学院',
+    researchAreas: ['人工智能', '机器学习', '计算机视觉'],
+    achievements: '国家级教学名师，主持国家自然科学基金重点项目3项，发表SCI论文100余篇，指导学生获得"互联网+"创新创业大赛金奖5项。',
+    mentoringCount: 12,
+    successProjects: 8,
+    availableSlots: 3,
+    appointmentCount: 45,
+    rating: 4.9,
+    reviews: [
+      { userName: '李明', rating: 5, content: '张教授专业知识渊博，对项目的技术路线给出了非常宝贵的建议。', createTime: Date.now() - 86400000 * 10 },
+      { userName: '王芳', rating: 5, content: '非常耐心细致，帮助我们梳理了商业模式，非常感谢！', createTime: Date.now() - 86400000 * 25 }
+    ],
+    availableDates: ['2026-06-14', '2026-06-15', '2026-06-17', '2026-06-18', '2026-06-19'],
+    avatar: 'https://picsum.photos/seed/mentor1/200/200'
+  },
+  {
+    name: '李梅',
+    title: 'entrepreneur',
+    department: '创业学院',
+    researchAreas: ['商业模式设计', '创业融资', '团队管理'],
+    achievements: '连续创业者，创办3家公司，其中1家成功退出。国家级创业导师，累计指导创业项目200+，帮助项目获得融资超过5亿元。',
+    mentoringCount: 25,
+    successProjects: 15,
+    availableSlots: 5,
+    appointmentCount: 78,
+    rating: 4.8,
+    reviews: [
+      { userName: '张华', rating: 5, content: '李老师对商业模式的理解非常深刻，一针见血地指出了我们的问题。', createTime: Date.now() - 86400000 * 5 }
+    ],
+    availableDates: ['2026-06-14', '2026-06-16', '2026-06-18', '2026-06-20'],
+    avatar: 'https://picsum.photos/seed/mentor2/200/200'
+  },
+  {
+    name: '王强',
+    title: 'investor',
+    department: '校友创业投资基金',
+    researchAreas: ['风险投资', '项目估值', '股权设计'],
+    achievements: '知名风险投资人，曾任职于红杉资本、IDG等顶级投资机构。主导投资项目30+，其中5家成功上市，管理基金规模超过50亿元。',
+    mentoringCount: 18,
+    successProjects: 12,
+    availableSlots: 2,
+    appointmentCount: 36,
+    rating: 4.9,
+    reviews: [
+      { userName: '刘伟', rating: 5, content: '王总从投资人的角度给了我们很多专业建议，帮助我们更好地准备融资。', createTime: Date.now() - 86400000 * 15 }
+    ],
+    availableDates: ['2026-06-15', '2026-06-19'],
+    avatar: 'https://picsum.photos/seed/mentor3/200/200'
+  },
+  {
+    name: '陈晓',
+    title: 'industry_expert',
+    department: '人工智能研究院',
+    researchAreas: ['大语言模型', '自然语言处理', '智能客服'],
+    achievements: '前字节跳动高级架构师，主导开发多个千万级用户的AI产品。拥有15年人工智能领域从业经验，对AI技术落地有深刻理解。',
+    mentoringCount: 8,
+    successProjects: 6,
+    availableSlots: 4,
+    appointmentCount: 28,
+    rating: 4.7,
+    reviews: [
+      { userName: '赵强', rating: 5, content: '陈老师的技术指导非常实用，帮助我们解决了很多技术难题。', createTime: Date.now() - 86400000 * 8 }
+    ],
+    availableDates: ['2026-06-14', '2026-06-17', '2026-06-20'],
+    avatar: 'https://picsum.photos/seed/mentor4/200/200'
+  },
+  {
+    name: '刘芳',
+    title: 'lawyer',
+    department: '法律顾问室',
+    researchAreas: ['公司法', '知识产权', '创业法律风险'],
+    achievements: '资深律师，执业20年，专注于创业公司法律服务。曾为100+创业公司提供法律顾问服务，处理过大量股权纠纷、知识产权案件。',
+    mentoringCount: 15,
+    successProjects: 10,
+    availableSlots: 6,
+    appointmentCount: 52,
+    rating: 4.8,
+    reviews: [
+      { userName: '孙丽', rating: 5, content: '刘律师帮助我们规避了很多法律风险，非常专业。', createTime: Date.now() - 86400000 * 12 }
+    ],
+    availableDates: ['2026-06-15', '2026-06-16', '2026-06-18', '2026-06-19'],
+    avatar: 'https://picsum.photos/seed/mentor5/200/200'
+  }
+];
+
+const MOCK_INNOVATION_ROADSHOWS = [
+  {
+    title: '2026年夏季创业项目路演会',
+    subtitle: 'AI与数字经济专场',
+    description: '本次路演会聚焦人工智能与数字经济领域，邀请知名投资人、行业专家担任评委，为优秀创业项目提供展示和融资对接的平台。',
+    date: '2026-06-25',
+    startTime: '14:00',
+    endTime: '18:00',
+    location: '大学生活动中心报告厅',
+    organizer: '创新创业学院',
+    maxParticipants: 200,
+    registeredCount: 156,
+    status: 'registering',
+    judges: [
+      { name: '张建国', title: '教授' },
+      { name: '王强', title: '投资人' },
+      { name: '李梅', title: '创业导师' }
+    ],
+    projects: [
+      { title: 'AI智能辅导机器人', team: '智能教育团队', stage: 'MVP阶段' },
+      { title: '智慧校园生活服务平台', team: '校园科技团队', stage: '早期成长' },
+      { title: '环保智能垃圾分类箱', team: '绿色科技团队', stage: '创意阶段' }
+    ],
+    agenda: [
+      { time: '14:00-14:30', content: '签到入场' },
+      { time: '14:30-14:45', content: '开场致辞' },
+      { time: '14:45-16:45', content: '项目路演（每个项目15分钟）' },
+      { time: '16:45-17:15', content: '评委点评' },
+      { time: '17:15-18:00', content: '自由交流对接' }
+    ],
+    highlights: ['邀请知名投资人现场点评', '优秀项目可获得创业基金支持', '提供免费一对一融资咨询'],
+    coverImage: 'https://picsum.photos/seed/roadshow1/800/400',
+    views: 2345,
+    createTime: Date.now() - 86400000 * 5
+  },
+  {
+    title: '生物医药创业沙龙',
+    subtitle: '合成生物学与创新药物',
+    description: '邀请生物医药领域的专家、企业家、投资人共同探讨合成生物学在创新药物研发中的应用前景。',
+    date: '2026-06-30',
+    startTime: '19:00',
+    endTime: '21:00',
+    location: '生命科学学院学术报告厅',
+    organizer: '生命科学学院、创新创业学院',
+    maxParticipants: 100,
+    registeredCount: 78,
+    status: 'registering',
+    judges: [
+      { name: '周涛', title: '研究员' },
+      { name: '王强', title: '投资人' }
+    ],
+    projects: [],
+    agenda: [
+      { time: '19:00-19:30', content: '主题分享：合成生物学的产业应用' },
+      { time: '19:30-20:15', content: '圆桌对话：生物医药创业的机遇与挑战' },
+      { time: '20:15-21:00', content: '项目展示与交流' }
+    ],
+    highlights: ['行业大咖深度分享', '精准对接产业资源', '生物医药创业政策解读'],
+    coverImage: 'https://picsum.photos/seed/roadshow2/800/400',
+    views: 1567,
+    createTime: Date.now() - 86400000 * 3
+  },
+  {
+    title: '文化创意产业路演',
+    subtitle: '科技赋能传统文化',
+    description: '聚焦文化创意与科技融合的创业项目，展示VR/AR、数字孪生等技术在文化传承中的创新应用。',
+    date: '2026-07-05',
+    startTime: '14:00',
+    endTime: '17:30',
+    location: '艺术学院展厅',
+    organizer: '艺术学院、创新创业学院',
+    maxParticipants: 150,
+    registeredCount: 98,
+    status: 'upcoming',
+    judges: [
+      { name: '李梅', title: '创业导师' },
+      { name: '陈晓', title: '行业专家' }
+    ],
+    projects: [],
+    agenda: [],
+    highlights: ['非遗传承人现场互动', '文创产品展示体验', '投资机构一对一'],
+    coverImage: 'https://picsum.photos/seed/roadshow3/800/400',
+    views: 1234,
+    createTime: Date.now() - 86400000 * 2
+  },
+  {
+    title: '新能源与绿色科技路演会',
+    subtitle: '双碳目标下的创业机遇',
+    description: '聚焦新能源、节能环保、绿色制造等领域的创新创业项目，推动科技成果转化和产业落地。',
+    date: '2026-07-10',
+    startTime: '09:00',
+    endTime: '12:00',
+    location: '能源与动力工程学院报告厅',
+    organizer: '能源与动力工程学院、创新创业学院',
+    maxParticipants: 180,
+    registeredCount: 67,
+    status: 'upcoming',
+    judges: [],
+    projects: [],
+    agenda: [],
+    highlights: ['新能源政策解读', '行业龙头企业对接', '绿色技术成果展示'],
+    coverImage: 'https://picsum.photos/seed/roadshow4/800/400',
+    views: 987,
+    createTime: Date.now() - 86400000
+  }
+];
+
+const MOCK_INNOVATION_POLICIES = [
+  {
+    title: '大学生创新创业训练计划项目申报通知',
+    type: 'grant',
+    source: '教育部',
+    summary: '国家级大学生创新创业训练计划项目开始申报，最高资助5万元，支持本科生开展创新创业实践。',
+    content: '一、申报类别\n1. 创新训练项目：支持本科生团队开展创新性研究\n2. 创业训练项目：支持本科生团队开展模拟创业实践\n3. 创业实践项目：支持本科生团队开展真实创业实践\n\n二、资助标准\n- 国家级重点项目：50000元/项\n- 国家级一般项目：20000元/项\n- 省级项目：10000元/项\n- 校级项目：5000元/项\n\n三、申报条件\n1. 全日制在读本科生，品学兼优\n2. 具有创新意识和创业精神\n3. 有明确的项目计划和指导教师\n\n四、申报流程\n1. 6月20日前：项目团队提交申报材料\n2. 6月25日前：学院初审\n3. 6月30日前：学校评审\n4. 7月5日前：上报省教育厅',
+    publishDate: '2026-06-10',
+    deadline: '2026-06-20',
+    tags: ['大创项目', '本科生', '资金支持'],
+    views: 2345,
+    isFavorite: false
+  },
+  {
+    title: '关于落实创业担保贷款政策的通知',
+    type: 'financing',
+    source: '人力资源和社会保障部',
+    summary: '高校毕业生创业可申请最高30万元的创业担保贷款，财政给予全额贴息。',
+    content: '一、贷款对象\n1. 毕业5年内的高校毕业生\n2. 持有《就业创业证》\n3. 无不良信用记录\n\n二、贷款额度\n- 个人创业：最高30万元\n- 合伙创业：最高100万元\n- 小微企业：最高300万元\n\n三、贷款期限\n最长3年，财政给予全额贴息\n\n四、申请材料\n1. 创业担保贷款申请表\n2. 身份证、毕业证\n3. 《就业创业证》\n4. 营业执照\n5. 经营场所证明\n\n五、办理流程\n1. 向当地人社部门申请\n2. 担保机构审核\n3. 银行审批放款',
+    publishDate: '2026-06-08',
+    deadline: '长期有效',
+    tags: ['创业贷款', '财政贴息', '高校毕业生'],
+    views: 3456,
+    isFavorite: false
+  },
+  {
+    title: '科技型中小企业税收优惠政策指引',
+    type: 'tax',
+    source: '国家税务总局',
+    summary: '科技型中小企业可享受研发费用加计扣除100%、高新技术企业所得税减免等税收优惠。',
+    content: '一、研发费用加计扣除\n- 未形成无形资产计入当期损益的，在按规定据实扣除的基础上，再按照实际发生额的100%在税前加计扣除\n- 形成无形资产的，按照无形资产成本的200%在税前摊销\n\n二、高新技术企业优惠\n- 减按15%税率征收企业所得税\n- 职工教育经费支出，不超过工资薪金总额8%的部分，准予在计算应纳税所得额时扣除\n\n三、技术转让所得减免\n- 一个纳税年度内，技术转让所得不超过500万元的部分，免征企业所得税\n- 超过500万元的部分，减半征收企业所得税\n\n四、享受条件\n1. 在中国境内（不包括港、澳、台地区）注册的居民企业\n2. 职工总数不超过500人、年销售收入不超过2亿元、资产总额不超过2亿元\n3. 企业提供的产品和服务不属于国家规定的禁止、限制和淘汰类',
+    publishDate: '2026-06-05',
+    deadline: '长期有效',
+    tags: ['税收优惠', '研发费用', '高新企业'],
+    views: 2890,
+    isFavorite: false
+  },
+  {
+    title: '大学科技园入驻申请指南',
+    type: 'incubator',
+    source: 'XX大学国家大学科技园',
+    summary: '欢迎师生创业项目入驻大学科技园，享受免费办公场地、创业辅导、投融资对接等全方位服务。',
+    content: '一、园区介绍\nXX大学国家大学科技园是科技部、教育部认定的国家级大学科技园，占地200亩，建筑面积15万平方米，在孵企业200+。\n\n二、入驻条件\n1. 项目创始人或核心团队为我校师生或校友\n2. 项目符合国家产业政策，具有创新性和市场前景\n3. 拥有自主知识产权或核心技术\n4. 无违法违规记录\n\n三、优惠政策\n1. 免租金入驻2年，第3年起享受50%租金优惠\n2. 提供免费工商注册、财务代理、法律咨询等服务\n3. 优先申报政府各类科技项目\n4. 享受创投基金优先投资权\n5. 对接校友企业资源和产业资源\n\n四、申请材料\n1. 入驻申请表\n2. 商业计划书\n3. 团队成员身份证明\n4. 知识产权证明（如有）\n\n五、申请流程\n1. 在线提交申请材料\n2. 项目初审\n3. 现场答辩\n4. 审批通过后签订入驻协议',
+    publishDate: '2026-06-01',
+    deadline: '长期有效',
+    tags: ['大学科技园', '免租金', '孵化服务'],
+    views: 4123,
+    isFavorite: false
+  },
+  {
+    title: '青年人才引进计划实施办法',
+    type: 'talent',
+    source: 'XX市人力资源和社会保障局',
+    summary: '来我市创业就业的青年人才可享受最高50万元的购房补贴、每月2000元的生活补贴。',
+    content: '一、补贴对象\n1. 年龄35周岁以下\n2. 具有本科及以上学历\n3. 毕业5年内来我市创业或就业\n4. 首次在我市缴纳社保\n\n二、补贴标准\n1. 生活补贴\n   - 博士研究生：3000元/月，补贴3年\n   - 硕士研究生：2000元/月，补贴3年\n   - 本科生：1000元/月，补贴2年\n2. 购房补贴\n   - 博士研究生：50万元\n   - 硕士研究生：30万元\n   - 本科生：15万元\n3. 创业补贴\n   - 一次性创业补贴：10000元\n   - 创业带动就业补贴：每人3000元\n\n三、申请流程\n1. 登录"人才服务网"注册账号\n2. 填写申请信息并上传证明材料\n3. 人社部门审核\n4. 补贴按月发放至个人银行账户',
+    publishDate: '2026-05-28',
+    deadline: '2026-12-31',
+    tags: ['人才补贴', '购房补贴', '青年人才'],
+    views: 5678,
+    isFavorite: false
+  }
+];
+
+const MOCK_INNOVATION_INCUBATORS = [
+  {
+    name: 'XX大学国家大学科技园',
+    type: 'university',
+    level: '国家级',
+    address: 'XX市XX区XX路100号',
+    description: '科技部、教育部认定的国家级大学科技园，专注于孵化高校师生创业项目，提供全方位的创业孵化服务。',
+    area: '150000㎡',
+    capacity: 200,
+    inCubatedCount: 156,
+    graduatedCount: 89,
+    successCases: ['智慧校园科技', 'AI教育机器人', '绿色环保科技'],
+    services: [
+      { name: '办公场地', desc: '免费独立办公室，配备家具、网络、空调' },
+      { name: '工商注册', desc: '免费工商注册、变更、注销服务' },
+      { name: '财务代理', desc: '专业会计团队提供记账、报税服务' },
+      { name: '法律咨询', desc: '合作律师事务所提供免费法律咨询' },
+      { name: '创业辅导', desc: '一对一创业导师辅导' },
+      { name: '融资对接', desc: '对接创投机构、银行等金融机构' },
+      { name: '政策申报', desc: '协助申报各类政府项目和补贴' },
+      { name: '市场推广', desc: '提供品牌宣传、市场对接服务' }
+    ],
+    policies: [
+      '免租金入驻2年，第3年起50%租金优惠',
+      '优先推荐申报政府科技项目',
+      '设立5000万元种子基金，优先投资入驻项目',
+      '享受高新区各项人才政策和产业政策'
+    ],
+    contactName: '王经理',
+    contactPhone: '010-12345678',
+    contactEmail: 'incubator@campus.edu.cn',
+    applyUrl: '',
+    images: ['https://picsum.photos/seed/incubator1/800/500', 'https://picsum.photos/seed/incubator1-2/800/500'],
+    rating: 4.9,
+    reviews: 156,
+    views: 5678,
+    distance: '1.2km'
+  },
+  {
+    name: 'XX市创业孵化基地',
+    type: 'government',
+    level: '省级',
+    address: 'XX市XX区创业大道200号',
+    description: '由市人力资源和社会保障局设立的公益性创业孵化基地，重点扶持高校毕业生、退役军人等群体创业。',
+    area: '80000㎡',
+    capacity: 120,
+    inCubatedCount: 98,
+    graduatedCount: 67,
+    successCases: ['电商平台', '家政服务', '教育培训'],
+    services: [
+      { name: '办公场地', desc: '联合办公区、独立办公室可选' },
+      { name: '创业培训', desc: '免费SIYB创业培训' },
+      { name: '融资服务', desc: '协助申请创业担保贷款' },
+      { name: '社保补贴', desc: '3年社会保险补贴' },
+      { name: '岗位补贴', desc: '带动就业岗位补贴' }
+    ],
+    policies: [
+      '3年免租金入驻',
+      '享受社保补贴、岗位补贴',
+      '优先申请30万元创业担保贷款（全额贴息）',
+      '一次性创业补贴10000元'
+    ],
+    contactName: '李主任',
+    contactPhone: '010-87654321',
+    contactEmail: 'cyjd@xx.gov.cn',
+    applyUrl: '',
+    images: ['https://picsum.photos/seed/incubator2/800/500'],
+    rating: 4.7,
+    reviews: 89,
+    views: 4321,
+    distance: '2.5km'
+  },
+  {
+    name: 'XX科创加速器',
+    type: 'accelerator',
+    level: '市级',
+    address: 'XX市高新区科创路88号',
+    description: '专注于硬科技领域的专业加速器，提供为期6个月的加速营，帮助项目快速成长和获得融资。',
+    area: '30000㎡',
+    capacity: 50,
+    inCubatedCount: 42,
+    graduatedCount: 78,
+    successCases: ['半导体芯片', '智能硬件', '生物医药'],
+    services: [
+      { name: '加速营', desc: '6个月集中加速，每周一次创业培训' },
+      { name: '技术支持', desc: '对接实验室、检测中心' },
+      { name: '产业对接', desc: '对接行业龙头企业' },
+      { name: 'Demo Day', desc: '每季举办项目路演对接会' }
+    ],
+    policies: [
+      '择优投资，单项目投资50-200万元',
+      '6个月免费入驻加速营',
+      '免费参加各类培训和对接活动',
+      '产业资源深度对接'
+    ],
+    contactName: '张总监',
+    contactPhone: '010-11112222',
+    contactEmail: 'startup@tech.com',
+    applyUrl: '',
+    images: ['https://picsum.photos/seed/incubator3/800/500'],
+    rating: 4.8,
+    reviews: 123,
+    views: 3890,
+    distance: '3.8km'
+  }
+];
+
 module.exports = {
   ..._firstExports,
   MOCK_CLUBS,
@@ -5417,5 +5902,10 @@ module.exports = {
   MOCK_EXAM_SCORES,
   MOCK_EXAM_SCHEDULE,
   MOCK_CLASSROOMS,
-  MOCK_COURSE_SETTINGS
+  MOCK_COURSE_SETTINGS,
+  MOCK_INNOVATION_PROJECTS,
+  MOCK_INNOVATION_MENTORS,
+  MOCK_INNOVATION_ROADSHOWS,
+  MOCK_INNOVATION_POLICIES,
+  MOCK_INNOVATION_INCUBATORS
 };

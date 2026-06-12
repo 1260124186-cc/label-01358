@@ -112,7 +112,18 @@
     "pages/admin/broadcast-list/index",
     "pages/admin/broadcast-edit/index",
     "pages/admin/scenery-list/index",
-    "pages/admin/scenery-edit/index"
+    "pages/admin/scenery-edit/index",
+    "pages/innovation/index",
+    "pages/innovation/project-detail",
+    "pages/innovation/project-publish",
+    "pages/innovation/mentor-list",
+    "pages/innovation/mentor-detail",
+    "pages/innovation/roadshow-list",
+    "pages/innovation/roadshow-detail",
+    "pages/innovation/policy-list",
+    "pages/innovation/policy-detail",
+    "pages/innovation/incubator-list",
+    "pages/innovation/incubator-detail"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

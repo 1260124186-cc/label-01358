@@ -79,7 +79,15 @@ const STORAGE_KEYS = {
   MARKET_COMMENTS: 'marketComments',
   TICKET_ORDER_LIST: 'ticketOrderList',
   TICKET_VERIFY_LOG: 'ticketVerifyLog',
-  USER_WALLET: 'userWallet'
+  USER_WALLET: 'userWallet',
+  INNOVATION_PROJECT_LIST: 'innovationProjectList',
+  INNOVATION_MENTOR_LIST: 'innovationMentorList',
+  INNOVATION_ROADSHOW_LIST: 'innovationRoadshowList',
+  INNOVATION_POLICY_LIST: 'innovationPolicyList',
+  INNOVATION_INCUBATOR_LIST: 'innovationIncubatorList',
+  INNOVATION_APPOINTMENT_LIST: 'innovationAppointmentList',
+  INNOVATION_REGISTRATION_LIST: 'innovationRegistrationList',
+  INNOVATION_MY_PROJECTS: 'innovationMyProjects'
 };
 
 /**

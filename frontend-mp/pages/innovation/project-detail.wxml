@@ -1,0 +1,298 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{project}}">
+  <!-- 项目图片轮播 -->
+  <view class="swiper-section" wx:if="{{project.images && project.images.length > 0}}">
+    <swiper class="project-swiper" indicator-dots="{{true}}" autoplay="{{true}}" circular="{{true}}">
+      <swiper-item wx:for="{{project.images}}" wx:key="index">
+        <image
+          class="swiper-img"
+          src="{{item}}"
+          mode="aspectFill"
+          bindtap="onImagePreview"
+          data-index="{{index}}"
+        />
+      </swiper-item>
+    </swiper>
+    <view class="image-counter" wx:if="{{project.images.length > 1}}">
+      1/{{project.images.length}}
+    </view>
+  </view>
+
+  <!-- 操作按钮栏 -->
+  <view class="action-bar">
+    <view class="action-left">
+      <view class="action-item" bindtap="onLikeTap">
+        <text class="action-icon">{{isLiked ? '❤️' : '🤍'}}</text>
+        <text class="action-text">点赞</text>
+      </view>
+      <view class="action-item" bindtap="onCollectTap">
+        <text class="action-icon">{{isCollected ? '⭐' : '☆'}}</text>
+        <text class="action-text">收藏</text>
+      </view>
+      <view class="action-item" bindtap="onShareTap">
+        <text class="action-icon">📤</text>
+        <text class="action-text">分享</text>
+      </view>
+    </view>
+    <view class="action-right" wx:if="{{isPublisher}}">
+      <view class="action-btn edit" bindtap="onEditTap">编辑</view>
+      <view class="action-btn delete" bindtap="onDeleteTap">删除</view>
+    </view>
+  </view>
+
+  <!-- 项目内容 -->
+  <scroll-view class="content-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <!-- 基本信息 -->
+    <view class="info-section">
+      <view class="info-header">
+        <view class="tags-row">
+          <view class="tag" style="background: {{project.fieldInfo.color}}15; color: {{project.fieldInfo.color}}">
+            {{project.fieldInfo.icon}} {{project.fieldInfo.label}}
+          </view>
+          <view class="tag" style="background: {{project.stageInfo.color}}15; color: {{project.stageInfo.color}}">
+            {{project.stageInfo.icon}} {{project.stageInfo.label}}
+          </view>
+          <view class="tag status-tag" style="color: {{project.statusInfo.color}}; border-color: {{project.statusInfo.color}}">
+            {{project.statusInfo.label}}
+          </view>
+        </view>
+        <view class="meta-row">
+          <text class="meta-item">👁 {{project.views}} 浏览</text>
+          <text class="meta-item">👍 {{project.likes}} 点赞</text>
+          <text class="meta-item">📅 {{project.formattedTime}}</text>
+        </view>
+      </view>
+
+      <view class="project-title">{{project.title}}</view>
+      <view class="project-desc">{{project.description}}</view>
+
+      <!-- 项目亮点 -->
+      <view class="highlights-section" wx:if="{{project.highlights.length > 0}}">
+        <view class="section-title">✨ 项目亮点</view>
+        <view class="highlights-list">
+          <view class="highlight-item" wx:for="{{project.highlights}}" wx:key="index">
+            <text class="highlight-dot">•</text>
+            <text class="highlight-text">{{item}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 融资信息 -->
+    <view class="info-section" wx:if="{{project.financingStage !== 'none'}}">
+      <view class="section-title">💰 融资需求</view>
+      <view class="financing-card">
+        <view class="financing-row">
+          <text class="financing-label">融资轮次</text>
+          <text class="financing-value" style="color: {{project.financingInfo.color}}">
+            {{project.financingInfo.icon}} {{project.financingInfo.label}}
+          </text>
+        </view>
+        <view class="financing-row" wx:if="{{project.financingAmount}}">
+          <text class="financing-label">融资金额</text>
+          <text class="financing-value">{{project.financingAmount}}</text>
+        </view>
+        <view class="financing-row" wx:if="{{project.financingPurpose}}">
+          <text class="financing-label">资金用途</text>
+          <text class="financing-value">{{project.financingPurpose}}</text>
+        </view>
+        <view class="financing-row" wx:if="{{project.equityProportion}}">
+          <text class="financing-label">股权比例</text>
+          <text class="financing-value">{{project.equityProportion}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 团队信息 -->
+    <view class="info-section">
+      <view class="section-title">👥 团队成员</view>
+      <view class="team-list">
+        <view class="team-member" wx:for="{{project.team}}" wx:key="id">
+          <image class="member-avatar" src="{{item.avatar}}" mode="aspectFill"/>
+          <view class="member-info">
+            <view class="member-name-row">
+              <text class="member-name">{{item.name}}</text>
+              <view class="member-role" style="background: {{item.roleInfo.color}}15; color: {{item.roleInfo.color}}">
+                {{item.roleInfo.icon}} {{item.roleInfo.label}}
+              </view>
+            </view>
+            <text class="member-major">{{item.major}}</text>
+            <text class="member-grade">{{item.grade}}级</text>
+            <text class="member-skills" wx:if="{{item.skills}}">技能：{{item.skills}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 招募信息 -->
+    <view class="info-section" wx:if="{{project.recruitingRoleInfos.length > 0}}">
+      <view class="section-title">🎯 招募队友</view>
+      <view class="recruiting-intro" wx:if="{{project.recruitmentIntro}}">
+        {{project.recruitmentIntro}}
+      </view>
+      <view class="recruiting-roles">
+        <view
+          class="recruiting-role-card"
+          wx:for="{{project.recruitingRoleInfos}}"
+          wx:key="value"
+        >
+          <view class="role-header">
+            <view class="role-tag" style="background: {{item.color}}15; color: {{item.color}}">
+              {{item.icon}} {{item.label}}
+            </view>
+            <view class="apply-btn" bindtap="onRecruitTap" data-role="{{item}}">
+              申请加入
+            </view>
+          </view>
+          <view class="role-req" wx:if="{{item.requirements}}">
+            <text class="req-label">要求：</text>
+            <text class="req-text">{{item.requirements}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 项目详情 -->
+    <view class="info-section" wx:if="{{project.detailedDescription}}">
+      <view class="section-title">📋 项目详情</view>
+      <view class="detail-content">
+        {{project.detailedDescription}}
+      </view>
+    </view>
+
+    <!-- 项目图片 -->
+    <view class="info-section" wx:if="{{project.images && project.images.length > 0}}">
+      <view class="section-title">🖼 项目图片</view>
+      <view class="image-grid">
+        <image
+          class="grid-img"
+          wx:for="{{project.images}}"
+          wx:key="index"
+          src="{{item}}"
+          mode="aspectFill"
+          bindtap="onImagePreview2"
+          data-src="{{item}}"
+        />
+      </view>
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="info-section">
+      <view class="section-title">📞 联系方式</view>
+      <view class="contact-card">
+        <view class="contact-row" wx:if="{{project.contactPerson}}">
+          <text class="contact-label">联系人</text>
+          <text class="contact-value">{{project.contactPerson}}</text>
+        </view>
+        <view class="contact-row" wx:if="{{project.contactPhone}}">
+          <text class="contact-label">联系电话</text>
+          <text class="contact-value link">{{project.contactPhone}}</text>
+        </view>
+        <view class="contact-row" wx:if="{{project.contactEmail}}">
+          <text class="contact-label">电子邮箱</text>
+          <text class="contact-value link">{{project.contactEmail}}</text>
+        </view>
+        <view class="contact-row" wx:if="{{project.wechatId}}">
+          <text class="contact-label">微信号</text>
+          <text class="contact-value">{{project.wechatId}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacing"></view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <btn type="primary" size="large" block="{{true}}" bind:click="onContactTap">
+      <text class="btn-icon">📞</text>
+      联系发布者
+    </btn>
+  </view>
+
+  <!-- 分享菜单 -->
+  <view class="picker-mask {{showShareMenu ? 'show' : ''}}" bindtap="onCloseShareMenu">
+    <view class="share-content" catchtap="stopPropagation">
+      <view class="share-header">
+        <text class="share-title">分享到</text>
+        <view class="share-close" bindtap="onCloseShareMenu">✕</view>
+      </view>
+      <view class="share-options">
+        <button class="share-option" open-type="share">
+          <text class="share-icon">💬</text>
+          <text class="share-label">微信好友</text>
+        </button>
+        <view class="share-option" bindtap="onCloseShareMenu">
+          <text class="share-icon">📋</text>
+          <text class="share-label">复制链接</text>
+        </view>
+        <view class="share-option" bindtap="onCloseShareMenu">
+          <text class="share-icon">🔗</text>
+          <text class="share-label">生成海报</text>
+        </view>
+      </view>
+      <view class="share-cancel" bindtap="onCloseShareMenu">取消</view>
+    </view>
+  </view>
+
+  <!-- 申请加入弹窗 -->
+  <view class="picker-mask {{showRecruitModal ? 'show' : ''}}" bindtap="onCloseRecruitModal">
+    <view class="recruit-modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">申请加入</text>
+        <text class="modal-role-tag" style="background: {{selectedRole.color}}15; color: {{selectedRole.color}}">
+          {{selectedRole.icon}} {{selectedRole.label}}
+        </text>
+        <view class="modal-close" bindtap="onCloseRecruitModal">✕</view>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">姓名 <text class="required">*</text></text>
+          <input
+            class="form-input"
+            placeholder="请输入您的姓名"
+            value="{{applicantName}}"
+            data-field="applicantName"
+            bindinput="onInputChange"
+          />
+        </view>
+        <view class="form-item">
+          <text class="form-label">手机号 <text class="required">*</text></text>
+          <input
+            class="form-input"
+            type="number"
+            placeholder="请输入您的手机号"
+            value="{{applicantPhone}}"
+            data-field="applicantPhone"
+            bindinput="onInputChange"
+            maxlength="11"
+          />
+        </view>
+        <view class="form-item">
+          <text class="form-label">自我介绍 <text class="required">*</text></text>
+          <textarea
+            class="form-textarea"
+            placeholder="请简单介绍一下自己，包括相关经验、技能等"
+            value="{{applicantIntroduction}}"
+            data-field="applicantIntroduction"
+            bindinput="onInputChange"
+            maxlength="500"
+            auto-height="{{true}}"
+          />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <btn type="default" size="medium" bind:click="onCloseRecruitModal">取消</btn>
+        <btn type="primary" size="medium" bind:click="onSubmitApplication">提交申请</btn>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

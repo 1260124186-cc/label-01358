@@ -16,6 +16,11 @@ let volunteerInitialized = false;
 let canteenInitialized = false;
 let canteenReviewsInitialized = false;
 let dishReviewsInitialized = false;
+let innovationProjectsInitialized = false;
+let innovationMentorsInitialized = false;
+let innovationRoadshowsInitialized = false;
+let innovationPoliciesInitialized = false;
+let innovationIncubatorsInitialized = false;
 
 function initVolunteerData() {
   if (volunteerInitialized) return;
@@ -4645,6 +4650,400 @@ function clearClassReminders() {
   return storage.set(STORAGE_KEYS.CLASS_REMINDERS, []);
 }
 
+// ==================== 创新创业项目工坊 ====================
+
+function initInnovationProjects() {
+  if (innovationProjectsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.INNOVATION_PROJECT_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const projects = mockData.MOCK_INNOVATION_PROJECTS.map((item, index) => ({
+      id: 'innov_proj_' + index + '_' + now,
+      ...item,
+      publisherId: 'user_' + (index + 1),
+      views: item.views || 0,
+      likes: item.likes || 0,
+      createTime: now - (index + 1) * 86400000,
+      updateTime: now - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.INNOVATION_PROJECT_LIST, projects);
+  }
+  innovationProjectsInitialized = true;
+}
+
+function initInnovationMentors() {
+  if (innovationMentorsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.INNOVATION_MENTOR_LIST);
+  if (!existing || existing.length === 0) {
+    const mentors = mockData.MOCK_INNOVATION_MENTORS.map((item, index) => ({
+      id: 'innov_mentor_' + index,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.INNOVATION_MENTOR_LIST, mentors);
+  }
+  innovationMentorsInitialized = true;
+}
+
+function initInnovationRoadshows() {
+  if (innovationRoadshowsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.INNOVATION_ROADSHOW_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const roadshows = mockData.MOCK_INNOVATION_ROADSHOWS.map((item, index) => ({
+      id: 'innov_roadshow_' + index + '_' + now,
+      ...item,
+      views: item.views || 0,
+      createTime: item.createTime || now
+    }));
+    storage.set(STORAGE_KEYS.INNOVATION_ROADSHOW_LIST, roadshows);
+  }
+  innovationRoadshowsInitialized = true;
+}
+
+function initInnovationPolicies() {
+  if (innovationPoliciesInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.INNOVATION_POLICY_LIST);
+  if (!existing || existing.length === 0) {
+    const policies = mockData.MOCK_INNOVATION_POLICIES.map((item, index) => ({
+      id: 'innov_policy_' + index,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.INNOVATION_POLICY_LIST, policies);
+  }
+  innovationPoliciesInitialized = true;
+}
+
+function initInnovationIncubators() {
+  if (innovationIncubatorsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.INNOVATION_INCUBATOR_LIST);
+  if (!existing || existing.length === 0) {
+    const incubators = mockData.MOCK_INNOVATION_INCUBATORS.map((item, index) => ({
+      id: 'innov_incubator_' + index,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.INNOVATION_INCUBATOR_LIST, incubators);
+  }
+  innovationIncubatorsInitialized = true;
+}
+
+function initAllInnovationData() {
+  initInnovationProjects();
+  initInnovationMentors();
+  initInnovationRoadshows();
+  initInnovationPolicies();
+  initInnovationIncubators();
+}
+
+function getInnovationProjectList(filters = {}) {
+  initInnovationProjects();
+  let list = storage.getList(STORAGE_KEYS.INNOVATION_PROJECT_LIST);
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'description', 'highlights']);
+  }
+
+  if (filters.field) {
+    list = list.filter(item => item.field === filters.field);
+  }
+
+  if (filters.stage) {
+    list = list.filter(item => item.stage === filters.stage);
+  }
+
+  if (filters.tab) {
+    if (filters.tab === 'recruiting') {
+      list = list.filter(item => item.recruitingRoles && item.recruitingRoles.length > 0);
+    } else if (filters.tab === 'financing') {
+      list = list.filter(item => item.financingStage && item.financingStage !== 'none');
+    }
+  }
+
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getInnovationProjectDetail(id) {
+  initInnovationProjects();
+  const list = storage.getList(STORAGE_KEYS.INNOVATION_PROJECT_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function publishInnovationProject(data) {
+  initInnovationProjects();
+  const now = Date.now();
+  const project = {
+    id: util.generateId(),
+    ...data,
+    views: 0,
+    likes: 0,
+    status: 'active',
+    createTime: now,
+    updateTime: now
+  };
+  storage.addToList(STORAGE_KEYS.INNOVATION_PROJECT_LIST, project);
+  return project;
+}
+
+function updateInnovationProject(id, updates) {
+  initInnovationProjects();
+  const result = storage.updateInList(STORAGE_KEYS.INNOVATION_PROJECT_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+  return result;
+}
+
+function deleteInnovationProject(id) {
+  initInnovationProjects();
+  return storage.removeFromList(STORAGE_KEYS.INNOVATION_PROJECT_LIST, id);
+}
+
+function increaseInnovationProjectViews(id) {
+  initInnovationProjects();
+  const list = storage.getList(STORAGE_KEYS.INNOVATION_PROJECT_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    list[index].views = (list[index].views || 0) + 1;
+    storage.set(STORAGE_KEYS.INNOVATION_PROJECT_LIST, list);
+    return list[index].views;
+  }
+  return 0;
+}
+
+function getMyInnovationProjects(userId) {
+  initInnovationProjects();
+  const list = storage.getList(STORAGE_KEYS.INNOVATION_PROJECT_LIST);
+  return list.filter(item => item.publisherId === userId);
+}
+
+function getInnovationMentorList(filters = {}) {
+  initInnovationMentors();
+  let list = storage.getList(STORAGE_KEYS.INNOVATION_MENTOR_LIST);
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'department', 'researchAreas']);
+  }
+
+  if (filters.title) {
+    list = list.filter(item => item.title === filters.title);
+  }
+
+  if (filters.sortBy === 'rating') {
+    list = list.sort((a, b) => b.rating - a.rating);
+  } else if (filters.sortBy === 'appointments') {
+    list = list.sort((a, b) => b.appointmentCount - a.appointmentCount);
+  }
+
+  return list;
+}
+
+function getInnovationMentorDetail(id) {
+  initInnovationMentors();
+  const list = storage.getList(STORAGE_KEYS.INNOVATION_MENTOR_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function createMentorAppointment(mentorId, appointmentData) {
+  const appointments = storage.getList(STORAGE_KEYS.INNOVATION_APPOINTMENT_LIST);
+  const appointment = {
+    id: util.generateId(),
+    mentorId,
+    ...appointmentData,
+    status: 'pending',
+    createTime: Date.now()
+  };
+  appointments.unshift(appointment);
+  storage.set(STORAGE_KEYS.INNOVATION_APPOINTMENT_LIST, appointments);
+  return appointment;
+}
+
+function getMentorAppointments(mentorId) {
+  return storage.getList(STORAGE_KEYS.INNOVATION_APPOINTMENT_LIST)
+    .filter(item => item.mentorId === mentorId)
+    .sort((a, b) => b.createTime - a.createTime);
+}
+
+function getMyMentorAppointments(userId) {
+  return storage.getList(STORAGE_KEYS.INNOVATION_APPOINTMENT_LIST)
+    .filter(item => item.userId === userId)
+    .sort((a, b) => b.createTime - a.createTime);
+}
+
+function updateAppointmentStatus(appointmentId, status) {
+  return storage.updateInList(STORAGE_KEYS.INNOVATION_APPOINTMENT_LIST, appointmentId, { status });
+}
+
+function getInnovationRoadshowList(filters = {}) {
+  initInnovationRoadshows();
+  let list = storage.getList(STORAGE_KEYS.INNOVATION_ROADSHOW_LIST);
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'subtitle', 'description']);
+  }
+
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  return list.sort((a, b) => {
+    const dateA = new Date(a.date).getTime();
+    const dateB = new Date(b.date).getTime();
+    return dateA - dateB;
+  });
+}
+
+function getInnovationRoadshowDetail(id) {
+  initInnovationRoadshows();
+  const list = storage.getList(STORAGE_KEYS.INNOVATION_ROADSHOW_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function registerForRoadshow(roadshowId, userId, userInfo) {
+  initInnovationRoadshows();
+  const roadshows = storage.getList(STORAGE_KEYS.INNOVATION_ROADSHOW_LIST);
+  const index = roadshows.findIndex(item => item.id === roadshowId);
+  if (index > -1) {
+    roadshows[index].registeredCount = (roadshows[index].registeredCount || 0) + 1;
+    storage.set(STORAGE_KEYS.INNOVATION_ROADSHOW_LIST, roadshows);
+
+    const registrations = storage.getList(STORAGE_KEYS.INNOVATION_REGISTRATION_LIST);
+    const registration = {
+      id: util.generateId(),
+      roadshowId,
+      userId,
+      ...userInfo,
+      status: 'registered',
+      createTime: Date.now()
+    };
+    registrations.unshift(registration);
+    storage.set(STORAGE_KEYS.INNOVATION_REGISTRATION_LIST, registrations);
+    return registration;
+  }
+  return null;
+}
+
+function cancelRoadshowRegistration(roadshowId, userId) {
+  initInnovationRoadshows();
+  const roadshows = storage.getList(STORAGE_KEYS.INNOVATION_ROADSHOW_LIST);
+  const index = roadshows.findIndex(item => item.id === roadshowId);
+  if (index > -1 && roadshows[index].registeredCount > 0) {
+    roadshows[index].registeredCount--;
+    storage.set(STORAGE_KEYS.INNOVATION_ROADSHOW_LIST, roadshows);
+
+    const registrations = storage.getList(STORAGE_KEYS.INNOVATION_REGISTRATION_LIST);
+    const filtered = registrations.filter(
+      item => !(item.roadshowId === roadshowId && item.userId === userId)
+    );
+    storage.set(STORAGE_KEYS.INNOVATION_REGISTRATION_LIST, filtered);
+    return true;
+  }
+  return false;
+}
+
+function isRegisteredForRoadshow(roadshowId, userId) {
+  const registrations = storage.getList(STORAGE_KEYS.INNOVATION_REGISTRATION_LIST);
+  return registrations.some(item => item.roadshowId === roadshowId && item.userId === userId);
+}
+
+function getMyRoadshowRegistrations(userId) {
+  return storage.getList(STORAGE_KEYS.INNOVATION_REGISTRATION_LIST)
+    .filter(item => item.userId === userId)
+    .sort((a, b) => b.createTime - a.createTime);
+}
+
+function increaseRoadshowViews(id) {
+  initInnovationRoadshows();
+  const list = storage.getList(STORAGE_KEYS.INNOVATION_ROADSHOW_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    list[index].views = (list[index].views || 0) + 1;
+    storage.set(STORAGE_KEYS.INNOVATION_ROADSHOW_LIST, list);
+    return list[index].views;
+  }
+  return 0;
+}
+
+function getInnovationPolicyList(filters = {}) {
+  initInnovationPolicies();
+  let list = storage.getList(STORAGE_KEYS.INNOVATION_POLICY_LIST);
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'summary', 'content', 'tags']);
+  }
+
+  if (filters.type) {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  return list.sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
+}
+
+function getInnovationPolicyDetail(id) {
+  initInnovationPolicies();
+  const list = storage.getList(STORAGE_KEYS.INNOVATION_POLICY_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function togglePolicyFavorite(id) {
+  initInnovationPolicies();
+  const list = storage.getList(STORAGE_KEYS.INNOVATION_POLICY_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    list[index].isFavorite = !list[index].isFavorite;
+    storage.set(STORAGE_KEYS.INNOVATION_POLICY_LIST, list);
+    return list[index].isFavorite;
+  }
+  return false;
+}
+
+function getFavoritePolicies() {
+  initInnovationPolicies();
+  const list = storage.getList(STORAGE_KEYS.INNOVATION_POLICY_LIST);
+  return list.filter(item => item.isFavorite);
+}
+
+function getInnovationIncubatorList(filters = {}) {
+  initInnovationIncubators();
+  let list = storage.getList(STORAGE_KEYS.INNOVATION_INCUBATOR_LIST);
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'description', 'services']);
+  }
+
+  if (filters.type) {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  if (filters.level) {
+    list = list.filter(item => item.level === filters.level);
+  }
+
+  return list;
+}
+
+function getInnovationIncubatorDetail(id) {
+  initInnovationIncubators();
+  const list = storage.getList(STORAGE_KEYS.INNOVATION_INCUBATOR_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function applyForIncubator(incubatorId, applicationData) {
+  const applications = storage.getList(STORAGE_KEYS.INNOVATION_MY_PROJECTS);
+  const application = {
+    id: util.generateId(),
+    incubatorId,
+    ...applicationData,
+    status: 'pending',
+    createTime: Date.now()
+  };
+  applications.unshift(application);
+  storage.set(STORAGE_KEYS.INNOVATION_MY_PROJECTS, applications);
+  return application;
+}
+
 module.exports = {
   paginateList,
 
@@ -4938,5 +5337,35 @@ module.exports = {
   // ==================== 上课提醒 ====================
   scheduleClassReminders,
   getClassReminders,
-  clearClassReminders
+  clearClassReminders,
+
+  // ==================== 创新创业项目工坊 ====================
+  initAllInnovationData,
+  getInnovationProjectList,
+  getInnovationProjectDetail,
+  publishInnovationProject,
+  updateInnovationProject,
+  deleteInnovationProject,
+  increaseInnovationProjectViews,
+  getMyInnovationProjects,
+  getInnovationMentorList,
+  getInnovationMentorDetail,
+  createMentorAppointment,
+  getMentorAppointments,
+  getMyMentorAppointments,
+  updateAppointmentStatus,
+  getInnovationRoadshowList,
+  getInnovationRoadshowDetail,
+  registerForRoadshow,
+  cancelRoadshowRegistration,
+  isRegisteredForRoadshow,
+  getMyRoadshowRegistrations,
+  increaseRoadshowViews,
+  getInnovationPolicyList,
+  getInnovationPolicyDetail,
+  togglePolicyFavorite,
+  getFavoritePolicies,
+  getInnovationIncubatorList,
+  getInnovationIncubatorDetail,
+  applyForIncubator
 };

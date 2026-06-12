@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "路演活动",
+  "usingComponents": {
+    "btn": "/components/btn/index",
+    "empty": "/components/empty/index"
+  }
+}

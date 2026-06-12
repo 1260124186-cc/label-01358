@@ -1,0 +1,222 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{mentor}}">
+  <!-- 头部信息 -->
+  <view class="header-section">
+    <view class="header-bg"></view>
+    <view class="mentor-info">
+      <image class="mentor-avatar" src="{{mentor.avatar}}" mode="aspectFill"/>
+      <view class="mentor-badge" style="background: {{mentor.titleInfo.color}}">
+        {{mentor.titleInfo.label}}
+      </view>
+      <view class="mentor-name">{{mentor.name}}</view>
+      <view class="mentor-dept">{{mentor.department}}</view>
+      <view class="mentor-rating">
+        <text>⭐</text>
+        <text class="rating-value">{{mentor.rating}}</text>
+        <text class="rating-count">({{mentor.ratingCount}}条评价)</text>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view class="content-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <!-- 基本信息 -->
+    <view class="info-section">
+      <view class="section-title">👤 基本信息</view>
+      <view class="info-grid">
+        <view class="info-item">
+          <text class="info-label">研究方向</text>
+          <text class="info-value">{{mentor.researchAreasText}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">擅长领域</text>
+          <text class="info-value">{{mentor.expertisesText}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">学术成就</text>
+          <text class="info-value">{{mentor.achievements}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 研究标签 -->
+    <view class="info-section">
+      <view class="section-title">🔬 研究标签</view>
+      <view class="tags-container">
+        <view class="tag-chip" wx:for="{{mentor.researchAreaChips}}" wx:key="index">{{item}}</view>
+      </view>
+    </view>
+
+    <!-- 指导数据 -->
+    <view class="info-section">
+      <view class="section-title">📊 指导数据</view>
+      <view class="stats-grid">
+        <view class="stat-card">
+          <text class="stat-value">{{mentor.mentoringCount}}</text>
+          <text class="stat-label">在导项目</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">{{mentor.successProjects}}</text>
+          <text class="stat-label">成功案例</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">{{mentor.availableSlots}}</text>
+          <text class="stat-label">剩余名额</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">{{mentor.totalStudents}}</text>
+          <text class="stat-label">累计学生</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 个人简介 -->
+    <view class="info-section">
+      <view class="section-title">📝 个人简介</view>
+      <view class="bio-content">{{mentor.bio}}</view>
+    </view>
+
+    <!-- 代表项目 -->
+    <view class="info-section" wx:if="{{mentor.representativeProjects && mentor.representativeProjects.length > 0}}">
+      <view class="section-title">🏆 代表项目</view>
+      <view class="project-list">
+        <view class="project-item" wx:for="{{mentor.representativeProjects}}" wx:key="index">
+          <view class="project-icon">📁</view>
+          <view class="project-info">
+            <text class="project-name">{{item.name}}</text>
+            <text class="project-desc">{{item.description}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 学生评价 -->
+    <view class="info-section" wx:if="{{mentor.reviews && mentor.reviews.length > 0}}">
+      <view class="section-title">💬 学生评价</view>
+      <view class="review-list">
+        <view class="review-item" wx:for="{{mentor.reviews}}" wx:key="id">
+          <view class="review-header">
+            <text class="reviewer">{{item.studentName}}</text>
+            <view class="review-rating">
+              <text wx:for="{{5}}" wx:for-item="star" wx:key="index">
+                {{star < item.rating ? '⭐' : '☆'}}
+              </text>
+            </view>
+          </view>
+          <text class="review-content">{{item.content}}</text>
+          <text class="review-date">{{item.date}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacing"></view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <btn type="primary" size="large" block="{{true}}" bind:click="onAppointmentTap">
+      <text class="btn-icon">📅</text>
+      预约咨询
+    </btn>
+  </view>
+
+  <!-- 预约弹窗 -->
+  <view class="picker-mask {{showAppointmentModal ? 'show' : ''}}" bindtap="onCloseAppointmentModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">预约导师咨询</text>
+        <view class="modal-close" bindtap="onCloseAppointmentModal">✕</view>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">预约日期 <text class="required">*</text></text>
+          <view class="form-picker" bindtap="onDatePickerTap">
+            <text class="picker-value {{appointmentDate ? '' : 'placeholder'}}">
+              {{appointmentDate || '请选择预约日期'}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">预约时间 <text class="required">*</text></text>
+          <view class="form-picker" bindtap="onTimePickerTap">
+            <text class="picker-value {{appointmentTime ? '' : 'placeholder'}}">
+              {{appointmentTime || '请选择预约时间'}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </view>
+        <view class="form-item">
+          <text class="form-label">预约事由 <text class="required">*</text></text>
+          <textarea
+            class="form-textarea"
+            placeholder="请简要描述您的问题和咨询目的（至少10个字符）"
+            value="{{appointmentPurpose}}"
+            bindinput="onPurposeInput"
+            maxlength="500"
+            auto-height="{{true}}"
+          />
+        </view>
+        <view class="notice">
+          <text class="notice-icon">⚠️</text>
+          <text class="notice-text">预约提交后请耐心等待导师确认，取消预约请提前24小时</text>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <btn type="default" size="medium" bind:click="onCloseAppointmentModal">取消</btn>
+        <btn type="primary" size="medium" bind:click="onSubmitAppointment">提交预约</btn>
+      </view>
+    </view>
+  </view>
+
+  <!-- 日期选择弹窗 -->
+  <view class="picker-mask {{showDatePicker ? 'show' : ''}}" bindtap="onCloseDatePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择预约日期</text>
+        <view class="picker-close" bindtap="onCloseDatePicker">✕</view>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{appointmentDate === item.value ? 'active' : ''}}"
+          wx:for="{{appointmentDateOptions}}"
+          wx:key="value"
+          bindtap="onDateSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{appointmentDate === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 时间选择弹窗 -->
+  <view class="picker-mask {{showTimePicker ? 'show' : ''}}" bindtap="onCloseTimePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择预约时间</text>
+        <view class="picker-close" bindtap="onCloseTimePicker">✕</view>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{appointmentTime === item.value ? 'active' : ''}}"
+          wx:for="{{appointmentTimeOptions}}"
+          wx:key="value"
+          bindtap="onTimeSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{appointmentTime === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

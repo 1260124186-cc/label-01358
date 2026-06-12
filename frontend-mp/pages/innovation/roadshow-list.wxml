@@ -1,0 +1,105 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="search-section">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索路演活动名称、主办方..."
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        placeholder-class="search-placeholder"
+      />
+    </view>
+    <view class="filter-btn" bindtap="onStatusFilterTap">
+      <text class="filter-text">{{selectedStatus ? (statusOptions.find(s => s.value === selectedStatus) ? statusOptions.find(s => s.value === selectedStatus).label : '状态') : '状态筛选'}}</text>
+    </view>
+  </view>
+
+  <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="roadshow-list" wx:if="{{filteredRoadshows.length > 0}}">
+      <view
+        class="roadshow-card"
+        wx:for="{{filteredRoadshows}}"
+        wx:key="id"
+        bindtap="onRoadshowTap"
+        data-id="{{item.id}}"
+      >
+        <view class="roadshow-cover">
+          <image class="cover-img" src="{{item.coverImage}}" mode="aspectFill"/>
+          <view class="status-badge" style="background: {{item.statusInfo.color}}">
+            {{item.statusInfo.label}}
+          </view>
+          <view class="view-count">
+            <text>👁️</text>
+            <text class="count-text">{{item.views}}</text>
+          </view>
+        </view>
+        <view class="roadshow-content">
+          <view class="roadshow-title-row">
+            <text class="roadshow-title">{{item.title}}</text>
+          </view>
+          <text class="roadshow-subtitle" wx:if="{{item.subtitle}}">{{item.subtitle}}</text>
+          <view class="roadshow-meta">
+            <view class="meta-item">
+              <text class="meta-icon">📅</text>
+              <text class="meta-text">{{item.dateText}} {{item.timeText}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">📍</text>
+              <text class="meta-text">{{item.location}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">🏢</text>
+              <text class="meta-text">{{item.organizer}}</text>
+            </view>
+          </view>
+          <view class="progress-section">
+            <view class="progress-header">
+              <text class="progress-label">报名进度</text>
+              <text class="progress-count">{{item.registeredCount}}/{{item.maxParticipants}}人</text>
+            </view>
+            <view class="progress-bar">
+              <view class="progress-fill" style="width: {{item.progress}}%"></view>
+            </view>
+          </view>
+          <view class="highlights" wx:if="{{item.highlightsText}}">
+            <text class="highlights-text">✨ {{item.highlightsText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <empty wx:else text="暂无路演活动" icon="📢"/>
+  </scroll-view>
+
+  <!-- 状态筛选弹窗 -->
+  <view class="picker-mask {{showStatusFilter ? 'show' : ''}}" bindtap="onCloseFilter">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择状态</text>
+        <text class="picker-clear" bindtap="onClearStatusFilter">清除</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{selectedStatus === item.value ? 'active' : ''}}"
+          wx:for="{{statusOptions}}"
+          wx:key="value"
+          bindtap="onStatusSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-dot" style="background: {{item.color}}"></text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{selectedStatus === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

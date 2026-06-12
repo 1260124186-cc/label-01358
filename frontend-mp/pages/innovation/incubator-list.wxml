@@ -1,0 +1,109 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="search-section">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索孵化器名称、地址..."
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        placeholder-class="search-placeholder"
+      />
+    </view>
+    <view class="filter-btn" bindtap="onTypeFilterTap">
+      <text class="filter-text">{{selectedType ? (typeOptions.find(t => t.value === selectedType) ? typeOptions.find(t => t.value === selectedType).label : '类型') : '类型筛选'}}</text>
+    </view>
+  </view>
+
+  <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="incubator-list" wx:if="{{filteredIncubators.length > 0}}">
+      <view
+        class="incubator-card"
+        wx:for="{{filteredIncubators}}"
+        wx:key="id"
+        bindtap="onIncubatorTap"
+        data-id="{{item.id}}"
+      >
+        <view class="incubator-cover">
+          <image class="cover-img" src="{{item.images[0]}}" mode="aspectFill"/>
+          <view class="cover-overlay"></view>
+          <view class="cover-content">
+            <view class="level-badge">{{item.level}}</view>
+            <view class="type-badge" style="background: {{item.typeInfo.color}}">
+              <text class="type-icon">{{item.typeInfo.icon}}</text>
+              <text class="type-label">{{item.typeInfo.label}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="incubator-content">
+          <view class="incubator-header">
+            <text class="incubator-name">{{item.name}}</text>
+            <view class="rating-section">
+              <text class="star">⭐</text>
+              <text class="rating-value">{{item.rating}}</text>
+              <text class="review-count">({{item.reviews}})</text>
+            </view>
+          </view>
+          <text class="incubator-desc">{{item.description}}</text>
+          <view class="incubator-meta">
+            <text class="meta-item">📍 {{item.address}}</text>
+            <text class="meta-item">📏 {{item.area}}</text>
+            <text class="meta-item">🏢 {{item.inCubatedCount}}/{{item.capacity}}家</text>
+          </view>
+          <view class="incubator-stats">
+            <view class="stat-item">
+              <text class="stat-value">{{item.inCubatedCount}}</text>
+              <text class="stat-label">在孵企业</text>
+            </view>
+            <view class="stat-divider"></view>
+            <view class="stat-item">
+              <text class="stat-value">{{item.graduatedCount}}</text>
+              <text class="stat-label">毕业企业</text>
+            </view>
+            <view class="stat-divider"></view>
+            <view class="stat-item">
+              <text class="stat-value">{{item.distance}}</text>
+              <text class="stat-label">距离</text>
+            </view>
+          </view>
+          <view class="incubator-services" wx:if="{{item.servicesText}}">
+            <text class="services-text">🛠️ {{item.servicesText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <empty wx:else text="暂无孵化器信息" icon="🏢"/>
+  </scroll-view>
+
+  <!-- 类型筛选弹窗 -->
+  <view class="picker-mask {{showTypeFilter ? 'show' : ''}}" bindtap="onCloseFilter">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择孵化器类型</text>
+        <text class="picker-clear" bindtap="onClearTypeFilter">清除</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{selectedType === item.value ? 'active' : ''}}"
+          wx:for="{{typeOptions}}"
+          wx:key="value"
+          bindtap="onTypeSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{selectedType === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

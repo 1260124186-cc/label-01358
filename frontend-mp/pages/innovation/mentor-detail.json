@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "导师详情",
+  "usingComponents": {
+    "btn": "/components/btn/index",
+    "card": "/components/card/index"
+  }
+}

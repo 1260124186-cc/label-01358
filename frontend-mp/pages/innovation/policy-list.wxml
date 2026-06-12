@@ -1,0 +1,86 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="search-section">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索政策标题、内容..."
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        placeholder-class="search-placeholder"
+      />
+    </view>
+    <view class="filter-btn" bindtap="onTypeFilterTap">
+      <text class="filter-text">{{selectedType ? (typeOptions.find(t => t.value === selectedType) ? typeOptions.find(t => t.value === selectedType).label : '类型') : '类型筛选'}}</text>
+    </view>
+  </view>
+
+  <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="policy-list" wx:if="{{filteredPolicies.length > 0}}">
+      <view
+        class="policy-card"
+        wx:for="{{filteredPolicies}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onPolicyTap"
+      >
+        <view class="policy-header">
+          <view class="type-tag" style="background: {{item.typeInfo.color}}20; color: {{item.typeInfo.color}}">
+            <text class="type-icon">{{item.typeInfo.icon}}</text>
+            <text class="type-label">{{item.typeInfo.label}}</text>
+          </view>
+          <view
+            class="favorite-btn {{item.isFavorite ? 'active' : ''}}"
+            catchtap="onFavoriteTap"
+            data-id="{{item.id}}"
+          >
+            <text class="favorite-icon">{{item.isFavorite ? '❤️' : '🤍'}}</text>
+          </view>
+        </view>
+        <text class="policy-title">{{item.title}}</text>
+        <text class="policy-summary">{{item.summary}}</text>
+        <view class="policy-meta">
+          <text class="meta-item">📅 {{item.publishDate}}</text>
+          <text class="meta-item">🏛️ {{item.source}}</text>
+          <text class="meta-item">👁️ {{item.views}}</text>
+        </view>
+        <view class="policy-tags" wx:if="{{item.tagsText}}">
+          <text class="tags-text"># {{item.tagsText}}</text>
+        </view>
+      </view>
+    </view>
+    <empty wx:else text="暂无政策信息" icon="📋"/>
+  </scroll-view>
+
+  <!-- 类型筛选弹窗 -->
+  <view class="picker-mask {{showTypeFilter ? 'show' : ''}}" bindtap="onCloseFilter">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择政策类型</text>
+        <text class="picker-clear" bindtap="onClearTypeFilter">清除</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{selectedType === item.value ? 'active' : ''}}"
+          wx:for="{{typeOptions}}"
+          wx:key="value"
+          bindtap="onTypeSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{selectedType === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

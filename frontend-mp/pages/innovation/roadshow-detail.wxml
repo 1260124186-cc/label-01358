@@ -1,0 +1,219 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{roadshow}}">
+  <scroll-view class="main-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <!-- 封面图 -->
+    <view class="cover-section">
+      <image class="cover-img" src="{{roadshow.coverImage}}" mode="aspectFill"/>
+      <view class="cover-overlay"></view>
+      <view class="cover-content">
+        <view class="status-badge" style="background: {{roadshow.statusInfo.color}}">
+          {{roadshow.statusInfo.label}}
+        </view>
+        <view class="cover-views">
+          <text>👁️</text>
+          <text class="views-text">{{roadshow.views}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 基本信息 -->
+    <view class="content-section">
+      <view class="title-section">
+        <text class="roadshow-title">{{roadshow.title}}</text>
+        <text class="roadshow-subtitle" wx:if="{{roadshow.subtitle}}">{{roadshow.subtitle}}</text>
+      </view>
+
+      <view class="info-cards">
+        <view class="info-card">
+          <text class="info-icon">📅</text>
+          <view class="info-content">
+            <text class="info-label">活动时间</text>
+            <text class="info-value">{{roadshow.dateText}} {{roadshow.timeText}}</text>
+          </view>
+        </view>
+        <view class="info-card">
+          <text class="info-icon">📍</text>
+          <view class="info-content">
+            <text class="info-label">活动地点</text>
+            <text class="info-value">{{roadshow.location}}</text>
+          </view>
+        </view>
+        <view class="info-card">
+          <text class="info-icon">🏢</text>
+          <view class="info-content">
+            <text class="info-label">主办方</text>
+            <text class="info-value">{{roadshow.organizer}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 报名进度 -->
+      <view class="progress-card">
+        <view class="progress-header">
+          <text class="progress-title">报名情况</text>
+          <text class="progress-count">{{roadshow.registeredCount}}/{{roadshow.maxParticipants}}人</text>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{roadshow.progress}}%"></view>
+        </view>
+        <view class="progress-tips">
+          <text class="tip-text" wx:if="{{roadshow.registeredCount >= roadshow.maxParticipants}}">名额已满</text>
+          <text class="tip-text" wx:elif="{{roadshow.status === 'ended'}}">活动已结束</text>
+          <text class="tip-text" wx:else>还剩 {{roadshow.maxParticipants - roadshow.registeredCount}} 个名额</text>
+        </view>
+      </view>
+
+      <!-- 活动简介 -->
+      <view class="section-card">
+        <view class="section-header">
+          <text class="section-title">📝 活动简介</text>
+        </view>
+        <text class="section-content">{{roadshow.description}}</text>
+      </view>
+
+      <!-- 活动亮点 -->
+      <view class="section-card" wx:if="{{roadshow.highlights && roadshow.highlights.length > 0}}">
+        <view class="section-header">
+          <text class="section-title">✨ 活动亮点</text>
+        </view>
+        <view class="highlights-list">
+          <view class="highlight-item" wx:for="{{roadshow.highlights}}" wx:key="index">
+            <text class="highlight-dot">•</text>
+            <text class="highlight-text">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 评委嘉宾 -->
+      <view class="section-card" wx:if="{{roadshow.judges && roadshow.judges.length > 0}}">
+        <view class="section-header">
+          <text class="section-title">👥 评委嘉宾</text>
+        </view>
+        <view class="judges-list">
+          <view class="judge-item" wx:for="{{roadshow.judges}}" wx:key="index">
+            <view class="judge-avatar">{{item.name.charAt(0)}}</view>
+            <view class="judge-info">
+              <text class="judge-name">{{item.name}}</text>
+              <text class="judge-title">{{item.title}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 路演项目 -->
+      <view class="section-card" wx:if="{{roadshow.projects && roadshow.projects.length > 0}}">
+        <view class="section-header">
+          <text class="section-title">🚀 路演项目</text>
+        </view>
+        <view class="projects-list">
+          <view class="project-item" wx:for="{{roadshow.projects}}" wx:key="index">
+            <view class="project-info">
+              <text class="project-title">{{item.title}}</text>
+              <text class="project-team">{{item.team}}</text>
+            </view>
+            <view class="project-stage">{{item.stage}}</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 活动议程 -->
+      <view class="section-card" wx:if="{{roadshow.agenda && roadshow.agenda.length > 0}}">
+        <view class="section-header">
+          <text class="section-title">📋 活动议程</text>
+        </view>
+        <view class="agenda-list">
+          <view class="agenda-item" wx:for="{{roadshow.agenda}}" wx:key="index">
+            <view class="agenda-time">{{item.time}}</view>
+            <view class="agenda-line"></view>
+            <view class="agenda-content">{{item.content}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="bottom-space"></view>
+    </view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="action-btn secondary" open-type="share">
+      <text class="action-icon">📤</text>
+      <text class="action-text">分享</text>
+    </view>
+    <btn
+      class="action-btn primary"
+      type="{{isRegistered ? 'default' : 'primary'}}"
+      bind:click="onRegisterTap"
+      loading="{{submitting}}"
+    >
+      {{isRegistered ? '取消报名' : '立即报名'}}
+    </btn>
+  </view>
+
+  <!-- 报名弹窗 -->
+  <view class="modal-mask {{showRegisterModal ? 'show' : ''}}" bindtap="onCloseModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">活动报名</text>
+        <text class="modal-close" bindtap="onCloseModal">✕</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">姓名 <text class="required">*</text></text>
+          <input
+            class="form-input"
+            placeholder="请输入您的姓名"
+            value="{{registerForm.name}}"
+            data-field="name"
+            bindinput="onFormInput"
+          />
+        </view>
+        <view class="form-item">
+          <text class="form-label">手机号 <text class="required">*</text></text>
+          <input
+            class="form-input"
+            type="number"
+            maxlength="11"
+            placeholder="请输入您的手机号"
+            value="{{registerForm.phone}}"
+            data-field="phone"
+            bindinput="onFormInput"
+          />
+        </view>
+        <view class="form-item">
+          <text class="form-label">单位/学校</text>
+          <input
+            class="form-input"
+            placeholder="请输入您的单位或学校"
+            value="{{registerForm.organization}}"
+            data-field="organization"
+            bindinput="onFormInput"
+          />
+        </view>
+        <view class="form-item">
+          <text class="form-label">备注</text>
+          <textarea
+            class="form-textarea"
+            placeholder="请输入备注信息（选填）"
+            value="{{registerForm.note}}"
+            data-field="note"
+            bindinput="onFormInput"
+            maxlength="200"
+          />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <btn class="modal-btn" type="default" bind:click="onCloseModal">取消</btn>
+        <btn class="modal-btn" type="primary" bind:click="onSubmitRegister" loading="{{submitting}}">确认报名</btn>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

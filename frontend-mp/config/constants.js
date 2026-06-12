@@ -919,6 +919,118 @@ const CLUB_ACTIVITY_TABS_EXTENDED = [
   { value: 'my_tickets', label: '我的票务' }
 ];
 
+// ==================== 创新创业项目工坊 ====================
+
+const INNOVATION_PROJECT_FIELDS = [
+  { value: 'ai', label: '人工智能', color: '#6366F1', icon: '🤖' },
+  { value: 'internet', label: '互联网', color: '#3B82F6', icon: '🌐' },
+  { value: 'hardware', label: '智能硬件', color: '#10B981', icon: '⚡' },
+  { value: 'biomedical', label: '生物医药', color: '#EC4899', icon: '🧬' },
+  { value: 'new_energy', label: '新能源', color: '#F59E0B', icon: '🔋' },
+  { value: 'cultural_creative', label: '文化创意', color: '#8B5CF6', icon: '🎨' },
+  { value: 'education', label: '教育培训', color: '#14B8A6', icon: '📚' },
+  { value: 'fintech', label: '金融科技', color: '#22C55E', icon: '💳' },
+  { value: 'agriculture', label: '现代农业', color: '#84CC16', icon: '🌱' },
+  { value: 'other', label: '其他', color: '#6B7280', icon: '📌' }
+];
+
+const INNOVATION_PROJECT_STAGES = [
+  { value: 'idea', label: '创意阶段', color: '#6B7280', icon: '💡' },
+  { value: 'mvp', label: 'MVP阶段', color: '#3B82F6', icon: '🔨' },
+  { value: 'early', label: '早期成长', color: '#10B981', icon: '🌱' },
+  { value: 'growth', label: '快速增长', color: '#F59E0B', icon: '🚀' },
+  { value: 'mature', label: '成熟稳定', color: '#8B5CF6', icon: '🏢' }
+];
+
+const INNOVATION_FINANCING_STAGES = [
+  { value: 'none', label: '暂不需要', color: '#6B7280' },
+  { value: 'angel', label: '天使轮', color: '#3B82F6' },
+  { value: 'pre_a', label: 'Pre-A轮', color: '#10B981' },
+  { value: 'a_round', label: 'A轮', color: '#F59E0B' },
+  { value: 'b_round', label: 'B轮', color: '#8B5CF6' },
+  { value: 'c_round', label: 'C轮及以上', color: '#EC4899' }
+];
+
+const INNOVATION_TEAM_ROLES = [
+  { value: 'product', label: '产品经理', color: '#3B82F6', icon: '📋' },
+  { value: 'frontend', label: '前端开发', color: '#10B981', icon: '💻' },
+  { value: 'backend', label: '后端开发', color: '#8B5CF6', icon: '🖥️' },
+  { value: 'mobile', label: '移动端开发', color: '#F59E0B', icon: '📱' },
+  { value: 'ui_ux', label: 'UI/UX设计', color: '#EC4899', icon: '🎨' },
+  { value: 'algorithm', label: '算法工程师', color: '#14B8A6', icon: '🧮' },
+  { value: 'marketing', label: '市场营销', color: '#22C55E', icon: '📣' },
+  { value: 'operation', label: '运营推广', color: '#F97316', icon: '📊' },
+  { value: 'finance', label: '财务法务', color: '#6366F1', icon: '📑' },
+  { value: 'hr', label: '人力资源', color: '#EC4899', icon: '👥' },
+  { value: 'other', label: '其他角色', color: '#6B7280', icon: '📌' }
+];
+
+const INNOVATION_MENTOR_TITLES = [
+  { value: 'professor', label: '教授/研究员', color: '#6366F1' },
+  { value: 'entrepreneur', label: '创业导师', color: '#F59E0B' },
+  { value: 'investor', label: '投资人', color: '#10B981' },
+  { value: 'industry_expert', label: '行业专家', color: '#3B82F6' },
+  { value: 'lawyer', label: '法律顾问', color: '#8B5CF6' },
+  { value: 'accountant', label: '财务顾问', color: '#EC4899' }
+];
+
+const INNOVATION_ROADSHOW_STATUS = [
+  { value: 'upcoming', label: '即将开始', color: '#3B82F6' },
+  { value: 'registering', label: '报名中', color: '#10B981' },
+  { value: 'ongoing', label: '进行中', color: '#F59E0B' },
+  { value: 'ended', label: '已结束', color: '#6B7280' }
+];
+
+const INNOVATION_POLICY_TYPES = [
+  { value: 'grant', label: '补贴政策', icon: '💰', color: '#10B981' },
+  { value: 'tax', label: '税收优惠', icon: '📑', color: '#3B82F6' },
+  { value: 'incubator', label: '孵化支持', icon: '🏢', color: '#8B5CF6' },
+  { value: 'talent', label: '人才政策', icon: '👥', color: '#F59E0B' },
+  { value: 'financing', label: '融资服务', icon: '💳', color: '#EC4899' },
+  { value: 'other', label: '其他政策', icon: '📌', color: '#6B7280' }
+];
+
+const INNOVATION_INCUBATOR_TYPES = [
+  { value: 'university', label: '大学科技园', icon: '🎓', color: '#3B82F6' },
+  { value: 'government', label: '政府孵化器', icon: '🏛️', color: '#10B981' },
+  { value: 'private', label: '民营孵化器', icon: '🏢', color: '#8B5CF6' },
+  { value: 'accelerator', label: '加速器', icon: '🚀', color: '#F59E0B' }
+];
+
+const INNOVATION_PROJECT_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'recruiting', label: '招募中' },
+  { value: 'financing', label: '融资中' }
+];
+
+const INNOVATION_MAIN_TABS = [
+  { value: 'projects', label: '项目展示', icon: '🚀' },
+  { value: 'mentors', label: '导师预约', icon: '👨‍🏫' },
+  { value: 'roadshows', label: '路演活动', icon: '📢' },
+  { value: 'policies', label: '政策服务', icon: '📋' }
+];
+
+const INNOVATION_APPOINTMENT_TIME_SLOTS = [
+  { value: '09:00-10:00', label: '09:00 - 10:00' },
+  { value: '10:00-11:00', label: '10:00 - 11:00' },
+  { value: '14:00-15:00', label: '14:00 - 15:00' },
+  { value: '15:00-16:00', label: '15:00 - 16:00' },
+  { value: '16:00-17:00', label: '16:00 - 17:00' },
+  { value: '19:00-20:00', label: '19:00 - 20:00' },
+  { value: '20:00-21:00', label: '20:00 - 21:00' }
+];
+
+const INNOVATION_PROJECT_STATUS = [
+  { value: 'active', label: '进行中', color: '#10B981' },
+  { value: 'paused', label: '已暂停', color: '#F59E0B' },
+  { value: 'closed', label: '已关闭', color: '#6B7280' }
+];
+
+const INNOVATION_PROJECT_STATUS_MAP = INNOVATION_PROJECT_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
 module.exports = {
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
@@ -1038,5 +1150,18 @@ module.exports = {
   TICKET_ORDER_STATUS_MAP,
   TICKET_ORDER_TABS,
   TICKET_PAY_METHODS,
-  CLUB_ACTIVITY_TABS_EXTENDED
+  CLUB_ACTIVITY_TABS_EXTENDED,
+  INNOVATION_PROJECT_FIELDS,
+  INNOVATION_PROJECT_STAGES,
+  INNOVATION_FINANCING_STAGES,
+  INNOVATION_TEAM_ROLES,
+  INNOVATION_MENTOR_TITLES,
+  INNOVATION_ROADSHOW_STATUS,
+  INNOVATION_POLICY_TYPES,
+  INNOVATION_INCUBATOR_TYPES,
+  INNOVATION_PROJECT_TABS,
+  INNOVATION_MAIN_TABS,
+  INNOVATION_APPOINTMENT_TIME_SLOTS,
+  INNOVATION_PROJECT_STATUS,
+  INNOVATION_PROJECT_STATUS_MAP
 };
