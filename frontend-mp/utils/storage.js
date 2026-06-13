@@ -87,7 +87,15 @@ const STORAGE_KEYS = {
   INNOVATION_INCUBATOR_LIST: 'innovationIncubatorList',
   INNOVATION_APPOINTMENT_LIST: 'innovationAppointmentList',
   INNOVATION_REGISTRATION_LIST: 'innovationRegistrationList',
-  INNOVATION_MY_PROJECTS: 'innovationMyProjects'
+  INNOVATION_MY_PROJECTS: 'innovationMyProjects',
+  LOW_CARBON_CHECKIN_LIST: 'lowCarbonCheckinList',
+  LOW_CARBON_POINTS: 'lowCarbonPoints',
+  LOW_CARBON_POINTS_RECORD: 'lowCarbonPointsRecord',
+  LOW_CARBON_ACTIVITY_LIST: 'lowCarbonActivityList',
+  LOW_CARBON_ACTIVITY_REGISTRATION: 'lowCarbonActivityRegistration',
+  LOW_CARBON_REDEEM_LIST: 'lowCarbonRedeemList',
+  LOW_CARBON_REDEEM_ORDER: 'lowCarbonRedeemOrder',
+  LOW_CARBON_WEEKLY_REPORT: 'lowCarbonWeeklyReport'
 };
 
 /**

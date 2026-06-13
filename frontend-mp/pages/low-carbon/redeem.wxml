@@ -1,0 +1,84 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="points-bar">
+    <view class="points-info">
+      <text class="points-icon">💚</text>
+      <view class="points-text-wrap">
+        <text class="points-label">我的碳积分</text>
+        <text class="points-value">{{myPoints}}</text>
+      </view>
+    </view>
+    <view class="points-shop-link" bindtap="onNavShop" hover-class="points-shop-link-hover">
+      <text class="shop-link-text">积分商城</text>
+      <text class="shop-link-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="category-section">
+    <scroll-view class="category-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="category-tabs">
+        <view
+          class="category-tab {{currentCategory === item.value ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="value"
+          bindtap="onCategoryTap"
+          data-category="{{item.value}}"
+        >
+          <text class="category-icon">{{item.icon}}</text>
+          <text class="category-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view class="list-scroll" scroll-y="{{true}}">
+    <view class="reward-grid" wx:if="{{rewardList.length > 0}}">
+      <view class="reward-card" wx:for="{{rewardList}}" wx:key="id">
+        <view class="reward-image">
+          <text class="reward-emoji">{{item.category === 'coupon' ? '🏷️' : item.category === 'gift' ? '🎁' : item.category === 'virtual' ? '✨' : '⚡'}}</text>
+          <view class="reward-stock" wx:if="{{item.stock <= 10 && item.stock > 0}}">
+            <text class="stock-text">仅剩{{item.stock}}件</text>
+          </view>
+        </view>
+        <view class="reward-info">
+          <text class="reward-title">{{item.title}}</text>
+          <text class="reward-desc">{{item.description}}</text>
+          <view class="reward-bottom">
+            <view class="reward-points-wrap">
+              <text class="reward-points-icon">💚</text>
+              <text class="reward-points">{{item.points}}</text>
+              <text class="reward-points-unit">积分</text>
+            </view>
+            <view
+              class="redeem-btn {{item.canRedeem ? '' : 'btn-disabled'}}"
+              bindtap="onRedeem"
+              data-id="{{item.id}}"
+              hover-class="{{item.canRedeem ? 'redeem-btn-hover' : ''}}"
+            >
+              <text>{{item.statusLabel}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty wx:if="{{rewardList.length === 0}}" text="暂无可兑换礼品" />
+  </scroll-view>
+
+  <view class="orders-section" wx:if="{{myOrders.length > 0}}">
+    <view class="orders-header">
+      <text class="orders-title">兑换记录</text>
+    </view>
+    <view class="orders-list">
+      <view class="order-item" wx:for="{{myOrders}}" wx:key="id">
+        <view class="order-left">
+          <text class="order-icon">{{item.category === 'coupon' ? '🏷️' : item.category === 'gift' ? '🎁' : '✨'}}</text>
+          <text class="order-title">{{item.rewardTitle}}</text>
+        </view>
+        <text class="order-points">-{{item.points}}积分</text>
+      </view>
+    </view>
+  </view>
+
+</view>

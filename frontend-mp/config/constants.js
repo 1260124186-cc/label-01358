@@ -1152,6 +1152,87 @@ const SHELTER_FILTER_TABS = [
   { value: 'other', label: '其他' }
 ];
 
+// ==================== 低碳校园 / 绿色打卡 ====================
+
+const LOW_CARBON_CHECKIN_TYPES = [
+  { value: 'walk_to_school', label: '步行上学', icon: '🚶', points: 5, carbon: 0.5, desc: '步行或骑行上学，减少碳排放' },
+  { value: 'empty_plate', label: '光盘行动', icon: '🍽️', points: 3, carbon: 0.3, desc: '吃完餐盘里的所有食物' },
+  { value: 'paperless', label: '无纸化办公', icon: '📱', points: 4, carbon: 0.4, desc: '使用电子文档，减少纸张消耗' },
+  { value: 'public_transport', label: '公共交通', icon: '🚌', points: 6, carbon: 0.8, desc: '乘坐公共交通工具出行' }
+];
+
+const LOW_CARBON_CHECKIN_MAP = LOW_CARBON_CHECKIN_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, icon: t.icon, points: t.points, carbon: t.carbon, desc: t.desc };
+  return acc;
+}, {});
+
+const LOW_CARBON_ACHIEVEMENTS = [
+  { value: 'first_checkin', label: '绿色初心', icon: '🌱', desc: '完成首次打卡', condition: 1, type: 'checkin_count', reward: 10 },
+  { value: 'week_3', label: '坚持3天', icon: '🌿', desc: '累计打卡3天', condition: 3, type: 'checkin_days', reward: 20 },
+  { value: 'week_7', label: '坚持一周', icon: '🌳', desc: '累计打卡7天', condition: 7, type: 'checkin_days', reward: 50 },
+  { value: 'month_15', label: '半月达人', icon: '🏆', desc: '累计打卡15天', condition: 15, type: 'checkin_days', reward: 100 },
+  { value: 'month_30', label: '月度先锋', icon: '🥇', desc: '累计打卡30天', condition: 30, type: 'checkin_days', reward: 200 },
+  { value: 'points_100', label: '积分百户', icon: '💯', desc: '累计碳积分达到100', condition: 100, type: 'total_points', reward: 30 },
+  { value: 'points_500', label: '积分千长', icon: '🎖️', desc: '累计碳积分达到500', condition: 500, type: 'total_points', reward: 80 },
+  { value: 'walker_10', label: '步行能手', icon: '👟', desc: '步行上学打卡10次', condition: 10, type: 'walk_to_school', reward: 30 },
+  { value: 'saver_20', label: '光盘卫士', icon: '🥢', desc: '光盘行动打卡20次', condition: 20, type: 'empty_plate', reward: 50 }
+];
+
+const LOW_CARBON_REWARD_STATUS = [
+  { value: 'available', label: '可兑换', color: '#10B981' },
+  { value: 'limited', label: '限量抢兑', color: '#F59E0B' },
+  { value: 'redeemed', label: '已兑换', color: '#6B7280' },
+  { value: 'insufficient', label: '积分不足', color: '#EF4444' }
+];
+
+const LOW_CARBON_REWARD_CATEGORIES = [
+  { value: 'all', label: '全部', icon: '🎁' },
+  { value: 'coupon', label: '优惠券', icon: '🏷️' },
+  { value: 'gift', label: '实体礼品', icon: '🎀' },
+  { value: 'virtual', label: '虚拟道具', icon: '✨' },
+  { value: 'service', label: '服务权益', icon: '⚡' }
+];
+
+const LOW_CARBON_ACTIVITY_TYPES = [
+  { value: 'tree_planting', label: '植树活动', icon: '🌲', color: '#22C55E' },
+  { value: 'cleanup', label: '校园清洁', icon: '🧹', color: '#3B82F6' },
+  { value: 'lecture', label: '环保讲座', icon: '🎤', color: '#8B5CF6' },
+  { value: 'recycling', label: '垃圾分类', icon: '♻️', color: '#14B8A6' },
+  { value: 'competition', label: '环保竞赛', icon: '🏅', color: '#F59E0B' },
+  { value: 'other', label: '其他活动', icon: '🌿', color: '#6B7280' }
+];
+
+const LOW_CARBON_ACTIVITY_TYPE_MAP = LOW_CARBON_ACTIVITY_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, icon: t.icon, color: t.color };
+  return acc;
+}, {});
+
+const LOW_CARBON_ACTIVITY_STATUS = [
+  { value: 'registering', label: '报名中', color: '#10B981' },
+  { value: 'full', label: '名额已满', color: '#F59E0B' },
+  { value: 'ongoing', label: '进行中', color: '#3B82F6' },
+  { value: 'ended', label: '已结束', color: '#6B7280' }
+];
+
+const LOW_CARBON_ACTIVITY_STATUS_MAP = LOW_CARBON_ACTIVITY_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const LOW_CARBON_LEADERBOARD_TABS = [
+  { value: 'week', label: '本周榜' },
+  { value: 'month', label: '本月榜' },
+  { value: 'total', label: '总榜' }
+];
+
+const LOW_CARBON_TIPS = [
+  '随手关灯，节约每一度电',
+  '双面打印，减少纸张浪费',
+  '自带水杯，拒绝一次性塑料',
+  '尽量爬楼，少乘电梯更健康',
+  '旧物循环利用，传递环保理念'
+];
+
 module.exports = {
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
@@ -1300,5 +1381,16 @@ module.exports = {
   DONATION_TYPES,
   VOLUNTEER_ROLES,
   SHELTER_MAIN_TABS,
-  SHELTER_FILTER_TABS
+  SHELTER_FILTER_TABS,
+  LOW_CARBON_CHECKIN_TYPES,
+  LOW_CARBON_CHECKIN_MAP,
+  LOW_CARBON_ACHIEVEMENTS,
+  LOW_CARBON_REWARD_STATUS,
+  LOW_CARBON_REWARD_CATEGORIES,
+  LOW_CARBON_ACTIVITY_TYPES,
+  LOW_CARBON_ACTIVITY_TYPE_MAP,
+  LOW_CARBON_ACTIVITY_STATUS,
+  LOW_CARBON_ACTIVITY_STATUS_MAP,
+  LOW_CARBON_LEADERBOARD_TABS,
+  LOW_CARBON_TIPS
 };

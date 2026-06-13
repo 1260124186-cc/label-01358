@@ -246,6 +246,12 @@ App({
         console.error('初始化地图数据失败:', e);
       }
 
+      try {
+        dataService.initLowCarbonData();
+      } catch (e) {
+        console.error('初始化低碳数据失败:', e);
+      }
+
       wx.setStorageSync('mock_data_version', MOCK_DATA_VERSION);
     } catch (e) {
       console.error('初始化mock数据失败:', e);

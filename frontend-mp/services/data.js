@@ -5044,6 +5044,386 @@ function applyForIncubator(incubatorId, applicationData) {
   return application;
 }
 
+let lowCarbonInitialized = false;
+
+function initLowCarbonData() {
+  if (lowCarbonInitialized) return;
+  const now = Date.now();
+
+  let activityList = storage.get(STORAGE_KEYS.LOW_CARBON_ACTIVITY_LIST);
+  if (!activityList || activityList.length === 0) {
+    activityList = mockData.MOCK_LOW_CARBON_ACTIVITIES.map((item, index) => ({
+      id: 'mock_lca_' + index + '_' + now,
+      ...item,
+      registrations: [],
+      status: 'registering',
+      views: Math.floor(Math.random() * 200) + 50,
+      createTime: now - index * 86400000,
+      updateTime: now - index * 86400000
+    }));
+    storage.set(STORAGE_KEYS.LOW_CARBON_ACTIVITY_LIST, activityList);
+  }
+
+  let rewardList = storage.get(STORAGE_KEYS.LOW_CARBON_REDEEM_LIST);
+  if (!rewardList || rewardList.length === 0) {
+    rewardList = mockData.MOCK_LOW_CARBON_REWARDS.map((item, index) => ({
+      id: 'mock_lcr_' + index + '_' + now,
+      ...item,
+      createTime: now - index * 86400000
+    }));
+    storage.set(STORAGE_KEYS.LOW_CARBON_REDEEM_LIST, rewardList);
+  }
+
+  let pointsData = storage.get(STORAGE_KEYS.LOW_CARBON_POINTS);
+  if (pointsData === null || pointsData === undefined) {
+    const userId = 'test_user';
+    pointsData = {
+      [userId]: {
+        totalPoints: 120,
+        totalCarbon: 9.8,
+        checkinDays: 8,
+        categoryCounts: { walk_to_school: 5, empty_plate: 6, paperless: 3, public_transport: 2 }
+      }
+    };
+    storage.set(STORAGE_KEYS.LOW_CARBON_POINTS, pointsData);
+  }
+
+  let pointsRecord = storage.get(STORAGE_KEYS.LOW_CARBON_POINTS_RECORD);
+  if (!pointsRecord || Object.keys(pointsRecord).length === 0) {
+    const userId = 'test_user';
+    const records = [];
+    for (let i = 1; i <= 8; i++) {
+      const types = ['walk_to_school', 'empty_plate', 'paperless', 'public_transport'];
+      const type = types[i % types.length];
+      const typeInfo = constants.LOW_CARBON_CHECKIN_MAP[type];
+      records.push({
+        id: 'lcr_' + i + '_' + now,
+        userId,
+        type,
+        points: typeInfo.points,
+        carbon: typeInfo.carbon,
+        date: util.formatTime(now - i * 86400000, 'YYYY-MM-DD'),
+        createTime: now - i * 86400000
+      });
+    }
+    pointsRecord = { [userId]: records };
+    storage.set(STORAGE_KEYS.LOW_CARBON_POINTS_RECORD, pointsRecord);
+  }
+
+  let checkinList = storage.get(STORAGE_KEYS.LOW_CARBON_CHECKIN_LIST);
+  if (!checkinList) {
+    checkinList = {};
+    storage.set(STORAGE_KEYS.LOW_CARBON_CHECKIN_LIST, checkinList);
+  }
+
+  let registrationList = storage.get(STORAGE_KEYS.LOW_CARBON_ACTIVITY_REGISTRATION);
+  if (!registrationList) {
+    registrationList = {};
+    storage.set(STORAGE_KEYS.LOW_CARBON_ACTIVITY_REGISTRATION, registrationList);
+  }
+
+  let redeemOrders = storage.get(STORAGE_KEYS.LOW_CARBON_REDEEM_ORDER);
+  if (!redeemOrders) {
+    redeemOrders = {};
+    storage.set(STORAGE_KEYS.LOW_CARBON_REDEEM_ORDER, redeemOrders);
+  }
+
+  lowCarbonInitialized = true;
+}
+
+function doLowCarbonCheckin(userId, type) {
+  const today = util.formatTime(Date.now(), 'YYYY-MM-DD');
+  const checkinKey = userId + '_' + today;
+  const checkinList = storage.get(STORAGE_KEYS.LOW_CARBON_CHECKIN_LIST) || {};
+
+  if (checkinList[checkinKey] && checkinList[checkinKey][type]) {
+    return { success: false, message: '今日已打卡' };
+  }
+
+  if (!checkinList[checkinKey]) {
+    checkinList[checkinKey] = {};
+  }
+  checkinList[checkinKey][type] = { time: Date.now() };
+  storage.set(STORAGE_KEYS.LOW_CARBON_CHECKIN_LIST, checkinList);
+
+  const typeInfo = constants.LOW_CARBON_CHECKIN_MAP[type];
+  if (!typeInfo) return { success: false, message: '无效打卡类型' };
+
+  let pointsData = storage.get(STORAGE_KEYS.LOW_CARBON_POINTS) || {};
+  if (!pointsData[userId]) {
+    pointsData[userId] = { totalPoints: 0, totalCarbon: 0, checkinDays: 0, categoryCounts: {} };
+  }
+  const userPoints = pointsData[userId];
+  userPoints.totalPoints += typeInfo.points;
+  userPoints.totalCarbon = Math.round((userPoints.totalCarbon + typeInfo.carbon) * 100) / 100;
+  userPoints.categoryCounts[type] = (userPoints.categoryCounts[type] || 0) + 1;
+
+  const allDates = Object.keys(checkinList).filter(k => k.startsWith(userId + '_'));
+  userPoints.checkinDays = allDates.length;
+
+  storage.set(STORAGE_KEYS.LOW_CARBON_POINTS, pointsData);
+
+  let pointsRecord = storage.get(STORAGE_KEYS.LOW_CARBON_POINTS_RECORD) || {};
+  if (!pointsRecord[userId]) pointsRecord[userId] = [];
+  pointsRecord[userId].unshift({
+    id: util.generateId(),
+    userId,
+    type,
+    points: typeInfo.points,
+    carbon: typeInfo.carbon,
+    date: today,
+    createTime: Date.now()
+  });
+  storage.set(STORAGE_KEYS.LOW_CARBON_POINTS_RECORD, pointsRecord);
+
+  return {
+    success: true,
+    points: typeInfo.points,
+    carbon: typeInfo.carbon,
+    totalPoints: userPoints.totalPoints,
+    totalCarbon: userPoints.totalCarbon,
+    label: typeInfo.label,
+    icon: typeInfo.icon
+  };
+}
+
+function getTodayCheckins(userId) {
+  const today = util.formatTime(Date.now(), 'YYYY-MM-DD');
+  const checkinKey = userId + '_' + today;
+  const checkinList = storage.get(STORAGE_KEYS.LOW_CARBON_CHECKIN_LIST) || {};
+  return checkinList[checkinKey] || {};
+}
+
+function getLowCarbonPoints(userId) {
+  const pointsData = storage.get(STORAGE_KEYS.LOW_CARBON_POINTS) || {};
+  return pointsData[userId] || { totalPoints: 0, totalCarbon: 0, checkinDays: 0, categoryCounts: {} };
+}
+
+function getLowCarbonPointsRecord(userId, limit) {
+  const pointsRecord = storage.get(STORAGE_KEYS.LOW_CARBON_POINTS_RECORD) || {};
+  const records = pointsRecord[userId] || [];
+  return limit ? records.slice(0, limit) : records;
+}
+
+function getLowCarbonLeaderboard(period) {
+  const leaderboardData = mockData.MOCK_LOW_CARBON_LEADERBOARD.map((item, index) => ({
+    ...item,
+    rank: index + 1
+  }));
+
+  const pointsData = storage.get(STORAGE_KEYS.LOW_CARBON_POINTS) || {};
+  const userId = 'test_user';
+  if (pointsData[userId]) {
+    const userEntry = {
+      userId,
+      userName: '测试用户',
+      totalPoints: pointsData[userId].totalPoints,
+      totalCarbon: pointsData[userId].totalCarbon,
+      checkinDays: pointsData[userId].checkinDays,
+      walkCount: pointsData[userId].categoryCounts.walk_to_school || 0,
+      emptyPlateCount: pointsData[userId].categoryCounts.empty_plate || 0,
+      paperlessCount: pointsData[userId].categoryCounts.paperless || 0,
+      transportCount: pointsData[userId].categoryCounts.public_transport || 0
+    };
+
+    const existingIdx = leaderboardData.findIndex(item => item.userId === userId);
+    if (existingIdx >= 0) {
+      leaderboardData[existingIdx] = userEntry;
+    } else {
+      leaderboardData.push(userEntry);
+    }
+  }
+
+  leaderboardData.sort((a, b) => b.totalPoints - a.totalPoints);
+  leaderboardData.forEach((item, index) => { item.rank = index + 1; });
+
+  if (period === 'week') {
+    return leaderboardData.map(item => ({
+      ...item,
+      totalPoints: Math.floor(item.totalPoints * 0.15),
+      totalCarbon: Math.round(item.totalCarbon * 0.15 * 100) / 100
+    }));
+  }
+  if (period === 'month') {
+    return leaderboardData.map(item => ({
+      ...item,
+      totalPoints: Math.floor(item.totalPoints * 0.4),
+      totalCarbon: Math.round(item.totalCarbon * 0.4 * 100) / 100
+    }));
+  }
+
+  return leaderboardData;
+}
+
+function getLowCarbonActivityList(filters) {
+  let list = storage.getList(STORAGE_KEYS.LOW_CARBON_ACTIVITY_LIST);
+
+  if (filters) {
+    if (filters.type) list = list.filter(item => item.type === filters.type);
+    if (filters.status) list = list.filter(item => item.status === filters.status);
+  }
+
+  return list;
+}
+
+function registerForEcoActivity(userId, activityId) {
+  const list = storage.getList(STORAGE_KEYS.LOW_CARBON_ACTIVITY_LIST);
+  const activity = list.find(a => a.id === activityId);
+  if (!activity) return { success: false, message: '活动不存在' };
+  if (activity.registrations && activity.registrations.length >= activity.maxParticipants) {
+    return { success: false, message: '名额已满' };
+  }
+
+  const regList = storage.get(STORAGE_KEYS.LOW_CARBON_ACTIVITY_REGISTRATION) || {};
+  if (regList[userId] && regList[userId].includes(activityId)) {
+    return { success: false, message: '已报名' };
+  }
+
+  if (!activity.registrations) activity.registrations = [];
+  activity.registrations.push({ userId, time: Date.now() });
+  if (activity.registrations.length >= activity.maxParticipants) {
+    activity.status = 'full';
+  }
+  storage.set(STORAGE_KEYS.LOW_CARBON_ACTIVITY_LIST, list);
+
+  if (!regList[userId]) regList[userId] = [];
+  regList[userId].push(activityId);
+  storage.set(STORAGE_KEYS.LOW_CARBON_ACTIVITY_REGISTRATION, regList);
+
+  return { success: true, message: '报名成功' };
+}
+
+function cancelEcoActivityRegistration(userId, activityId) {
+  const list = storage.getList(STORAGE_KEYS.LOW_CARBON_ACTIVITY_LIST);
+  const activity = list.find(a => a.id === activityId);
+  if (!activity) return { success: false, message: '活动不存在' };
+
+  if (activity.registrations) {
+    activity.registrations = activity.registrations.filter(r => r.userId !== userId);
+    if (activity.status === 'full') activity.status = 'registering';
+  }
+  storage.set(STORAGE_KEYS.LOW_CARBON_ACTIVITY_LIST, list);
+
+  const regList = storage.get(STORAGE_KEYS.LOW_CARBON_ACTIVITY_REGISTRATION) || {};
+  if (regList[userId]) {
+    regList[userId] = regList[userId].filter(id => id !== activityId);
+    storage.set(STORAGE_KEYS.LOW_CARBON_ACTIVITY_REGISTRATION, regList);
+  }
+
+  return { success: true, message: '取消成功' };
+}
+
+function getLowCarbonRewardList(category) {
+  let list = storage.getList(STORAGE_KEYS.LOW_CARBON_REDEEM_LIST);
+  if (category && category !== 'all') {
+    list = list.filter(item => item.category === category);
+  }
+  return list;
+}
+
+function redeemReward(userId, rewardId) {
+  const list = storage.getList(STORAGE_KEYS.LOW_CARBON_REDEEM_LIST);
+  const reward = list.find(r => r.id === rewardId);
+  if (!reward) return { success: false, message: '礼品不存在' };
+  if (reward.stock <= 0) return { success: false, message: '库存不足' };
+
+  const pointsData = storage.get(STORAGE_KEYS.LOW_CARBON_POINTS) || {};
+  const userPoints = pointsData[userId] || { totalPoints: 0 };
+  if (userPoints.totalPoints < reward.points) return { success: false, message: '积分不足' };
+
+  userPoints.totalPoints -= reward.points;
+  pointsData[userId] = userPoints;
+  storage.set(STORAGE_KEYS.LOW_CARBON_POINTS, pointsData);
+
+  reward.stock -= 1;
+  storage.set(STORAGE_KEYS.LOW_CARBON_REDEEM_LIST, list);
+
+  const orderList = storage.get(STORAGE_KEYS.LOW_CARBON_REDEEM_ORDER) || {};
+  if (!orderList[userId]) orderList[userId] = [];
+  orderList[userId].unshift({
+    id: util.generateId(),
+    rewardId,
+    rewardTitle: reward.title,
+    points: reward.points,
+    category: reward.category,
+    status: 'success',
+    createTime: Date.now()
+  });
+  storage.set(STORAGE_KEYS.LOW_CARBON_REDEEM_ORDER, orderList);
+
+  return { success: true, message: '兑换成功', remainingPoints: userPoints.totalPoints };
+}
+
+function getLowCarbonRedeemOrders(userId) {
+  const orderList = storage.get(STORAGE_KEYS.LOW_CARBON_REDEEM_ORDER) || {};
+  return orderList[userId] || [];
+}
+
+function getWeeklyCarbonReport(userId) {
+  const pointsData = storage.get(STORAGE_KEYS.LOW_CARBON_POINTS) || {};
+  const userPoints = pointsData[userId] || { totalPoints: 0, totalCarbon: 0, checkinDays: 0, categoryCounts: {} };
+
+  const now = new Date();
+  const dayOfWeek = now.getDay() || 7;
+  const weekStart = new Date(now);
+  weekStart.setDate(now.getDate() - dayOfWeek + 1);
+  weekStart.setHours(0, 0, 0, 0);
+
+  const pointsRecord = storage.get(STORAGE_KEYS.LOW_CARBON_POINTS_RECORD) || {};
+  const allRecords = pointsRecord[userId] || [];
+
+  const weekRecords = allRecords.filter(r => r.createTime >= weekStart.getTime());
+  const weekPoints = weekRecords.reduce((sum, r) => sum + r.points, 0);
+  const weekCarbon = weekRecords.reduce((sum, r) => sum + r.carbon, 0);
+
+  const weekDays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+  const dailyData = weekDays.map((day, index) => {
+    const dayDate = new Date(weekStart);
+    dayDate.setDate(weekStart.getDate() + index);
+    const dayStr = util.formatTime(dayDate.getTime(), 'YYYY-MM-DD');
+    const dayRecords = weekRecords.filter(r => r.date === dayStr);
+    return {
+      day,
+      points: dayRecords.reduce((sum, r) => sum + r.points, 0),
+      carbon: Math.round(dayRecords.reduce((sum, r) => sum + r.carbon, 0) * 100) / 100,
+      count: dayRecords.length
+    };
+  });
+
+  const maxDailyPoints = Math.max(1, ...dailyData.map(d => d.points));
+
+  const categoryBreakdown = constants.LOW_CARBON_CHECKIN_TYPES.map(type => {
+    const weekTypeRecords = weekRecords.filter(r => r.type === type.value);
+    return {
+      type: type.value,
+      label: type.label,
+      icon: type.icon,
+      count: weekTypeRecords.length,
+      points: weekTypeRecords.reduce((sum, r) => sum + r.points, 0),
+      carbon: Math.round(weekTypeRecords.reduce((sum, r) => sum + r.carbon, 0) * 100) / 100
+    };
+  }).filter(c => c.count > 0);
+
+  const leaderboard = getLowCarbonLeaderboard('week');
+  const myRank = leaderboard.find(item => item.userId === userId);
+  const rankPercent = myRank ? Math.round((1 - (myRank.rank - 1) / leaderboard.length) * 100) : 0;
+
+  return {
+    totalPoints: userPoints.totalPoints,
+    totalCarbon: userPoints.totalCarbon,
+    totalDays: userPoints.checkinDays,
+    weekPoints,
+    weekCarbon: Math.round(weekCarbon * 100) / 100,
+    weekCheckinDays: dailyData.filter(d => d.count > 0).length,
+    dailyData,
+    maxDailyPoints,
+    categoryBreakdown,
+    rank: myRank ? myRank.rank : 0,
+    rankPercent,
+    tip: constants.LOW_CARBON_TIPS[Math.floor(Math.random() * constants.LOW_CARBON_TIPS.length)]
+  };
+}
+
 module.exports = {
   paginateList,
 
@@ -5367,5 +5747,19 @@ module.exports = {
   getFavoritePolicies,
   getInnovationIncubatorList,
   getInnovationIncubatorDetail,
-  applyForIncubator
+  applyForIncubator,
+
+  initLowCarbonData,
+  doLowCarbonCheckin,
+  getTodayCheckins,
+  getLowCarbonPoints,
+  getLowCarbonPointsRecord,
+  getLowCarbonLeaderboard,
+  getLowCarbonActivityList,
+  registerForEcoActivity,
+  cancelEcoActivityRegistration,
+  getLowCarbonRewardList,
+  redeemReward,
+  getLowCarbonRedeemOrders,
+  getWeeklyCarbonReport
 };

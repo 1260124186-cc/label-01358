@@ -1,0 +1,90 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{report}}">
+
+  <view class="report-header">
+    <view class="report-header-bg"></view>
+    <view class="report-header-content">
+      <text class="report-title">📊 碳足迹周报</text>
+      <text class="report-subtitle">本周环保表现一览</text>
+    </view>
+  </view>
+
+  <view class="stats-row">
+    <view class="stat-card">
+      <text class="stat-value">{{report.weekPoints}}</text>
+      <text class="stat-label">本周积分</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value">{{report.weekCarbon}}</text>
+      <text class="stat-label">减碳(kg)</text>
+    </view>
+    <view class="stat-card">
+      <text class="stat-value">{{report.weekCheckinDays}}/7</text>
+      <text class="stat-label">打卡天数</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">📈 每日打卡趋势</text>
+    </view>
+    <view class="chart-card">
+      <view class="chart-container">
+        <view class="chart-bar-group" wx:for="{{report.dailyData}}" wx:key="day">
+          <view class="chart-bar-wrap">
+            <view class="chart-bar" style="height: {{item.barHeight}}%;"></view>
+          </view>
+          <text class="chart-label">{{item.day}}</text>
+          <text class="chart-value" wx:if="{{item.points > 0}}">{{item.points}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{report.categoryBreakdown.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">🏷️ 分类统计</text>
+    </view>
+    <view class="category-card">
+      <view class="category-item" wx:for="{{report.categoryBreakdown}}" wx:key="type">
+        <view class="category-left">
+          <text class="category-icon">{{item.icon}}</text>
+          <view class="category-info">
+            <text class="category-label">{{item.label}}</text>
+            <text class="category-sub">{{item.count}}次 · {{item.carbon}}kg</text>
+          </view>
+        </view>
+        <text class="category-points">+{{item.points}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">🏆 排名概览</text>
+    </view>
+    <view class="rank-overview-card">
+      <view class="rank-main">
+        <text class="rank-number">{{report.rank}}</text>
+        <text class="rank-suffix">名</text>
+      </view>
+      <view class="rank-desc">
+        <text class="rank-percent">超过了 {{report.rankPercent}}% 的同学</text>
+        <text class="rank-total-points">累计 {{report.totalPoints}} 积分 · {{report.totalDays}} 天打卡</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tip-card">
+    <text class="tip-icon">💡</text>
+    <text class="tip-text">{{report.tip}}</text>
+  </view>
+
+  <view class="share-btn" hover-class="share-btn-hover">
+    <button class="share-button" open-type="share">
+      <text class="share-icon">📤</text>
+      <text class="share-text">分享周报</text>
+    </button>
+  </view>
+
+</view>

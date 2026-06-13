@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "环保活动",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "/components/empty/index"
+  }
+}

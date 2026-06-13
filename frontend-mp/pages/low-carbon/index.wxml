@@ -1,0 +1,134 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="hero-card">
+    <view class="hero-bg-circle hero-bg-circle-1"></view>
+    <view class="hero-bg-circle hero-bg-circle-2"></view>
+    <view class="hero-stats">
+      <view class="hero-stat-main">
+        <text class="hero-stat-value">{{totalPoints}}</text>
+        <text class="hero-stat-unit">碳积分</text>
+      </view>
+      <text class="hero-stat-label">累计碳积分</text>
+    </view>
+    <view class="hero-stats-row">
+      <view class="hero-stat-item">
+        <text class="hero-stat-num">{{totalCarbon}}</text>
+        <text class="hero-stat-desc">减碳(kg)</text>
+      </view>
+      <view class="hero-stat-divider"></view>
+      <view class="hero-stat-item">
+        <text class="hero-stat-num">{{checkinDays}}</text>
+        <text class="hero-stat-desc">打卡天数</text>
+      </view>
+      <view class="hero-stat-divider"></view>
+      <view class="hero-stat-item">
+        <text class="hero-stat-num">{{todayCount}}</text>
+        <text class="hero-stat-desc">今日打卡</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tip-bar" wx:if="{{tip}}">
+    <text class="tip-icon">💡</text>
+    <text class="tip-text">{{tip}}</text>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">🌿 每日低碳打卡</text>
+    </view>
+    <view class="checkin-grid">
+      <view
+        class="checkin-card {{todayCheckins[item.value] ? 'checked' : ''}}"
+        wx:for="{{checkinTypes}}"
+        wx:key="value"
+        hover-class="checkin-card-hover"
+        bindtap="onCheckin"
+        data-type="{{item.value}}"
+      >
+        <view class="checkin-icon-wrap {{todayCheckins[item.value] ? 'checked-icon' : ''}}">
+          <text class="checkin-icon">{{item.icon}}</text>
+        </view>
+        <text class="checkin-label">{{item.label}}</text>
+        <text class="checkin-points">+{{item.points}}积分</text>
+        <view class="checkin-done" wx:if="{{todayCheckins[item.value]}}">
+          <text class="checkin-done-icon">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">⚡ 快捷入口</text>
+    </view>
+    <view class="quick-grid">
+      <view class="quick-item" hover-class="quick-item-hover" bindtap="onNavLeaderboard">
+        <view class="quick-icon-wrap" style="background: linear-gradient(135deg, #FFE8E8 0%, #FFCECE 100%);">
+          <text class="quick-icon">🏆</text>
+        </view>
+        <text class="quick-label">排行榜</text>
+      </view>
+      <view class="quick-item" hover-class="quick-item-hover" bindtap="onNavWeeklyReport">
+        <view class="quick-icon-wrap" style="background: linear-gradient(135deg, #E0F7FA 0%, #B2EBF2 100%);">
+          <text class="quick-icon">📊</text>
+        </view>
+        <text class="quick-label">碳足迹周报</text>
+      </view>
+      <view class="quick-item" hover-class="quick-item-hover" bindtap="onNavActivity">
+        <view class="quick-icon-wrap" style="background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);">
+          <text class="quick-icon">🌍</text>
+        </view>
+        <text class="quick-label">环保活动</text>
+      </view>
+      <view class="quick-item" hover-class="quick-item-hover" bindtap="onNavRedeem">
+        <view class="quick-icon-wrap" style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);">
+          <text class="quick-icon">🎁</text>
+        </view>
+        <text class="quick-label">积分兑换</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{recentRecords.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">📋 最近打卡记录</text>
+    </view>
+    <view class="record-list">
+      <view class="record-item" wx:for="{{recentRecords}}" wx:key="id">
+        <view class="record-left">
+          <text class="record-icon">{{item.icon}}</text>
+          <view class="record-info">
+            <text class="record-label">{{item.label}}</text>
+            <text class="record-time">{{item.timeText}}</text>
+          </view>
+        </view>
+        <view class="record-right">
+          <text class="record-points">+{{item.points}}</text>
+          <text class="record-carbon">-{{item.carbon}}kg</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="checkin-success-overlay" wx:if="{{showCheckinSuccess}}" catchtap="dismissSuccess">
+    <view class="checkin-success-card">
+      <text class="success-icon">{{checkinResult.icon}}</text>
+      <text class="success-title">{{checkinResult.label}}打卡成功！</text>
+      <view class="success-rewards">
+        <view class="success-reward-item">
+          <text class="success-reward-value">+{{checkinResult.points}}</text>
+          <text class="success-reward-label">碳积分</text>
+        </view>
+        <view class="success-reward-divider"></view>
+        <view class="success-reward-item">
+          <text class="success-reward-value">-{{checkinResult.carbon}}kg</text>
+          <text class="success-reward-label">碳排放</text>
+        </view>
+      </view>
+      <text class="success-total">累计 {{checkinResult.totalPoints}} 积分</text>
+    </view>
+  </view>
+
+</view>

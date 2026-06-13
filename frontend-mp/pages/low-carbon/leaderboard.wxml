@@ -1,0 +1,106 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="tab-bar">
+    <scroll-view class="tab-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="tab-list">
+        <view
+          class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabTap"
+          data-value="{{item.value}}"
+        >
+          <text class="tab-text">{{item.label}}</text>
+          <view class="tab-underline" wx:if="{{currentTab === item.value}}"></view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="podium-section" wx:if="{{leaderboard.length >= 3}}">
+    <view class="podium">
+      <view class="podium-item podium-second">
+        <view class="podium-avatar-wrap">
+          <view class="podium-medal">🥈</view>
+          <view class="podium-avatar" style="background: linear-gradient(135deg, #C0C0C0 0%, #A8A8A8 100%);">
+            <text class="avatar-letter">{{leaderboard[1].userName[0]}}</text>
+          </view>
+        </view>
+        <text class="podium-name">{{leaderboard[1].userName}}</text>
+        <text class="podium-score">{{leaderboard[1].totalPoints}}</text>
+        <view class="podium-bar podium-bar-2"></view>
+      </view>
+      <view class="podium-item podium-first">
+        <view class="podium-avatar-wrap">
+          <view class="podium-crown">👑</view>
+          <view class="podium-avatar" style="background: linear-gradient(135deg, #22C55E 0%, #4ADE80 100%);">
+            <text class="avatar-letter">{{leaderboard[0].userName[0]}}</text>
+          </view>
+        </view>
+        <text class="podium-name">{{leaderboard[0].userName}}</text>
+        <text class="podium-score">{{leaderboard[0].totalPoints}}</text>
+        <view class="podium-bar podium-bar-1"></view>
+      </view>
+      <view class="podium-item podium-third">
+        <view class="podium-avatar-wrap">
+          <view class="podium-medal">🥉</view>
+          <view class="podium-avatar" style="background: linear-gradient(135deg, #CD7F32 0%, #B87333 100%);">
+            <text class="avatar-letter">{{leaderboard[2].userName[0]}}</text>
+          </view>
+        </view>
+        <text class="podium-name">{{leaderboard[2].userName}}</text>
+        <text class="podium-score">{{leaderboard[2].totalPoints}}</text>
+        <view class="podium-bar podium-bar-3"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="rank-list">
+    <view
+      class="rank-item {{item.isMe ? 'rank-item-me' : ''}}"
+      wx:for="{{leaderboard}}"
+      wx:key="userId"
+    >
+      <view class="rank-left">
+        <view class="rank-number" wx:if="{{!item.isTop3}}">
+          <text class="rank-num-text">{{item.rank}}</text>
+        </view>
+        <view class="rank-medal" wx:if="{{item.isTop3}}">
+          <text class="rank-medal-icon">{{item.medalIcon}}</text>
+        </view>
+        <view class="rank-avatar" style="background: linear-gradient(135deg, {{item.isMe ? '#22C55E' : '#4ECDC4'}} 0%, {{item.isMe ? '#4ADE80' : '#44A08D'}} 100%);">
+          <text class="avatar-letter">{{item.userName[0]}}</text>
+        </view>
+        <view class="rank-info">
+          <text class="rank-name">{{item.userName}}</text>
+          <text class="rank-sub">打卡{{item.checkinDays}}天 · 减碳{{item.totalCarbon}}kg</text>
+        </view>
+      </view>
+      <view class="rank-right">
+        <text class="rank-points">{{item.totalPoints}}</text>
+        <text class="rank-unit">积分</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="my-rank-card" wx:if="{{currentUserRank}}">
+    <view class="my-rank-left">
+      <view class="my-rank-badge" style="background: linear-gradient(135deg, #22C55E 0%, #4ADE80 100%);">
+        <text class="my-rank-num">{{currentUserRank.rank}}</text>
+      </view>
+      <view class="my-rank-avatar" style="background: linear-gradient(135deg, #22C55E 0%, #4ADE80 100%);">
+        <text class="avatar-letter">{{currentUserRank.userName[0]}}</text>
+      </view>
+      <view class="my-rank-info">
+        <text class="my-rank-label">我的排名</text>
+        <text class="my-rank-name">{{currentUserRank.userName}}</text>
+      </view>
+    </view>
+    <view class="my-rank-right">
+      <text class="my-rank-points">{{currentUserRank.totalPoints}}</text>
+      <text class="my-rank-unit">积分</text>
+    </view>
+  </view>
+
+</view>

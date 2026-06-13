@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "低碳校园",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "/components/empty/index"
+  }
+}

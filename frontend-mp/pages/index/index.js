@@ -131,6 +131,13 @@ Page({
         icon: '/assets/icons/nav-broadcast.png',
         bgColor: 'linear-gradient(135deg, #FA709A 0%, #FEE140 100%)',
         url: '/pages/exam-schedule/index'
+      },
+      {
+        id: 'low-carbon',
+        name: '低碳打卡',
+        icon: '/assets/icons/nav-scenery.png',
+        bgColor: 'linear-gradient(135deg, #D1FAE5 0%, #6EE7B7 100%)',
+        url: '/pages/low-carbon/index'
       }
     ],
     weatherData: null,

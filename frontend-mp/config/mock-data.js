@@ -6653,6 +6653,170 @@ const SHELTER_KNOWLEDGE = [
   }
 ];
 
+const MOCK_LOW_CARBON_ACTIVITIES = [
+  {
+    title: '校园植树节',
+    type: 'tree_planting',
+    description: '一起在校园种下绿色希望，为地球增添一抹绿色',
+    location: '校园后山绿化区',
+    startTime: Date.now() + 3 * 86400000,
+    endTime: Date.now() + 3 * 86400000 + 3 * 3600000,
+    maxParticipants: 50,
+    points: 20,
+    carbon: 5.0,
+    organizer: '校学生会环保部',
+    contact: '张同学 138****1234'
+  },
+  {
+    title: '世界环境日校园清洁行动',
+    type: 'cleanup',
+    description: '响应世界环境日号召，一起清洁校园环境，捡拾垃圾并分类处理',
+    location: '校园中心广场',
+    startTime: Date.now() + 5 * 86400000,
+    endTime: Date.now() + 5 * 86400000 + 2 * 3600000,
+    maxParticipants: 80,
+    points: 15,
+    carbon: 3.0,
+    organizer: '环保志愿者协会',
+    contact: '李同学 139****5678'
+  },
+  {
+    title: '环保知识讲座：低碳生活从我做起',
+    type: 'lecture',
+    description: '邀请环境学院教授分享低碳生活理念与实践方法，了解日常生活中的减碳小技巧',
+    location: '学术报告厅A201',
+    startTime: Date.now() + 7 * 86400000,
+    endTime: Date.now() + 7 * 86400000 + 2 * 3600000,
+    maxParticipants: 200,
+    points: 10,
+    carbon: 1.0,
+    organizer: '环境学院学生会',
+    contact: '王同学 137****9012'
+  },
+  {
+    title: '垃圾分类挑战赛',
+    type: 'competition',
+    description: '分组进行垃圾分类知识竞赛与实操比拼，赢取环保积分奖励',
+    location: '学生活动中心',
+    startTime: Date.now() + 10 * 86400000,
+    endTime: Date.now() + 10 * 86400000 + 3 * 3600000,
+    maxParticipants: 60,
+    points: 25,
+    carbon: 2.0,
+    organizer: '后勤管理处',
+    contact: '赵同学 136****3456'
+  },
+  {
+    title: '废旧物品回收创意DIY',
+    type: 'recycling',
+    description: '将废旧物品变废为宝，发挥创意制作实用小物件，体验循环利用的乐趣',
+    location: '创客空间',
+    startTime: Date.now() + 14 * 86400000,
+    endTime: Date.now() + 14 * 86400000 + 4 * 3600000,
+    maxParticipants: 30,
+    points: 15,
+    carbon: 2.5,
+    organizer: '创意手工社',
+    contact: '陈同学 135****7890'
+  }
+];
+
+const MOCK_LOW_CARBON_REWARDS = [
+  {
+    title: '食堂满减券',
+    category: 'coupon',
+    description: '校园食堂消费满15元减3元',
+    points: 30,
+    stock: 100,
+    totalStock: 100,
+    image: '',
+    validityDays: 30
+  },
+  {
+    title: '奶茶优惠券',
+    category: 'coupon',
+    description: '校内奶茶店任意饮品立减5元',
+    points: 50,
+    stock: 50,
+    totalStock: 50,
+    image: '',
+    validityDays: 15
+  },
+  {
+    title: '环保帆布袋',
+    category: 'gift',
+    description: '定制环保帆布袋，印有校园低碳标语',
+    points: 200,
+    stock: 20,
+    totalStock: 20,
+    image: '',
+    validityDays: 0
+  },
+  {
+    title: '迷你绿植盆栽',
+    category: 'gift',
+    description: '一盆迷你多肉植物，点缀你的书桌',
+    points: 150,
+    stock: 30,
+    totalStock: 30,
+    image: '',
+    validityDays: 0
+  },
+  {
+    title: '低碳达人头衔',
+    category: 'virtual',
+    description: '获得专属低碳达人头衔，展示在你的个人主页',
+    points: 100,
+    stock: 999,
+    totalStock: 999,
+    image: '',
+    validityDays: 90
+  },
+  {
+    title: '自习室预约优先权',
+    category: 'service',
+    description: '享受7天自习室预约优先权',
+    points: 80,
+    stock: 200,
+    totalStock: 200,
+    image: '',
+    validityDays: 7
+  },
+  {
+    title: '打印优惠券',
+    category: 'coupon',
+    description: '校内打印店免费打印20张',
+    points: 40,
+    stock: 80,
+    totalStock: 80,
+    image: '',
+    validityDays: 30
+  },
+  {
+    title: '运动手环',
+    category: 'gift',
+    description: '简约运动手环，记录你的低碳出行步数',
+    points: 500,
+    stock: 10,
+    totalStock: 10,
+    image: '',
+    validityDays: 0
+  }
+];
+
+const MOCK_LOW_CARBON_LEADERBOARD = [
+  { userId: 'user_lc_1', userName: '林小绿', totalPoints: 860, totalCarbon: 72.5, checkinDays: 45, walkCount: 30, emptyPlateCount: 40, paperlessCount: 25, transportCount: 20 },
+  { userId: 'user_lc_2', userName: '王环保', totalPoints: 720, totalCarbon: 58.3, checkinDays: 38, walkCount: 25, emptyPlateCount: 35, paperlessCount: 20, transportCount: 18 },
+  { userId: 'user_lc_3', userName: '张低碳', totalPoints: 650, totalCarbon: 51.0, checkinDays: 35, walkCount: 20, emptyPlateCount: 30, paperlessCount: 28, transportCount: 15 },
+  { userId: 'user_lc_4', userName: '李步行', totalPoints: 580, totalCarbon: 45.8, checkinDays: 30, walkCount: 28, emptyPlateCount: 20, paperlessCount: 15, transportCount: 12 },
+  { userId: 'user_lc_5', userName: '陈绿意', totalPoints: 520, totalCarbon: 40.2, checkinDays: 28, walkCount: 18, emptyPlateCount: 25, paperlessCount: 22, transportCount: 10 },
+  { userId: 'user_lc_6', userName: '赵环保', totalPoints: 460, totalCarbon: 36.5, checkinDays: 25, walkCount: 15, emptyPlateCount: 22, paperlessCount: 18, transportCount: 8 },
+  { userId: 'user_lc_7', userName: '刘绿色', totalPoints: 390, totalCarbon: 30.8, checkinDays: 22, walkCount: 12, emptyPlateCount: 18, paperlessCount: 14, transportCount: 7 },
+  { userId: 'user_lc_8', userName: '黄减碳', totalPoints: 320, totalCarbon: 25.1, checkinDays: 18, walkCount: 10, emptyPlateCount: 15, paperlessCount: 10, transportCount: 5 },
+  { userId: 'user_lc_9', userName: '周生态', totalPoints: 250, totalCarbon: 19.6, checkinDays: 15, walkCount: 8, emptyPlateCount: 12, paperlessCount: 8, transportCount: 4 },
+  { userId: 'user_lc_10', userName: '吴清风', totalPoints: 180, totalCarbon: 14.2, checkinDays: 10, walkCount: 5, emptyPlateCount: 8, paperlessCount: 6, transportCount: 3 }
+];
+
 module.exports = {
   ..._firstExports,
   MOCK_CLUBS,
@@ -6678,5 +6842,8 @@ module.exports = {
   SHELTER_VOLUNTEER_SIGNUPS,
   SHELTER_DONATION_USAGE,
   SHELTER_QUICK_ENTRIES,
-  SHELTER_KNOWLEDGE
+  SHELTER_KNOWLEDGE,
+  MOCK_LOW_CARBON_ACTIVITIES,
+  MOCK_LOW_CARBON_REWARDS,
+  MOCK_LOW_CARBON_LEADERBOARD
 };

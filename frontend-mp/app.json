@@ -131,7 +131,12 @@
     "pages/innovation/policy-list",
     "pages/innovation/policy-detail",
     "pages/innovation/incubator-list",
-    "pages/innovation/incubator-detail"
+    "pages/innovation/incubator-detail",
+    "pages/low-carbon/index",
+    "pages/low-carbon/leaderboard",
+    "pages/low-carbon/weekly-report",
+    "pages/low-carbon/activity",
+    "pages/low-carbon/redeem"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",
