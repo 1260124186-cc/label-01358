@@ -16,6 +16,11 @@ let pageOptions = {
     ],
     records: [],
     filteredRecords: [],
+    stats: {
+      total: 0,
+      completed: 0,
+      pending: 0
+    },
     selectedRecord: null,
     showDetail: false
   },
@@ -86,7 +91,13 @@ let pageOptions = {
       filtered = records.filter(item => item.type === currentTab);
     }
 
-    this.setData({ filteredRecords: filtered });
+    const stats = {
+      total: filtered.length,
+      completed: filtered.filter(r => r.status === 'completed').length,
+      pending: filtered.filter(r => r.status === 'pending').length
+    };
+
+    this.setData({ filteredRecords: filtered, stats });
   },
 
   onRecordTap(e) {

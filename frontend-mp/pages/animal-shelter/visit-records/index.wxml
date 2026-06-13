@@ -18,17 +18,17 @@
 
     <view class="stats-banner">
       <view class="stats-item">
-        <text class="stats-num">{{filteredRecords.length}}</text>
+        <text class="stats-num">{{stats.total}}</text>
         <text class="stats-label">总回访记录</text>
       </view>
       <view class="stats-divider"></view>
       <view class="stats-item">
-        <text class="stats-num success">{{filteredRecords.filter(r => r.status === 'completed').length}}</text>
+        <text class="stats-num success">{{stats.completed}}</text>
         <text class="stats-label">已完成</text>
       </view>
       <view class="stats-divider"></view>
       <view class="stats-item">
-        <text class="stats-num warning">{{filteredRecords.filter(r => r.status === 'pending').length}}</text>
+        <text class="stats-num warning">{{stats.pending}}</text>
         <text class="stats-label">待回访</text>
       </view>
     </view>
