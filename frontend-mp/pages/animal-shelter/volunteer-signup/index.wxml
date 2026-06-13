@@ -14,11 +14,11 @@
       </view>
       <view class="banner-stats">
         <view class="stat-item">
-          <view class="stat-num">{{activities.length}}</view>
+          <view class="stat-num">{{stats.activityCount}}</view>
           <view class="stat-label">进行中活动</view>
         </view>
         <view class="stat-item">
-          <view class="stat-num">{{activities.reduce((s, a) => s + a.currentParticipants, 0)}}</view>
+          <view class="stat-num">{{stats.totalVolunteers}}</view>
           <view class="stat-label">志愿者</view>
         </view>
       </view>

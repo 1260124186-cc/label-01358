@@ -9,6 +9,7 @@ let pageOptions = {
     showSkeleton: true,
     currentTab: 'activities',
     activities: [],
+    stats: null,
     roles: constants.VOLUNTEER_ROLES,
     form: {
       name: '',
@@ -56,8 +57,15 @@ let pageOptions = {
         }))
         .sort((a, b) => a.startTime - b.startTime);
 
+      const totalVolunteers = activities.reduce((s, a) => s + a.currentParticipants, 0);
+      const stats = {
+        activityCount: activities.length,
+        totalVolunteers
+      };
+
       this.setData({
         activities,
+        stats,
         showSkeleton: false
       });
 
