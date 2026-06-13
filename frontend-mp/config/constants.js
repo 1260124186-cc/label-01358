@@ -1031,6 +1031,127 @@ const INNOVATION_PROJECT_STATUS_MAP = INNOVATION_PROJECT_STATUS.reduce((acc, s) 
   return acc;
 }, {});
 
+// ==================== 流浪动物救助站 ====================
+
+const ANIMAL_TYPES = [
+  { value: 'dog', label: '狗狗', icon: '🐕', color: '#FF8C42' },
+  { value: 'cat', label: '猫咪', icon: '🐱', color: '#9B59B6' },
+  { value: 'rabbit', label: '兔子', icon: '🐰', color: '#F39C12' },
+  { value: 'bird', label: '鸟类', icon: '🐦', color: '#3498DB' },
+  { value: 'other', label: '其他', icon: '🐾', color: '#1ABC9C' }
+];
+
+const ANIMAL_TYPE_MAP = ANIMAL_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, icon: t.icon, color: t.color };
+  return acc;
+}, {});
+
+const ANIMAL_GENDERS = [
+  { value: 'male', label: '公', icon: '♂' },
+  { value: 'female', label: '母', icon: '♀' }
+];
+
+const ANIMAL_HEALTH_STATUS = [
+  { value: 'excellent', label: '非常健康', color: '#10B981', icon: '💚' },
+  { value: 'good', label: '健康', color: '#22C55E', icon: '✅' },
+  { value: 'recovering', label: '康复中', color: '#F59E0B', icon: '💊' },
+  { value: 'special', label: '特殊照顾', color: '#EF4444', icon: '🏥' }
+];
+
+const ANIMAL_HEALTH_MAP = ANIMAL_HEALTH_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const ANIMAL_PERSONALITY_TAGS = [
+  { value: 'friendly', label: '亲人', color: '#FF6B6B' },
+  { value: 'active', label: '活泼', color: '#FFE66D' },
+  { value: 'quiet', label: '安静', color: '#4ECDC4' },
+  { value: 'shy', label: '胆小', color: '#95E1D3' },
+  { value: 'playful', label: '爱玩', color: '#FF8E8E' },
+  { value: 'independent', label: '独立', color: '#A8D8EA' },
+  { value: 'gentle', label: '温顺', color: '#FDCB6E' },
+  { value: 'curious', label: '好奇', color: '#74B9FF' },
+  { value: 'protective', label: '护主', color: '#E17055' },
+  { value: 'social', label: '合群', color: '#55EFC4' }
+];
+
+const ANIMAL_AGE_RANGES = [
+  { value: 'baby', label: '幼年(0-1岁)', min: 0, max: 1 },
+  { value: 'young', label: '青年(1-3岁)', min: 1, max: 3 },
+  { value: 'adult', label: '成年(3-7岁)', min: 3, max: 7 },
+  { value: 'senior', label: '老年(7岁+)', min: 7, max: 30 }
+];
+
+const ADOPTION_STATUS = [
+  { value: 'available', label: '待领养', color: '#10B981' },
+  { value: 'pending', label: '申请中', color: '#F59E0B' },
+  { value: 'reserved', label: '已预定', color: '#3B82F6' },
+  { value: 'adopted', label: '已领养', color: '#6B7280' }
+];
+
+const ADOPTION_STATUS_MAP = ADOPTION_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const ADOPTION_APPLICATION_STATUS = [
+  { value: 'pending', label: '待审核', color: '#F59E0B', icon: '⏳' },
+  { value: 'reviewing', label: '审核中', color: '#3B82F6', icon: '🔍' },
+  { value: 'interview', label: '待家访', color: '#8B5CF6', icon: '🏠' },
+  { value: 'approved', label: '已通过', color: '#10B981', icon: '✅' },
+  { value: 'rejected', label: '已拒绝', color: '#EF4444', icon: '❌' },
+  { value: 'completed', label: '已完成', color: '#10B981', icon: '🎉' }
+];
+
+const ADOPTION_APPLICATION_STATUS_MAP = ADOPTION_APPLICATION_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const VISIT_RECORD_TYPES = [
+  { value: 'first', label: '首次家访', color: '#3B82F6' },
+  { value: 'weekly', label: '周回访', color: '#10B981' },
+  { value: 'monthly', label: '月回访', color: '#8B5CF6' },
+  { value: 'quarterly', label: '季回访', color: '#F59E0B' },
+  { value: 'special', label: '专项回访', color: '#EC4899' }
+];
+
+const DONATION_TYPES = [
+  { value: 'money', label: '资金捐赠', icon: '💰', color: '#10B981' },
+  { value: 'food', label: '粮食物资', icon: '🥣', color: '#F59E0B' },
+  { value: 'medical', label: '医疗物资', icon: '💊', color: '#EF4444' },
+  { value: 'daily', label: '生活用品', icon: '🧻', color: '#3B82F6' },
+  { value: 'other', label: '其他物资', icon: '📦', color: '#8B5CF6' }
+];
+
+const VOLUNTEER_ROLES = [
+  { value: 'feeding', label: '喂养照顾', icon: '🍖', color: '#FF6B6B' },
+  { value: 'cleaning', label: '清洁打扫', icon: '🧹', color: '#4ECDC4' },
+  { value: 'medical', label: '医疗协助', icon: '🏥', color: '#EF4444' },
+  { value: 'walking', label: '遛狗陪玩', icon: '🎾', color: '#FFE66D' },
+  { value: 'photography', label: '摄影宣传', icon: '📸', color: '#8B5CF6' },
+  { value: 'adoption', label: '领养对接', icon: '🤝', color: '#3B82F6' },
+  { value: 'transport', label: '运输接送', icon: '🚗', color: '#F59E0B' },
+  { value: 'other', label: '其他', icon: '👐', color: '#6B7280' }
+];
+
+const SHELTER_MAIN_TABS = [
+  { value: 'pets', label: '待领养', icon: '🐾' },
+  { value: 'donation', label: '捐赠', icon: '💝' },
+  { value: 'volunteer', label: '志愿者', icon: '🙋' },
+  { value: 'my', label: '我的', icon: '👤' }
+];
+
+const SHELTER_FILTER_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'dog', label: '狗狗' },
+  { value: 'cat', label: '猫咪' },
+  { value: 'rabbit', label: '兔子' },
+  { value: 'bird', label: '鸟类' },
+  { value: 'other', label: '其他' }
+];
+
 module.exports = {
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
@@ -1163,5 +1284,21 @@ module.exports = {
   INNOVATION_MAIN_TABS,
   INNOVATION_APPOINTMENT_TIME_SLOTS,
   INNOVATION_PROJECT_STATUS,
-  INNOVATION_PROJECT_STATUS_MAP
+  INNOVATION_PROJECT_STATUS_MAP,
+  ANIMAL_TYPES,
+  ANIMAL_TYPE_MAP,
+  ANIMAL_GENDERS,
+  ANIMAL_HEALTH_STATUS,
+  ANIMAL_HEALTH_MAP,
+  ANIMAL_PERSONALITY_TAGS,
+  ANIMAL_AGE_RANGES,
+  ADOPTION_STATUS,
+  ADOPTION_STATUS_MAP,
+  ADOPTION_APPLICATION_STATUS,
+  ADOPTION_APPLICATION_STATUS_MAP,
+  VISIT_RECORD_TYPES,
+  DONATION_TYPES,
+  VOLUNTEER_ROLES,
+  SHELTER_MAIN_TABS,
+  SHELTER_FILTER_TABS
 };

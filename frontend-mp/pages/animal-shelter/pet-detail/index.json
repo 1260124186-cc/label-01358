@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "动物详情",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "skeleton": "/components/skeleton/index"
+  }
+}

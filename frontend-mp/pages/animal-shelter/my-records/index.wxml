@@ -1,0 +1,192 @@
+<view class="my-records-page {{darkMode ? 'dark' : ''}}">
+
+  <skeleton wx:if="{{showSkeleton}}" />
+
+  <block wx:else>
+
+    <view class="banner">
+      <view class="banner-header">
+        <view class="banner-icon">👤</view>
+        <view class="banner-text">
+          <view class="banner-title">我的记录</view>
+          <view class="banner-desc">爱心旅程，一路相伴</view>
+        </view>
+      </view>
+      <view class="stats-grid">
+        <view class="stat-item">
+          <view class="stat-num">{{stats.totalApplications}}</view>
+          <view class="stat-label">申请次数</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-num">{{stats.approved}}</view>
+          <view class="stat-label">审核通过</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-num">{{stats.adopted}}</view>
+          <view class="stat-label">成功领养</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-num">{{stats.visitRecords}}</view>
+          <view class="stat-label">回访记录</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tab-bar">
+      <view 
+        class="tab-item {{currentTab === 'applications' ? 'active' : ''}}"
+        data-value="applications"
+        bindtap="onTabTap"
+      >
+        📝 我的申请
+      </view>
+      <view 
+        class="tab-item {{currentTab === 'adopted' ? 'active' : ''}}"
+        data-value="adopted"
+        bindtap="onTabTap"
+      >
+        🏠 已领养
+      </view>
+    </view>
+
+    <view class="content-section" wx:if="{{currentTab === 'applications'}}">
+      <view class="record-list" wx:if="{{applications.length > 0}}">
+        <view 
+          class="record-card" 
+          wx:for="{{applications}}" 
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onApplicationTap"
+        >
+          <view class="record-header">
+            <image class="animal-avatar" src="{{item.animalAvatar}}" mode="aspectFill" />
+            <view class="animal-info">
+              <view class="animal-name">
+                <text class="type-icon">{{item.typeIcon}}</text>
+                {{item.animalName}}
+              </view>
+              <view class="apply-time">申请时间：{{item.createTimeText}}</view>
+            </view>
+            <view class="status-badge" style="background: {{item.statusColor}}15; color: {{item.statusColor}};">
+              <text>{{item.statusIcon}} {{item.statusLabel}}</text>
+            </view>
+          </view>
+          <view class="record-footer">
+            <text class="update-time">{{item.updateTimeText}}更新</text>
+            <view class="action-btn">查看详情</view>
+          </view>
+        </view>
+      </view>
+      <empty wx:else text="暂无申请记录" icon="📝" />
+    </view>
+
+    <view class="content-section" wx:if="{{currentTab === 'adopted'}}">
+      <view class="pet-list" wx:if="{{adoptedPets.length > 0}}">
+        <view 
+          class="pet-card" 
+          wx:for="{{adoptedPets}}" 
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onAdoptedPetTap"
+        >
+          <image class="pet-avatar" src="{{item.animalAvatar}}" mode="aspectFill" />
+          <view class="pet-info">
+            <view class="pet-name">
+              <text class="type-icon">{{item.typeIcon}}</text>
+              {{item.animalName}}
+            </view>
+            <view class="pet-meta">
+              <text>{{item.breed}}</text>
+              <text class="dot">·</text>
+              <text>{{item.ageText}}</text>
+            </view>
+            <view class="pet-stats">
+              <view class="stat-chip">
+                <text>📅</text>
+                <text>领养于 {{item.adoptDateText}}</text>
+              </view>
+            </view>
+            <view class="pet-visit">
+              <text class="visit-count">📋 回访 {{item.visitCount}} 次</text>
+              <text class="last-visit">{{item.lastVisitTime}}</text>
+            </view>
+          </view>
+          <view class="arrow">›</view>
+        </view>
+      </view>
+      <empty wx:else text="暂无领养记录" icon="🏠" />
+    </view>
+
+  </block>
+
+  <view class="detail-mask" wx:if="{{showDetail}}" bindtap="onCloseDetail">
+    <view class="detail-content" catchtap="catchNoop">
+      <view class="detail-header">
+        <view class="detail-title">申请详情</view>
+        <view class="close-btn" bindtap="onCloseDetail">✕</view>
+      </view>
+
+      <view class="detail-animal" wx:if="{{selectedRecord}}">
+        <image class="detail-avatar" src="{{selectedRecord.animalAvatar}}" mode="aspectFill" />
+        <view class="detail-animal-info">
+          <view class="detail-animal-name">
+            <text class="type-icon">{{selectedRecord.typeIcon}}</text>
+            {{selectedRecord.animalName}}
+          </view>
+          <view class="detail-status" style="background: {{selectedRecord.statusColor}}15; color: {{selectedRecord.statusColor}};">
+            {{selectedRecord.statusIcon}} {{selectedRecord.statusLabel}}
+          </view>
+        </view>
+      </view>
+
+      <view class="detail-section" wx:if="{{selectedRecord}}">
+        <view class="section-title">申请信息</view>
+        <view class="detail-row">
+          <text class="row-label">申请人</text>
+          <text class="row-value">{{selectedRecord.applicantName}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="row-label">联系电话</text>
+          <text class="row-value">{{selectedRecord.applicantPhone}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="row-label">申请时间</text>
+          <text class="row-value">{{selectedRecord.createTimeText}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="row-label">更新时间</text>
+          <text class="row-value">{{selectedRecord.updateTimeText}}</text>
+        </view>
+      </view>
+
+      <view class="detail-section" wx:if="{{selectedRecord && selectedRecord.reason}}">
+        <view class="section-title">领养宣言</view>
+        <view class="reason-text">{{selectedRecord.reason}}</view>
+      </view>
+
+      <view class="detail-section" wx:if="{{selectedRecord && selectedRecord.reviewNote}}">
+        <view class="section-title">审核意见</view>
+        <view class="review-note">{{selectedRecord.reviewNote}}</view>
+      </view>
+
+      <view class="detail-actions">
+        <button class="action-btn secondary" bindtap="onViewAnimal">查看动物</button>
+        <button 
+          class="action-btn primary" 
+          bindtap="onContactShelter"
+          wx:if="{{selectedRecord && selectedRecord.status !== 'rejected'}}"
+        >
+          联系救助站
+        </button>
+        <button 
+          class="action-btn primary" 
+          bindtap="onSubmitAgain"
+          wx:if="{{selectedRecord && selectedRecord.status === 'rejected'}}"
+        >
+          重新申请
+        </button>
+      </view>
+    </view>
+  </view>
+
+</view>

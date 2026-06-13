@@ -1,0 +1,191 @@
+<view class="donation-page {{darkMode ? 'dark' : ''}}">
+
+  <skeleton wx:if="{{showSkeleton}}" />
+
+  <block wx:else>
+
+    <view class="banner">
+      <view class="banner-content">
+        <view class="banner-icon">💝</view>
+        <view class="banner-text">
+          <view class="banner-title">爱心捐赠</view>
+          <view class="banner-desc">每一份爱心都是生命的希望</view>
+        </view>
+      </view>
+      <view class="banner-stats">
+        <view class="stat-item">
+          <view class="stat-num">{{stats.totalDonors}}</view>
+          <view class="stat-label">爱心人士</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-num">¥{{stats.totalAmount}}</view>
+          <view class="stat-label">累计捐款</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-num">¥{{stats.thisMonthAmount}}</view>
+          <view class="stat-label">本月捐款</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="tab-bar">
+      <view 
+        class="tab-item {{currentTab === 'money' ? 'active' : ''}}"
+        data-value="money"
+        bindtap="onTabTap"
+      >
+        💰 资金捐赠
+      </view>
+      <view 
+        class="tab-item {{currentTab === 'supplies' ? 'active' : ''}}"
+        data-value="supplies"
+        bindtap="onTabTap"
+      >
+        🎁 物资捐赠
+      </view>
+    </view>
+
+    <view class="money-section" wx:if="{{currentTab === 'money'}}">
+      <view class="section-card">
+        <view class="section-title">
+          <text>选择捐赠金额</text>
+        </view>
+        <view class="amount-grid">
+          <view 
+            class="amount-item {{customAmount === item.value ? 'active' : ''}}"
+            wx:for="{{moneyItems}}"
+            wx:key="id"
+            data-amount="{{item.value}}"
+            bindtap="onAmountTap"
+          >
+            <text class="amount-value">¥{{item.value}}</text>
+            <text class="amount-desc">{{item.desc}}</text>
+          </view>
+        </view>
+        <view class="custom-amount">
+          <text class="amount-prefix">¥</text>
+          <input 
+            class="amount-input" 
+            type="digit" 
+            placeholder="自定义金额" 
+            value="{{amountInput}}"
+            bindinput="onAmountInput"
+          />
+        </view>
+        <button 
+          class="donate-btn {{submitting ? 'loading' : ''}}"
+          bindtap="onConfirmDonate"
+          disabled="{{submitting}}"
+        >
+          <text wx:if="{{submitting}}">捐赠中...</text>
+          <text wx:else>确认捐赠 ¥{{customAmount || 0}}</text>
+        </button>
+        <view class="protocol-row" bindtap="onProtocolTap">
+          <text>💡 点击了解捐赠用途和说明</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="supplies-section" wx:if="{{currentTab === 'supplies'}}">
+      <view class="supply-list">
+        <view 
+          class="supply-item" 
+          wx:for="{{supplyItems}}" 
+          wx:key="id"
+          data-item="{{item}}"
+          bindtap="onDonateTap"
+        >
+          <view class="supply-icon" style="background: {{item.iconBg}};">
+            <text>{{item.icon}}</text>
+          </view>
+          <view class="supply-info">
+            <text class="supply-name">{{item.name}}</text>
+            <text class="supply-desc">{{item.desc}}</text>
+            <text class="supply-need">急需 {{item.needed}} 份</text>
+          </view>
+          <view class="supply-action">
+            <text class="supply-price">¥{{item.amount}}/份</text>
+            <view class="supply-btn" data-item="{{item}}" catchtap="onSupplyDonateTap">
+              捐赠物资
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="delivery-info">
+        <view class="info-title">📦 物资寄送地址</view>
+        <view class="info-row">
+          <text class="info-label">地址：</text>
+          <text class="info-value">北京市朝阳区XX路XX号 流浪动物救助站</text>
+          <view class="copy-btn" bindtap="onCopyAddress">复制</view>
+        </view>
+        <view class="info-row">
+          <text class="info-label">收件人：</text>
+          <text class="info-value">志愿者 138XXXX1234</text>
+          <view class="copy-btn" bindtap="onCallPhone">拨打</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="usage-section section-card">
+      <view class="section-title">
+        <text>📊 捐赠使用明细</text>
+      </view>
+      <view class="usage-list">
+        <view class="usage-item" wx:for="{{usageList}}" wx:key="id">
+          <view class="usage-icon" style="background: {{item.iconBg}};">
+            <text>{{item.icon}}</text>
+          </view>
+          <view class="usage-info">
+            <text class="usage-title">{{item.title}}</text>
+            <text class="usage-desc">{{item.desc}}</text>
+            <text class="usage-date">{{item.dateText}}</text>
+          </view>
+          <view class="usage-amount">-{{item.amountText}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="records-section section-card">
+      <view class="section-title">
+        <text>💖 最近捐赠</text>
+      </view>
+      <view class="records-list">
+        <view class="record-item" wx:for="{{donationRecords}}" wx:key="id">
+          <view class="record-avatar">
+            <text>{{item.anonymous ? '🙏' : '爱心人士'}}</text>
+          </view>
+          <view class="record-info">
+            <view class="record-name">
+              {{item.anonymous ? '好心人' : item.donorName}}
+              <text class="record-type">{{item.typeText}}</text>
+            </view>
+            <view class="record-desc">{{item.message || '爱心捐赠'}}</view>
+            <view class="record-time">{{item.timeText}}</view>
+          </view>
+          <view class="record-amount">{{item.amountText}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="footer-notice">
+      <text>📢 所有捐款将定期公示，接受社会监督</text>
+    </view>
+
+  </block>
+
+  <view class="success-mask" wx:if="{{showSuccess}}" bindtap="onSuccessClose">
+    <view class="success-content" catchtap="catchNoop">
+      <view class="success-icon">💖</view>
+      <view class="success-title">感谢您的爱心！</view>
+      <view class="success-desc">
+        您的每一份捐助都将帮助到\n需要帮助的毛孩子们 🐾
+      </view>
+      <view class="success-btns">
+        <view class="success-btn secondary" bindtap="onSuccessClose">继续浏览</view>
+        <view class="success-btn primary" open-type="share">分享给朋友</view>
+      </view>
+    </view>
+  </view>
+
+</view>

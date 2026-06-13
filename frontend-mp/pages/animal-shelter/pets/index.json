@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "待领养动物",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50,
+  "usingComponents": {
+    "empty": "/components/empty/index",
+    "skeleton": "/components/skeleton/index"
+  }
+}

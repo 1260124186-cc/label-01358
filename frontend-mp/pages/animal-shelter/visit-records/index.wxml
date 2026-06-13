@@ -1,0 +1,188 @@
+<view class="visit-records {{darkMode ? 'dark' : ''}}">
+
+  <skeleton wx:if="{{showSkeleton}}" />
+
+  <block wx:else>
+
+    <view class="tab-bar">
+      <view 
+        class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+        wx:for="{{tabs}}"
+        wx:key="value"
+        data-value="{{item.value}}"
+        bindtap="onTabTap"
+      >
+        {{item.label}}
+      </view>
+    </view>
+
+    <view class="stats-banner">
+      <view class="stats-item">
+        <text class="stats-num">{{filteredRecords.length}}</text>
+        <text class="stats-label">总回访记录</text>
+      </view>
+      <view class="stats-divider"></view>
+      <view class="stats-item">
+        <text class="stats-num success">{{filteredRecords.filter(r => r.status === 'completed').length}}</text>
+        <text class="stats-label">已完成</text>
+      </view>
+      <view class="stats-divider"></view>
+      <view class="stats-item">
+        <text class="stats-num warning">{{filteredRecords.filter(r => r.status === 'pending').length}}</text>
+        <text class="stats-label">待回访</text>
+      </view>
+    </view>
+
+    <view class="record-list" wx:if="{{filteredRecords.length > 0}}">
+      <view 
+        class="record-card" 
+        wx:for="{{filteredRecords}}" 
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onRecordTap"
+      >
+        <view class="record-header">
+          <view class="animal-info">
+            <image src="{{item.animalAvatar}}" mode="aspectFill" class="animal-avatar" />
+            <view class="animal-text">
+              <text class="animal-name">{{item.animalName}}</text>
+              <text class="adopter-name">领养人：{{item.adopterName}}</text>
+            </view>
+          </view>
+          <view class="record-type" style="background: {{item.typeColor}}15; color: {{item.typeColor}};">
+            <text>{{item.typeIcon}} {{item.typeLabel}}</text>
+          </view>
+        </view>
+
+        <view class="record-content">
+          <view class="record-info-row">
+            <text class="record-label">回访时间</text>
+            <text class="record-value">{{item.dateText}} {{item.timeText}}</text>
+          </view>
+          <view class="record-info-row">
+            <text class="record-label">回访人员</text>
+            <text class="record-value">{{item.volunteerName}}</text>
+          </view>
+          <view class="record-summary" wx:if="{{item.summary}}">
+            <text>{{item.summary}}</text>
+          </view>
+        </view>
+
+        <view class="record-footer">
+          <view class="record-status" style="color: {{item.statusColor}};">
+            <text class="status-dot" style="background: {{item.statusColor}};"></text>
+            {{item.statusLabel}}
+          </view>
+          <text class="record-time">{{item.createText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <empty wx:else text="暂无回访记录" />
+
+  </block>
+
+  <view class="detail-mask" wx:if="{{showDetail}}" bindtap="onDetailClose"></view>
+  <view class="detail-modal {{showDetail ? 'show' : ''}}" catchtap="catchNoop" wx:if="{{selectedRecord}}">
+    <view class="detail-header">
+      <view class="detail-title">回访详情</view>
+      <view class="close-btn" bindtap="onDetailClose">✕</view>
+    </view>
+
+    <scroll-view class="detail-content" scroll-y="{{true}}">
+      <view class="detail-animal">
+        <image src="{{selectedRecord.animalAvatar}}" mode="aspectFill" class="detail-animal-avatar" />
+        <view class="detail-animal-info">
+          <text class="detail-animal-name">{{selectedRecord.animalName}}</text>
+          <view class="detail-tags">
+            <view class="detail-tag" style="background: {{selectedRecord.typeColor}}15; color: {{selectedRecord.typeColor}};">
+              {{selectedRecord.typeIcon}} {{selectedRecord.typeLabel}}
+            </view>
+            <view class="detail-tag" style="background: {{selectedRecord.statusColor}}15; color: {{selectedRecord.statusColor}};">
+              {{selectedRecord.statusLabel}}
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="detail-section">
+        <view class="detail-section-title">基本信息</view>
+        <view class="detail-info-item">
+          <text class="detail-info-label">回访时间</text>
+          <text class="detail-info-value">{{selectedRecord.dateText}} {{selectedRecord.timeText}}</text>
+        </view>
+        <view class="detail-info-item">
+          <text class="detail-info-label">领养人</text>
+          <text class="detail-info-value">{{selectedRecord.adopterName}}</text>
+        </view>
+        <view class="detail-info-item">
+          <text class="detail-info-label">联系电话</text>
+          <view class="detail-info-value">
+            <text>{{selectedRecord.adopterPhone}}</text>
+            <view class="call-btn" bindtap="onCallAdopter">拨打</view>
+          </view>
+        </view>
+        <view class="detail-info-item">
+          <text class="detail-info-label">回访人员</text>
+          <text class="detail-info-value">{{selectedRecord.volunteerName}}</text>
+        </view>
+      </view>
+
+      <view class="detail-section" wx:if="{{selectedRecord.content}}">
+        <view class="detail-section-title">回访内容</view>
+        <view class="detail-content-text">
+          <text>{{selectedRecord.content}}</text>
+        </view>
+      </view>
+
+      <view class="detail-section" wx:if="{{selectedRecord.photos && selectedRecord.photos.length > 0}}">
+        <view class="detail-section-title">现场照片</view>
+        <view class="detail-photos">
+          <image 
+            wx:for="{{selectedRecord.photos}}" 
+            wx:key="*this"
+            src="{{item}}" 
+            mode="aspectFill" 
+            class="detail-photo"
+            data-index="{{index}}"
+            bindtap="onViewPhotos"
+          />
+        </view>
+      </view>
+
+      <view class="detail-section" wx:if="{{selectedRecord.videoUrl}}">
+        <view class="detail-section-title">回访视频</view>
+        <view class="detail-video" bindtap="onWatchVideo">
+          <text class="video-icon">▶️</text>
+          <text class="video-text">点击播放回访视频</text>
+        </view>
+      </view>
+
+      <view class="detail-section" wx:if="{{selectedRecord.rating}}">
+        <view class="detail-section-title">状态评估</view>
+        <view class="detail-rating">
+          <text class="rating-label">整体状况</text>
+          <view class="rating-stars">
+            <text wx:for="{{5}}" wx:key="*this">
+              {{index < selectedRecord.rating ? '⭐' : '☆'}}
+            </text>
+          </view>
+        </view>
+        <view class="detail-remarks" wx:if="{{selectedRecord.remarks}}">
+          <text class="remarks-label">备注</text>
+          <text class="remarks-text">{{selectedRecord.remarks}}</text>
+        </view>
+      </view>
+
+      <view class="detail-footer">
+        <view class="footer-btn secondary" bindtap="onCallVolunteer">
+          📞 联系回访员
+        </view>
+        <view class="footer-btn primary" wx:if="{{selectedRecord.status === 'pending'}}">
+          确认回访
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+</view>

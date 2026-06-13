@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "生命关怀",
+  "enablePullDownRefresh": true,
+  "onReachBottomDistance": 50,
+  "usingComponents": {
+    "empty": "/components/empty/index",
+    "skeleton": "/components/skeleton/index",
+    "card": "/components/card/index"
+  }
+}

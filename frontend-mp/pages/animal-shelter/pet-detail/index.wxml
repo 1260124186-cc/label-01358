@@ -1,0 +1,194 @@
+<view class="pet-detail {{darkMode ? 'dark' : ''}}">
+
+  <skeleton wx:if="{{showSkeleton}}" />
+
+  <block wx:elif="{{animal}}">
+
+    <swiper 
+      class="image-swiper" 
+      indicator-dots="{{false}}" 
+      autoplay="{{true}}" 
+      interval="3000" 
+      circular="{{true}}"
+      bindchange="onImageChange"
+    >
+      <swiper-item wx:for="{{animal.images}}" wx:key="*this">
+        <image 
+          src="{{item}}" 
+          mode="aspectFill" 
+          class="swiper-image"
+          data-index="{{index}}"
+          bindtap="onPreviewImage"
+        />
+      </swiper-item>
+    </swiper>
+
+    <view class="image-indicator">
+      <text>{{currentImageIndex + 1}} / {{animal.images.length}}</text>
+    </view>
+
+    <view class="content">
+
+      <view class="header-section">
+        <view class="name-row">
+          <text class="name">{{animal.name}}</text>
+          <view class="status-tag" style="background: {{animal.statusColor}};">
+            {{animal.statusLabel}}
+          </view>
+        </view>
+        <view class="basic-row">
+          <text class="type">{{animal.typeIcon}} {{animal.breed}}</text>
+          <text class="dot">·</text>
+          <text class="gender" style="color: {{animal.gender === 'male' ? '#3B82F6' : '#EC4899'}};">
+            {{animal.genderIcon}} {{animal.genderLabel}}
+          </text>
+          <text class="dot">·</text>
+          <text class="age">{{animal.ageText}}</text>
+        </view>
+        <view class="tags-row">
+          <view 
+            class="tag" 
+            wx:for="{{animal.personalityTags}}" 
+            wx:key="value"
+            style="background: {{item.color}}15; color: {{item.color}};"
+          >
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+
+      <view class="info-card">
+        <view class="info-grid">
+          <view class="info-item">
+            <text class="info-icon">⚖️</text>
+            <view class="info-text">
+              <text class="info-label">体重</text>
+              <text class="info-value">{{animal.weight}}</text>
+            </view>
+          </view>
+          <view class="info-item">
+            <text class="info-icon">💊</text>
+            <view class="info-text">
+              <text class="info-label">健康状况</text>
+              <text class="info-value" style="color: {{animal.healthColor}};">
+                {{animal.healthIcon}} {{animal.healthLabel}}
+              </text>
+            </view>
+          </view>
+          <view class="info-item">
+            <text class="info-icon">🔬</text>
+            <view class="info-text">
+              <text class="info-label">绝育</text>
+              <text class="info-value">{{animal.sterilizedText}}</text>
+            </view>
+          </view>
+          <view class="info-item">
+            <text class="info-icon">💉</text>
+            <view class="info-text">
+              <text class="info-label">驱虫</text>
+              <text class="info-value">{{animal.vaccinatedText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">
+          <text>关于{{animal.name}}</text>
+        </view>
+        <view class="section-content">
+          <text class="description">{{animal.description}}</text>
+        </view>
+      </view>
+
+      <view class="section">
+        <view class="section-title">
+          <text>💖 救助故事</text>
+        </view>
+        <view class="section-content">
+          <text class="story">{{animal.story}}</text>
+          <view class="rescue-info">
+            <text>📍 {{animal.rescueLocation}}</text>
+            <text>📅 {{animal.rescueDateText}} 救助</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-num">{{animal.views}}</text>
+          <text class="stat-label">浏览</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">{{animal.likes}}</text>
+          <text class="stat-label">喜欢</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-num">{{animal.rescueText}}</text>
+          <text class="stat-label">救助</text>
+        </view>
+      </view>
+
+      <view class="section" wx:if="{{relatedAnimals.length > 0}}">
+        <view class="section-title">
+          <text>🐾 相似的毛孩子</text>
+        </view>
+        <scroll-view class="related-list" scroll-x="{{true}}" show-scrollbar="{{false}}">
+          <view 
+            class="related-item" 
+            wx:for="{{relatedAnimals}}" 
+            wx:key="id"
+            data-id="{{item.id}}"
+            bindtap="onAnimalTap"
+          >
+            <image src="{{item.avatar}}" mode="aspectFill" class="related-image" />
+            <view class="related-info">
+              <text class="related-name">{{item.name}}</text>
+              <text class="related-desc">{{item.breed}} · {{item.ageText}}</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <view class="adopt-notice">
+        <view class="notice-title">📝 领养须知</view>
+        <view class="notice-content">
+          <text>• 需年满18周岁，有稳定住所和收入</text>
+          <text>• 需全家人同意饲养宠物</text>
+          <text>• 需定期回访，配合志愿者跟进</text>
+          <text>• 不得虐待、遗弃动物</text>
+          <text>• 需缴纳押金，绝育后退还</text>
+        </view>
+      </view>
+
+    </view>
+
+    <view class="bottom-bar">
+      <view class="action-btns">
+        <view class="action-btn {{isLiked ? 'active' : ''}}" bindtap="onLikeTap">
+          <text class="action-icon">{{isLiked ? '❤️' : '🤍'}}</text>
+          <text class="action-label">收藏</text>
+        </view>
+        <view class="action-btn" bindtap="onShareTap">
+          <text class="action-icon">📤</text>
+          <text class="action-label">分享</text>
+        </view>
+      </view>
+      <view 
+        class="adopt-btn" 
+        bindtap="onAdoptTap"
+        wx:if="{{animal.status === 'available'}}"
+      >
+        我要领养
+      </view>
+      <view 
+        class="adopt-btn disabled" 
+        wx:else
+      >
+        {{animal.statusLabel}}
+      </view>
+    </view>
+
+  </block>
+
+</view>

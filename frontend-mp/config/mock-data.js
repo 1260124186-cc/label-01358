@@ -5893,6 +5893,766 @@ const MOCK_INNOVATION_INCUBATORS = [
   }
 ];
 
+// ==================== 流浪动物救助站 ====================
+
+const SHELTER_ANIMALS = [
+  {
+    id: 'a1',
+    name: '小黄',
+    type: 'dog',
+    breed: '中华田园犬',
+    gender: 'male',
+    age: 2,
+    ageText: '2岁',
+    weight: '12kg',
+    sterilized: true,
+    vaccinated: true,
+    healthStatus: 'excellent',
+    personality: ['friendly', 'active', 'playful'],
+    description: '小黄是一只非常活泼可爱的狗狗，特别喜欢和人亲近。他是在校园附近被发现的流浪狗，经过救助站的照顾后，现在已经完全康复，非常期待能找到一个温暖的家。小黄很聪明，已经学会了坐下、握手等基本指令，非常适合有爱心的家庭领养。',
+    story: '小黄是在去年冬天被志愿者发现的，当时他瘦弱不堪，还患有皮肤病。经过救助站三个月的悉心照料，现在的小黄毛发顺滑，身体健壮。他特别喜欢在草地上奔跑，和其他狗狗玩耍。',
+    images: [
+      'https://picsum.photos/id/237/800/600',
+      'https://picsum.photos/id/718/800/600',
+      'https://picsum.photos/id/1025/800/600',
+      'https://picsum.photos/id/1062/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/237/300/300',
+    status: 'available',
+    rescueDate: Date.now() - 86400000 * 90,
+    rescueLocation: '校园东门附近',
+    views: 1256,
+    likes: 89,
+    createTime: Date.now() - 86400000 * 90
+  },
+  {
+    id: 'a2',
+    name: '咪咪',
+    type: 'cat',
+    breed: '橘猫',
+    gender: 'female',
+    age: 1,
+    ageText: '1岁',
+    weight: '4kg',
+    sterilized: true,
+    vaccinated: true,
+    healthStatus: 'good',
+    personality: ['gentle', 'quiet', 'independent'],
+    description: '咪咪是一只温柔安静的橘猫，喜欢晒太阳和打盹。她性格独立，但也会在你回家时主动蹭蹭你。咪咪很爱干净，已经学会了正确使用猫砂盆，是一只非常好养的猫咪。',
+    story: '咪咪是在图书馆后面的灌木丛中被发现的，当时她还带着两只刚出生的小猫。现在小猫们都已经被领养，咪咪也恢复了健康，正在等待属于她的家。',
+    images: [
+      'https://picsum.photos/id/659/800/600',
+      'https://picsum.photos/id/1069/800/600',
+      'https://picsum.photos/id/1074/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/659/300/300',
+    status: 'available',
+    rescueDate: Date.now() - 86400000 * 60,
+    rescueLocation: '图书馆后身',
+    views: 2341,
+    likes: 156,
+    createTime: Date.now() - 86400000 * 60
+  },
+  {
+    id: 'a3',
+    name: '旺财',
+    type: 'dog',
+    breed: '金毛寻回犬',
+    gender: 'male',
+    age: 4,
+    ageText: '4岁',
+    weight: '30kg',
+    sterilized: true,
+    vaccinated: true,
+    healthStatus: 'good',
+    personality: ['friendly', 'gentle', 'social'],
+    description: '旺财是一只温顺的大金毛，特别喜欢和小朋友玩耍。他非常聪明，已经掌握了很多技能，包括坐下、趴下、握手、接飞盘等。旺财需要较大的活动空间，适合有院子或者经常能带他出去运动的家庭。',
+    story: '旺财的主人因为工作调动无法继续照顾他，所以送到了救助站。他从小就是家庭的一员，非常适应家庭生活，也很习惯和人类相处。',
+    images: [
+      'https://picsum.photos/id/718/800/600',
+      'https://picsum.photos/id/1025/800/600',
+      'https://picsum.photos/id/237/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/718/300/300',
+    status: 'available',
+    rescueDate: Date.now() - 86400000 * 30,
+    rescueLocation: '主人送养',
+    views: 3456,
+    likes: 267,
+    createTime: Date.now() - 86400000 * 30
+  },
+  {
+    id: 'a4',
+    name: '雪球',
+    type: 'rabbit',
+    breed: '荷兰垂耳兔',
+    gender: 'female',
+    age: 0.5,
+    ageText: '6个月',
+    weight: '1.5kg',
+    sterilized: false,
+    vaccinated: true,
+    healthStatus: 'excellent',
+    personality: ['shy', 'quiet', 'curious'],
+    description: '雪球是一只可爱的垂耳兔，毛发雪白柔软。她比较胆小，需要有耐心的主人慢慢培养感情。雪球已经学会了在固定地点上厕所，非常爱干净。',
+    story: '雪球是在校园宿舍区被发现的，可能是被毕业生遗弃的宠物。现在她在救助站生活得很好，每天都要吃很多新鲜的蔬菜和草料。',
+    images: [
+      'https://picsum.photos/id/783/800/600',
+      'https://picsum.photos/id/1025/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/783/300/300',
+    status: 'available',
+    rescueDate: Date.now() - 86400000 * 20,
+    rescueLocation: '宿舍区',
+    views: 876,
+    likes: 56,
+    createTime: Date.now() - 86400000 * 20
+  },
+  {
+    id: 'a5',
+    name: '小黑',
+    type: 'cat',
+    breed: '黑猫',
+    gender: 'male',
+    age: 3,
+    ageText: '3岁',
+    weight: '5kg',
+    sterilized: true,
+    vaccinated: true,
+    healthStatus: 'recovering',
+    personality: ['independent', 'quiet', 'gentle'],
+    description: '小黑是一只神秘优雅的黑猫，虽然外表看起来高冷，但其实内心很渴望被爱。他之前因为车祸受过伤，现在正在康复中，腿部还有一点小残疾，但不影响正常生活。小黑需要一个有耐心、能包容他小缺点的家。',
+    story: '小黑是在一次车祸中被志愿者救起的，当时他腿部骨折，情况危急。经过手术和长时间的康复，现在已经基本恢复了。虽然走路还有一点跛，但他依然是一只可爱的猫咪。',
+    images: [
+      'https://picsum.photos/id/1069/800/600',
+      'https://picsum.photos/id/659/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/1069/300/300',
+    status: 'available',
+    rescueDate: Date.now() - 86400000 * 120,
+    rescueLocation: '校门口马路边',
+    views: 1890,
+    likes: 234,
+    createTime: Date.now() - 86400000 * 120
+  },
+  {
+    id: 'a6',
+    name: '豆豆',
+    type: 'dog',
+    breed: '柯基',
+    gender: 'male',
+    age: 1.5,
+    ageText: '1岁半',
+    weight: '10kg',
+    sterilized: true,
+    vaccinated: true,
+    healthStatus: 'excellent',
+    personality: ['active', 'playful', 'curious'],
+    description: '豆豆是一只精力充沛的小柯基，短腿大屁股超级可爱。他特别喜欢玩球，每次出门都开心得不得了。豆豆已经学会了基本指令，训练潜力很大。',
+    story: '豆豆是因为原主人对狗毛过敏而被送养的。他非常健康活泼，是家庭的开心果。',
+    images: [
+      'https://picsum.photos/id/1025/800/600',
+      'https://picsum.photos/id/237/800/600',
+      'https://picsum.photos/id/718/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/1025/300/300',
+    status: 'pending',
+    rescueDate: Date.now() - 86400000 * 15,
+    rescueLocation: '主人送养',
+    views: 4567,
+    likes: 378,
+    createTime: Date.now() - 86400000 * 15
+  },
+  {
+    id: 'a7',
+    name: '小蓝',
+    type: 'bird',
+    breed: '虎皮鹦鹉',
+    gender: 'male',
+    age: 2,
+    ageText: '2岁',
+    weight: '0.03kg',
+    sterilized: false,
+    vaccinated: true,
+    healthStatus: 'excellent',
+    personality: ['active', 'social', 'curious'],
+    description: '小蓝是一只聪明的虎皮鹦鹉，会说几句简单的话，比如"你好"、"再见"。他喜欢站在人的肩膀上，特别喜欢被挠头。小蓝已经学会了在固定地点进食和休息，很容易照顾。',
+    story: '小蓝是在树林里被发现的，可能是从家里飞出来的宠物鸟。救助站等了很久都没有人来认领，所以现在开放领养。',
+    images: [
+      'https://picsum.photos/id/1025/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/1025/300/300',
+    status: 'available',
+    rescueDate: Date.now() - 86400000 * 45,
+    rescueLocation: '学校小树林',
+    views: 654,
+    likes: 43,
+    createTime: Date.now() - 86400000 * 45
+  },
+  {
+    id: 'a8',
+    name: '花花',
+    type: 'cat',
+    breed: '三花猫',
+    gender: 'female',
+    age: 5,
+    ageText: '5岁',
+    weight: '4.5kg',
+    sterilized: true,
+    vaccinated: true,
+    healthStatus: 'good',
+    personality: ['independent', 'gentle', 'quiet'],
+    description: '花花是一只成熟稳重的三花猫，性格温和，不挑食，很好照顾。她喜欢安静的环境，适合作为陪伴宠物。花花已经习惯了室内生活，会正确使用猫砂盆。',
+    story: '花花是一只流浪猫妈妈，先后生下了三窝小猫，现在所有小猫都已经被领养，花花也终于可以安心地寻找属于自己的家了。',
+    images: [
+      'https://picsum.photos/id/1074/800/600',
+      'https://picsum.photos/id/659/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/1074/300/300',
+    status: 'available',
+    rescueDate: Date.now() - 86400000 * 180,
+    rescueLocation: '家属区',
+    views: 1234,
+    likes: 98,
+    createTime: Date.now() - 86400000 * 180
+  },
+  {
+    id: 'a9',
+    name: '大白',
+    type: 'dog',
+    breed: '萨摩耶',
+    gender: 'male',
+    age: 3,
+    ageText: '3岁',
+    weight: '28kg',
+    sterilized: true,
+    vaccinated: true,
+    healthStatus: 'special',
+    personality: ['friendly', 'gentle', 'active'],
+    description: '大白是一只微笑天使萨摩耶，永远带着灿烂的笑容。他需要特殊照顾，因为患有轻微的皮肤病，需要定期药浴和护理。但这并不影响他的好心情，大白每天都开开心心的。',
+    story: '大白是在宠物医院门口被遗弃的，当时他的皮肤病很严重。经过救助站半年多的治疗，现在已经好了很多，只需要定期护理就能维持健康。',
+    images: [
+      'https://picsum.photos/id/1062/800/600',
+      'https://picsum.photos/id/718/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/1062/300/300',
+    status: 'available',
+    rescueDate: Date.now() - 86400000 * 200,
+    rescueLocation: '宠物医院门口',
+    views: 2678,
+    likes: 312,
+    createTime: Date.now() - 86400000 * 200
+  },
+  {
+    id: 'a10',
+    name: '小橘',
+    type: 'cat',
+    breed: '橘猫',
+    gender: 'male',
+    age: 0.8,
+    ageText: '8个月',
+    weight: '3.5kg',
+    sterilized: false,
+    vaccinated: true,
+    healthStatus: 'excellent',
+    personality: ['active', 'playful', 'friendly'],
+    description: '小橘是一只超级活泼的小奶猫，对一切都充满好奇。他特别喜欢玩逗猫棒，每次都能玩很久。小橘正是最可爱的年纪，希望能找到一个能陪伴他长大的家庭。',
+    story: '小橘和他的兄弟姐妹一起在垃圾桶旁边被发现的，当时他们才刚出生几天。在志愿者的悉心照料下，小橘健康成长，现在已经可以独立生活了。',
+    images: [
+      'https://picsum.photos/id/659/800/600',
+      'https://picsum.photos/id/1074/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/659/300/300',
+    status: 'reserved',
+    rescueDate: Date.now() - 86400000 * 50,
+    rescueLocation: '食堂附近垃圾桶',
+    views: 3210,
+    likes: 245,
+    createTime: Date.now() - 86400000 * 50
+  },
+  {
+    id: 'a11',
+    name: '灰灰',
+    type: 'rabbit',
+    breed: '道奇兔',
+    gender: 'male',
+    age: 1,
+    ageText: '1岁',
+    weight: '2kg',
+    sterilized: true,
+    vaccinated: true,
+    healthStatus: 'good',
+    personality: ['curious', 'active', 'friendly'],
+    description: '灰灰是一只活泼好动的道奇兔，标志性的黑白配色非常可爱。他特别喜欢跳来跳去，需要一定的活动空间。灰灰已经学会了上厕所，非常聪明。',
+    story: '灰灰是在校园里被发现的流浪兔，可能是被遗弃的宠物。现在他在救助站生活得很好，每天都要出来跑几圈。',
+    images: [
+      'https://picsum.photos/id/783/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/783/300/300',
+    status: 'available',
+    rescueDate: Date.now() - 86400000 * 35,
+    rescueLocation: '操场边上',
+    views: 567,
+    likes: 38,
+    createTime: Date.now() - 86400000 * 35
+  },
+  {
+    id: 'a12',
+    name: '阿黄',
+    type: 'dog',
+    breed: '柴犬',
+    gender: 'male',
+    age: 5,
+    ageText: '5岁',
+    weight: '15kg',
+    sterilized: true,
+    vaccinated: true,
+    healthStatus: 'good',
+    personality: ['independent', 'protective', 'gentle'],
+    description: '阿黄是一只忠诚的柴犬，对主人非常忠心。他性格独立，不粘人，但会默默守护在你身边。阿黄已经习惯了家庭生活，会自己定点上厕所。',
+    story: '阿黄是因为原主人搬家无法带走而被送养的。他已经陪伴了原主人5年，非常有感情，希望能找到一个同样爱他的新家庭。',
+    images: [
+      'https://picsum.photos/id/237/800/600',
+      'https://picsum.photos/id/718/800/600'
+    ],
+    avatar: 'https://picsum.photos/id/237/300/300',
+    status: 'adopted',
+    rescueDate: Date.now() - 86400000 * 25,
+    rescueLocation: '主人送养',
+    views: 2890,
+    likes: 198,
+    createTime: Date.now() - 86400000 * 25
+  }
+];
+
+const SHELTER_STATS = {
+  totalAnimals: 48,
+  availableAnimals: 28,
+  adoptedThisMonth: 12,
+  totalAdopted: 156,
+  volunteers: 35,
+  donationsThisMonth: 8950,
+  successRate: 89
+};
+
+const SHELTER_ADOPTION_APPLICATIONS = [
+  {
+    id: 'app1',
+    animalId: 'a6',
+    animalName: '豆豆',
+    animalAvatar: 'https://picsum.photos/id/1025/300/300',
+    applicantName: '张同学',
+    applicantPhone: '138****8888',
+    applicantAvatar: 'https://picsum.photos/seed/avatar1/100/100',
+    applicantId: 'u1',
+    housingType: 'rental',
+    housingDesc: '租的一居室，有阳台',
+    experience: '有过养猫经验',
+    familyMembers: 2,
+    hasOtherPets: false,
+    otherPetsDesc: '',
+    workStatus: '在校学生，课余时间充足',
+    monthlyBudget: 500,
+    agreement: true,
+    status: 'reviewing',
+    createTime: Date.now() - 86400000 * 2,
+    reviewTime: Date.now() - 86400000 * 1,
+    reviewer: '李志愿者',
+    reviewComment: '资料齐全，正在安排家访时间'
+  },
+  {
+    id: 'app2',
+    animalId: 'a10',
+    animalName: '小橘',
+    animalAvatar: 'https://picsum.photos/id/659/300/300',
+    applicantName: '王同学',
+    applicantPhone: '139****9999',
+    applicantAvatar: 'https://picsum.photos/seed/avatar2/100/100',
+    applicantId: 'u2',
+    housingType: 'family',
+    housingDesc: '家里自有住房，120平米',
+    experience: '养过两只猫，现在还有一只',
+    familyMembers: 4,
+    hasOtherPets: true,
+    otherPetsDesc: '有一只4岁的英短，已绝育',
+    workStatus: '已毕业工作，朝九晚五',
+    monthlyBudget: 1000,
+    agreement: true,
+    status: 'approved',
+    createTime: Date.now() - 86400000 * 7,
+    reviewTime: Date.now() - 86400000 * 5,
+    reviewer: '王站长',
+    reviewComment: '条件很好，已通过审核，等待签订领养协议'
+  },
+  {
+    id: 'app3',
+    animalId: 'a1',
+    animalName: '小黄',
+    animalAvatar: 'https://picsum.photos/id/237/300/300',
+    applicantName: '李同学',
+    applicantPhone: '137****7777',
+    applicantAvatar: 'https://picsum.photos/seed/avatar3/100/100',
+    applicantId: 'u3',
+    housingType: 'dormitory',
+    housingDesc: '学生宿舍，4人间',
+    experience: '没有养宠经验',
+    familyMembers: 1,
+    hasOtherPets: false,
+    otherPetsDesc: '',
+    workStatus: '在校学生',
+    monthlyBudget: 300,
+    agreement: true,
+    status: 'rejected',
+    createTime: Date.now() - 86400000 * 5,
+    reviewTime: Date.now() - 86400000 * 3,
+    reviewer: '李志愿者',
+    reviewComment: '宿舍不允许养宠物，不符合领养条件'
+  }
+];
+
+const SHELTER_VISIT_RECORDS = [
+  {
+    id: 'v1',
+    applicationId: 'app2',
+    animalId: 'a10',
+    animalName: '小橘',
+    adopterName: '王同学',
+    adopterPhone: '139****9999',
+    visitType: 'first',
+    visitDate: Date.now() - 86400000 * 14,
+    visitor: '李志愿者',
+    healthStatus: 'excellent',
+    weight: '3.8kg',
+    dietStatus: 'good',
+    environmentStatus: 'good',
+    notes: '小橘适应得很好，和家里的原住民相处融洽。新主人非常细心，准备了所有必需品。',
+    photos: [
+      'https://picsum.photos/id/659/800/600',
+      'https://picsum.photos/id/1074/800/600'
+    ],
+    createTime: Date.now() - 86400000 * 14
+  },
+  {
+    id: 'v2',
+    applicationId: 'app2',
+    animalId: 'a10',
+    animalName: '小橘',
+    adopterName: '王同学',
+    adopterPhone: '139****9999',
+    visitType: 'weekly',
+    visitDate: Date.now() - 86400000 * 7,
+    visitor: '张志愿者',
+    healthStatus: 'excellent',
+    weight: '4.0kg',
+    dietStatus: 'good',
+    environmentStatus: 'good',
+    notes: '小橘长胖了一点，非常活泼。已经完全适应了新环境，每天都会主动和主人玩耍。',
+    photos: [
+      'https://picsum.photos/id/659/800/600'
+    ],
+    createTime: Date.now() - 86400000 * 7
+  },
+  {
+    id: 'v3',
+    applicationId: 'app4',
+    animalId: 'a12',
+    animalName: '阿黄',
+    adopterName: '陈女士',
+    adopterPhone: '136****6666',
+    visitType: 'first',
+    visitDate: Date.now() - 86400000 * 10,
+    visitor: '王站长',
+    healthStatus: 'good',
+    weight: '14.5kg',
+    dietStatus: 'good',
+    environmentStatus: 'excellent',
+    notes: '阿黄在新家生活得很好，家里有一个小院子供他活动。陈女士每天都会带他出去散步两次。',
+    photos: [
+      'https://picsum.photos/id/237/800/600'
+    ],
+    createTime: Date.now() - 86400000 * 10
+  }
+];
+
+const SHELTER_DONATION_ITEMS = [
+  {
+    id: 'd1',
+    type: 'money',
+    title: '爱心捐款',
+    description: '您的每一分捐款都将用于流浪动物的医疗、食品和日常护理。我们承诺所有捐款都将公开透明，定期公示使用情况。',
+    icon: '💰',
+    color: '#10B981',
+    amounts: [10, 50, 100, 200, 500, 1000],
+    paymentMethods: [
+      { id: 'wechat', name: '微信支付', icon: '💚' },
+      { id: 'alipay', name: '支付宝', icon: '💙' }
+    ]
+  },
+  {
+    id: 'd2',
+    type: 'food',
+    title: '粮食物资',
+    description: '救助站每天需要消耗大量的猫粮狗粮。您可以捐赠以下物资，支持我们的救助工作。',
+    icon: '🥣',
+    color: '#F59E0B',
+    items: [
+      { name: '猫粮（成猫）', unit: '袋', price: 120, quantity: 0 },
+      { name: '猫粮（幼猫）', unit: '袋', price: 150, quantity: 0 },
+      { name: '狗粮（成犬）', unit: '袋', price: 180, quantity: 0 },
+      { name: '狗粮（幼犬）', unit: '袋', price: 200, quantity: 0 },
+      { name: '猫罐头', unit: '箱', price: 240, quantity: 0 },
+      { name: '狗罐头', unit: '箱', price: 300, quantity: 0 },
+      { name: '营养膏', unit: '支', price: 80, quantity: 0 }
+    ]
+  },
+  {
+    id: 'd3',
+    type: 'medical',
+    title: '医疗物资',
+    description: '医疗物资是救助站最急需的物资之一，很多流浪动物都需要治疗。',
+    icon: '💊',
+    color: '#EF4444',
+    items: [
+      { name: '宠物驱虫药', unit: '盒', price: 60, quantity: 0 },
+      { name: '宠物感冒药', unit: '盒', price: 45, quantity: 0 },
+      { name: '皮肤药膏', unit: '支', price: 55, quantity: 0 },
+      { name: '碘伏/酒精', unit: '瓶', price: 15, quantity: 0 },
+      { name: '医用纱布', unit: '包', price: 25, quantity: 0 },
+      { name: '宠物体温计', unit: '支', price: 35, quantity: 0 }
+    ]
+  },
+  {
+    id: 'd4',
+    type: 'daily',
+    title: '生活用品',
+    description: '日常消耗品也是救助站的刚需，您的捐赠能让毛孩子们生活得更舒适。',
+    icon: '🧻',
+    color: '#3B82F6',
+    items: [
+      { name: '宠物尿垫', unit: '包', price: 40, quantity: 0 },
+      { name: '猫砂', unit: '袋', price: 35, quantity: 0 },
+      { name: '宠物毛巾', unit: '条', price: 25, quantity: 0 },
+      { name: '宠物食盆', unit: '个', price: 30, quantity: 0 },
+      { name: '宠物窝', unit: '个', price: 80, quantity: 0 },
+      { name: '牵引绳', unit: '根', price: 45, quantity: 0 },
+      { name: '指甲剪', unit: '个', price: 20, quantity: 0 }
+    ]
+  }
+];
+
+const SHELTER_DONATION_RECORDS = [
+  {
+    id: 'dr1',
+    type: 'money',
+    amount: 100,
+    donorName: '爱心人士',
+    message: '希望毛孩子们都能找到家',
+    createTime: Date.now() - 3600000
+  },
+  {
+    id: 'dr2',
+    type: 'food',
+    items: [{ name: '猫粮（成猫）', quantity: 2 }],
+    totalAmount: 240,
+    donorName: '张同学',
+    message: '小小心意，希望能帮到它们',
+    createTime: Date.now() - 7200000
+  },
+  {
+    id: 'dr3',
+    type: 'money',
+    amount: 500,
+    donorName: '匿名',
+    message: '',
+    createTime: Date.now() - 86400000
+  },
+  {
+    id: 'dr4',
+    type: 'medical',
+    items: [{ name: '宠物驱虫药', quantity: 5 }],
+    totalAmount: 300,
+    donorName: '王女士',
+    message: '之前领养了咪咪，现在来感谢救助站',
+    createTime: Date.now() - 86400000 * 2
+  },
+  {
+    id: 'dr5',
+    type: 'money',
+    amount: 50,
+    donorName: '李同学',
+    message: '加油！',
+    createTime: Date.now() - 86400000 * 3
+  }
+];
+
+const SHELTER_VOLUNTEER_ACTIVITIES = [
+  {
+    id: 'va1',
+    title: '周末清洁日',
+    description: '每周六上午组织志愿者到救助站进行清洁工作，包括打扫犬舍猫舍、消毒、整理物资等。',
+    date: Date.now() + 86400000 * 3,
+    dateText: '本周六 09:00-12:00',
+    location: '流浪动物救助站',
+    locationAddress: '学校西门外200米',
+    maxParticipants: 15,
+    currentParticipants: 8,
+    roles: ['cleaning', 'feeding'],
+    requirements: '无特殊要求，有爱心、能吃苦耐劳即可',
+    organizer: '救助站',
+    contactName: '李站长',
+    contactPhone: '138****8888',
+    status: 'recruiting',
+    images: ['https://picsum.photos/seed/vol1/800/400'],
+    views: 456,
+    createTime: Date.now() - 86400000 * 2
+  },
+  {
+    id: 'va2',
+    title: '遛狗陪玩活动',
+    description: '救助站的狗狗们每天都需要充足的运动。欢迎爱狗人士报名，带狗狗们出去散步玩耍。',
+    date: Date.now() + 86400000 * 5,
+    dateText: '下周一 16:00-18:00',
+    location: '流浪动物救助站 + 附近公园',
+    locationAddress: '学校西门外200米',
+    maxParticipants: 10,
+    currentParticipants: 5,
+    roles: ['walking'],
+    requirements: '需要有一定的养狗经验，能控制住狗狗',
+    organizer: '救助站',
+    contactName: '王志愿者',
+    contactPhone: '139****9999',
+    status: 'recruiting',
+    images: ['https://picsum.photos/seed/vol2/800/400'],
+    views: 321,
+    createTime: Date.now() - 86400000 * 1
+  },
+  {
+    id: 'va3',
+    title: '流浪动物摄影日',
+    description: '好的照片能帮助流浪动物更快找到家。欢迎有摄影基础的同学为毛孩子们拍摄美照。',
+    date: Date.now() + 86400000 * 7,
+    dateText: '下周三 14:00-17:00',
+    location: '流浪动物救助站',
+    locationAddress: '学校西门外200米',
+    maxParticipants: 5,
+    currentParticipants: 2,
+    roles: ['photography'],
+    requirements: '需要自带相机，有动物摄影经验优先',
+    organizer: '救助站',
+    contactName: '张志愿者',
+    contactPhone: '137****7777',
+    status: 'recruiting',
+    images: ['https://picsum.photos/seed/vol3/800/400'],
+    views: 289,
+    createTime: Date.now() - 86400000 * 1
+  },
+  {
+    id: 'va4',
+    title: '领养日活动',
+    description: '每月一次的大型领养日活动，需要大量志愿者协助场地布置、接待咨询、动物护理等工作。',
+    date: Date.now() + 86400000 * 14,
+    dateText: '6月27日 10:00-18:00',
+    location: '校园广场',
+    locationAddress: '学校中心广场',
+    maxParticipants: 30,
+    currentParticipants: 12,
+    roles: ['adoption', 'feeding', 'cleaning', 'transport'],
+    requirements: '需要全天参与，有经验者优先',
+    organizer: '救助站 + 校学生会',
+    contactName: '李站长',
+    contactPhone: '138****8888',
+    status: 'recruiting',
+    images: ['https://picsum.photos/seed/vol4/800/400'],
+    views: 678,
+    createTime: Date.now() - 86400000 * 5
+  }
+];
+
+const SHELTER_VOLUNTEER_SIGNUPS = [
+  {
+    id: 'vs1',
+    activityId: 'va1',
+    activityTitle: '周末清洁日',
+    volunteerName: '张同学',
+    volunteerPhone: '138****8888',
+    volunteerAvatar: 'https://picsum.photos/seed/avatar1/100/100',
+    role: 'cleaning',
+    experience: '参加过2次志愿者活动',
+    note: '有清洁经验，自带手套',
+    status: 'approved',
+    createTime: Date.now() - 86400000 * 1
+  },
+  {
+    id: 'vs2',
+    activityId: 'va1',
+    activityTitle: '周末清洁日',
+    volunteerName: '李同学',
+    volunteerPhone: '139****9999',
+    volunteerAvatar: 'https://picsum.photos/seed/avatar2/100/100',
+    role: 'feeding',
+    experience: '养过猫，有照顾宠物经验',
+    note: '',
+    status: 'pending',
+    createTime: Date.now() - 3600000
+  }
+];
+
+const SHELTER_DONATION_USAGE = [
+  {
+    id: 'du1',
+    date: '2026年5月',
+    totalIncome: 23450,
+    totalExpense: 18900,
+    categories: [
+      { name: '医疗支出', amount: 8500, percentage: 45 },
+      { name: '粮食采购', amount: 5670, percentage: 30 },
+      { name: '物资采购', amount: 2835, percentage: 15 },
+      { name: '场地维护', amount: 1895, percentage: 10 }
+    ],
+    details: [
+      { item: '小黑的骨折手术', amount: 5000, date: '5月10日' },
+      { item: '采购猫粮20袋', amount: 2400, date: '5月15日' },
+      { item: '采购狗粮15袋', amount: 2700, date: '5月15日' },
+      { item: '疫苗接种', amount: 2200, date: '5月20日' },
+      { item: '消毒用品采购', amount: 850, date: '5月8日' },
+      { item: '水电费用', amount: 1200, date: '5月25日' }
+    ]
+  }
+];
+
+const SHELTER_QUICK_ENTRIES = [
+  { id: 'pets', title: '待领养', icon: '🐾', color: '#10B981', path: '/pages/animal-shelter/pets' },
+  { id: 'adopt', title: '领养流程', icon: '📝', color: '#3B82F6', path: '/pages/animal-shelter/adopt-form' },
+  { id: 'donation', title: '爱心捐赠', icon: '💝', color: '#EC4899', path: '/pages/animal-shelter/donation' },
+  { id: 'volunteer', title: '志愿者', icon: '🙋', color: '#8B5CF6', path: '/pages/animal-shelter/volunteer-signup' },
+  { id: 'records', title: '回访记录', icon: '📋', color: '#F59E0B', path: '/pages/animal-shelter/visit-records' },
+  { id: 'my', title: '我的记录', icon: '👤', color: '#14B8A6', path: '/pages/animal-shelter/my-records' }
+];
+
+const SHELTER_KNOWLEDGE = [
+  {
+    id: 'k1',
+    title: '领养前的准备工作',
+    content: '在决定领养宠物之前，请仔细考虑以下几点：\n1. 你是否有足够的时间和精力照顾它？\n2. 你的居住环境是否允许养宠物？\n3. 你是否有足够的经济能力承担宠物的日常开销和医疗费用？\n4. 你是否了解宠物的习性和需要？\n5. 你的家人是否都支持养宠物？\n\n请记住，领养是一份十几年的承诺，不是一时的冲动。',
+    icon: '📋',
+    views: 1234
+  },
+  {
+    id: 'k2',
+    title: '新宠到家注意事项',
+    content: '新宠物到家第一周非常重要：\n1. 给它足够的空间和时间适应新环境\n2. 不要急于互动，让它主动接近你\n3. 保持之前的饮食习惯，不要突然换粮\n4. 准备好必要的用品：食盆、水盆、窝、猫砂盆/狗厕所\n5. 7-10天后如果一切正常，可以带去医院做体检和驱虫\n6. 不要立即洗澡，至少等一周后再洗\n7. 注意观察它的饮食、排便和精神状态',
+    icon: '🏠',
+    views: 876
+  },
+  {
+    id: 'k3',
+    title: '宠物基础医疗知识',
+    content: '宠物健康小常识：\n1. 定期接种疫苗：猫三联/狗四联、狂犬疫苗\n2. 定期驱虫：体外驱虫每月一次，体内驱虫每3个月一次\n3. 适龄绝育：6-8个月是最佳绝育时间\n4. 观察异常：食欲下降、精神萎靡、呕吐腹泻超过24小时请及时就医\n5. 适龄体检：7岁以下每年体检一次，7岁以上每半年一次\n6. 合理喂养：选择正规品牌的宠物粮，不要喂人的食物',
+    icon: '🏥',
+    views: 956
+  }
+];
+
 module.exports = {
   ..._firstExports,
   MOCK_CLUBS,
@@ -5907,5 +6667,16 @@ module.exports = {
   MOCK_INNOVATION_MENTORS,
   MOCK_INNOVATION_ROADSHOWS,
   MOCK_INNOVATION_POLICIES,
-  MOCK_INNOVATION_INCUBATORS
+  MOCK_INNOVATION_INCUBATORS,
+  SHELTER_ANIMALS,
+  SHELTER_STATS,
+  SHELTER_ADOPTION_APPLICATIONS,
+  SHELTER_VISIT_RECORDS,
+  SHELTER_DONATION_ITEMS,
+  SHELTER_DONATION_RECORDS,
+  SHELTER_VOLUNTEER_ACTIVITIES,
+  SHELTER_VOLUNTEER_SIGNUPS,
+  SHELTER_DONATION_USAGE,
+  SHELTER_QUICK_ENTRIES,
+  SHELTER_KNOWLEDGE
 };

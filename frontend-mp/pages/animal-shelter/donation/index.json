@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "爱心捐赠",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "/components/empty/index",
+    "skeleton": "/components/skeleton/index"
+  }
+}
