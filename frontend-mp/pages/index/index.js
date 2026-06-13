@@ -138,6 +138,13 @@ Page({
         icon: '/assets/icons/nav-scenery.png',
         bgColor: 'linear-gradient(135deg, #D1FAE5 0%, #6EE7B7 100%)',
         url: '/pages/low-carbon/index'
+      },
+      {
+        id: 'international',
+        name: '国际生专区',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)',
+        url: '/pages/international-students/index'
       }
     ],
     weatherData: null,

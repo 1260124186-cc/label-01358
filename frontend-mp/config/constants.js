@@ -1392,5 +1392,162 @@ module.exports = {
   LOW_CARBON_ACTIVITY_STATUS,
   LOW_CARBON_ACTIVITY_STATUS_MAP,
   LOW_CARBON_LEADERBOARD_TABS,
-  LOW_CARBON_TIPS
+  LOW_CARBON_TIPS,
+  INTL_GUIDE_CATEGORIES,
+  INTL_BUDDY_MAJORS,
+  INTL_BUDDY_GRADES,
+  INTL_BUDDY_HOBBIES,
+  INTL_BUDDY_LANGUAGES,
+  INTL_EVENT_CATEGORIES,
+  INTL_EVENT_STATUS,
+  INTL_EMERGENCY_CONTACTS
 };
+
+const INTL_GUIDE_CATEGORIES = [
+  {
+    value: 'visa',
+    label: '签证居留',
+    labelEn: 'Visa & Residence',
+    icon: '🛂',
+    color: '#3B82F6',
+    gradient: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)'
+  },
+  {
+    value: 'medical',
+    label: '医疗保险',
+    labelEn: 'Medical Insurance',
+    icon: '🏥',
+    color: '#EF4444',
+    gradient: 'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)'
+  },
+  {
+    value: 'bank',
+    label: '银行开户',
+    labelEn: 'Bank Account',
+    icon: '🏦',
+    color: '#10B981',
+    gradient: 'linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%)'
+  },
+  {
+    value: 'sim',
+    label: 'SIM卡办理',
+    labelEn: 'SIM Card',
+    icon: '📱',
+    color: '#8B5CF6',
+    gradient: 'linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)'
+  }
+];
+
+const INTL_BUDDY_MAJORS = [
+  '计算机科学', '软件工程', '电子工程', '机械工程', '土木工程',
+  '工商管理', '经济学', '金融学', '国际关系', '新闻传播',
+  '中国语言文学', '英语', '日语', '艺术设计', '数学', '物理学', '化学', '生物学', '医学', '法学'
+];
+
+const INTL_BUDDY_GRADES = [
+  { value: 'freshman', label: '大一', labelEn: 'Freshman' },
+  { value: 'sophomore', label: '大二', labelEn: 'Sophomore' },
+  { value: 'junior', label: '大三', labelEn: 'Junior' },
+  { value: 'senior', label: '大四', labelEn: 'Senior' },
+  { value: 'master', label: '硕士', labelEn: 'Master' },
+  { value: 'phd', label: '博士', labelEn: 'PhD' }
+];
+
+const INTL_BUDDY_HOBBIES = [
+  { value: 'sports', label: '运动健身', labelEn: 'Sports & Fitness', icon: '🏃' },
+  { value: 'music', label: '音乐', labelEn: 'Music', icon: '🎵' },
+  { value: 'movie', label: '电影', labelEn: 'Movies', icon: '🎬' },
+  { value: 'reading', label: '阅读', labelEn: 'Reading', icon: '📚' },
+  { value: 'travel', label: '旅行', labelEn: 'Travel', icon: '✈️' },
+  { value: 'food', label: '美食', labelEn: 'Food', icon: '🍜' },
+  { value: 'photography', label: '摄影', labelEn: 'Photography', icon: '📷' },
+  { value: 'gaming', label: '游戏', labelEn: 'Gaming', icon: '🎮' },
+  { value: 'art', label: '艺术绘画', labelEn: 'Art & Drawing', icon: '🎨' },
+  { value: 'dance', label: '舞蹈', labelEn: 'Dancing', icon: '💃' },
+  { value: 'cooking', label: '烹饪', labelEn: 'Cooking', icon: '🍳' },
+  { value: 'language', label: '语言学习', labelEn: 'Language Learning', icon: '🌍' }
+];
+
+const INTL_BUDDY_LANGUAGES = [
+  { value: 'zh', label: '中文', labelEn: 'Chinese', level: '母语' },
+  { value: 'en', label: '英语', labelEn: 'English', level: 'Fluent' },
+  { value: 'ja', label: '日语', labelEn: 'Japanese', level: 'Intermediate' },
+  { value: 'ko', label: '韩语', labelEn: 'Korean', level: 'Intermediate' },
+  { value: 'fr', label: '法语', labelEn: 'French', level: 'Basic' },
+  { value: 'de', label: '德语', labelEn: 'German', level: 'Basic' },
+  { value: 'es', label: '西班牙语', labelEn: 'Spanish', level: 'Basic' }
+];
+
+const INTL_EVENT_CATEGORIES = [
+  { value: 'festival', label: '传统节日', labelEn: 'Traditional Festival', icon: '🏮', color: '#EF4444' },
+  { value: 'workshop', label: '文化工坊', labelEn: 'Cultural Workshop', icon: '🎨', color: '#8B5CF6' },
+  { value: 'tour', label: '城市游览', labelEn: 'City Tour', icon: '🗺️', color: '#3B82F6' },
+  { value: 'social', label: '社交聚会', labelEn: 'Social Gathering', icon: '🎉', color: '#F59E0B' },
+  { value: 'sports', label: '体育活动', labelEn: 'Sports Event', icon: '⚽', color: '#10B981' },
+  { value: 'academic', label: '学术交流', labelEn: 'Academic Exchange', icon: '🎓', color: '#6366F1' }
+];
+
+const INTL_EVENT_STATUS = [
+  { value: 'registering', label: '报名中', labelEn: 'Registering', color: '#10B981' },
+  { value: 'full', label: '已满员', labelEn: 'Full', color: '#F59E0B' },
+  { value: 'ongoing', label: '进行中', labelEn: 'Ongoing', color: '#3B82F6' },
+  { value: 'ended', label: '已结束', labelEn: 'Ended', color: '#6B7280' }
+];
+
+const INTL_EMERGENCY_CONTACTS = [
+  {
+    id: 'english_hotline',
+    name: '英语紧急热线',
+    nameEn: 'English Emergency Line',
+    phone: '400-888-9999',
+    desc: '全天候英语服务，处理各类紧急事务',
+    descEn: '24/7 English service for all emergencies',
+    icon: '📞',
+    color: '#EF4444',
+    priority: 1
+  },
+  {
+    id: 'campus_police',
+    name: '校园安保',
+    nameEn: 'Campus Security',
+    phone: '010-12345678',
+    desc: '校园内安全问题、遗失物品等',
+    descEn: 'Campus safety, lost items, etc.',
+    icon: '👮',
+    color: '#3B82F6',
+    priority: 2
+  },
+  {
+    id: 'hospital',
+    name: '校医院急诊',
+    nameEn: 'Hospital Emergency',
+    phone: '010-87654321',
+    desc: '24小时急诊医疗服务',
+    descEn: '24-hour emergency medical service',
+    icon: '🏥',
+    color: '#10B981',
+    priority: 2
+  },
+  {
+    id: 'mental_health',
+    name: '心理咨询热线',
+    nameEn: 'Mental Health Hotline',
+    phone: '400-161-9995',
+    desc: '专业心理咨询师在线援助',
+    descEn: 'Professional counselor online support',
+    icon: '💚',
+    color: '#8B5CF6',
+    priority: 3
+  },
+  {
+    id: 'international_office',
+    name: '国际交流处',
+    nameEn: 'International Office',
+    phone: '010-11223344',
+    desc: '签证、居留、学籍相关事务',
+    descEn: 'Visa, residence, academic affairs',
+    icon: '🌍',
+    color: '#F59E0B',
+    priority: 3
+  }
+];

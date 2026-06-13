@@ -1,0 +1,105 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="hero-banner">
+    <view class="hero-bg"></view>
+    <view class="hero-content">
+      <view class="hero-header">
+        <view class="hero-title-wrap">
+          <text class="hero-title">{{lang === 'zh' ? '国际生服务专区' : 'International Student'}}</text>
+          <text class="hero-title">{{lang === 'zh' ? 'International Services' : 'Services'}}</text>
+        </view>
+        <view class="lang-switch" bindtap="onSwitchLanguage">
+          <text class="lang-icon">🌐</text>
+          <text class="lang-text">{{lang === 'zh' ? 'EN' : '中文'}}</text>
+        </view>
+      </view>
+      <text class="hero-subtitle">{{lang === 'zh' ? '欢迎来到国际生服务专区' : 'Welcome to International Student Services'}}</text>
+      <text class="hero-desc">{{lang === 'zh' ? '一站式解决学习生活各类问题' : 'One-stop solution for study and life'}}</text>
+    </view>
+    <view class="hero-decoration">
+      <text class="deco-emoji">🌍</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-icon">📋</text>
+      <text class="section-title">{{lang === 'zh' ? '生活指南' : 'Living Guide'}}</text>
+    </view>
+    <view class="guide-grid">
+      <view
+        class="guide-item"
+        wx:for="{{navItems}}"
+        wx:key="value"
+        bindtap="onNavTap"
+        data-item="{{item}}"
+      >
+        <view class="guide-icon" style="background: {{item.bgColor}};">
+          <text>{{item.icon}}</text>
+        </view>
+        <text class="guide-name">{{item.name}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-icon">✨</text>
+      <text class="section-title">{{lang === 'zh' ? '核心服务' : 'Core Services'}}</text>
+    </view>
+    <view class="service-list">
+      <view
+        class="service-card"
+        wx:for="{{serviceCards}}"
+        wx:key="id"
+        bindtap="onServiceTap"
+        data-item="{{item}}"
+        style="background: {{item.gradient}};"
+      >
+        <view class="service-left">
+          <text class="service-icon">{{item.icon}}</text>
+          <view class="service-info">
+            <text class="service-title">{{lang === 'zh' ? item.title : item.titleEn}}</text>
+            <text class="service-subtitle">{{item.subtitle}}</text>
+          </view>
+        </view>
+        <view class="service-action">
+          <text>{{lang === 'zh' ? item.actionText : item.actionTextEn}}</text>
+          <text class="action-arrow">→</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section tips-section">
+    <view class="section-header">
+      <text class="section-icon">💡</text>
+      <text class="section-title">{{lang === 'zh' ? '温馨提示' : 'Tips'}}</text>
+    </view>
+    <view class="tips-list">
+      <view class="tip-item">
+        <text class="tip-icon">📞</text>
+        <view class="tip-content">
+          <text class="tip-title">{{lang === 'zh' ? '24小时英语援助' : '24/7 English Support'}}</text>
+          <text class="tip-desc">{{lang === 'zh' ? '紧急情况下请拨打英语热线' : 'Call English hotline in emergencies'}}</text>
+        </view>
+      </view>
+      <view class="tip-item">
+        <text class="tip-icon">🤝</text>
+        <view class="tip-content">
+          <text class="tip-title">{{lang === 'zh' ? 'Buddy结对计划' : 'Buddy Program'}}</text>
+          <text class="tip-desc">{{lang === 'zh' ? '匹配本地学生伙伴，快速融入校园' : 'Match with local students, integrate quickly'}}</text>
+        </view>
+      </view>
+      <view class="tip-item">
+        <text class="tip-icon">🎊</text>
+        <view class="tip-content">
+          <text class="tip-title">{{lang === 'zh' ? '精彩文化活动' : 'Cultural Events'}}</text>
+          <text class="tip-desc">{{lang === 'zh' ? '参与各类活动，体验中国文化' : 'Join events, experience Chinese culture'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-spacer"></view>
+</view>

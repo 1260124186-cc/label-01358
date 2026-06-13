@@ -1,0 +1,123 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#FFF5F5'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="sos-banner">
+    <view class="sos-pulse"></view>
+    <view class="sos-pulse pulse-delayed"></view>
+    <view class="sos-content">
+      <text class="sos-icon">🚨</text>
+      <text class="sos-title">{{lang === 'zh' ? '紧急情况？' : 'Emergency?'}}</text>
+      <text class="sos-subtitle">{{lang === 'zh' ? '保持冷静，点击下方按钮求助' : 'Stay calm, tap below for help'}}</text>
+      <view class="sos-btn" bindtap="onSosTap">
+        <text class="sos-btn-icon">📞</text>
+        <text class="sos-btn-text">{{lang === 'zh' ? '紧急呼救' : 'SOS Call'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title-bar">
+    <text class="section-icon">📞</text>
+    <text class="section-title">{{lang === 'zh' ? '英语服务热线' : 'English Service Hotlines'}}</text>
+  </view>
+
+  <view class="contacts-list">
+    <view
+      class="contact-card"
+      wx:for="{{contacts}}"
+      wx:key="id"
+    >
+      <view class="contact-header">
+        <view class="contact-avatar" style="background: {{item.color}};">
+          <text>{{item.icon}}</text>
+        </view>
+        <view class="contact-info">
+          <text class="contact-name">{{item.displayName}}</text>
+          <text class="contact-desc">{{item.displayDesc}}</text>
+        </view>
+      </view>
+      <view class="contact-meta">
+        <text class="contact-hours">🕐 {{item.displayHours}}</text>
+      </view>
+      <view class="contact-footer">
+        <view class="phone-display">
+          <text class="phone-label">{{lang === 'zh' ? '电话' : 'Phone'}}</text>
+          <text class="phone-number">{{item.phone}}</text>
+        </view>
+        <view class="call-btn" bindtap="onCallTap" data-phone="{{item.phone}}">
+          <text>{{lang === 'zh' ? '拨打' : 'Call'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="phrases-section">
+    <view class="phrases-header" bindtap="togglePhrases">
+      <text class="section-icon">💬</text>
+      <text class="section-title">{{lang === 'zh' ? '紧急常用语' : 'Emergency Phrases'}}</text>
+      <text class="toggle-arrow">{{emergencyPhraseVisible ? '▲' : '▼'}}</text>
+    </view>
+    <view class="phrases-list" wx:if="{{emergencyPhraseVisible}}">
+      <view class="phrase-item" bindtap="onCopyPhrase" data-text="Help! I need assistance.">
+        <view class="phrase-zh">
+          <text class="phrase-cn">{{lang === 'zh' ? '求助！我需要帮助。' : 'Help! I need assistance.'}}</text>
+        </view>
+        <text class="phrase-en">Help! I need assistance.</text>
+        <text class="phrase-copy">{{lang === 'zh' ? '点击复制英文' : 'Tap to copy'}}</text>
+      </view>
+      <view class="phrase-item" bindtap="onCopyPhrase" data-text="I need a doctor / Call an ambulance.">
+        <view class="phrase-zh">
+          <text class="phrase-cn">{{lang === 'zh' ? '我需要医生 / 请叫救护车。' : 'I need a doctor / Call an ambulance.'}}</text>
+        </view>
+        <text class="phrase-en">I need a doctor / Call an ambulance.</text>
+        <text class="phrase-copy">{{lang === 'zh' ? '点击复制英文' : 'Tap to copy'}}</text>
+      </view>
+      <view class="phrase-item" bindtap="onCopyPhrase" data-text="I have lost my passport / ID card.">
+        <view class="phrase-zh">
+          <text class="phrase-cn">{{lang === 'zh' ? '我的护照 / 身份证丢了。' : 'I have lost my passport / ID card.'}}</text>
+        </view>
+        <text class="phrase-en">I have lost my passport / ID card.</text>
+        <text class="phrase-copy">{{lang === 'zh' ? '点击复制英文' : 'Tap to copy'}}</text>
+      </view>
+      <view class="phrase-item" bindtap="onCopyPhrase" data-text="I feel unsafe. Please help me.">
+        <view class="phrase-zh">
+          <text class="phrase-cn">{{lang === 'zh' ? '我感到不安全，请帮助我。' : 'I feel unsafe. Please help me.'}}</text>
+        </view>
+        <text class="phrase-en">I feel unsafe. Please help me.</text>
+        <text class="phrase-copy">{{lang === 'zh' ? '点击复制英文' : 'Tap to copy'}}</text>
+      </view>
+      <view class="phrase-item" bindtap="onCopyPhrase" data-text="Where is the international office?">
+        <view class="phrase-zh">
+          <text class="phrase-cn">{{lang === 'zh' ? '国际交流处在哪里？' : 'Where is the international office?'}}</text>
+        </view>
+        <text class="phrase-en">Where is the international office?</text>
+        <text class="phrase-copy">{{lang === 'zh' ? '点击复制英文' : 'Tap to copy'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="safety-tips">
+    <view class="tips-header">
+      <text class="tips-icon">🛡️</text>
+      <text class="tips-title">{{lang === 'zh' ? '安全提示' : 'Safety Tips'}}</text>
+    </view>
+    <view class="tips-list">
+      <view class="tip-item">
+        <text class="tip-dot">1</text>
+        <text class="tip-text">{{lang === 'zh' ? '随身携带身份证件，牢记校园安保电话' : 'Carry ID at all times, save campus security number'}}</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-dot">2</text>
+        <text class="tip-text">{{lang === 'zh' ? '夜晚出行尽量结伴，避免偏僻路线' : 'Travel in groups at night, avoid isolated areas'}}</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-dot">3</text>
+        <text class="tip-text">{{lang === 'zh' ? '与Buddy保持联系，定期报平安' : 'Stay in touch with your Buddy, check in regularly'}}</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-dot">4</text>
+        <text class="tip-text">{{lang === 'zh' ? '遇到问题可联系国际交流处获取帮助' : 'Contact International Office for any issues'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-spacer"></view>
+</view>

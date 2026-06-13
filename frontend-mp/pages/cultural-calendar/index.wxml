@@ -1,0 +1,156 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="hero-banner">
+    <text class="hero-title">{{lang === 'zh' ? '文化活动日历' : 'Cultural Events'}}</text>
+    <text class="hero-subtitle">{{lang === 'zh' ? '探索中国文化，参与精彩校园活动' : 'Explore Chinese culture, join campus events'}}</text>
+  </view>
+
+  <view class="tabs-bar">
+    <view
+      class="tab-item {{activeTab === item.value ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="value"
+      bindtap="onTabTap"
+      data-value="{{item.value}}"
+    >
+      <text class="tab-icon">{{item.icon}}</text>
+      <text class="tab-label">{{item.label}}</text>
+    </view>
+  </view>
+
+  <scroll-view scroll-x class="category-scroll" enable-flex>
+    <view class="category-filter all" bindtap="onTabTap" data-value="all">
+      <text>{{lang === 'zh' ? '全部' : 'All'}}</text>
+    </view>
+    <view
+      class="category-filter"
+      wx:for="{{categoryFilters}}"
+      wx:key="value"
+      bindtap="onCategoryFilterTap"
+      data-value="{{item.value}}"
+      style="border-color: {{item.color}}; color: {{item.color}};"
+    >
+      <text>{{item.icon}} {{item.label}}</text>
+    </view>
+  </scroll-view>
+
+  <view class="events-list">
+    <view
+      class="event-card"
+      wx:for="{{filteredEvents}}"
+      wx:key="id"
+      bindtap="onEventTap"
+      data-id="{{item.id}}"
+    >
+      <view class="event-date-badge">
+        <text class="badge-icon">{{item.categoryIcon}}</text>
+      </view>
+      <view class="event-content">
+        <view class="event-header">
+          <text class="event-title">{{item.displayTitle}}</text>
+          <view class="event-status" style="background: {{item.statusColor}}20; color: {{item.statusColor}};">
+            <text>{{item.statusLabel}}</text>
+          </view>
+        </view>
+        <view class="event-meta">
+          <text class="meta-item">📅 {{item.displayDate}}</text>
+          <text class="meta-item">🕐 {{item.time}}</text>
+        </view>
+        <view class="event-meta">
+          <text class="meta-item">📍 {{item.displayLocation}}</text>
+        </view>
+        <view class="event-progress">
+          <view class="progress-bar">
+            <view class="progress-fill" style="width: {{item.progressPercent}}%; background: {{item.categoryColor}};"></view>
+          </view>
+          <text class="progress-text">{{item.registered}}/{{item.capacity}} {{lang === 'zh' ? '已报名' : 'registered'}}</text>
+        </view>
+        <view class="event-tags" wx:if="{{item.tags.length > 0}}">
+          <text class="event-tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+        </view>
+        <view class="event-registered" wx:if="{{item.isRegistered}}">
+          <text>✓ {{lang === 'zh' ? '已报名' : 'Registered'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{filteredEvents.length === 0}}">
+    <text class="empty-icon">🎉</text>
+    <text class="empty-text">{{lang === 'zh' ? '暂无活动' : 'No events'}}</text>
+  </view>
+
+  <view class="modal-mask" wx:if="{{showDetail}}" bindtap="onCloseDetail"></view>
+  <view class="detail-modal {{showDetail ? 'show' : ''}}" wx:if="{{selectedEvent}}">
+    <view class="modal-header" style="background: linear-gradient(135deg, {{selectedEvent.categoryColor}} 0%, {{selectedEvent.categoryColor}}CC 100%);">
+      <text class="modal-category-icon">{{selectedEvent.categoryIcon}}</text>
+      <text class="modal-title">{{selectedEvent.displayTitle}}</text>
+      <view class="modal-status" style="background: rgba(255,255,255,0.2);">
+        <text>{{selectedEvent.statusLabel}}</text>
+      </view>
+    </view>
+    <view class="modal-body">
+      <view class="detail-row">
+        <text class="detail-icon">📅</text>
+        <view class="detail-info">
+          <text class="detail-label">{{lang === 'zh' ? '活动时间' : 'Time'}}</text>
+          <text class="detail-value">{{selectedEvent.displayDate}} {{selectedEvent.time}}</text>
+        </view>
+      </view>
+      <view class="detail-row">
+        <text class="detail-icon">📍</text>
+        <view class="detail-info">
+          <text class="detail-label">{{lang === 'zh' ? '活动地点' : 'Location'}}</text>
+          <text class="detail-value">{{selectedEvent.displayLocation}}</text>
+        </view>
+      </view>
+      <view class="detail-row">
+        <text class="detail-icon">🎯</text>
+        <view class="detail-info">
+          <text class="detail-label">{{lang === 'zh' ? '主办方' : 'Organizer'}}</text>
+          <text class="detail-value">{{selectedEvent.displayOrganizer}}</text>
+        </view>
+      </view>
+      <view class="detail-row">
+        <text class="detail-icon">👥</text>
+        <view class="detail-info">
+          <text class="detail-label">{{lang === 'zh' ? '活动名额' : 'Capacity'}}</text>
+          <text class="detail-value">{{selectedEvent.registered}}/{{selectedEvent.capacity}} {{lang === 'zh' ? '人已报名' : 'registered'}}</text>
+        </view>
+      </view>
+      <view class="detail-section">
+        <text class="detail-section-title">{{lang === 'zh' ? '活动介绍' : 'Description'}}</text>
+        <text class="detail-section-text">{{selectedEvent.displayDesc}}</text>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <view class="modal-btn secondary" bindtap="onCloseDetail">
+        <text>{{lang === 'zh' ? '关闭' : 'Close'}}</text>
+      </view>
+      <view 
+        class="modal-btn primary" 
+        wx:if="{{!selectedEvent.isRegistered && selectedEvent.status !== 'full'}}"
+        bindtap="onRegister"
+        data-id="{{selectedEvent.id}}"
+      >
+        <text>{{lang === 'zh' ? '立即报名' : 'Register Now'}}</text>
+      </view>
+      <view 
+        class="modal-btn registered" 
+        wx:if="{{selectedEvent.isRegistered}}"
+        bindtap="onCancelRegister"
+        data-id="{{selectedEvent.id}}"
+      >
+        <text>{{lang === 'zh' ? '取消报名' : 'Cancel Registration'}}</text>
+      </view>
+      <view 
+        class="modal-btn disabled" 
+        wx:if="{{selectedEvent.status === 'full' && !selectedEvent.isRegistered}}"
+      >
+        <text>{{lang === 'zh' ? '已满员' : 'Full'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-spacer"></view>
+</view>

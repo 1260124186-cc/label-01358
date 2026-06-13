@@ -136,7 +136,12 @@
     "pages/low-carbon/leaderboard",
     "pages/low-carbon/weekly-report",
     "pages/low-carbon/activity",
-    "pages/low-carbon/redeem"
+    "pages/low-carbon/redeem",
+    "pages/international-students/index",
+    "pages/international-guide/index",
+    "pages/buddy-match/index",
+    "pages/cultural-calendar/index",
+    "pages/emergency-hotline/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

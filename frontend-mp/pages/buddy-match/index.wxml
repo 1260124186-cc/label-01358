@@ -1,0 +1,141 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="hero-banner">
+    <view class="hero-content">
+      <text class="hero-title">{{lang === 'zh' ? 'Buddy匹配计划' : 'Buddy Program'}}</text>
+      <text class="hero-subtitle">{{lang === 'zh' ? '与本地学生结对，快速适应校园生活' : 'Pair with local students, adapt quickly'}}</text>
+      <view class="hero-stats">
+        <view class="stat-item">
+          <text class="stat-num">{{buddies.length}}+</text>
+          <text class="stat-label">{{lang === 'zh' ? 'Buddy志愿者' : 'Buddies'}}</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-num">98%</text>
+          <text class="stat-label">{{lang === 'zh' ? '满意度' : 'Satisfaction'}}</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-num">24/7</text>
+          <text class="stat-label">{{lang === 'zh' ? '在线支持' : 'Support'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="auto-match-section" wx:if="{{!myBuddy}}">
+    <view class="auto-match-btn" bindtap="onAutoMatch">
+      <text class="btn-icon">🎯</text>
+      <text class="btn-text">{{lang === 'zh' ? '智能匹配我的Buddy' : 'Auto Match My Buddy'}}</text>
+    </view>
+  </view>
+
+  <view class="my-buddy-section" wx:if="{{myBuddy}}">
+    <view class="section-header">
+      <text class="section-icon">💚</text>
+      <text class="section-title">{{lang === 'zh' ? '我的Buddy' : 'My Buddy'}}</text>
+    </view>
+    <view class="my-buddy-card">
+      <view class="my-buddy-info">
+        <text class="my-buddy-avatar">👨‍🎓</text>
+        <view class="my-buddy-detail">
+          <text class="my-buddy-name">{{lang === 'zh' ? myBuddy.name : myBuddy.nameEn}}</text>
+          <text class="my-buddy-status">{{lang === 'zh' ? '已结对' : 'Matched'}}</text>
+        </view>
+      </view>
+      <view class="my-buddy-actions">
+        <view class="action-btn-outline" bindtap="onContactBuddy">
+          <text>{{lang === 'zh' ? '发消息' : 'Message'}}</text>
+        </view>
+        <view class="action-btn-danger" bindtap="onCancelMatch">
+          <text>{{lang === 'zh' ? '取消' : 'Cancel'}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-icon">🌟</text>
+      <text class="section-title">{{lang === 'zh' ? '推荐Buddy' : 'Recommended Buddies'}}</text>
+    </view>
+    <view class="buddy-list">
+      <view
+        class="buddy-card"
+        wx:for="{{buddies}}"
+        wx:key="id"
+        bindtap="onBuddyTap"
+        data-id="{{item.id}}"
+      >
+        <view class="buddy-header">
+          <text class="buddy-avatar">{{item.avatar}}</text>
+          <view class="buddy-main">
+            <text class="buddy-name">{{item.displayName}}</text>
+            <view class="buddy-meta">
+              <text class="buddy-major">{{item.displayMajor}}</text>
+              <text class="buddy-dot">·</text>
+              <text class="buddy-grade">{{item.displayGrade}}</text>
+            </view>
+          </view>
+          <view class="buddy-status {{item.isMyBuddy ? 'matched' : 'available'}}">
+            <text>{{item.isMyBuddy ? (lang === 'zh' ? '我的' : 'Mine') : (lang === 'zh' ? '可匹配' : 'Available')}}</text>
+          </view>
+        </view>
+        <text class="buddy-bio">{{item.displayBio}}</text>
+        <view class="buddy-footer">
+          <view class="buddy-hobbies">
+            <text class="hobby-icon" wx:for="{{item.hobbyIcons}}" wx:for-item="icon" wx:key="*this">{{icon}}</text>
+          </view>
+          <view class="buddy-rating">
+            <text class="rating-star">⭐</text>
+            <text class="rating-score">{{item.rating}}</text>
+            <text class="rating-count">({{item.matchCount}})</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal-mask" wx:if="{{showDetail}}" bindtap="onCloseDetail"></view>
+  <view class="detail-modal {{showDetail ? 'show' : ''}}" wx:if="{{selectedBuddy}}">
+    <view class="modal-header">
+      <text class="modal-avatar">{{selectedBuddy.avatar}}</text>
+      <text class="modal-name">{{selectedBuddy.displayName}}</text>
+      <view class="modal-tags">
+        <text class="modal-tag" wx:for="{{selectedBuddy.tags}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+    <view class="modal-body">
+      <view class="info-row">
+        <text class="info-label">{{lang === 'zh' ? '专业' : 'Major'}}</text>
+        <text class="info-value">{{selectedBuddy.displayMajor}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">{{lang === 'zh' ? '年级' : 'Grade'}}</text>
+        <text class="info-value">{{selectedBuddy.displayGrade}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">{{lang === 'zh' ? '语言能力' : 'Languages'}}</text>
+        <text class="info-value">{{selectedBuddy.langLabels}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">{{lang === 'zh' ? '兴趣爱好' : 'Hobbies'}}</text>
+        <text class="info-value">{{selectedBuddy.hobbyLabels}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">{{lang === 'zh' ? '个人简介' : 'Bio'}}</text>
+        <text class="info-value bio-text">{{selectedBuddy.displayBio}}</text>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <view class="modal-btn secondary" bindtap="onCloseDetail">
+        <text>{{lang === 'zh' ? '关闭' : 'Close'}}</text>
+      </view>
+      <view class="modal-btn primary" wx:if="{{!selectedBuddy.isMyBuddy}}" bindtap="onMatchRequest" data-id="{{selectedBuddy.id}}">
+        <text>{{lang === 'zh' ? '申请结对' : 'Request Match'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-spacer"></view>
+</view>

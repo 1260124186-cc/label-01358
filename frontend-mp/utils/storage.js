@@ -95,7 +95,13 @@ const STORAGE_KEYS = {
   LOW_CARBON_ACTIVITY_REGISTRATION: 'lowCarbonActivityRegistration',
   LOW_CARBON_REDEEM_LIST: 'lowCarbonRedeemList',
   LOW_CARBON_REDEEM_ORDER: 'lowCarbonRedeemOrder',
-  LOW_CARBON_WEEKLY_REPORT: 'lowCarbonWeeklyReport'
+  LOW_CARBON_WEEKLY_REPORT: 'lowCarbonWeeklyReport',
+  APP_LANGUAGE: 'app_language',
+  INTL_BUDDY_LIST: 'intlBuddyList',
+  INTL_MY_BUDDY: 'intlMyBuddy',
+  INTL_BUDDY_MATCH_REQUESTS: 'intlBuddyMatchRequests',
+  INTL_CULTURAL_EVENTS: 'intlCulturalEvents',
+  INTL_EVENT_REGISTRATIONS: 'intlEventRegistrations'
 };
 
 /**
