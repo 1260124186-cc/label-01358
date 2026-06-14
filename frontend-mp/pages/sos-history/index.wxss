@@ -1,0 +1,168 @@
+.page {
+  min-height: 100vh;
+  padding: 30rpx;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.history-card {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+  padding-bottom: 20rpx;
+  border-bottom: 1rpx solid #F3F4F6;
+}
+
+.status-badge {
+  padding: 8rpx 16rpx;
+  border-radius: 8rpx;
+}
+
+.status-badge text {
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.time-text {
+  font-size: 24rpx;
+  color: #6B7280;
+}
+
+.card-content {
+  margin-bottom: 20rpx;
+}
+
+.info-row {
+  display: flex;
+  padding: 12rpx 0;
+}
+
+.info-icon {
+  font-size: 32rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.info-content {
+  flex: 1;
+}
+
+.info-label {
+  font-size: 24rpx;
+  color: #6B7280;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.info-value {
+  font-size: 28rpx;
+  color: #2C3E50;
+}
+
+.contacts-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 8rpx;
+}
+
+.contact-tag {
+  font-size: 22rpx;
+  color: #DC2626;
+  background: #FEF2F2;
+  padding: 4rpx 12rpx;
+  border-radius: 16rpx;
+}
+
+.card-actions {
+  display: flex;
+  gap: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid #F3F4F6;
+}
+
+.action-btn {
+  flex: 1;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #F3F4F6;
+  border-radius: 36rpx;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%);
+}
+
+.action-btn.primary .action-text {
+  color: #FFFFFF;
+}
+
+.action-icon {
+  font-size: 28rpx;
+  margin-right: 8rpx;
+}
+
+.action-text {
+  font-size: 26rpx;
+  color: #2C3E50;
+  font-weight: 500;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  opacity: 0.3;
+  margin-bottom: 24rpx;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  color: #6B7280;
+  margin-bottom: 12rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #9CA3AF;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.page.dark .history-card {
+  background: #1F2937;
+}
+
+.page.dark .card-header,
+.page.dark .card-actions {
+  border-bottom-color: #374151;
+  border-top-color: #374151;
+}
+
+.page.dark .info-value,
+.page.dark .action-text {
+  color: #E8ECF1;
+}
+
+.page.dark .action-btn {
+  background: #374151;
+}

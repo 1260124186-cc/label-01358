@@ -114,7 +114,11 @@ const STORAGE_KEYS = {
   TAKEOUT_PROMOTIONS: 'takeoutPromotions',
   GRADUATION_CHECKLIST: 'graduationChecklist',
   GRADUATION_ADMIN_SIGNS: 'graduationAdminSigns',
-  GRADUATION_CERTIFICATE: 'graduationCertificate'
+  GRADUATION_CERTIFICATE: 'graduationCertificate',
+  SOS_EMERGENCY_CONTACTS: 'sosEmergencyContacts',
+  SOS_HISTORY: 'sosHistory',
+  SOS_SETTINGS: 'sosSettings',
+  SAFETY_ARTICLES: 'safetyArticles'
 };
 
 /**

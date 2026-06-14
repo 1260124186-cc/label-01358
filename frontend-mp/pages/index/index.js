@@ -7,6 +7,27 @@ Page({
     announcements: [],
     navItems: [
       {
+        id: 'sos',
+        name: 'SOS 求助',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%)',
+        url: '/pages/sos-settings/index'
+      },
+      {
+        id: 'emergency-contacts',
+        name: '紧急联系人',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%)',
+        url: '/pages/emergency-contacts/index'
+      },
+      {
+        id: 'safety-education',
+        name: '安全科普',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%)',
+        url: '/pages/safety-education/index'
+      },
+      {
         id: 'weather',
         name: '今日天气',
         icon: '/assets/icons/nav-broadcast.png',
@@ -95,7 +116,7 @@ Page({
         name: '跑腿服务',
         icon: '/assets/icons/nav-market.png',
         bgColor: 'linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%)',
-        url: '/pages/errand/index'
+        url: '/pages/errand/index/index'
       },
       {
         id: 'carpool',
@@ -299,5 +320,12 @@ Page({
 
   onQuickStudyEntry() {
     util.navigateTo('/pages/study-materials/index');
+  },
+
+  onSOSTriggered(e) {
+    const { record } = e.detail;
+    if (record) {
+      util.showToast('求助信号已发送！');
+    }
   }
 });

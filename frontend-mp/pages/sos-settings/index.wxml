@@ -1,0 +1,146 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="settings-card">
+    <view class="card-title">通知设置</view>
+    
+    <view class="setting-item">
+      <view class="setting-info">
+        <text class="setting-icon">👮</text>
+        <view class="setting-text">
+          <text class="setting-name">通知保卫处</text>
+          <text class="setting-desc">触发SOS时自动通知校园保卫处</text>
+        </view>
+      </view>
+      <switch 
+        checked="{{settings.notifyAdmin}}"
+        bindchange="onNotifyAdminChange"
+        color="#FF6B6B"
+      />
+    </view>
+    
+    <view class="setting-item">
+      <view class="setting-info">
+        <text class="setting-icon">👥</text>
+        <view class="setting-text">
+          <text class="setting-name">通知紧急联系人</text>
+          <text class="setting-desc">触发SOS时自动通知紧急联系人</text>
+        </view>
+      </view>
+      <switch 
+        checked="{{settings.notifyContacts}}"
+        bindchange="onNotifyContactsChange"
+        color="#FF6B6B"
+      />
+    </view>
+  </view>
+
+  <view class="settings-card">
+    <view class="card-title">触发反馈</view>
+    
+    <view class="setting-item">
+      <view class="setting-info">
+        <text class="setting-icon">🔊</text>
+        <view class="setting-text">
+          <text class="setting-name">声音提醒</text>
+          <text class="setting-desc">触发SOS时播放警报声</text>
+        </view>
+      </view>
+      <switch 
+        checked="{{settings.soundAlert}}"
+        bindchange="onSoundAlertChange"
+        color="#FF6B6B"
+      />
+    </view>
+    
+    <view class="setting-item">
+      <view class="setting-info">
+        <text class="setting-icon">📳</text>
+        <view class="setting-text">
+          <text class="setting-name">震动提醒</text>
+          <text class="setting-desc">触发SOS时手机震动</text>
+        </view>
+      </view>
+      <switch 
+        checked="{{settings.vibrateAlert}}"
+        bindchange="onVibrateAlertChange"
+        color="#FF6B6B"
+      />
+    </view>
+    
+    <view class="setting-item">
+      <view class="setting-info">
+        <text class="setting-icon">📞</text>
+        <view class="setting-text">
+          <text class="setting-name">自动拨打保卫处</text>
+          <text class="setting-desc">触发SOS后自动拨打保卫处电话</text>
+        </view>
+      </view>
+      <switch 
+        checked="{{settings.autoCall}}"
+        bindchange="onAutoCallChange"
+        color="#FF6B6B"
+      />
+    </view>
+  </view>
+
+  <view class="settings-card">
+    <view class="card-title">快捷入口</view>
+    
+    <view class="link-item" bindtap="onContactsTap">
+      <view class="link-info">
+        <text class="link-icon">👥</text>
+        <text class="link-name">紧急联系人管理</text>
+      </view>
+      <text class="link-arrow">›</text>
+    </view>
+    
+    <view class="link-item" bindtap="onSafetyTap">
+      <view class="link-info">
+        <text class="link-icon">📚</text>
+        <text class="link-name">安全科普知识</text>
+      </view>
+      <text class="link-arrow">›</text>
+    </view>
+    
+    <view class="link-item" bindtap="onHistoryTap">
+      <view class="link-info">
+        <text class="link-icon">📋</text>
+        <text class="link-name">SOS 历史记录</text>
+      </view>
+      <text class="link-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="settings-card" wx:if="{{history.length > 0}}">
+    <view class="card-title">最近 SOS 记录</view>
+    <view 
+      class="history-item" 
+      wx:for="{{recentHistory}}" 
+      wx:key="id"
+    >
+      <view class="history-status" style="background: {{item.statusBg}};">
+        <text style="color: {{item.statusColor}};">{{item.statusText}}</text>
+      </view>
+      <view class="history-info">
+        <view class="history-location" wx:if="{{item.locationText}}">
+          <text class="history-label">位置：</text>
+          <text class="history-value">{{item.locationText}}</text>
+        </view>
+        <view class="history-location" wx:else>
+          <text class="history-label">位置：</text>
+          <text class="history-value">未知</text>
+        </view>
+        <text class="history-time">{{item.timeText}}</text>
+      </view>
+    </view>
+    <view class="view-all" bindtap="onHistoryTap">
+      <text>查看全部记录</text>
+      <text class="view-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="danger-zone">
+    <view class="danger-title">⚠️ 重要提示</view>
+    <text class="danger-text">SOS功能仅用于紧急情况，请勿随意触发。恶意触发可能会承担相应的法律责任。</text>
+  </view>
+</view>

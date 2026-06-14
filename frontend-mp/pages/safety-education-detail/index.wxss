@@ -1,0 +1,241 @@
+.page {
+  min-height: 100vh;
+  padding-bottom: 40rpx;
+}
+
+.article-header {
+  position: relative;
+  height: 400rpx;
+}
+
+.article-cover {
+  width: 100%;
+  height: 100%;
+}
+
+.header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+}
+
+.header-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30rpx;
+}
+
+.category-tag {
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 20rpx;
+  display: inline-block;
+  margin-bottom: 16rpx;
+}
+
+.article-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #FFFFFF;
+  line-height: 1.4;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.article-meta {
+  display: flex;
+  gap: 24rpx;
+}
+
+.meta-item {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.article-content {
+  padding: 30rpx;
+}
+
+.content-section {
+  margin-bottom: 30rpx;
+}
+
+.content-text {
+  font-size: 28rpx;
+  color: #6B7280;
+  line-height: 1.8;
+  background: #F8F9FA;
+  padding: 20rpx;
+  border-radius: 12rpx;
+  display: block;
+}
+
+.content-divider {
+  height: 1rpx;
+  background: #E5E7EB;
+  margin: 30rpx 0;
+}
+
+.content-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2C3E50;
+  display: block;
+  margin: 24rpx 0 16rpx 0;
+}
+
+.content-paragraph {
+  font-size: 28rpx;
+  color: #374151;
+  line-height: 1.8;
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.content-list {
+  margin: 16rpx 0;
+}
+
+.list-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 8rpx 0;
+}
+
+.list-bullet {
+  font-size: 24rpx;
+  color: #FF6B6B;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+  line-height: 1.8;
+}
+
+.list-text {
+  font-size: 28rpx;
+  color: #374151;
+  line-height: 1.8;
+  flex: 1;
+}
+
+.article-footer {
+  padding: 0 30rpx;
+}
+
+.emergency-tip {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.tip-icon {
+  font-size: 48rpx;
+  margin-right: 20rpx;
+}
+
+.tip-content {
+  flex: 1;
+}
+
+.tip-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #DC2626;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.tip-desc {
+  font-size: 24rpx;
+  color: #B91C1C;
+}
+
+.tip-action {
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%);
+  padding: 16rpx 24rpx;
+  border-radius: 32rpx;
+}
+
+.tip-action text {
+  font-size: 26rpx;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.share-section {
+  display: flex;
+  justify-content: center;
+}
+
+.share-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 32rpx;
+  background: #F3F4F6;
+  border-radius: 32rpx;
+}
+
+.share-icon {
+  font-size: 28rpx;
+  margin-right: 8rpx;
+}
+
+.share-text {
+  font-size: 26rpx;
+  color: #6B7280;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 120rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  opacity: 0.3;
+  margin-bottom: 24rpx;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  color: #6B7280;
+}
+
+.page.dark .content-text {
+  background: #374151;
+  color: #9CA3AF;
+}
+
+.page.dark .content-divider {
+  background: #374151;
+}
+
+.page.dark .content-title {
+  color: #E8ECF1;
+}
+
+.page.dark .content-paragraph,
+.page.dark .list-text {
+  color: #D1D5DB;
+}
+
+.page.dark .emergency-tip {
+  background: rgba(220, 38, 38, 0.1);
+}
+
+.page.dark .tip-desc {
+  color: #FCA5A5;
+}
+
+.page.dark .share-item {
+  background: #374151;
+}

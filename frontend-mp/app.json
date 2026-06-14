@@ -1,7 +1,7 @@
 {
   "permission": {
     "scope.userLocation": {
-      "desc": "你的位置信息将用于在二手市场中展示附近的商品及交易地点选择"
+      "desc": "你的位置信息将用于 SOS 一键求助、二手市场展示附近商品及交易地点选择"
     }
   },
   "requiredPrivateInfos": [
@@ -153,7 +153,12 @@
     "pages/international-guide/index",
     "pages/buddy-match/index",
     "pages/cultural-calendar/index",
-    "pages/emergency-hotline/index"
+    "pages/emergency-hotline/index",
+    "pages/emergency-contacts/index",
+    "pages/sos-settings/index",
+    "pages/sos-history/index",
+    "pages/safety-education/index",
+    "pages/safety-education-detail/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

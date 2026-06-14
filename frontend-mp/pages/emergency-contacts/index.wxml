@@ -1,0 +1,142 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header-tip">
+    <text class="tip-icon">💡</text>
+    <text class="tip-text">添加紧急联系人，遇到危险时将自动通知他们</text>
+  </view>
+
+  <view class="contacts-list" wx:if="{{contacts.length > 0}}">
+    <view 
+      class="contact-item" 
+      wx:for="{{contacts}}" 
+      wx:key="id"
+    >
+      <view class="contact-main">
+        <view class="contact-avatar">
+          <text>{{item.name.charAt(0)}}</text>
+        </view>
+        <view class="contact-info">
+          <view class="contact-name-row">
+            <text class="contact-name">{{item.name}}</text>
+            <view class="primary-tag" wx:if="{{item.isPrimary}}">
+              <text>主要</text>
+            </view>
+          </view>
+          <text class="contact-phone">{{item.phone}}</text>
+          <text class="contact-relation">{{item.relationship}}</text>
+        </view>
+      </view>
+      <view class="contact-actions">
+        <view class="action-btn call" bindtap="onCall" data-phone="{{item.phone}}">
+          <text class="action-icon">📞</text>
+        </view>
+        <view class="action-btn edit" bindtap="onEdit" data-item="{{item}}">
+          <text class="action-icon">✏️</text>
+        </view>
+        <view class="action-btn delete" bindtap="onDelete" data-id="{{item.id}}">
+          <text class="action-icon">🗑️</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{contacts.length === 0}}">
+    <text class="empty-icon">👥</text>
+    <text class="empty-title">暂无紧急联系人</text>
+    <text class="empty-desc">点击下方按钮添加紧急联系人</text>
+  </view>
+
+  <view class="add-btn" bindtap="onAdd">
+    <text class="add-icon">+</text>
+    <text class="add-text">添加紧急联系人</text>
+  </view>
+
+  <view class="security-contacts">
+    <view class="section-title">
+      <text class="section-icon">🏫</text>
+      <text class="section-text">校园紧急电话</text>
+    </view>
+    <view class="security-list">
+      <view 
+        class="security-item" 
+        wx:for="{{securityContacts}}" 
+        wx:key="id"
+        bindtap="onCall"
+        data-phone="{{item.phone}}"
+      >
+        <view class="security-icon">
+          <text>{{item.icon}}</text>
+        </view>
+        <view class="security-info">
+          <text class="security-name">{{item.name}}</text>
+          <text class="security-desc">{{item.description}}</text>
+        </view>
+        <view class="security-phone">
+          <text class="phone-icon">📞</text>
+          <text class="phone-text">{{item.phone}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="edit-modal" wx:if="{{showEdit}}" catchtouchmove="noop">
+  <view class="modal-mask" bindtap="onCancelEdit"></view>
+  <view class="modal-content">
+    <view class="modal-title">{{editingId ? '编辑联系人' : '添加联系人'}}</view>
+    
+    <view class="form-item">
+      <text class="form-label">姓名</text>
+      <input 
+        class="form-input" 
+        placeholder="请输入姓名" 
+        value="{{formData.name}}"
+        bindinput="onNameInput"
+      />
+    </view>
+    
+    <view class="form-item">
+      <text class="form-label">手机号</text>
+      <input 
+        class="form-input" 
+        type="number"
+        placeholder="请输入手机号" 
+        value="{{formData.phone}}"
+        bindinput="onPhoneInput"
+      />
+    </view>
+    
+    <view class="form-item">
+      <text class="form-label">关系</text>
+      <picker 
+        range="{{relationshipOptions}}" 
+        range-key="label"
+        value="{{relationshipIndex}}"
+        bindchange="onRelationshipChange"
+      >
+        <view class="picker-view">
+          <text class="picker-text">{{formData.relationship || '请选择关系'}}</text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </picker>
+    </view>
+    
+    <view class="form-item switch-item">
+      <text class="form-label">设为主要联系人</text>
+      <switch 
+        checked="{{formData.isPrimary}}"
+        bindchange="onPrimaryChange"
+        color="#FF6B6B"
+      />
+    </view>
+    
+    <view class="modal-buttons">
+      <view class="modal-btn cancel" bindtap="onCancelEdit">
+        <text>取消</text>
+      </view>
+      <view class="modal-btn confirm" bindtap="onSave">
+        <text>保存</text>
+      </view>
+    </view>
+  </view>
+</view>

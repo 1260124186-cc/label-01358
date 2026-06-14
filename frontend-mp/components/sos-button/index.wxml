@@ -1,0 +1,112 @@
+<view class="sos-button-container">
+  <view 
+    class="sos-button {{pressing ? 'pressing' : ''}} {{triggered ? 'triggered' : ''}}"
+    bindtouchstart="onTouchStart"
+    bindtouchend="onTouchEnd"
+    bindtouchcancel="onTouchEnd"
+    bindlongpress="onLongPress"
+  >
+    <view class="sos-button-ripple" wx:if="{{pressing}}"></view>
+    <view class="sos-button-inner">
+      <text class="sos-icon">🚨</text>
+      <text class="sos-text">{{pressing ? (3 - pressSeconds) + 's' : 'SOS'}}</text>
+    </view>
+    <view class="sos-progress-ring" wx:if="{{pressing}}">
+      <svg viewBox="0 0 100 100" class="progress-svg">
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="none"
+          stroke="rgba(255,255,255,0.3)"
+          stroke-width="4"
+        />
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="none"
+          stroke="#FFFFFF"
+          stroke-width="4"
+          stroke-linecap="round"
+          stroke-dasharray="{{progressDashArray}}"
+          stroke-dashoffset="0"
+          transform="rotate(-90 50 50)"
+        />
+      </svg>
+    </view>
+  </view>
+  <view class="sos-hint">
+    <text>{{hintText}}</text>
+  </view>
+  <view class="sos-shortcuts">
+    <view class="shortcut-item" bindtap="onContactsTap">
+      <text class="shortcut-icon">👥</text>
+      <text class="shortcut-text">联系人</text>
+    </view>
+    <view class="shortcut-item" bindtap="onSettingsTap">
+      <text class="shortcut-icon">⚙️</text>
+      <text class="shortcut-text">设置</text>
+    </view>
+    <view class="shortcut-item" bindtap="onSafetyTap">
+      <text class="shortcut-icon">📚</text>
+      <text class="shortcut-text">安全科普</text>
+    </view>
+  </view>
+</view>
+
+<view class="sos-confirm-modal" wx:if="{{showConfirm}}" catchtouchmove="noop">
+  <view class="confirm-mask" bindtap="onCancelConfirm"></view>
+  <view class="confirm-content">
+    <view class="confirm-icon">🚨</view>
+    <view class="confirm-title">确认发送求助信号？</view>
+    <view class="confirm-desc">
+      将发送您的当前位置和紧急信息给：
+    </view>
+    <view class="confirm-targets" wx:if="{{notifyTargets.length > 0}}">
+      <view class="target-item" wx:for="{{notifyTargets}}" wx:key="id">
+        <text class="target-icon">{{item.icon}}</text>
+        <text class="target-name">{{item.name}}</text>
+      </view>
+    </view>
+    <view class="confirm-buttons">
+      <view class="confirm-btn cancel" bindtap="onCancelConfirm">
+        <text>取消</text>
+      </view>
+      <view class="confirm-btn confirm" bindtap="onConfirmTrigger">
+        <text>确认发送</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<view class="sos-success-modal" wx:if="{{showSuccess}}" catchtouchmove="noop">
+  <view class="success-mask"></view>
+  <view class="success-content">
+    <view class="success-icon">✅</view>
+    <view class="success-title">求助信号已发送</view>
+    <view class="success-info" wx:if="{{lastSOSRecord}}">
+      <view class="info-item" wx:if="{{lastSOSRecord.location}}">
+        <text class="info-label">位置：</text>
+        <text class="info-value">{{lastSOSRecord.location.latitude}}, {{lastSOSRecord.location.longitude}}</text>
+      </view>
+      <view class="info-item" wx:if="{{lastSOSRecord.nearestPOI}}">
+        <text class="info-label">附近：</text>
+        <text class="info-value">{{lastSOSRecord.nearestPOI.name}}</text>
+      </view>
+      <view class="info-item">
+        <text class="info-label">时间：</text>
+        <text class="info-value">{{lastSOSRecord.timeText}}</text>
+      </view>
+    </view>
+    <view class="success-actions">
+      <view class="action-btn" bindtap="onCallSecurity">
+        <text class="action-icon">📞</text>
+        <text class="action-text">拨打保卫处</text>
+      </view>
+      <view class="action-btn primary" bindtap="onCloseSuccess">
+        <text class="action-text">知道了</text>
+      </view>
+    </view>
+  </view>
+</view>

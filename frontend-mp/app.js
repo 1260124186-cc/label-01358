@@ -5,6 +5,7 @@ const config = require('./config/index');
 const dataService = require('./services/data');
 const userService = require('./services/userService');
 const security = require('./utils/security');
+const sosService = require('./services/sosService');
 
 App({
   globalData: {
@@ -250,6 +251,12 @@ App({
         dataService.initLowCarbonData();
       } catch (e) {
         console.error('初始化低碳数据失败:', e);
+      }
+
+      try {
+        sosService.initSOSData();
+      } catch (e) {
+        console.error('初始化SOS数据失败:', e);
       }
 
       wx.setStorageSync('mock_data_version', MOCK_DATA_VERSION);

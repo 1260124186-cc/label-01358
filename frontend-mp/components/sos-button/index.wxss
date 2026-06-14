@@ -1,0 +1,297 @@
+.sos-button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40rpx 30rpx;
+}
+
+.sos-button {
+  position: relative;
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 30rpx rgba(238, 90, 90, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  z-index: 10;
+}
+
+.sos-button.pressing {
+  transform: scale(0.95);
+  box-shadow: 0 4rpx 15rpx rgba(238, 90, 90, 0.3);
+}
+
+.sos-button.triggered {
+  animation: sosPulse 0.5s ease-in-out infinite;
+}
+
+@keyframes sosPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 8rpx 30rpx rgba(238, 90, 90, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 12rpx 40rpx rgba(238, 90, 90, 0.6);
+  }
+}
+
+.sos-button-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%) scale(1);
+  animation: ripple 3s linear forwards;
+}
+
+@keyframes ripple {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.8);
+    opacity: 0;
+  }
+}
+
+.sos-button-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.sos-icon {
+  font-size: 48rpx;
+  line-height: 1;
+}
+
+.sos-text {
+  color: #FFFFFF;
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-top: 8rpx;
+}
+
+.sos-progress-ring {
+  position: absolute;
+  top: -8rpx;
+  left: -8rpx;
+  width: calc(100% + 16rpx);
+  height: calc(100% + 16rpx);
+  pointer-events: none;
+}
+
+.progress-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.sos-hint {
+  margin-top: 24rpx;
+  color: #6B7280;
+  font-size: 26rpx;
+}
+
+.sos-shortcuts {
+  display: flex;
+  justify-content: center;
+  margin-top: 32rpx;
+  gap: 48rpx;
+}
+
+.shortcut-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  border-radius: 16rpx;
+  background: #F8F9FA;
+  transition: background 0.2s ease;
+}
+
+.shortcut-item:active {
+  background: #E9ECEF;
+}
+
+.shortcut-icon {
+  font-size: 36rpx;
+}
+
+.shortcut-text {
+  font-size: 22rpx;
+  color: #6B7280;
+  margin-top: 8rpx;
+}
+
+.sos-confirm-modal,
+.sos-success-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.confirm-mask,
+.success-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.confirm-content,
+.success-content {
+  position: relative;
+  width: 600rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 48rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.confirm-icon,
+.success-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.confirm-title,
+.success-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #2C3E50;
+  margin-bottom: 16rpx;
+}
+
+.confirm-desc {
+  font-size: 28rpx;
+  color: #6B7280;
+  margin-bottom: 24rpx;
+  text-align: center;
+}
+
+.confirm-targets {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16rpx;
+  margin-bottom: 32rpx;
+}
+
+.target-item {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 20rpx;
+  background: #FEF2F2;
+  border-radius: 32rpx;
+}
+
+.target-icon {
+  font-size: 28rpx;
+  margin-right: 8rpx;
+}
+
+.target-name {
+  font-size: 26rpx;
+  color: #DC2626;
+}
+
+.confirm-buttons {
+  display: flex;
+  width: 100%;
+  gap: 24rpx;
+}
+
+.confirm-btn {
+  flex: 1;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.confirm-btn.cancel {
+  background: #F3F4F6;
+  color: #6B7280;
+}
+
+.confirm-btn.confirm {
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%);
+  color: #FFFFFF;
+}
+
+.success-info {
+  width: 100%;
+  background: #F8F9FA;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 32rpx;
+}
+
+.info-item {
+  display: flex;
+  font-size: 26rpx;
+  padding: 8rpx 0;
+}
+
+.info-label {
+  color: #6B7280;
+  min-width: 100rpx;
+}
+
+.info-value {
+  color: #2C3E50;
+  flex: 1;
+  word-break: break-all;
+}
+
+.success-actions {
+  display: flex;
+  width: 100%;
+  gap: 24rpx;
+}
+
+.action-btn {
+  flex: 1;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 44rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  background: #F3F4F6;
+  color: #2C3E50;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  color: #FFFFFF;
+}
+
+.action-icon {
+  font-size: 32rpx;
+  margin-right: 8rpx;
+}

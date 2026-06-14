@@ -164,4 +164,7 @@
       </scroll-view>
     </view>
   </view>
+
+  <!-- SOS 一键求助按钮 -->
+  <sos-button bind:sosTriggered="onSOSTriggered" />
 </view>

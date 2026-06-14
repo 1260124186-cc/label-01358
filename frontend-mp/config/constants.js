@@ -1626,6 +1626,101 @@ const ALUMNI_CARD_BENEFIT_CATEGORIES = [
   { value: 'shopping', label: '购物优惠', icon: '🛍️', color: '#6366F1' }
 ];
 
+const SOS_TRIGGER_DURATION = 3000;
+
+const SOS_STATUS = {
+  PENDING: 'pending',
+  SENT: 'sent',
+  CANCELLED: 'cancelled'
+};
+
+const SOS_STATUS_MAP = {
+  pending: { label: '待发送', color: '#F59E0B' },
+  sent: { label: '已发送', color: '#10B981' },
+  cancelled: { label: '已取消', color: '#6B7280' }
+};
+
+const SAFETY_CATEGORIES = [
+  { value: 'all', label: '全部', icon: '📚' },
+  { value: 'campus', label: '校园安全', icon: '🏫' },
+  { value: 'traffic', label: '交通安全', icon: '🚗' },
+  { value: 'fire', label: '消防安全', icon: '🔥' },
+  { value: 'anti_fraud', label: '防诈骗', icon: '🕵️' },
+  { value: 'mental', label: '心理健康', icon: '💚' },
+  { value: 'emergency', label: '应急处理', icon: '🚨' }
+];
+
+const CAMPUS_SECURITY_CONTACTS = [
+  { id: 'security_office', name: '保卫处', phone: '010-12345678', description: '24小时值班', icon: '👮' },
+  { id: 'campus_police', name: '校园警务站', phone: '010-87654321', description: '工作日8:00-22:00', icon: '🚓' },
+  { id: 'medical_center', name: '校医务室', phone: '010-11112222', description: '24小时急诊', icon: '🏥' },
+  { id: 'psychology_center', name: '心理咨询中心', phone: '010-33334444', description: '工作日9:00-17:00', icon: '💚' },
+  { id: 'student_affairs', name: '学生处', phone: '010-55556666', description: '工作日8:30-17:30', icon: '👨‍🏫' }
+];
+
+const SAFETY_ARTICLES = [
+  {
+    id: 'safety_001',
+    title: '校园防诈骗指南',
+    category: 'anti_fraud',
+    summary: '了解常见诈骗手段，保护个人财产安全',
+    content: '一、常见诈骗类型\n1. 网络贷款诈骗：以低息、无抵押为诱饵，骗取保证金、验证金\n2. 刷单返利诈骗：以小额返利为诱饵，逐步诱导大额投入\n3. 冒充公检法：以涉嫌犯罪为由，要求转账到"安全账户"\n4. 校园贷诈骗：针对学生的高利贷，暴力催收\n\n二、防范措施\n1. 不轻易透露个人信息，特别是银行卡、验证码\n2. 不点击陌生链接，不下载非官方APP\n3. 遇到可疑情况，第一时间向学校保卫处或家长报告\n4. 树立正确消费观，不盲目攀比借贷',
+    cover: '/assets/images/default-news.png',
+    views: 1256,
+    createTime: Date.now() - 7 * 86400000
+  },
+  {
+    id: 'safety_002',
+    title: '宿舍消防安全须知',
+    category: 'fire',
+    summary: '遵守宿舍用电规定，杜绝火灾隐患',
+    content: '一、禁止行为\n1. 严禁使用大功率电器（电炉、电热棒、电磁炉等）\n2. 严禁私拉乱接电线\n3. 严禁在宿舍内吸烟、点蜡烛\n4. 严禁占用、堵塞消防通道\n\n二、注意事项\n1. 人走关灯、拔插头，不超负荷用电\n2. 手机、充电宝等不要长时间充电\n3. 熟悉宿舍楼层消防通道和灭火器位置\n4. 发现火情及时拨打119和保卫处电话',
+    cover: '/assets/images/default-news.png',
+    views: 892,
+    createTime: Date.now() - 14 * 86400000
+  },
+  {
+    id: 'safety_003',
+    title: '夜间出行安全提示',
+    category: 'campus',
+    summary: '提高安全意识，避免夜间单独出行',
+    content: '一、出行建议\n1. 尽量避免夜间单独外出，尤其是偏僻路段\n2. 夜间出行选择照明好、行人多的路线\n3. 不搭乘陌生车辆，不接受陌生人的接送\n4. 随身携带手机，保持电量充足\n\n二、应急处理\n1. 感觉有人尾随时，立即向人多的地方移动\n2. 遇到危险大声呼救，及时报警\n3. 可随身携带防狼喷雾等防身用品\n4. 保存学校保卫处紧急电话',
+    cover: '/assets/images/default-news.png',
+    views: 2034,
+    createTime: Date.now() - 3 * 86400000
+  },
+  {
+    id: 'safety_004',
+    title: '大学生心理健康维护',
+    category: 'mental',
+    summary: '关注心理健康，学会自我调节',
+    content: '一、常见心理问题\n1. 适应问题：新环境、新人际关系的适应\n2. 学业压力：考试焦虑、专业困惑\n3. 情绪问题：抑郁、焦虑情绪\n4. 人际关系：宿舍矛盾、恋爱问题\n\n二、自我调节方法\n1. 规律作息，适度运动\n2. 学会倾诉，与朋友家人沟通\n3. 培养兴趣爱好，丰富课余生活\n4. 正确认识自己，接纳不完美\n\n三、寻求帮助\n学校心理咨询中心提供免费咨询服务，预约电话：010-33334444',
+    cover: '/assets/images/default-news.png',
+    views: 1567,
+    createTime: Date.now() - 10 * 86400000
+  },
+  {
+    id: 'safety_005',
+    title: '交通事故应急处理',
+    category: 'traffic',
+    summary: '遇到交通事故如何正确应对',
+    content: '一、事故处理步骤\n1. 立即停车，保护现场\n2. 检查伤亡情况，拨打120急救\n3. 拨打122报警，通知保险公司\n4. 记录事故信息（车牌、联系方式）\n\n二、注意事项\n1. 不要轻易私了，尤其是有人受伤时\n2. 不移动现场物品，除非为了救人\n3. 配合交警调查，如实陈述\n4. 收集证据，拍照留存\n\n三、行人安全\n1. 走人行横道，遵守交通信号\n2. 不低头看手机过马路\n3. 夜间穿亮色衣物\n4. 不翻越护栏',
+    cover: '/assets/images/default-news.png',
+    views: 756,
+    createTime: Date.now() - 20 * 86400000
+  },
+  {
+    id: 'safety_006',
+    title: '突发公共事件应对',
+    category: 'emergency',
+    summary: '遇到突发情况如何自救互救',
+    content: '一、地震应对\n1. 室内：躲在坚固家具下，护住头部\n2. 室外：远离建筑物、电线杆\n3. 不乘坐电梯，不走楼道\n\n二、暴雨洪涝\n1. 关闭门窗，防止雨水进屋\n2. 不涉水行走，远离积水区域\n3. 断电关气，防止触电\n\n三、踩踏事件\n1. 保持冷静，不拥挤\n2. 抓住稳固物体，防止摔倒\n3. 被挤倒时设法靠墙，身体蜷缩成球状\n\n四、紧急电话\n- 报警：110\n- 火警：119\n- 急救：120\n- 保卫处：010-12345678',
+    cover: '/assets/images/default-news.png',
+    views: 3241,
+    createTime: Date.now() - 1 * 86400000
+  }
+];
+
 module.exports = {
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
@@ -1814,5 +1909,11 @@ module.exports = {
   TAKEOUT_PROMOTION_TYPES,
   GRADUATION_STATUS,
   GRADUATION_STATUS_MAP,
-  GRADUATION_ITEMS
+  GRADUATION_ITEMS,
+  SOS_TRIGGER_DURATION,
+  SOS_STATUS,
+  SOS_STATUS_MAP,
+  SAFETY_CATEGORIES,
+  CAMPUS_SECURITY_CONTACTS,
+  SAFETY_ARTICLES
 };

@@ -1,0 +1,412 @@
+.page {
+  min-height: 100vh;
+  padding: 30rpx;
+  padding-bottom: 120rpx;
+}
+
+.header-tip {
+  display: flex;
+  align-items: flex-start;
+  padding: 24rpx;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  border-radius: 16rpx;
+  margin-bottom: 30rpx;
+}
+
+.tip-icon {
+  font-size: 32rpx;
+  margin-right: 16rpx;
+}
+
+.tip-text {
+  font-size: 26rpx;
+  color: #92400E;
+  line-height: 1.5;
+  flex: 1;
+}
+
+.contacts-list {
+  margin-bottom: 30rpx;
+}
+
+.contact-item {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.contact-main {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.contact-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  font-size: 36rpx;
+  font-weight: bold;
+  margin-right: 24rpx;
+}
+
+.contact-info {
+  flex: 1;
+}
+
+.contact-name-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+
+.contact-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2C3E50;
+  margin-right: 16rpx;
+}
+
+.primary-tag {
+  background: #FEF2F2;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+.primary-tag text {
+  font-size: 22rpx;
+  color: #DC2626;
+}
+
+.contact-phone {
+  font-size: 28rpx;
+  color: #4ECDC4;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.contact-relation {
+  font-size: 24rpx;
+  color: #6B7280;
+}
+
+.contact-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 20rpx;
+  border-top: 1rpx solid #F3F4F6;
+  padding-top: 20rpx;
+}
+
+.action-btn {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.action-btn.call {
+  background: #D1FAE5;
+}
+
+.action-btn.edit {
+  background: #DBEAFE;
+}
+
+.action-btn.delete {
+  background: #FEE2E2;
+}
+
+.action-icon {
+  font-size: 32rpx;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 40rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  opacity: 0.3;
+  margin-bottom: 24rpx;
+}
+
+.empty-title {
+  font-size: 32rpx;
+  color: #6B7280;
+  margin-bottom: 12rpx;
+}
+
+.empty-desc {
+  font-size: 26rpx;
+  color: #9CA3AF;
+}
+
+.add-btn {
+  position: fixed;
+  bottom: 40rpx;
+  left: 30rpx;
+  right: 30rpx;
+  height: 100rpx;
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%);
+  border-radius: 50rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(238, 90, 90, 0.3);
+  z-index: 100;
+}
+
+.add-icon {
+  font-size: 36rpx;
+  color: #FFFFFF;
+  margin-right: 12rpx;
+}
+
+.add-text {
+  font-size: 30rpx;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.security-contacts {
+  margin-top: 40rpx;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.section-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+}
+
+.section-text {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #2C3E50;
+}
+
+.security-list {
+  background: #FFFFFF;
+  border-radius: 16rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0,  0, 0.05);
+}
+
+.security-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  border-bottom: 1rpx solid #F3F4F6;
+}
+
+.security-item:last-child {
+  border-bottom: none;
+}
+
+.security-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: #FEE2E2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+}
+
+.security-icon text {
+  font-size: 36rpx;
+}
+
+.security-info {
+  flex: 1;
+}
+
+.security-name {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: #2C3E50;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.security-desc {
+  font-size: 24rpx;
+  color: #6B7280;
+}
+
+.security-phone {
+  display: flex;
+  align-items: center;
+  background: #D1FAE5;
+  padding: 12rpx 20rpx;
+  border-radius: 32rpx;
+}
+
+.phone-icon {
+  font-size: 24rpx;
+  margin-right: 8rpx;
+}
+
+.phone-text {
+  font-size: 24rpx;
+  color: #059669;
+  font-weight: 500;
+}
+
+.edit-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content {
+  position: relative;
+  width: 640rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 40rpx;
+}
+
+.modal-title {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #2C3E50;
+  text-align: center;
+  margin-bottom: 32rpx;
+}
+
+.form-item {
+  margin-bottom: 32rpx;
+}
+
+.form-label {
+  font-size: 28rpx;
+  color: #374151;
+  margin-bottom: 12rpx;
+  display: block;
+}
+
+.form-input {
+  height: 88rpx;
+  background: #F8F9FA;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #2C3E50;
+}
+
+.picker-view {
+  height: 88rpx;
+  background: #F8F9FA;
+  border-radius: 12rpx;
+  padding: 0 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.picker-text {
+  font-size: 28rpx;
+  color: #2C3E50;
+}
+
+.picker-arrow {
+  font-size: 32rpx;
+  color: #6B7280;
+}
+
+.switch-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 24rpx;
+  margin-top: 40rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 44rpx;
+  font-size: 30rpx;
+  font-weight: 500;
+}
+
+.modal-btn.cancel {
+  background: #F3F4F6;
+  color: #6B7280;
+}
+
+.modal-btn.confirm {
+  background: linear-gradient(135deg, #FF6B6B 0%, #EE5A5A 100%);
+  color: #FFFFFF;
+}
+
+.page.dark .contact-item,
+.page.dark .security-list {
+  background: #1F2937;
+}
+
+.page.dark .contact-name,
+.page.dark .security-name,
+.page.dark .section-text,
+.page.dark .modal-title,
+.page.dark .form-label,
+.page.dark .form-input,
+.page.dark .picker-text {
+  color: #E8ECF1;
+}
+
+.page.dark .contact-phone {
+  color: #4ECDC4;
+}
+
+.page.dark .form-input,
+.page.dark .picker-view {
+  background: #374151;
+}
+
+.page.dark .contact-actions,
+.page.dark .security-item {
+  border-top-color: #374151;
+  border-bottom-color: #374151;
+}
