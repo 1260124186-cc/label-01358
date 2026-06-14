@@ -7630,7 +7630,7 @@ function getMatchedScholarships() {
 
     if (clubPositions && clubPositions.length > 0) {
       matchResult.matchScore += 10;
-      matchResult.matchReasons.push(`担任${clubPositions.length}项学生干部经历');
+      matchResult.matchReasons.push(`担任${clubPositions.length}项学生干部经历`);
     }
 
     if (researchExperience && researchExperience.length > 0) {
