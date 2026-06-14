@@ -63,7 +63,7 @@ mixPage({
     }
     const posts = dataService.getAlumniPostList(filters).map(item => ({
       ...item,
-      typeInfo: constants.ALUMNI_POST_TYPE_MAP[item.type],
+      typeInfo: constants.ALUMNI_POST_TYPE_MAP[item.type] || { label: '其他', icon: '📌', color: '#6B7280' },
       formattedTime: util.formatDate(item.createTime)
     }));
     this.setData({
@@ -80,8 +80,8 @@ mixPage({
     };
     const mentors = dataService.getAlumniMentorList(filters).map(item => ({
       ...item,
-      titleInfo: constants.ALUMNI_MENTOR_TITLES.find(t => t.value === item.title),
-      industryInfo: constants.ALUMNI_INDUSTRY_MAP[item.industry],
+      titleInfo: constants.ALUMNI_MENTOR_TITLES.find(t => t.value === item.title) || { label: '其他', color: '#6B7280' },
+      industryInfo: constants.ALUMNI_INDUSTRY_MAP[item.industry] || { label: '其他', color: '#6B7280', icon: '📌' },
       expertiseText: (item.expertise || []).join('、')
     }));
     this.setData({
@@ -96,7 +96,7 @@ mixPage({
     if (info) {
       verifyInfo = {
         ...info,
-        statusInfo: constants.ALUMNI_VERIFY_STATUS_MAP[info.status]
+        statusInfo: constants.ALUMNI_VERIFY_STATUS_MAP[info.status] || { label: '未知', color: '#6B7280', icon: '📌' }
       };
     }
     this.setData({ verifyInfo });
