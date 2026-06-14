@@ -26,6 +26,7 @@ let alumniMentorsInitialized = false;
 let alumniCardBenefitsInitialized = false;
 let alumniProfilesInitialized = false;
 let takeoutInitialized = false;
+let scholarshipInitialized = false;
 
 function initVolunteerData() {
   if (volunteerInitialized) return;
@@ -7483,5 +7484,270 @@ module.exports = {
   updateCourseAssistantSettings,
   importTrainingPlanCourses,
   getSemesterOptions,
-  getCategoryOptions
+  getCategoryOptions,
+
+  initScholarshipData,
+  getScholarshipPolicyList,
+  getScholarshipPolicyDetail,
+  getScholarshipUserProfile,
+  getMatchedScholarships,
+  getScholarshipApplicationList,
+  getScholarshipApplicationDetail,
+  createScholarshipApplication,
+  getScholarshipMaterialList,
+  getScholarshipMaterialDetail,
+  getScholarshipPublicList,
+  getScholarshipPublicDetail
 };
+
+function initScholarshipData() {
+  if (scholarshipInitialized) return;
+  const existingPolicies = storage.get(STORAGE_KEYS.SCHOLARSHIP_POLICY_LIST);
+  if (!existingPolicies || existingPolicies.length === 0) {
+    const policies = mockData.MOCK_SCHOLARSHIP_POLICIES.map((item, index) => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.SCHOLARSHIP_POLICY_LIST, policies);
+
+    const applications = mockData.MOCK_SCHOLARSHIP_APPLICATIONS.map(item => ({
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.SCHOLARSHIP_APPLICATION_LIST, applications);
+
+    const materials = mockData.MOCK_SCHOLARSHIP_MATERIALS.map(item => ({
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.SCHOLARSHIP_MATERIAL_LIST, materials);
+
+    const publicList = mockData.MOCK_SCHOLARSHIP_PUBLIC_LIST.map(item => ({
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.SCHOLARSHIP_PUBLIC_LIST, publicList);
+
+    const userProfile = {
+      ...mockData.MOCK_SCHOLARSHIP_USER_PROFILE
+    };
+    storage.set(STORAGE_KEYS.SCHOLARSHIP_USER_PROFILE, userProfile);
+  }
+  scholarshipInitialized = true;
+}
+
+function getScholarshipPolicyList(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.SCHOLARSHIP_POLICY_LIST);
+
+  if (filters.category) {
+    list = list.filter(item => item.category === filters.category);
+  }
+
+  if (filters.level) {
+    list = list.filter(item => item.level === filters.level);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'description', 'sponsor']);
+  }
+
+  if (filters.sort === 'amount') {
+    list = list.sort((a, b) => b.amount - a.amount);
+  } else if (filters.sort === 'deadline') {
+    list = list.sort((a, b) => {
+      const aDate = new Date(a.applyEndDate);
+      const bDate = new Date(b.applyEndDate);
+      return aDate - bDate;
+    });
+  }
+
+  return list;
+}
+
+function getScholarshipPolicyDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.SCHOLARSHIP_POLICY_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function getScholarshipUserProfile() {
+  return storage.get(STORAGE_KEYS.SCHOLARSHIP_USER_PROFILE) || null;
+}
+
+function getMatchedScholarships() {
+  const policies = getScholarshipPolicyList();
+  const profile = getScholarshipUserProfile();
+  if (!profile) return [];
+
+  const { gpa, comprehensiveRankPercent, hasDisciplinaryAction, college, awards, clubPositions, researchExperience, familyEconomicStatus, volunteerHours } = profile;
+
+  return policies.map(policy => {
+    const matchResult = {
+      ...policy,
+      matchScore: 0,
+      matchLevel: 'low',
+      matchReasons: [],
+      unmetConditions: [],
+      isEligible: true
+    };
+
+    const eligibility = policy.eligibility || [];
+    const benefits = policy.benefits || [];
+
+    if (gpa >= 3.8) {
+      matchResult.matchScore += 30;
+      matchResult.matchReasons.push('GPA成绩优异');
+    } else if (gpa >= 3.5) {
+      matchResult.matchScore += 20;
+      matchResult.matchReasons.push('GPA成绩良好');
+    } else if (gpa >= 3.2) {
+      matchResult.matchScore += 10;
+      matchResult.matchReasons.push('GPA成绩达标');
+    } else {
+      matchResult.isEligible = false;
+      matchResult.unmetConditions.push('GPA未达到最低要求');
+    }
+
+    if (comprehensiveRankPercent <= 5) {
+      matchResult.matchScore += 25;
+      matchResult.matchReasons.push('综合测评排名前5%');
+    } else if (comprehensiveRankPercent <= 15) {
+      matchResult.matchScore += 15;
+      matchResult.matchReasons.push('综合测评排名前15%');
+    } else if (comprehensiveRankPercent <= 30) {
+      matchResult.matchScore += 5;
+      matchResult.matchReasons.push('综合测评排名前30%');
+    }
+
+    if (hasDisciplinaryAction) {
+      matchResult.isEligible = false;
+      matchResult.unmetConditions.push('存在违纪记录');
+    } else {
+      matchResult.matchScore += 10;
+      matchResult.matchReasons.push('无违纪记录');
+    }
+
+    if (awards && awards.length > 0) {
+      matchResult.matchScore += 15;
+      matchResult.matchReasons.push(`拥有${awards.length}项获奖经历`);
+    }
+
+    if (clubPositions && clubPositions.length > 0) {
+      matchResult.matchScore += 10;
+      matchResult.matchReasons.push(`担任${clubPositions.length}项学生干部经历');
+    }
+
+    if (researchExperience && researchExperience.length > 0) {
+      matchResult.matchScore += 10;
+      matchResult.matchReasons.push('拥有科研经历');
+    }
+
+    if (volunteerHours >= 50) {
+      matchResult.matchScore += 5;
+      matchResult.matchReasons.push('志愿服务时长充足');
+    }
+
+    if (policy.category === 'enterprise' && college === '计算机学院') {
+      matchResult.matchScore += 10;
+      matchResult.matchReasons.push('学院匹配');
+    }
+
+    if (policy.category === 'special' && policy.name.includes('社会工作') && clubPositions.length > 0) {
+      matchResult.matchScore += 15;
+    }
+
+    if (policy.category === 'special' && policy.name.includes('创新创业') && awards.some(a => a.name.includes('竞赛'))) {
+      matchResult.matchScore += 15;
+    }
+
+    if (policy.level === 'postgraduate' && !profile.grade.includes('202')) {
+      matchResult.isEligible = false;
+      matchResult.unmetConditions.push('仅限研究生');
+    }
+
+    if (matchResult.matchScore >= 60) {
+      matchResult.matchLevel = 'high';
+    } else if (matchResult.matchScore >= 30) {
+      matchResult.matchLevel = 'medium';
+    }
+
+    return matchResult;
+  }).filter(item => item.isEligible).sort((a, b) => b.matchScore - a.matchScore);
+}
+
+function getScholarshipApplicationList(userId = 'test_user') {
+  const list = storage.getList(STORAGE_KEYS.SCHOLARSHIP_APPLICATION_LIST);
+  return list.filter(item => item.userId === userId);
+}
+
+function getScholarshipApplicationDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.SCHOLARSHIP_APPLICATION_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function createScholarshipApplication(data) {
+  const app = {
+    id: util.generateId(),
+    userId: 'test_user',
+    applyTime: Date.now(),
+    status: 'pending',
+    currentStep: 1,
+    totalSteps: 5,
+    steps: [
+      { name: '提交申请', status: 'completed', time: Date.now(), remark: '申请已提交' },
+      { name: '班级初审', status: 'pending', time: null, remark: '' },
+      { name: '学院审核', status: 'pending', time: null, remark: '' },
+      { name: '学校评审', status: 'pending', time: null, remark: '' },
+      { name: '奖学金发放', status: 'pending', time: null, remark: '' }
+    ],
+    ...data
+  };
+  storage.addToList(STORAGE_KEYS.SCHOLARSHIP_APPLICATION_LIST, app);
+  return app;
+}
+
+function getScholarshipMaterialList(scholarshipId) {
+  let list = storage.getList(STORAGE_KEYS.SCHOLARSHIP_MATERIAL_LIST);
+
+  if (scholarshipId) {
+    const policy = getScholarshipPolicyDetail(scholarshipId);
+    if (policy) {
+      const requiredMaterials = [];
+      if (policy.name.includes('国家励志') || policy.name.includes('励志')) {
+        requiredMaterials.push('mat_001', 'mat_002', 'mat_003', 'mat_004');
+      } else if (policy.name.includes('社会工作')) {
+        requiredMaterials.push('mat_001', 'mat_002', 'mat_003', 'mat_005');
+      } else if (policy.name.includes('创新创业')) {
+        requiredMaterials.push('mat_001', 'mat_002', 'mat_003', 'mat_006');
+      } else {
+        requiredMaterials.push('mat_001', 'mat_002', 'mat_003');
+      }
+      list = list.filter(item => requiredMaterials.includes(item.id));
+    }
+  }
+  return list;
+}
+
+function getScholarshipMaterialDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.SCHOLARSHIP_MATERIAL_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function getScholarshipPublicList(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.SCHOLARSHIP_PUBLIC_LIST);
+
+  if (filters.year) {
+    list = list.filter(item => item.year === filters.year);
+  }
+
+  if (filters.scholarshipId) {
+    list = list.filter(item => item.scholarshipId === filters.scholarshipId);
+  }
+
+  if (filters.college) {
+    list = list.filter(item => item.college === filters.college);
+  }
+
+  return list.sort((a, b) => b.publishTime - a.publishTime);
+}
+
+function getScholarshipPublicDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.SCHOLARSHIP_PUBLIC_LIST);
+  return list.find(item => item.id === id) || null;
+}

@@ -128,7 +128,13 @@ const STORAGE_KEYS = {
   TRAINING_PLAN_COURSES: 'trainingPlanCourses',
   SELECTED_COURSES: 'selectedCourses',
   COURSE_REVIEWS: 'courseReviews',
-  COURSE_ASSISTANT_SETTINGS: 'courseAssistantSettings'
+  COURSE_ASSISTANT_SETTINGS: 'courseAssistantSettings',
+
+  SCHOLARSHIP_POLICY_LIST: 'scholarshipPolicyList',
+  SCHOLARSHIP_APPLICATION_LIST: 'scholarshipApplicationList',
+  SCHOLARSHIP_MATERIAL_LIST: 'scholarshipMaterialList',
+  SCHOLARSHIP_PUBLIC_LIST: 'scholarshipPublicList',
+  SCHOLARSHIP_USER_PROFILE: 'scholarshipUserProfile'
 };
 
 /**

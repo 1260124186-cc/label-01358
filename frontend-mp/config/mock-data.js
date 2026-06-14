@@ -8244,5 +8244,590 @@ module.exports = {
   MOCK_TAKEOUT_PROMOTIONS_BANNER,
   MOCK_TRAINING_PLANS,
   MOCK_TRAINING_PLAN_COURSES,
-  MOCK_COURSE_REVIEWS
+  MOCK_COURSE_REVIEWS,
+
+  MOCK_SCHOLARSHIP_POLICIES,
+  MOCK_SCHOLARSHIP_APPLICATIONS,
+  MOCK_SCHOLARSHIP_MATERIALS,
+  MOCK_SCHOLARSHIP_PUBLIC_LIST,
+  MOCK_SCHOLARSHIP_USER_PROFILE
 };
+
+const MOCK_SCHOLARSHIP_POLICIES = [
+  {
+    id: 'sch_001',
+    name: '国家奖学金',
+    category: 'national',
+    categoryName: '国家级',
+    level: 'undergraduate',
+    levelName: '本科生',
+    amount: 8000,
+    amountText: '8000元/年',
+    applyStartDate: '2026-09-01',
+    applyEndDate: '2026-09-15',
+    quota: '全院5名',
+    eligibility: [
+      '热爱社会主义祖国，拥护中国共产党的领导',
+      '遵守宪法和法律，遵守学校规章制度',
+      '诚实守信，道德品质优良',
+      '在校期间学习成绩优异，学年GPA不低于3.8',
+      '学年综合测评成绩排名专业前5%',
+      '社会实践、创新能力、综合素质等方面特别突出'
+    ],
+    benefits: [
+      '一次性奖励8000元',
+      '颁发国家级荣誉证书',
+      '记入学生档案',
+      '优先推荐保研资格'
+    ],
+    description: '国家奖学金由中央政府出资设立，用于奖励高校全日制本专科学生中特别优秀的学生，是当前高等学校学生能够获得的荣誉等级最高的国家级奖学金。',
+    sponsor: '教育部',
+    contactName: '李老师',
+    contactPhone: '010-12345101',
+    createTime: Date.now() - 86400000 * 30,
+    views: 1528,
+    status: 'active'
+  },
+  {
+    id: 'sch_002',
+    name: '国家励志奖学金',
+    category: 'national',
+    categoryName: '国家级',
+    level: 'undergraduate',
+    levelName: '本科生',
+    amount: 5000,
+    amountText: '5000元/年',
+    applyStartDate: '2026-09-10',
+    applyEndDate: '2026-09-25',
+    quota: '全院15名',
+    eligibility: [
+      '热爱社会主义祖国，拥护中国共产党的领导',
+      '遵守宪法和法律，遵守学校规章制度',
+      '诚实守信，道德品质优良',
+      '家庭经济困难，生活俭朴',
+      '在校期间学习成绩优秀，学年GPA不低于3.2',
+      '学年综合测评成绩排名专业前20%'
+    ],
+    benefits: [
+      '一次性奖励5000元',
+      '颁发国家级荣誉证书',
+      '记入学生档案'
+    ],
+    description: '国家励志奖学金由中央政府出资设立，用于奖励资助高校全日制本专科学生中品学兼优的家庭经济困难学生。',
+    sponsor: '教育部',
+    contactName: '王老师',
+    contactPhone: '010-12345102',
+    createTime: Date.now() - 86400000 * 25,
+    views: 2345,
+    status: 'active'
+  },
+  {
+    id: 'sch_003',
+    name: '校长奖学金',
+    category: 'school',
+    categoryName: '校级',
+    level: 'undergraduate',
+    levelName: '本科生',
+    amount: 10000,
+    amountText: '10000元/年',
+    applyStartDate: '2026-10-01',
+    applyEndDate: '2026-10-15',
+    quota: '全校10名',
+    eligibility: [
+      '热爱社会主义祖国，拥护中国共产党的领导',
+      '遵守宪法和法律，遵守学校规章制度',
+      '诚实守信，道德品质优良',
+      '在校期间学习成绩特别优异，学年GPA不低于3.9',
+      '学年综合测评成绩排名专业前2%',
+      '在学术研究、科技创新、社会实践等方面有突出表现'
+    ],
+    benefits: [
+      '一次性奖励10000元',
+      '颁发校长奖学金荣誉证书',
+      '记入学生档案',
+      '直接获得保研面试资格',
+      '优先推荐国际交流项目'
+    ],
+    description: '校长奖学金是学校设立的最高等级奖学金，旨在表彰德智体美劳全面发展、综合素质特别优秀的学生。',
+    sponsor: '学校',
+    contactName: '张老师',
+    contactPhone: '010-12345103',
+    createTime: Date.now() - 86400000 * 20,
+    views: 3120,
+    status: 'active'
+  },
+  {
+    id: 'sch_004',
+    name: '一等奖学金',
+    category: 'school',
+    categoryName: '校级',
+    level: 'undergraduate',
+    levelName: '本科生',
+    amount: 3000,
+    amountText: '3000元/年',
+    applyStartDate: '2026-09-20',
+    applyEndDate: '2026-10-05',
+    quota: '专业前5%',
+    eligibility: [
+      '遵守学校各项规章制度，无违纪行为',
+      '诚实守信，道德品质优良',
+      '学年GPA不低于3.5',
+      '学年综合测评成绩排名专业前5%',
+      '体育成绩达标'
+    ],
+    benefits: [
+      '一次性奖励3000元',
+      '颁发校级荣誉证书',
+      '记入学生档案'
+    ],
+    description: '一等奖学金用于奖励学习成绩优秀、综合素质突出的学生。',
+    sponsor: '学校',
+    contactName: '刘老师',
+    contactPhone: '010-12345104',
+    createTime: Date.now() - 86400000 * 15,
+    views: 4567,
+    status: 'active'
+  },
+  {
+    id: 'sch_005',
+    name: '二等奖学金',
+    category: 'school',
+    categoryName: '校级',
+    level: 'undergraduate',
+    levelName: '本科生',
+    amount: 2000,
+    amountText: '2000元/年',
+    applyStartDate: '2026-09-20',
+    applyEndDate: '2026-10-05',
+    quota: '专业前15%',
+    eligibility: [
+      '遵守学校各项规章制度，无违纪行为',
+      '诚实守信，道德品质优良',
+      '学年GPA不低于3.2',
+      '学年综合测评成绩排名专业前15%',
+      '体育成绩达标'
+    ],
+    benefits: [
+      '一次性奖励2000元',
+      '颁发校级荣誉证书',
+      '记入学生档案'
+    ],
+    description: '二等奖学金用于奖励学习成绩良好、综合素质较好的学生。',
+    sponsor: '学校',
+    contactName: '刘老师',
+    contactPhone: '010-12345104',
+    createTime: Date.now() - 86400000 * 15,
+    views: 5234,
+    status: 'active'
+  },
+  {
+    id: 'sch_006',
+    name: '三等奖学金',
+    category: 'school',
+    categoryName: '校级',
+    level: 'undergraduate',
+    levelName: '本科生',
+    amount: 1000,
+    amountText: '1000元/年',
+    applyStartDate: '2026-09-20',
+    applyEndDate: '2026-10-05',
+    quota: '专业前30%',
+    eligibility: [
+      '遵守学校各项规章制度，无违纪行为',
+      '诚实守信，道德品质优良',
+      '学年GPA不低于2.8',
+      '学年综合测评成绩排名专业前30%',
+      '体育成绩达标'
+    ],
+    benefits: [
+      '一次性奖励1000元',
+      '颁发校级荣誉证书',
+      '记入学生档案'
+    ],
+    description: '三等奖学金用于奖励学习成绩较好、有进步的学生。',
+    sponsor: '学校',
+    contactName: '刘老师',
+    contactPhone: '010-12345104',
+    createTime: Date.now() - 86400000 * 15,
+    views: 6123,
+    status: 'active'
+  },
+  {
+    id: 'sch_007',
+    name: '腾讯企业奖学金',
+    category: 'enterprise',
+    categoryName: '企业赞助',
+    level: 'undergraduate',
+    levelName: '本科生',
+    amount: 6000,
+    amountText: '6000元/年',
+    applyStartDate: '2026-10-10',
+    applyEndDate: '2026-10-25',
+    quota: '计算机学院3名',
+    eligibility: [
+      '遵守学校各项规章制度，无违纪行为',
+      '计算机学院在读学生',
+      '学年GPA不低于3.5',
+      '在计算机相关领域有突出表现或科研成果',
+      '有志于从事互联网相关工作'
+    ],
+    benefits: [
+      '一次性奖励6000元',
+      '颁发企业荣誉证书',
+      '腾讯实习绿色通道',
+      '一对一企业导师指导'
+    ],
+    description: '腾讯企业奖学金由腾讯公司赞助设立，旨在奖励计算机相关专业品学兼优的学生，鼓励学生投身互联网事业。',
+    sponsor: '腾讯科技',
+    contactName: '陈老师',
+    contactPhone: '010-12345105',
+    createTime: Date.now() - 86400000 * 10,
+    views: 2890,
+    status: 'active'
+  },
+  {
+    id: 'sch_008',
+    name: '创新创业奖学金',
+    category: 'special',
+    categoryName: '专项奖学金',
+    level: 'undergraduate',
+    levelName: '本科生',
+    amount: 5000,
+    amountText: '5000元/项',
+    applyStartDate: '2026-11-01',
+    applyEndDate: '2026-11-15',
+    quota: '不限，择优评定',
+    eligibility: [
+      '遵守学校各项规章制度，无违纪行为',
+      '在学术研究、科技创新、创业实践等方面取得突出成果',
+      '满足以下条件之一：\n• 获得省部级及以上学科竞赛奖励\n• 获得发明专利授权\n• 发表高水平学术论文\n• 创业项目获得融资或入驻孵化园'
+    ],
+    benefits: [
+      '一次性奖励5000元',
+      '颁发创新创业荣誉证书',
+      '优先推荐参加创新创业培训'
+    ],
+    description: '创新创业奖学金旨在鼓励学生积极参与学术研究和创新创业活动，培养创新精神和实践能力。',
+    sponsor: '创新创业学院',
+    contactName: '周老师',
+    contactPhone: '010-12345106',
+    createTime: Date.now() - 86400000 * 5,
+    views: 1876,
+    status: 'active'
+  },
+  {
+    id: 'sch_009',
+    name: '社会工作奖学金',
+    category: 'special',
+    categoryName: '专项奖学金',
+    level: 'undergraduate',
+    levelName: '本科生',
+    amount: 1500,
+    amountText: '1500元/年',
+    applyStartDate: '2026-10-15',
+    applyEndDate: '2026-10-30',
+    quota: '全院10名',
+    eligibility: [
+      '遵守学校各项规章制度，无违纪行为',
+      '学年GPA不低于2.5',
+      '担任学生干部满1年以上',
+      '工作认真负责，在服务同学、组织活动等方面表现突出',
+      '获得校级及以上优秀学生干部等荣誉称号优先'
+    ],
+    benefits: [
+      '一次性奖励1500元',
+      '颁发社会工作荣誉证书'
+    ],
+    description: '社会工作奖学金旨在奖励在学生工作和社会服务中表现突出的学生干部。',
+    sponsor: '学生处',
+    contactName: '吴老师',
+    contactPhone: '010-12345107',
+    createTime: Date.now() - 86400000 * 8,
+    views: 1654,
+    status: 'active'
+  },
+  {
+    id: 'sch_010',
+    name: '研究生国家奖学金',
+    category: 'national',
+    categoryName: '国家级',
+    level: 'postgraduate',
+    levelName: '研究生',
+    amount: 20000,
+    amountText: '20000元/年',
+    applyStartDate: '2026-09-05',
+    applyEndDate: '2026-09-20',
+    quota: '全院3名',
+    eligibility: [
+      '热爱社会主义祖国，拥护中国共产党的领导',
+      '遵守宪法和法律，遵守学校规章制度',
+      '诚实守信，道德品质优良',
+      '学习成绩优异，科研能力显著，发展潜力突出',
+      '至少发表1篇SCI/EI论文或获得发明专利授权',
+      '综合测评成绩位列专业前10%'
+    ],
+    benefits: [
+      '一次性奖励20000元',
+      '颁发国家级荣誉证书',
+      '记入学生档案'
+    ],
+    description: '研究生国家奖学金由中央政府出资设立，用于奖励普通高等学校中表现优异的全日制研究生。',
+    sponsor: '教育部',
+    contactName: '赵老师',
+    contactPhone: '010-12345108',
+    createTime: Date.now() - 86400000 * 18,
+    views: 987,
+    status: 'active'
+  }
+];
+
+const MOCK_SCHOLARSHIP_USER_PROFILE = {
+  userId: 'test_user',
+  studentId: '2023001234',
+  name: '张三',
+  college: '计算机学院',
+  major: '软件工程',
+  grade: '2023级',
+  gpa: 3.65,
+  gpaRank: 8,
+  majorTotal: 120,
+  gpaRankPercent: 6.7,
+  comprehensiveScore: 88.5,
+  comprehensiveRank: 12,
+  comprehensiveRankPercent: 10,
+  hasDisciplinaryAction: false,
+  familyEconomicStatus: 'normal',
+  volunteerHours: 48,
+  clubPositions: [
+    { name: '计算机学院学生会', position: '学习部部长', tenure: '2024-2025' }
+  ],
+  awards: [
+    { name: '2025年大学生数学建模竞赛二等奖', level: 'provincial', date: '2025-09' },
+    { name: '校级优秀学生干部', level: 'school', date: '2025-12' },
+    { name: '二等奖学金', level: 'school', date: '2025-10' }
+  ],
+  researchExperience: [
+    { title: '基于深度学习的图像识别研究', role: '核心成员', date: '2025-03至今' }
+  ],
+  updateTime: Date.now()
+};
+
+const MOCK_SCHOLARSHIP_APPLICATIONS = [
+  {
+    id: 'app_001',
+    scholarshipId: 'sch_005',
+    scholarshipName: '二等奖学金',
+    userId: 'test_user',
+    applyTime: Date.now() - 86400000 * 10,
+    status: 'approved',
+    currentStep: 4,
+    totalSteps: 5,
+    steps: [
+      { name: '提交申请', status: 'completed', time: Date.now() - 86400000 * 10, remark: '申请已提交' },
+      { name: '班级初审', status: 'completed', time: Date.now() - 86400000 * 8, remark: '班长审核通过' },
+      { name: '学院审核', status: 'completed', time: Date.now() - 86400000 * 5, remark: '学院辅导员审核通过' },
+      { name: '学校评审', status: 'completed', time: Date.now() - 86400000 * 2, remark: '学校奖学金评审委员会审核通过' },
+      { name: '奖学金发放', status: 'pending', time: null, remark: '预计10个工作日内发放' }
+    ],
+    amount: 2000,
+    materials: [
+      { name: '成绩单', status: 'uploaded' },
+      { name: '获奖证书', status: 'uploaded' },
+      { name: '申请表', status: 'uploaded' }
+    ],
+    remark: '申请材料齐全，符合条件'
+  },
+  {
+    id: 'app_002',
+    scholarshipId: 'sch_009',
+    scholarshipName: '社会工作奖学金',
+    userId: 'test_user',
+    applyTime: Date.now() - 86400000 * 3,
+    status: 'reviewing',
+    currentStep: 2,
+    totalSteps: 5,
+    steps: [
+      { name: '提交申请', status: 'completed', time: Date.now() - 86400000 * 3, remark: '申请已提交' },
+      { name: '班级初审', status: 'completed', time: Date.now() - 86400000 * 2, remark: '班长审核通过' },
+      { name: '学院审核', status: 'in_progress', time: null, remark: '学院辅导员正在审核中' },
+      { name: '学校评审', status: 'pending', time: null, remark: '' },
+      { name: '奖学金发放', status: 'pending', time: null, remark: '' }
+    ],
+    amount: 1500,
+    materials: [
+      { name: '成绩单', status: 'uploaded' },
+      { name: '学生干部证明', status: 'uploaded' },
+      { name: '获奖证书', status: 'uploaded' },
+      { name: '申请表', status: 'uploaded' }
+    ],
+    remark: '材料审核中，请耐心等待'
+  }
+];
+
+const MOCK_SCHOLARSHIP_MATERIALS = [
+  {
+    id: 'mat_001',
+    name: '成绩单',
+    description: '需加盖教务处公章的成绩单原件扫描件',
+    format: 'PDF/JPG',
+    maxSize: '10MB',
+    required: true,
+    templateUrl: '',
+    notes: '成绩单需包含所有已修课程成绩，绩点信息'
+  },
+  {
+    id: 'mat_002',
+    name: '获奖证书',
+    description: '各类获奖证书、荣誉证书扫描件',
+    format: 'PDF/JPG',
+    maxSize: '20MB',
+    required: true,
+    templateUrl: '',
+    notes: '可上传多个证书，按重要性排序'
+  },
+  {
+    id: 'mat_003',
+    name: '奖学金申请表',
+    description: '填写完整并签字的奖学金申请表',
+    format: 'PDF',
+    maxSize: '5MB',
+    required: true,
+    templateUrl: '/download/scholarship_application_form.pdf',
+    notes: '需本人签字，学院盖章后方可提交'
+  },
+  {
+    id: 'mat_004',
+    name: '家庭经济困难证明',
+    description: '家庭经济困难学生需提供相关证明',
+    format: 'PDF/JPG',
+    maxSize: '10MB',
+    required: false,
+    templateUrl: '',
+    notes: '仅申请国家励志助学金等专项奖学金需要'
+  },
+  {
+    id: 'mat_005',
+    name: '学生干部证明',
+    description: '申请社会工作奖学金需提供学生干部任职证明',
+    format: 'PDF/JPG',
+    maxSize: '5MB',
+    required: false,
+    templateUrl: '',
+    notes: '需加盖学院公章或指导老师签字'
+  },
+  {
+    id: 'mat_006',
+    name: '科研成果证明',
+    description: '申请创新创业奖学金需提供论文、专利等成果证明',
+    format: 'PDF/JPG',
+    maxSize: '30MB',
+    required: false,
+    templateUrl: '',
+    notes: '包括论文录用通知、专利证书、竞赛获奖证书等'
+  },
+  {
+    id: 'mat_007',
+    name: '社会实践证明',
+    description: '志愿服务、社会实践活动证明材料',
+    format: 'PDF/JPG',
+    maxSize: '10MB',
+    required: false,
+    templateUrl: '',
+    notes: '可提供志愿服务时长证明、社会实践报告等'
+  },
+  {
+    id: 'mat_008',
+    name: '个人陈述',
+    description: '个人学习情况、获奖情况、未来规划等陈述',
+    format: 'DOC/PDF',
+    maxSize: '5MB',
+    required: false,
+    templateUrl: '',
+    notes: '字数500-1000字，建议附带个人照片'
+  }
+];
+
+const MOCK_SCHOLARSHIP_PUBLIC_LIST = [
+  {
+    id: 'pub_001',
+    scholarshipId: 'sch_001',
+    scholarshipName: '国家奖学金',
+    year: '2025-2026',
+    publishTime: Date.now() - 86400000 * 60,
+    status: 'published',
+    totalCount: 5,
+    college: '计算机学院',
+    list: [
+      { studentId: '2022****01', name: '*明', major: '计算机科学与技术', grade: '2022级', gpa: 3.95, rank: 1, amount: 8000 },
+      { studentId: '2022****08', name: '*华', major: '软件工程', grade: '2022级', gpa: 3.92, rank: 2, amount: 8000 },
+      { studentId: '2022****15', name: '*强', major: '人工智能', grade: '2022级', gpa: 3.89, rank: 3, amount: 8000 },
+      { studentId: '2023****03', name: '*敏', major: '计算机科学与技术', grade: '2023级', gpa: 3.88, rank: 1, amount: 8000 },
+      { studentId: '2023****12', name: '*涛', major: '软件工程', grade: '2023级', gpa: 3.85, rank: 2, amount: 8000 }
+    ]
+  },
+  {
+    id: 'pub_002',
+    scholarshipId: 'sch_003',
+    scholarshipName: '校长奖学金',
+    year: '2025-2026',
+    publishTime: Date.now() - 86400000 * 50,
+    status: 'published',
+    totalCount: 3,
+    college: '计算机学院',
+    list: [
+      { studentId: '2022****01', name: '*明', major: '计算机科学与技术', grade: '2022级', gpa: 3.95, rank: 1, amount: 10000 },
+      { studentId: '2022****20', name: '*丽', major: '网络空间安全', grade: '2022级', gpa: 3.93, rank: 1, amount: 10000 },
+      { studentId: '2021****05', name: '*伟', major: '软件工程', grade: '2021级', gpa: 3.91, rank: 1, amount: 10000 }
+    ]
+  },
+  {
+    id: 'pub_003',
+    scholarshipId: 'sch_002',
+    scholarshipName: '国家励志奖学金',
+    year: '2025-2026',
+    publishTime: Date.now() - 86400000 * 45,
+    status: 'published',
+    totalCount: 15,
+    college: '计算机学院',
+    list: [
+      { studentId: '2022****35', name: '*军', major: '计算机科学与技术', grade: '2022级', gpa: 3.45, rank: 12, amount: 5000 },
+      { studentId: '2022****42', name: '*芳', major: '软件工程', grade: '2022级', gpa: 3.38, rank: 18, amount: 5000 },
+      { studentId: '2023****28', name: '*龙', major: '人工智能', grade: '2023级', gpa: 3.42, rank: 15, amount: 5000 },
+      { studentId: '2023****35', name: '*凤', major: '计算机科学与技术', grade: '2023级', gpa: 3.35, rank: 20, amount: 5000 },
+      { studentId: '2024****15', name: '*飞', major: '软件工程', grade: '2024级', gpa: 3.30, rank: 25, amount: 5000 }
+    ]
+  },
+  {
+    id: 'pub_004',
+    scholarshipId: 'sch_004',
+    scholarshipName: '一等奖学金',
+    year: '2025-2026',
+    publishTime: Date.now() - 86400000 * 40,
+    status: 'published',
+    totalCount: 8,
+    college: '计算机学院',
+    list: [
+      { studentId: '2022****05', name: '*宇', major: '计算机科学与技术', grade: '2022级', gpa: 3.72, rank: 3, amount: 3000 },
+      { studentId: '2022****10', name: '*洁', major: '软件工程', grade: '2022级', gpa: 3.68, rank: 5, amount: 3000 },
+      { studentId: '2023****05', name: '*浩', major: '人工智能', grade: '2023级', gpa: 3.70, rank: 3, amount: 3000 },
+      { studentId: '2023****10', name: '*莹', major: '网络空间安全', grade: '2023级', gpa: 3.65, rank: 4, amount: 3000 }
+    ]
+  },
+  {
+    id: 'pub_005',
+    scholarshipId: 'sch_005',
+    scholarshipName: '二等奖学金',
+    year: '2025-2026',
+    publishTime: Date.now() - 86400000 * 35,
+    status: 'published',
+    totalCount: 20,
+    college: '计算机学院',
+    list: [
+      { studentId: '2022****18', name: '*阳', major: '计算机科学与技术', grade: '2022级', gpa: 3.48, rank: 10, amount: 2000 },
+      { studentId: '2022****25', name: '*欣', major: '软件工程', grade: '2022级', gpa: 3.42, rank: 15, amount: 2000 },
+      { studentId: '2023****12', name: '张*', major: '软件工程', grade: '2023级', gpa: 3.65, rank: 8, amount: 2000 },
+      { studentId: '2023****18', name: '*磊', major: '人工智能', grade: '2023级', gpa: 3.38, rank: 18, amount: 2000 },
+      { studentId: '2024****08', name: '*娜', major: '计算机科学与技术', grade: '2024级', gpa: 3.35, rank: 12, amount: 2000 }
+    ]
+  }
+];

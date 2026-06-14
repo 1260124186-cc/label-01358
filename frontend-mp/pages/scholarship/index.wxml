@@ -1,0 +1,494 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="tab-bar">
+    <view
+      class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="value"
+      bindtap="onTabChange"
+      data-value="{{item.value}}"
+    >
+      <text class="tab-icon">{{item.icon}}</text>
+      <text class="tab-label">{{item.label}}</text>
+    </view>
+  </view>
+
+  <scroll-view class="content-scroll" scroll-y="{{true}}">
+    <view wx:if="{{currentTab === 'policy'}}" class="tab-content">
+      <view class="search-bar">
+        <input
+          class="search-input"
+          placeholder="搜索奖学金名称"
+          placeholder-style="color: #9CA3AF;"
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+          confirm-type="search"
+        />
+        <text class="search-icon">🔍</text>
+      </view>
+
+      <view class="filter-row">
+        <scroll-view class="filter-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+          <view class="filter-chips">
+            <view
+              class="filter-chip {{currentCategory === item.value ? 'active' : ''}}"
+              wx:for="{{categoryOptions}}"
+              wx:key="value"
+              bindtap="onCategoryChange"
+              data-value="{{item.value}}"
+            >
+              {{item.label}}
+            </view>
+          </view>
+        </scroll-view>
+        <view class="sort-btn" bindtap="onSortChange" data-value="{{currentSort === 'amount' ? 'deadline' : currentSort === 'deadline' ? 'default' : 'amount'}}">
+          <text class="sort-icon">📊</text>
+          <text class="sort-text">{{sortOptions[0].value === currentSort ? '排序' : sortOptions.find(s => s.value === currentSort).label}}</text>
+        </view>
+      </view>
+
+      <view class="section-header">
+        <text class="section-title">📚 奖学金政策</text>
+        <text class="section-count">共 {{policyListFiltered.length}} 项</text>
+      </view>
+
+      <view class="policy-list" wx:if="{{policyListFiltered.length > 0}}">
+        <view
+          class="policy-card"
+          wx:for="{{policyListFiltered}}"
+          wx:key="id"
+          bindtap="onPolicyClick"
+          data-id="{{item.id}}"
+        >
+          <view class="policy-header">
+            <view class="policy-title-row">
+              <text class="policy-name">{{item.name}}</text>
+              <view class="policy-tag" style="background-color: {{item.categoryColor.bg}}; color: {{item.categoryColor.text}};">
+                {{item.categoryColor.label}}
+              </view>
+            </view>
+            <view class="policy-amount-row">
+              <text class="policy-amount">💰 {{item.amountText}}</text>
+              <view class="days-badge {{item.daysLeft.urgent ? 'urgent' : ''}} {{item.daysLeft.expired ? 'expired' : ''}}">
+                {{item.daysLeft.text}}
+              </view>
+            </view>
+          </view>
+
+          <view class="policy-info">
+            <view class="info-item">
+              <text class="info-icon">📅</text>
+              <text class="info-text">{{item.applyStartDate}} ~ {{item.applyEndDate}}</text>
+            </view>
+            <view class="info-item">
+              <text class="info-icon">👥</text>
+              <text class="info-text">{{item.quota}}</text>
+            </view>
+            <view class="info-item">
+              <text class="info-icon">🏫</text>
+              <text class="info-text">{{item.sponsor}}</text>
+            </view>
+          </view>
+
+          <view class="policy-desc">
+            <text class="desc-text">{{item.description}}</text>
+          </view>
+
+          <view class="eligibility-preview">
+            <text class="eligibility-title">📋 申请条件</text>
+            <view class="eligibility-list">
+              <text class="eligibility-item" wx:for="{{item.eligibility}}" wx:for-item="cond" wx:key="index" wx:if="{{index < 2}}">
+                • {{cond}}
+              </text>
+              <text class="eligibility-more" wx:if="{{item.eligibility.length > 2}}">... 共{{item.eligibility.length}}项条件</text>
+            </view>
+          </view>
+
+          <view class="policy-actions">
+            <view class="action-btn action-secondary" catchtap="onViewMaterials" data-id="{{item.id}}">
+              <text class="btn-icon">📋</text>
+              <text class="btn-text">材料清单</text>
+            </view>
+            <view class="action-btn action-primary {{item.daysLeft.expired ? 'disabled' : ''}}" catchtap="onApplyClick" data-id="{{item.id}}">
+              <text class="btn-icon">✍️</text>
+              <text class="btn-text">{{item.daysLeft.expired ? '已截止' : '立即申请'}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <empty wx:if="{{policyListFiltered.length === 0}}" text="暂无符合条件的奖学金" />
+    </view>
+
+    <view wx:if="{{currentTab === 'match'}}" class="tab-content">
+      <view class="user-profile-card gradient-card profile-gradient" wx:if="{{userProfile}}">
+        <view class="profile-header">
+          <view class="avatar-circle">
+            <text class="avatar-text">{{userProfile.name.charAt(0)}}</text>
+          </view>
+          <view class="profile-info">
+            <text class="profile-name">{{userProfile.name}}</text>
+            <text class="profile-college">{{userProfile.college}} · {{userProfile.major}}</text>
+            <text class="profile-grade">{{userProfile.grade}}</text>
+          </view>
+        </view>
+
+        <view class="profile-stats">
+          <view class="stat-item">
+            <view class="stat-circle">
+              <view class="stat-progress" style="height: {{userProfile.gpaPercent}}%;"></view>
+            </view>
+            <view class="stat-info">
+              <text class="stat-value">{{userProfile.gpa}}</text>
+              <text class="stat-label">GPA</text>
+            </view>
+          </view>
+          <view class="stat-item">
+            <view class="stat-info-rank">
+              <text class="stat-value rank-{{userProfile.rankPercentClass}}">{{userProfile.gpaRank}}/{{userProfile.majorTotal}}</text>
+              <text class="stat-label">专业排名</text>
+              <text class="stat-percent">前 {{userProfile.gpaRankPercent}}%</text>
+            </view>
+          </view>
+          <view class="stat-item">
+            <view class="stat-info-rank">
+              <text class="stat-value rank-{{userProfile.rankPercentClass}}">{{userProfile.comprehensiveRank}}/{{userProfile.majorTotal}}</text>
+              <text class="stat-label">综测排名</text>
+              <text class="stat-percent">前 {{userProfile.comprehensiveRankPercent}}%</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="profile-tags">
+          <view class="profile-tag" wx:if="{{userProfile.awards.length > 0}}">
+            <text class="tag-icon">🏆</text>
+            <text class="tag-text">{{userProfile.awards.length}}项获奖</text>
+          </view>
+          <view class="profile-tag" wx:if="{{userProfile.clubPositions.length > 0}}">
+            <text class="tag-icon">🎖️</text>
+            <text class="tag-text">{{userProfile.clubPositions.length}}项学生干部</text>
+          </view>
+          <view class="profile-tag" wx:if="{{userProfile.researchExperience.length > 0}}">
+            <text class="tag-icon">🔬</text>
+            <text class="tag-text">{{userProfile.researchExperience.length}}项科研</text>
+          </view>
+          <view class="profile-tag">
+            <text class="tag-icon">💝</text>
+            <text class="tag-text">{{userProfile.volunteerHours}}小时志愿</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-header">
+        <text class="section-title">🎯 为你推荐</text>
+        <text class="section-count">共 {{matchedList.length}} 项匹配</text>
+      </view>
+
+      <view class="match-list" wx:if="{{matchedList.length > 0}}">
+        <view
+          class="match-card"
+          wx:for="{{matchedList}}"
+          wx:key="id"
+          bindtap="onPolicyClick"
+          data-id="{{item.id}}"
+        >
+          <view class="match-header">
+            <view class="match-title-row">
+              <text class="match-name">{{item.name}}</text>
+              <view class="match-level-badge" style="background-color: {{item.matchLevelColor}}20; color: {{item.matchLevelColor}};">
+                {{item.matchLevelText}}
+              </view>
+            </view>
+            <text class="match-amount">💰 {{item.amountText}}</text>
+          </view>
+
+          <view class="match-score-section">
+            <view class="score-bar">
+              <view class="score-fill" style="width: {{item.matchProgressPercent}}%; background: linear-gradient(90deg, {{item.matchLevelColor}} 0%, {{item.matchLevelColor}}CC 100%);"></view>
+            </view>
+            <text class="score-text">匹配度 {{item.matchScore}}%</text>
+          </view>
+
+          <view class="match-reasons">
+            <view class="reason-tag" wx:for="{{item.matchReasons}}" wx:for-item="reason" wx:key="index" wx:if="{{index < 3}}">
+              ✓ {{reason}}
+            </view>
+          </view>
+
+          <view class="match-footer">
+            <view class="match-info">
+              <view class="policy-tag small" style="background-color: {{item.categoryColor.bg}}; color: {{item.categoryColor.text}};">
+                {{item.categoryColor.label}}
+              </view>
+              <view class="days-badge small {{item.daysLeft.urgent ? 'urgent' : ''}}">
+                {{item.daysLeft.text}}
+              </view>
+            </view>
+            <view class="match-apply-btn" catchtap="onMatchApplyClick" data-id="{{item.id}}">
+              立即申请
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <empty wx:if="{{matchedList.length === 0}}" text="暂无匹配的奖学金，建议提升综测成绩" />
+    </view>
+
+    <view wx:if="{{currentTab === 'progress'}}" class="tab-content">
+      <view class="progress-overview gradient-card progress-gradient">
+        <view class="overview-row">
+          <view class="overview-item">
+            <text class="overview-value">{{applicationList.length}}</text>
+            <text class="overview-label">申请总数</text>
+          </view>
+          <view class="overview-divider"></view>
+          <view class="overview-item">
+            <text class="overview-value success">{{applicationList.filter(a => a.status === 'approved').length}}</text>
+            <text class="overview-label">已通过</text>
+          </view>
+          <view class="overview-divider"></view>
+          <view class="overview-item">
+            <text class="overview-value warning">{{applicationList.filter(a => a.status === 'reviewing' || a.status === 'pending').length}}</text>
+            <text class="overview-label">审核中</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="section-header">
+        <text class="section-title">📊 申请进度</text>
+        <text class="section-count">共 {{applicationList.length}} 条记录</text>
+      </view>
+
+      <view class="application-list" wx:if="{{applicationList.length > 0}}">
+        <view
+          class="application-card"
+          wx:for="{{applicationList}}"
+          wx:key="id"
+          bindtap="onApplicationClick"
+          data-id="{{item.id}}"
+        >
+          <view class="app-header">
+            <text class="app-name">{{item.scholarshipName}}</text>
+            <view class="app-status-badge" style="background-color: {{item.statusColor}}20; color: {{item.statusColor}};">
+              {{item.statusText}}
+            </view>
+          </view>
+
+          <view class="app-info-row">
+            <text class="app-amount">💰 {{item.amount}}元</text>
+            <text class="app-time">📅 {{item.applyTimeText}}</text>
+          </view>
+
+          <view class="app-progress-section">
+            <view class="progress-header">
+              <text class="progress-label">申请进度</text>
+              <text class="progress-text">{{item.currentStep}}/{{item.totalSteps}} 步</text>
+            </view>
+            <view class="progress-bar-bg">
+              <view class="progress-bar-fill" style="width: {{item.progressPercent}}%; background-color: {{item.statusColor}};"></view>
+            </view>
+          </view>
+
+          <view class="app-steps">
+            <view
+              class="step-item {{step.status === 'completed' ? 'completed' : step.status === 'in_progress' ? 'in-progress' : 'pending'}}"
+              wx:for="{{item.steps}}"
+              wx:for-item="step"
+              wx:key="name"
+            >
+              <view class="step-dot">
+                <text class="step-icon">{{step.status === 'completed' ? '✓' : step.status === 'in_progress' ? '⏳' : ''}}</text>
+              </view>
+              <text class="step-name">{{step.name}}</text>
+            </view>
+          </view>
+
+          <view class="app-remark" wx:if="{{item.remark}}">
+            <text class="remark-icon">💬</text>
+            <text class="remark-text">{{item.remark}}</text>
+          </view>
+        </view>
+      </view>
+
+      <empty wx:if="{{applicationList.length === 0}}" text="暂无申请记录，快去申请奖学金吧！" />
+    </view>
+
+    <view wx:if="{{currentTab === 'material'}}" class="tab-content">
+      <view class="material-header gradient-card material-gradient">
+        <text class="material-header-title">📋 申请材料清单</text>
+        <text class="material-header-desc">准备好以下材料，申请更顺利</text>
+      </view>
+
+      <view class="section-header">
+        <text class="section-title">📄 通用材料清单</text>
+        <text class="section-count">共 {{materialList.length}} 项</text>
+      </view>
+
+      <view class="material-list" wx:if="{{materialList.length > 0}}">
+        <view
+          class="material-card"
+          wx:for="{{materialList}}"
+          wx:key="id"
+          bindtap="onMaterialClick"
+          data-id="{{item.id}}"
+        >
+          <view class="material-icon-wrap">
+            <text class="material-icon">📄</text>
+          </view>
+          <view class="material-info">
+            <view class="material-title-row">
+              <text class="material-name">{{item.name}}</text>
+              <view class="required-tag" style="color: {{item.requiredColor}};">
+                {{item.requiredText}}
+              </view>
+            </view>
+            <text class="material-desc">{{item.description}}</text>
+            <view class="material-meta">
+              <text class="meta-item">格式：{{item.format}}</text>
+              <text class="meta-item">大小：{{item.maxSize}}</text>
+            </view>
+          </view>
+          <text class="material-arrow">›</text>
+        </view>
+      </view>
+
+      <view class="material-tips-card">
+        <text class="tips-title">💡 材料准备注意事项</text>
+        <view class="tips-list">
+          <text class="tip-item">• 所有材料需清晰可辨，扫描件建议300DPI以上</text>
+          <text class="tip-item">• 获奖证书需包含证书名称、获奖时间、颁发单位完整信息</text>
+          <text class="tip-item">• 成绩单需加盖教务处公章方为有效</text>
+          <text class="tip-item">• 申请表需本人签字并经学院审核盖章</text>
+          <text class="tip-item">• 建议提前准备电子版材料，方便多次使用</text>
+          <text class="tip-item">• 材料提交后请关注审核进度，及时补充缺失材料</text>
+        </view>
+      </view>
+
+      <empty wx:if="{{materialList.length === 0}}" text="暂无材料清单" />
+    </view>
+
+    <view wx:if="{{currentTab === 'public'}}" class="tab-content">
+      <view class="filter-row">
+        <scroll-view class="filter-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+          <view class="filter-chips">
+            <view
+              class="filter-chip {{currentYear === item.value ? 'active' : ''}}"
+              wx:for="{{yearOptions}}"
+              wx:key="value"
+              bindtap="onYearChange"
+              data-value="{{item.value}}"
+            >
+              {{item.label}}
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <view class="public-header gradient-card public-gradient">
+        <text class="public-header-title">📜 获奖公示名单</text>
+        <text class="public-header-desc">公开透明，接受监督</text>
+      </view>
+
+      <view class="section-header">
+        <text class="section-title">🏆 获奖公示</text>
+        <text class="section-count">共 {{publicList.length}} 批次</text>
+      </view>
+
+      <view class="public-list" wx:if="{{publicList.length > 0}}">
+        <view
+          class="public-card"
+          wx:for="{{publicList}}"
+          wx:key="id"
+          bindtap="onPublicClick"
+          data-id="{{item.id}}"
+        >
+          <view class="public-header-row">
+            <text class="public-name">{{item.scholarshipName}}</text>
+            <text class="public-year">{{item.year}}</text>
+          </view>
+
+          <view class="public-stats">
+            <view class="public-stat-item">
+              <text class="stat-icon">👥</text>
+              <text class="stat-text">{{item.studentCount}}人获奖</text>
+            </view>
+            <view class="public-stat-item">
+              <text class="stat-icon">💰</text>
+              <text class="stat-text">{{item.totalAmount}}元</text>
+            </view>
+            <view class="public-stat-item">
+              <text class="stat-icon">🏢</text>
+              <text class="stat-text">{{item.college}}</text>
+            </view>
+          </view>
+
+          <view class="public-list-preview">
+            <text class="list-title">获奖名单（部分）：</text>
+            <view class="winner-chips">
+              <view class="winner-chip" wx:for="{{item.list}}" wx:for-item="winner" wx:key="index" wx:if="{{index < 4}}">
+                <text class="winner-name">{{winner.name}}</text>
+                <text class="winner-major">{{winner.major}}</text>
+              </view>
+              <text class="more-winners" wx:if="{{item.list.length > 4}}">+{{item.list.length - 4}}人</text>
+            </view>
+          </view>
+
+          <view class="public-footer">
+            <text class="publish-time">📅 公示时间：{{item.publishTimeText}}</text>
+            <view class="view-detail-btn">
+              <text class="btn-text">查看详情</text>
+              <text class="btn-arrow">›</text>
+            </view>
+          </view>
+
+          <view class="privacy-notice">
+            <text class="privacy-icon">🔒</text>
+            <text class="privacy-text">名单已做脱敏处理，保护个人隐私</text>
+          </view>
+        </view>
+      </view>
+
+      <empty wx:if="{{publicList.length === 0}}" text="暂无公示名单" />
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="material-modal {{showMaterialModal ? 'show' : ''}}" catchtap="closeMaterialModal">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">📋 所需材料清单</text>
+        <view class="modal-close" catchtap="closeMaterialModal">✕</view>
+      </view>
+      <scroll-view class="modal-body" scroll-y="{{true}}">
+        <view class="modal-material-list">
+          <view
+            class="modal-material-item"
+            wx:for="{{modalMaterials}}"
+            wx:key="id"
+            bindtap="onMaterialClick"
+            data-id="{{item.id}}"
+          >
+            <view class="material-icon-wrap small">
+              <text class="material-icon">📄</text>
+            </view>
+            <view class="material-info">
+              <view class="material-title-row">
+                <text class="material-name">{{item.name}}</text>
+                <view class="required-tag" style="color: {{item.required ? '#EF4444' : '#6B7280'}};">
+                  {{item.required ? '必填' : '选填'}}
+                </view>
+              </view>
+              <text class="material-desc">{{item.description}}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <view class="modal-btn" catchtap="closeMaterialModal">
+          知道了
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -126,6 +126,7 @@
     "pages/admin/graduation-verify/index",
     "pages/admin/lab-appointment/index",
     "pages/graduation/index",
+    "pages/scholarship/index",
     "pages/innovation/index",
     "pages/innovation/project-detail",
     "pages/innovation/project-publish",
