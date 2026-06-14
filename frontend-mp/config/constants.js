@@ -906,11 +906,76 @@ const PUBLISH_STATUS_MAP = PUBLISH_STATUS.reduce((acc, s) => {
   return acc;
 }, {});
 
+const GRADUATION_STATUS = [
+  { value: 'pending', label: '未办', color: '#9CA3AF', icon: '⏳' },
+  { value: 'processing', label: '办理中', color: '#3B82F6', icon: '🔄' },
+  { value: 'completed', label: '已完成', color: '#10B981', icon: '✅' }
+];
+
+const GRADUATION_STATUS_MAP = GRADUATION_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const GRADUATION_ITEMS = [
+  {
+    id: 'library',
+    name: '图书还清',
+    icon: '📚',
+    color: '#4ECDC4',
+    department: '图书馆',
+    location: '图书馆一楼服务台',
+    guideUrl: '/pages/guide-detail/index?type=library-return',
+    description: '归还所有借阅图书，结清逾期费用'
+  },
+  {
+    id: 'dormitory',
+    name: '宿舍验收',
+    icon: '🏠',
+    color: '#8B5CF6',
+    department: '后勤处',
+    location: '各宿舍楼值班室',
+    guideUrl: '/pages/guide-detail/index?type=dorm-checkout',
+    description: '检查宿舍设施，退还钥匙，结清水电费'
+  },
+  {
+    id: 'tuition',
+    name: '学费结清',
+    icon: '💰',
+    color: '#F59E0B',
+    department: '财务处',
+    location: '行政楼二楼财务大厅',
+    guideUrl: '/pages/guide-detail/index?type=tuition-clear',
+    description: '结清所有学费、住宿费等费用'
+  },
+  {
+    id: 'household',
+    name: '户口迁移',
+    icon: '📋',
+    color: '#EF4444',
+    department: '保卫处',
+    location: '行政楼一楼户籍室',
+    guideUrl: '/pages/guide-detail/index?type=household-move',
+    description: '办理户口迁移手续，领取户口迁移证'
+  },
+  {
+    id: 'certificate',
+    name: '证书领取',
+    icon: '🎓',
+    color: '#FF6B6B',
+    department: '教务处',
+    location: '各学院办公室',
+    guideUrl: '/pages/guide-detail/index?type=certificate-receive',
+    description: '领取毕业证、学位证、报到证等'
+  }
+];
+
 const ADMIN_MODULES = [
   { id: 'announcement', name: '公告管理', icon: '📢', color: '#FF6B6B', desc: '管理校园公告通知' },
   { id: 'news', name: '校园动态', icon: '📰', color: '#4ECDC4', desc: '管理校园新闻动态' },
   { id: 'broadcast', name: '广播节目', icon: '🎙️', color: '#F59E0B', desc: '管理校园广播节目' },
-  { id: 'scenery', name: '风光管理', icon: '🏞️', color: '#8B5CF6', desc: '管理校园风光图片' }
+  { id: 'scenery', name: '风光管理', icon: '🏞️', color: '#8B5CF6', desc: '管理校园风光图片' },
+  { id: 'graduation', name: '离校审核', icon: '🎓', color: '#10B981', desc: '审核学生离校申请' }
 ];
 
 const TICKET_REFUND_RULES = [
@@ -1746,5 +1811,8 @@ module.exports = {
   TAKEOUT_CATEGORIES,
   TAKEOUT_SORT_OPTIONS,
   TAKEOUT_DELIVERY_TYPES,
-  TAKEOUT_PROMOTION_TYPES
+  TAKEOUT_PROMOTION_TYPES,
+  GRADUATION_STATUS,
+  GRADUATION_STATUS_MAP,
+  GRADUATION_ITEMS
 };

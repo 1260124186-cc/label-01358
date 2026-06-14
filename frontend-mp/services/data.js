@@ -5831,6 +5831,281 @@ function getTodayAllDiscounts() {
   return allDiscounts;
 }
 
+// ==================== 毕业离校 ====================
+
+let graduationInitialized = false;
+
+function initGraduationChecklist(userId) {
+  if (graduationInitialized) return;
+
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const targetUserId = userId || userInfo.id || 'test_user';
+
+  const existing = storage.get(STORAGE_KEYS.GRADUATION_CHECKLIST);
+  const allChecklists = existing || {};
+
+  const mockStudents = [
+    { userId: 'stu_001', userName: '张同学', studentId: '2022001001', college: '计算机学院', major: '软件工程', className: '2022级1班' },
+    { userId: 'stu_002', userName: '李同学', studentId: '2022001002', college: '计算机学院', major: '计算机科学与技术', className: '2022级2班' },
+    { userId: 'stu_003', userName: '王同学', studentId: '2022002001', college: '电子信息学院', major: '电子信息工程', className: '2022级1班' },
+    { userId: 'stu_004', userName: '刘同学', studentId: '2022003001', college: '经济管理学院', major: '工商管理', className: '2022级1班' },
+    { userId: 'stu_005', userName: '陈同学', studentId: '2022004001', college: '外国语学院', major: '英语', className: '2022级1班' }
+  ];
+
+  mockStudents.forEach(student => {
+    if (!allChecklists[student.userId]) {
+      const items = constants.GRADUATION_ITEMS.map((item, idx) => {
+        let status = 'pending';
+        let adminSigned = false;
+        let signTime = null;
+        let signAdmin = null;
+
+        if (student.userId === 'stu_001') {
+          if (idx === 0) { status = 'completed'; adminSigned = true; signTime = Date.now() - 86400000 * 3; signAdmin = '王管理员'; }
+          else if (idx === 1) { status = 'completed'; adminSigned = true; signTime = Date.now() - 86400000 * 2; signAdmin = '赵管理员'; }
+          else if (idx === 2) { status = 'processing'; }
+          else if (idx === 3) { status = 'processing'; }
+        } else if (student.userId === 'stu_002') {
+          if (idx === 0) { status = 'completed'; adminSigned = true; signTime = Date.now() - 86400000 * 5; signAdmin = '王管理员'; }
+          else if (idx === 1) { status = 'completed'; adminSigned = true; signTime = Date.now() - 86400000 * 4; signAdmin = '赵管理员'; }
+          else if (idx === 2) { status = 'completed'; adminSigned = true; signTime = Date.now() - 86400000 * 2; signAdmin = '孙管理员'; }
+          else if (idx === 3) { status = 'completed'; adminSigned = true; signTime = Date.now() - 86400000; signAdmin = '周管理员'; }
+          else if (idx === 4) { status = 'processing'; }
+        } else if (student.userId === 'stu_003') {
+          if (idx === 0) { status = 'processing'; }
+        } else if (student.userId === 'stu_004') {
+          if (idx === 0) { status = 'completed'; adminSigned = true; signTime = Date.now() - 86400000 * 7; signAdmin = '王管理员'; }
+          else if (idx === 1) { status = 'completed'; adminSigned = true; signTime = Date.now() - 86400000 * 6; signAdmin = '赵管理员'; }
+          else if (idx === 2) { status = 'completed'; adminSigned = true; signTime = Date.now() - 86400000 * 5; signAdmin = '孙管理员'; }
+          else if (idx === 3) { status = 'completed'; adminSigned = true; signTime = Date.now() - 86400000 * 4; signAdmin = '周管理员'; }
+          else if (idx === 4) { status = 'completed'; adminSigned = true; signTime = Date.now() - 86400000 * 3; signAdmin = '吴管理员'; }
+        }
+
+        return {
+          ...item,
+          status,
+          adminSigned,
+          signTime,
+          signAdmin,
+          updateTime: signTime || null
+        };
+      });
+
+      allChecklists[student.userId] = {
+        userId: student.userId,
+        userName: student.userName,
+        studentId: student.studentId,
+        college: student.college,
+        major: student.major,
+        className: student.className,
+        items,
+        createTime: Date.now() - 86400000 * 10,
+        updateTime: Date.now(),
+        completed: items.every(i => i.status === 'completed'),
+        certificateGenerated: student.userId === 'stu_004'
+      };
+
+      if (student.userId === 'stu_004') {
+        const certificates = storage.get(STORAGE_KEYS.GRADUATION_CERTIFICATE) || {};
+        certificates[student.userId] = {
+          certificateNumber: `GRAD${Date.now()}`,
+          userName: student.userName,
+          studentId: student.studentId,
+          college: student.college,
+          major: student.major,
+          className: student.className,
+          issueDate: new Date(Date.now() - 86400000 * 2).toLocaleDateString('zh-CN'),
+          items: items.map(i => ({
+            name: i.name,
+            department: i.department,
+            signAdmin: i.signAdmin
+          })),
+          qrCode: '/assets/images/qrcode.png',
+          createTime: Date.now() - 86400000 * 2
+        };
+        storage.set(STORAGE_KEYS.GRADUATION_CERTIFICATE, certificates);
+      }
+    }
+  });
+
+  if (!allChecklists[targetUserId]) {
+    const items = constants.GRADUATION_ITEMS.map(item => ({
+      ...item,
+      status: 'pending',
+      adminSigned: false,
+      signTime: null,
+      signAdmin: null,
+      updateTime: null
+    }));
+
+    allChecklists[targetUserId] = {
+      userId: targetUserId,
+      userName: userInfo.nickName || '张同学',
+      studentId: '2022001001',
+      college: '计算机学院',
+      major: '软件工程',
+      className: '2022级1班',
+      items,
+      createTime: Date.now(),
+      updateTime: Date.now(),
+      completed: false,
+      certificateGenerated: false
+    };
+  }
+
+  storage.set(STORAGE_KEYS.GRADUATION_CHECKLIST, allChecklists);
+  graduationInitialized = true;
+}
+
+function getGraduationChecklist(userId) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const targetUserId = userId || userInfo.id || 'test_user';
+
+  initGraduationChecklist(targetUserId);
+
+  const allChecklists = storage.get(STORAGE_KEYS.GRADUATION_CHECKLIST) || {};
+  const checklist = allChecklists[targetUserId];
+
+  if (checklist) {
+    const completedCount = checklist.items.filter(item => item.status === 'completed').length;
+    const totalCount = checklist.items.length;
+    checklist.progress = Math.round((completedCount / totalCount) * 100);
+    checklist.completed = completedCount === totalCount;
+  }
+
+  return checklist;
+}
+
+function updateGraduationItemStatus(itemId, status, userId) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const targetUserId = userId || userInfo.id || 'test_user';
+
+  const allChecklists = storage.get(STORAGE_KEYS.GRADUATION_CHECKLIST) || {};
+  const checklist = allChecklists[targetUserId];
+
+  if (!checklist) return false;
+
+  const itemIndex = checklist.items.findIndex(item => item.id === itemId);
+  if (itemIndex === -1) return false;
+
+  checklist.items[itemIndex].status = status;
+  checklist.items[itemIndex].updateTime = Date.now();
+  checklist.updateTime = Date.now();
+
+  storage.set(STORAGE_KEYS.GRADUATION_CHECKLIST, allChecklists);
+  return true;
+}
+
+function getGraduationProgress(userId) {
+  const checklist = getGraduationChecklist(userId);
+  if (!checklist) return 0;
+  return checklist.progress;
+}
+
+function adminSignGraduationItem(userId, itemId, adminName, department) {
+  const allChecklists = storage.get(STORAGE_KEYS.GRADUATION_CHECKLIST) || {};
+  const checklist = allChecklists[userId];
+
+  if (!checklist) return { success: false, message: '未找到该学生的离校清单' };
+
+  const itemIndex = checklist.items.findIndex(item => item.id === itemId);
+  if (itemIndex === -1) return { success: false, message: '未找到该办理项' };
+
+  if (checklist.items[itemIndex].status !== 'processing') {
+    return { success: false, message: '该项目状态不是办理中，无法签字确认' };
+  }
+
+  checklist.items[itemIndex].status = 'completed';
+  checklist.items[itemIndex].adminSigned = true;
+  checklist.items[itemIndex].signTime = Date.now();
+  checklist.items[itemIndex].signAdmin = adminName || '管理员';
+  checklist.items[itemIndex].signDepartment = department || checklist.items[itemIndex].department;
+  checklist.items[itemIndex].updateTime = Date.now();
+  checklist.updateTime = Date.now();
+
+  const completedCount = checklist.items.filter(item => item.status === 'completed').length;
+  checklist.progress = Math.round((completedCount / checklist.items.length) * 100);
+  checklist.completed = completedCount === checklist.items.length;
+
+  storage.set(STORAGE_KEYS.GRADUATION_CHECKLIST, allChecklists);
+
+  return {
+    success: true,
+    message: '签字确认成功',
+    progress: checklist.progress,
+    completed: checklist.completed
+  };
+}
+
+function getAllGraduationChecklists() {
+  const allChecklists = storage.get(STORAGE_KEYS.GRADUATION_CHECKLIST) || {};
+  return Object.values(allChecklists).map(checklist => {
+    const completedCount = checklist.items.filter(item => item.status === 'completed').length;
+    const totalCount = checklist.items.length;
+    return {
+      ...checklist,
+      progress: Math.round((completedCount / totalCount) * 100),
+      completed: completedCount === totalCount
+    };
+  }).sort((a, b) => b.updateTime - a.updateTime);
+}
+
+function getGraduationCertificate(userId) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const targetUserId = userId || userInfo.id || 'test_user';
+
+  const certificates = storage.get(STORAGE_KEYS.GRADUATION_CERTIFICATE) || {};
+  return certificates[targetUserId] || null;
+}
+
+function generateGraduationCertificate(userId) {
+  const checklist = getGraduationChecklist(userId);
+  if (!checklist) return { success: false, message: '未找到离校清单' };
+  if (!checklist.completed) return { success: false, message: '离校手续尚未全部完成' };
+
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const targetUserId = userId || userInfo.id || 'test_user';
+
+  const certificates = storage.get(STORAGE_KEYS.GRADUATION_CERTIFICATE) || {};
+
+  const certificate = {
+    id: 'cert_' + Date.now(),
+    userId: targetUserId,
+    userName: checklist.userName,
+    studentId: checklist.studentId,
+    college: checklist.college,
+    major: checklist.major,
+    className: checklist.className,
+    certificateNumber: 'BY' + Date.now(),
+    issueDate: util.formatTime(Date.now(), 'YYYY-MM-DD'),
+    items: checklist.items.map(item => ({
+      name: item.name,
+      department: item.department,
+      signAdmin: item.signAdmin,
+      signTime: item.signTime
+    })),
+    generateTime: Date.now(),
+    qrCode: 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent('graduation:' + targetUserId)
+  };
+
+  certificates[targetUserId] = certificate;
+  storage.set(STORAGE_KEYS.GRADUATION_CERTIFICATE, certificates);
+
+  const allChecklists = storage.get(STORAGE_KEYS.GRADUATION_CHECKLIST) || {};
+  if (allChecklists[targetUserId]) {
+    allChecklists[targetUserId].certificateGenerated = true;
+    allChecklists[targetUserId].certificateId = certificate.id;
+    storage.set(STORAGE_KEYS.GRADUATION_CHECKLIST, allChecklists);
+  }
+
+  return { success: true, certificate };
+}
+
 module.exports = {
   paginateList,
 
@@ -6195,5 +6470,15 @@ module.exports = {
   isFavoriteTakeoutMerchant,
   getFavoriteTakeoutMerchants,
   getTakeoutPromotionBanners,
-  getTodayAllDiscounts
+  getTodayAllDiscounts,
+
+  // ==================== 毕业离校 ====================
+  initGraduationChecklist,
+  getGraduationChecklist,
+  updateGraduationItemStatus,
+  getGraduationProgress,
+  adminSignGraduationItem,
+  getAllGraduationChecklists,
+  getGraduationCertificate,
+  generateGraduationCertificate
 };

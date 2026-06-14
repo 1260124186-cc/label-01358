@@ -37,7 +37,8 @@ mixPage({
       announcement: '/pages/admin/announcement-list/index',
       news: '/pages/admin/news-list/index',
       broadcast: '/pages/admin/broadcast-list/index',
-      scenery: '/pages/admin/scenery-list/index'
+      scenery: '/pages/admin/scenery-list/index',
+      graduation: '/pages/admin/graduation-verify/index'
     };
 
     const url = routeMap[id];

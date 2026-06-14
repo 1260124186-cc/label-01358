@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "离校审核",
+  "navigationBarBackgroundColor": "#FF6B6B",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#F8F9FA",
+  "enablePullDownRefresh": true
+}

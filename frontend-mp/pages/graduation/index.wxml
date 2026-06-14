@@ -1,0 +1,195 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header-banner" wx:if="{{checklist}}">
+    <view class="banner-content">
+      <text class="banner-title">🎓 毕业离校一站式</text>
+      <text class="banner-subtitle">恭喜你即将毕业！</text>
+    </view>
+    <view class="student-info">
+      <view class="info-row">
+        <text class="info-label">姓名：</text>
+        <text class="info-value">{{checklist.userName}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">学号：</text>
+        <text class="info-value">{{checklist.studentId}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">学院：</text>
+        <text class="info-value">{{checklist.college}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">专业：</text>
+        <text class="info-value">{{checklist.major}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="progress-section" wx:if="{{checklist}}">
+    <view class="progress-header">
+      <text class="progress-title">离校进度</text>
+      <text class="progress-percent">{{checklist.progress}}%</text>
+    </view>
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{checklist.progress}}%;"></view>
+    </view>
+    <view class="progress-stats">
+      <text class="stats-text">已完成 {{completedCount}} / {{totalCount}} 项</text>
+    </view>
+  </view>
+
+  <view class="checklist-section">
+    <view class="section-header">
+      <text class="section-icon">📋</text>
+      <text class="section-title">离校清单</text>
+    </view>
+    
+    <view class="checklist-container">
+      <view 
+        class="check-item {{item.status}}"
+        wx:for="{{checklist.items}}" 
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onItemTap"
+      >
+        <view class="item-icon" style="background: {{item.color}}20;">
+          <text>{{item.icon}}</text>
+        </view>
+        
+        <view class="item-content">
+          <view class="item-header">
+            <text class="item-name">{{item.name}}</text>
+            <view 
+              class="item-status" 
+              style="background: {{statusMap[item.status].color}}20; color: {{statusMap[item.status].color}};"
+            >
+              <text>{{statusMap[item.status].icon}}</text>
+              <text class="status-text">{{statusMap[item.status].label}}</text>
+            </view>
+          </view>
+          
+          <text class="item-desc">{{item.description}}</text>
+          
+          <view class="item-meta">
+            <view class="meta-item" bindtap="onViewLocation" data-location="{{item.location}}" catchtap>
+              <text class="meta-icon">📍</text>
+              <text class="meta-text">{{item.location}}</text>
+            </view>
+            <view class="meta-item" bindtap="onViewGuide" data-url="{{item.guideUrl}}" catchtap>
+              <text class="meta-icon">📖</text>
+              <text class="meta-text">办理指南</text>
+            </view>
+          </view>
+          
+          <view class="item-department" wx:if="{{item.adminSigned}}">
+            <text class="dept-icon">✍️</text>
+            <text class="dept-text">{{item.department}} · {{item.signAdmin}} 已确认</text>
+            <text class="sign-time">{{item.signTime}}</text>
+          </view>
+          
+          <view class="item-action" wx:if="{{item.status === 'pending'}}">
+            <text class="action-text">点击开始办理 →</text>
+          </view>
+          <view class="item-action processing" wx:elif="{{item.status === 'processing'}}">
+            <text class="action-text">前往办理地点，由管理员签字确认</text>
+          </view>
+          <view class="item-action completed" wx:elif="{{item.status === 'completed'}}">
+            <text class="action-text">✓ 已完成</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-section">
+    <block wx:if="{{checklist && checklist.completed && !checklist.certificateGenerated}}">
+      <view class="action-btn primary" bindtap="onGenerateCertificate">
+        <text class="btn-icon">📄</text>
+        <text class="btn-text">生成电子离校单</text>
+      </view>
+    </block>
+    
+    <block wx:if="{{checklist && checklist.certificateGenerated && certificate}}">
+      <view class="action-btn success" bindtap="onViewCertificate">
+        <text class="btn-icon">📄</text>
+        <text class="btn-text">查看电子离校单</text>
+      </view>
+    </block>
+    
+    <block wx:if="{{checklist && !checklist.completed}}">
+      <view class="action-btn disabled">
+        <text class="btn-icon">⏳</text>
+        <text class="btn-text">请先完成所有离校手续</text>
+      </view>
+    </block>
+  </view>
+
+  <view class="certificate-modal {{showCertificate ? 'show' : ''}}" wx:if="{{certificate}}">
+    <view class="modal-mask" bindtap="onCloseCertificate"></view>
+    <view class="modal-content">
+      <view class="certificate-card">
+        <view class="cert-header">
+          <text class="cert-title">🎓 电子离校单</text>
+          <view class="cert-close" bindtap="onCloseCertificate">✕</view>
+        </view>
+        
+        <view class="cert-body">
+          <view class="cert-info">
+            <text class="cert-label">证书编号：</text>
+            <text class="cert-value">{{certificate.certificateNumber}}</text>
+          </view>
+          <view class="cert-info">
+            <text class="cert-label">姓名：</text>
+            <text class="cert-value">{{certificate.userName}}</text>
+          </view>
+          <view class="cert-info">
+            <text class="cert-label">学号：</text>
+            <text class="cert-value">{{certificate.studentId}}</text>
+          </view>
+          <view class="cert-info">
+            <text class="cert-label">学院：</text>
+            <text class="cert-value">{{certificate.college}}</text>
+          </view>
+          <view class="cert-info">
+            <text class="cert-label">专业：</text>
+            <text class="cert-value">{{certificate.major}}</text>
+          </view>
+          <view class="cert-info">
+            <text class="cert-label">班级：</text>
+            <text class="cert-value">{{certificate.className}}</text>
+          </view>
+          <view class="cert-info">
+            <text class="cert-label">签发日期：</text>
+            <text class="cert-value">{{certificate.issueDate}}</text>
+          </view>
+          
+          <view class="cert-divider"></view>
+          
+          <view class="cert-items-title">部门签字确认</view>
+          <view class="cert-items">
+            <view class="cert-item" wx:for="{{certificate.items}}" wx:key="name">
+              <view class="cert-item-left">
+                <text class="cert-item-name">{{item.name}}</text>
+                <text class="cert-item-dept">{{item.department}}</text>
+              </view>
+              <view class="cert-item-right">
+                <text class="cert-item-sign">{{item.signAdmin}}</text>
+              </view>
+            </view>
+          </view>
+          
+          <view class="cert-qrcode">
+            <image src="{{certificate.qrCode}}" mode="aspectFit" class="qrcode-img"/>
+            <text class="qrcode-text">扫码验证</text>
+          </view>
+        </view>
+        
+        <view class="cert-footer">
+          <view class="cert-btn" bindtap="onSaveCertificate">
+            <text class="btn-text">保存离校单</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

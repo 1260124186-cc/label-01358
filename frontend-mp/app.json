@@ -122,6 +122,8 @@
     "pages/admin/broadcast-edit/index",
     "pages/admin/scenery-list/index",
     "pages/admin/scenery-edit/index",
+    "pages/admin/graduation-verify/index",
+    "pages/graduation/index",
     "pages/innovation/index",
     "pages/innovation/project-detail",
     "pages/innovation/project-publish",

@@ -152,6 +152,13 @@ Page({
         icon: '/assets/icons/nav-broadcast.png',
         bgColor: 'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)',
         url: '/pages/international-students/index'
+      },
+      {
+        id: 'graduation',
+        name: '毕业离校',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)',
+        url: '/pages/graduation/index'
       }
     ],
     weatherData: null,

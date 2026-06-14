@@ -1,0 +1,149 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="filter-section">
+    <view class="filter-tabs">
+      <view 
+        class="filter-tab {{statusFilter === item.value ? 'active' : ''}}"
+        wx:for="{{statusOptions}}"
+        wx:key="value"
+        data-status="{{item.value}}"
+        bindtap="onFilterTap"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </view>
+
+  <view class="stats-section">
+    <view class="stats-card">
+      <view class="stats-item">
+        <text class="stats-number">{{filteredChecklists.length}}</text>
+        <text class="stats-label">总人数</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="list-section" wx:if="{{filteredChecklists.length > 0}}">
+    <view 
+      class="student-card"
+      wx:for="{{filteredChecklists}}"
+      wx:key="userId"
+      data-userid="{{item.userId}}"
+      bindtap="onStudentTap"
+    >
+      <view class="student-header">
+        <view class="student-info">
+          <text class="student-name">{{item.userName}}</text>
+          <text class="student-id">{{item.studentId}}</text>
+        </view>
+        <view class="student-progress">
+          <text class="progress-text">{{item.progress}}%</text>
+        </view>
+      </view>
+      
+      <view class="student-meta">
+        <text class="meta-text">{{item.college}} · {{item.major}}</text>
+      </view>
+
+      <view class="items-grid">
+        <view 
+          class="grid-item {{subItem.status}} {{subItem.adminSigned ? 'signed' : ''}}"
+          wx:for="{{item.items}}"
+          wx:for-item="subItem"
+          wx:key="id"
+          catchtap="onSignTap"
+          data-userid="{{item.userId}}"
+          data-itemid="{{subItem.id}}"
+        >
+          <text class="item-icon" style="color: {{subItem.color}};">{{subItem.icon}}</text>
+          <text class="item-name">{{subItem.name}}</text>
+          <view class="item-status-badge">
+            <text wx:if="{{subItem.adminSigned}}">✓</text>
+            <text wx:elif="{{subItem.status === 'processing'}}">签</text>
+            <text wx:elif="{{subItem.status === 'pending'}}">⏳</text>
+            <text wx:else>✓</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="card-footer">
+        <view class="progress-bar-mini">
+          <view class="progress-fill-mini" style="width: {{item.progress}}%;"></view>
+        </view>
+        <text class="footer-status {{item.completed ? 'completed' : ''}}">
+          {{item.completed ? '✓ 已全部完成' : '办理中'}}
+        </text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <text class="empty-icon">📋</text>
+    <text class="empty-text">暂无学生数据</text>
+  </view>
+
+  <view class="sign-modal {{showSignModal ? 'show' : ''}}" wx:if="{{currentStudent && currentItem}}">
+    <view class="modal-mask" bindtap="onCloseModal"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">✍️ 部门签字确认</text>
+        <view class="modal-close" bindtap="onCloseModal">✕</view>
+      </view>
+      
+      <view class="modal-body">
+        <view class="info-section">
+          <view class="info-row">
+            <text class="info-label">学生姓名：</text>
+            <text class="info-value">{{currentStudent.userName}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">学号：</text>
+            <text class="info-value">{{currentStudent.studentId}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-label">办理项目：</text>
+            <text class="info-value highlight">{{currentItem.name}}</text>
+          </view>
+        </view>
+
+        <view class="form-section">
+          <view class="form-item">
+            <text class="form-label">签字部门</text>
+            <picker 
+              mode="selector" 
+              range="{{departmentOptions}}" 
+              range-key="label"
+              value="{{selectedDeptIndex}}"
+              bindchange="onDepartmentChange"
+            >
+              <view class="picker-input">
+                {{selectedDepartment}}
+                <text class="picker-arrow">▼</text>
+              </view>
+            </picker>
+          </view>
+
+          <view class="form-item">
+            <text class="form-label">管理员姓名</text>
+            <input 
+              class="form-input" 
+              placeholder="请输入管理员姓名" 
+              value="{{adminName}}"
+              bindinput="onAdminNameInput"
+            />
+          </view>
+        </view>
+
+        <view class="notice-section">
+          <text class="notice-icon">⚠️</text>
+          <text class="notice-text">确认学生已完成相关手续后再签字</text>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <view class="btn-cancel" bindtap="onCloseModal">取消</view>
+        <view class="btn-confirm" bindtap="onConfirmSign">确认签字</view>
+      </view>
+    </view>
+  </view>
+</view>
