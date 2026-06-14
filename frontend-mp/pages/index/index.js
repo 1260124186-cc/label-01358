@@ -84,6 +84,13 @@ Page({
         url: '/pages/canteen/index'
       },
       {
+        id: 'takeout',
+        name: '校园外卖',
+        icon: '/assets/icons/nav-market.png',
+        bgColor: 'linear-gradient(135deg, #FFE4E6 0%, #FECDD3 100%)',
+        url: '/pages/takeout/index'
+      },
+      {
         id: 'errand',
         name: '跑腿服务',
         icon: '/assets/icons/nav-market.png',

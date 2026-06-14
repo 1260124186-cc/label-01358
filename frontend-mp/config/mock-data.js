@@ -7286,6 +7286,430 @@ const MOCK_ALUMNI_PROFILES = [
   }
 ];
 
+const MOCK_TAKEOUT_MERCHANTS = [
+  {
+    id: 'tm1',
+    name: '学府黄焖鸡米饭',
+    cover: 'https://picsum.photos/seed/takeout1/800/400',
+    category: 'chinese',
+    rating: 4.7,
+    reviewCount: 1286,
+    sales: 5632,
+    minOrderPrice: 20,
+    deliveryFee: 3,
+    freeDeliveryOver: 30,
+    deliveryTime: 25,
+    distance: 0.5,
+    deliveryType: 'merchant',
+    businessHours: {
+      breakfast: '07:00-10:00',
+      lunch: '10:30-14:00',
+      dinner: '16:30-21:30'
+    },
+    location: '南门美食街23号',
+    tags: ['品牌商家', '品质保障', '新用户立减'],
+    promotions: [
+      { type: 'full_reduction', title: '满20减3', desc: '满20元减3元，满35减6，满50减10' },
+      { type: 'discount', title: '限时8折', desc: '今日招牌菜限时8折' },
+      { type: 'free_delivery', title: '免配送费', desc: '满30元免配送费' }
+    ],
+    todayDiscounts: [
+      { name: '黄焖鸡米饭', originalPrice: 22, discountPrice: 18, limit: 50 },
+      { name: '黄焖排骨饭', originalPrice: 26, discountPrice: 21, limit: 30 },
+      { name: '酸辣土豆丝', originalPrice: 12, discountPrice: 8, limit: 100 }
+    ],
+    isOpen: true
+  },
+  {
+    id: 'tm2',
+    name: '快乐汉堡炸鸡',
+    cover: 'https://picsum.photos/seed/takeout2/800/400',
+    category: 'western',
+    rating: 4.5,
+    reviewCount: 2341,
+    sales: 8921,
+    minOrderPrice: 25,
+    deliveryFee: 5,
+    freeDeliveryOver: 40,
+    deliveryTime: 30,
+    distance: 0.8,
+    deliveryType: 'third_party',
+    businessHours: {
+      breakfast: '--:--',
+      lunch: '10:00-14:30',
+      dinner: '15:00-22:30'
+    },
+    location: '东门商业街8号',
+    tags: ['人气爆款', '配送准时'],
+    promotions: [
+      { type: 'full_reduction', title: '满30减5', desc: '满30元减5元，满50减10，满80减18' },
+      { type: 'gift', title: '买一送一', desc: '买汉堡送可乐' },
+      { type: 'coupon', title: '新人专享', desc: '新用户15元无门槛券' }
+    ],
+    todayDiscounts: [
+      { name: '香辣鸡腿堡套餐', originalPrice: 35, discountPrice: 25, limit: 80 },
+      { name: '全家桶', originalPrice: 88, discountPrice: 68, limit: 20 },
+      { name: '薯条(大)', originalPrice: 15, discountPrice: 9.9, limit: 150 }
+    ],
+    isOpen: true
+  },
+  {
+    id: 'tm3',
+    name: '樱花寿司日料',
+    cover: 'https://picsum.photos/seed/takeout3/800/400',
+    category: 'japanese',
+    rating: 4.8,
+    reviewCount: 892,
+    sales: 3245,
+    minOrderPrice: 30,
+    deliveryFee: 4,
+    freeDeliveryOver: 50,
+    deliveryTime: 35,
+    distance: 1.2,
+    deliveryType: 'merchant',
+    businessHours: {
+      breakfast: '--:--',
+      lunch: '11:00-14:00',
+      dinner: '17:00-21:00'
+    },
+    location: '校园北路15号',
+    tags: ['正宗日料', '新鲜食材', '好评如潮'],
+    promotions: [
+      { type: 'full_reduction', title: '满50减8', desc: '满50元减8元，满80减15，满120减25' },
+      { type: 'discount', title: '寿司7折', desc: '全场寿司类7折' }
+    ],
+    todayDiscounts: [
+      { name: '三文鱼寿司拼盘', originalPrice: 68, discountPrice: 48, limit: 25 },
+      { name: '鳗鱼饭', originalPrice: 42, discountPrice: 32, limit: 40 },
+      { name: '味增汤', originalPrice: 8, discountPrice: 1, limit: 200 }
+    ],
+    isOpen: true
+  },
+  {
+    id: 'tm4',
+    name: '老陕面馆',
+    cover: 'https://picsum.photos/seed/takeout4/800/400',
+    category: 'noodle',
+    rating: 4.6,
+    reviewCount: 1876,
+    sales: 6543,
+    minOrderPrice: 15,
+    deliveryFee: 2,
+    freeDeliveryOver: 25,
+    deliveryTime: 20,
+    distance: 0.3,
+    deliveryType: 'merchant',
+    businessHours: {
+      breakfast: '06:30-09:30',
+      lunch: '10:00-14:30',
+      dinner: '16:30-21:00'
+    },
+    location: '西门小吃街5号',
+    tags: ['十年老店', '量大实惠', '地道口味'],
+    promotions: [
+      { type: 'full_reduction', title: '满15减2', desc: '满15元减2元，满25减4，满35减6' },
+      { type: 'free_delivery', title: '免配送费', desc: '满25元免配送费' }
+    ],
+    todayDiscounts: [
+      { name: '油泼面', originalPrice: 16, discountPrice: 12, limit: 60 },
+      { name: '肉夹馍', originalPrice: 10, discountPrice: 6, limit: 100 },
+      { name: '羊肉泡馍', originalPrice: 28, discountPrice: 22, limit: 35 }
+    ],
+    isOpen: true
+  },
+  {
+    id: 'tm5',
+    name: '港式烧腊饭',
+    cover: 'https://picsum.photos/seed/takeout5/800/400',
+    category: 'rice',
+    rating: 4.4,
+    reviewCount: 1123,
+    sales: 4567,
+    minOrderPrice: 18,
+    deliveryFee: 3,
+    freeDeliveryOver: 35,
+    deliveryTime: 28,
+    distance: 0.9,
+    deliveryType: 'third_party',
+    businessHours: {
+      breakfast: '--:--',
+      lunch: '10:30-14:00',
+      dinner: '16:30-20:30'
+    },
+    location: '南门美食街15号',
+    tags: ['正宗港式', '现做现卖'],
+    promotions: [
+      { type: 'full_reduction', title: '满25减4', desc: '满25元减4元，满40减8，满60减15' }
+    ],
+    todayDiscounts: [
+      { name: '叉烧饭', originalPrice: 22, discountPrice: 17, limit: 50 },
+      { name: '烧鸭饭', originalPrice: 25, discountPrice: 19, limit: 45 },
+      { name: '双拼饭', originalPrice: 30, discountPrice: 24, limit: 30 }
+    ],
+    isOpen: true
+  },
+  {
+    id: 'tm6',
+    name: '蜜雪奶茶铺',
+    cover: 'https://picsum.photos/seed/takeout6/800/400',
+    category: 'drink',
+    rating: 4.9,
+    reviewCount: 3456,
+    sales: 12345,
+    minOrderPrice: 10,
+    deliveryFee: 2,
+    freeDeliveryOver: 20,
+    deliveryTime: 15,
+    distance: 0.4,
+    deliveryType: 'merchant',
+    businessHours: {
+      breakfast: '08:00-10:00',
+      lunch: '10:00-14:00',
+      dinner: '14:00-22:00'
+    },
+    location: '南门学生超市旁',
+    tags: ['网红饮品', '第二杯半价', '销量冠军'],
+    promotions: [
+      { type: 'discount', title: '第二杯半价', desc: '全场饮品第二杯半价' },
+      { type: 'full_reduction', title: '满20减3', desc: '满20元减3元，满35减6' },
+      { type: 'free_delivery', title: '免配送费', desc: '满20元免配送费' }
+    ],
+    todayDiscounts: [
+      { name: '珍珠奶茶(大)', originalPrice: 12, discountPrice: 8, limit: 200 },
+      { name: '杨枝甘露', originalPrice: 18, discountPrice: 12, limit: 80 },
+      { name: '柠檬水', originalPrice: 8, discountPrice: 3.9, limit: 300 }
+    ],
+    isOpen: true
+  },
+  {
+    id: 'tm7',
+    name: '烤百味烧烤',
+    cover: 'https://picsum.photos/seed/takeout7/800/400',
+    category: 'bbq',
+    rating: 4.7,
+    reviewCount: 987,
+    sales: 2876,
+    minOrderPrice: 30,
+    deliveryFee: 5,
+    freeDeliveryOver: 60,
+    deliveryTime: 40,
+    distance: 1.5,
+    deliveryType: 'third_party',
+    businessHours: {
+      breakfast: '--:--',
+      lunch: '--:--',
+      dinner: '17:00-01:00'
+    },
+    location: '东门夜市56号',
+    tags: ['深夜食堂', '烟火气', '人气爆棚'],
+    promotions: [
+      { type: 'full_reduction', title: '满50减10', desc: '满50元减10元，满100减25，满150减40' },
+      { type: 'gift', title: '送饮料', desc: '满60送可乐2罐' }
+    ],
+    todayDiscounts: [
+      { name: '烤羊肉串(10串)', originalPrice: 30, discountPrice: 22, limit: 60 },
+      { name: '烤鸡翅', originalPrice: 8, discountPrice: 5, limit: 150 },
+      { name: '烤韭菜', originalPrice: 6, discountPrice: 3, limit: 200 }
+    ],
+    isOpen: true
+  },
+  {
+    id: 'tm8',
+    name: '小四川麻辣烫',
+    cover: 'https://picsum.photos/seed/takeout8/800/400',
+    category: 'hotpot',
+    rating: 4.6,
+    reviewCount: 1543,
+    sales: 5432,
+    minOrderPrice: 20,
+    deliveryFee: 3,
+    freeDeliveryOver: 35,
+    deliveryTime: 32,
+    distance: 0.7,
+    deliveryType: 'merchant',
+    businessHours: {
+      breakfast: '--:--',
+      lunch: '10:30-14:00',
+      dinner: '16:30-22:00'
+    },
+    location: '西门美食街12号',
+    tags: ['地道川味', '麻辣鲜香', '可自选辣度'],
+    promotions: [
+      { type: 'full_reduction', title: '满30减5', desc: '满30元减5元，满50减10，满80减18' },
+      { type: 'discount', title: '素菜8折', desc: '今日素菜类8折' }
+    ],
+    todayDiscounts: [
+      { name: '单人麻辣烫套餐', originalPrice: 28, discountPrice: 20, limit: 80 },
+      { name: '肥牛卷', originalPrice: 15, discountPrice: 10, limit: 60 },
+      { name: '金针菇', originalPrice: 6, discountPrice: 4, limit: 150 }
+    ],
+    isOpen: true
+  },
+  {
+    id: 'tm9',
+    name: '轻食沙拉工坊',
+    cover: 'https://picsum.photos/seed/takeout9/800/400',
+    category: 'vegetarian',
+    rating: 4.5,
+    reviewCount: 654,
+    sales: 1876,
+    minOrderPrice: 25,
+    deliveryFee: 3,
+    freeDeliveryOver: 40,
+    deliveryTime: 25,
+    distance: 1.0,
+    deliveryType: 'merchant',
+    businessHours: {
+      breakfast: '07:30-10:00',
+      lunch: '10:30-14:00',
+      dinner: '16:30-20:30'
+    },
+    location: '北区生活广场18号',
+    tags: ['健康低卡', '减脂必备', '新鲜蔬菜'],
+    promotions: [
+      { type: 'full_reduction', title: '满35减5', desc: '满35元减5元，满60减10' },
+      { type: 'coupon', title: '新人立减', desc: '新用户立减8元' }
+    ],
+    todayDiscounts: [
+      { name: '鸡胸肉沙拉', originalPrice: 32, discountPrice: 25, limit: 50 },
+      { name: '牛油果三明治', originalPrice: 28, discountPrice: 22, limit: 40 },
+      { name: '混合蔬菜盒', originalPrice: 18, discountPrice: 12, limit: 60 }
+    ],
+    isOpen: true
+  },
+  {
+    id: 'tm10',
+    name: '鲜果时光',
+    cover: 'https://picsum.photos/seed/takeout10/800/400',
+    category: 'fruit',
+    rating: 4.7,
+    reviewCount: 432,
+    sales: 1234,
+    minOrderPrice: 15,
+    deliveryFee: 2,
+    freeDeliveryOver: 25,
+    deliveryTime: 20,
+    distance: 0.6,
+    deliveryType: 'merchant',
+    businessHours: {
+      breakfast: '08:00-10:00',
+      lunch: '10:00-14:00',
+      dinner: '14:00-21:30'
+    },
+    location: '中心食堂旁',
+    tags: ['新鲜直达', '切盒配送', '应季水果'],
+    promotions: [
+      { type: 'full_reduction', title: '满20减3', desc: '满20元减3元，满35减6' },
+      { type: 'discount', title: '第二份半价', desc: '鲜切水果第二份半价' }
+    ],
+    todayDiscounts: [
+      { name: '西瓜切盒(大)', originalPrice: 18, discountPrice: 12, limit: 80 },
+      { name: '草莓(一斤)', originalPrice: 22, discountPrice: 16, limit: 40 },
+      { name: '混合果切', originalPrice: 25, discountPrice: 18, limit: 60 }
+    ],
+    isOpen: true
+  },
+  {
+    id: 'tm11',
+    name: '甜蜜烘焙坊',
+    cover: 'https://picsum.photos/seed/takeout11/800/400',
+    category: 'dessert',
+    rating: 4.8,
+    reviewCount: 567,
+    sales: 1567,
+    minOrderPrice: 20,
+    deliveryFee: 3,
+    freeDeliveryOver: 35,
+    deliveryTime: 22,
+    distance: 0.8,
+    deliveryType: 'merchant',
+    businessHours: {
+      breakfast: '08:00-10:30',
+      lunch: '10:30-14:00',
+      dinner: '14:00-21:00'
+    },
+    location: '艺术楼旁',
+    tags: ['手工现做', '生日蛋糕', '下午茶首选'],
+    promotions: [
+      { type: 'full_reduction', title: '满30减5', desc: '满30元减5元，满50减10' },
+      { type: 'gift', title: '送小蛋糕', desc: '满50送纸杯蛋糕2个' }
+    ],
+    todayDiscounts: [
+      { name: '提拉米苏', originalPrice: 28, discountPrice: 22, limit: 30 },
+      { name: '芒果班戟(2个)', originalPrice: 22, discountPrice: 16, limit: 50 },
+      { name: '生日蛋糕(6寸)', originalPrice: 128, discountPrice: 98, limit: 10 }
+    ],
+    isOpen: true
+  },
+  {
+    id: 'tm12',
+    name: '正新鸡排',
+    cover: 'https://picsum.photos/seed/takeout12/800/400',
+    category: 'snack',
+    rating: 4.4,
+    reviewCount: 2345,
+    sales: 7654,
+    minOrderPrice: 15,
+    deliveryFee: 2,
+    freeDeliveryOver: 25,
+    deliveryTime: 18,
+    distance: 0.5,
+    deliveryType: 'merchant',
+    businessHours: {
+      breakfast: '--:--',
+      lunch: '10:00-14:30',
+      dinner: '14:30-22:00'
+    },
+    location: '南门小吃街1号',
+    tags: ['国民小吃', '酥脆可口', '送饮料'],
+    promotions: [
+      { type: 'full_reduction', title: '满20减3', desc: '满20元减3元，满35减6' },
+      { type: 'gift', title: '送酸梅汤', desc: '买鸡排送酸梅汤' }
+    ],
+    todayDiscounts: [
+      { name: '招牌大鸡排', originalPrice: 18, discountPrice: 12, limit: 100 },
+      { name: '炸鸡腿(2个)', originalPrice: 16, discountPrice: 11, limit: 80 },
+      { name: '甘梅地瓜条', originalPrice: 10, discountPrice: 6, limit: 120 }
+    ],
+    isOpen: true
+  }
+];
+
+const MOCK_TAKEOUT_PROMOTIONS_BANNER = [
+  {
+    id: 'pb1',
+    title: '新人专享',
+    subtitle: '新用户最高立减20元',
+    icon: '🎁',
+    bgColor: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)',
+    link: ''
+  },
+  {
+    id: 'pb2',
+    title: '限时特惠',
+    subtitle: '今日爆款菜低至5折',
+    icon: '🔥',
+    bgColor: 'linear-gradient(135deg, #FA8C16 0%, #FFA940 100%)',
+    link: ''
+  },
+  {
+    id: 'pb3',
+    title: '免配送费',
+    subtitle: '精选商家满额免配送',
+    icon: '🚚',
+    bgColor: 'linear-gradient(135deg, #52C41A 0%, #95DE64 100%)',
+    link: ''
+  },
+  {
+    id: 'pb4',
+    title: '下午茶',
+    subtitle: '奶茶甜品第二杯半价',
+    icon: '🧋',
+    bgColor: 'linear-gradient(135deg, #722ED1 0%, #9254DE 100%)',
+    link: ''
+  }
+];
+
 module.exports = {
   ..._firstExports,
   MOCK_CLUBS,
@@ -7318,5 +7742,7 @@ module.exports = {
   MOCK_ALUMNI_MENTORS,
   MOCK_ALUMNI_POSTS,
   MOCK_ALUMNI_CARD_BENEFITS,
-  MOCK_ALUMNI_PROFILES
+  MOCK_ALUMNI_PROFILES,
+  MOCK_TAKEOUT_MERCHANTS,
+  MOCK_TAKEOUT_PROMOTIONS_BANNER
 };

@@ -108,7 +108,10 @@ const STORAGE_KEYS = {
   ALUMNI_MENTOR_APPOINTMENTS: 'alumniMentorAppointments',
   ALUMNI_VISIT_APPOINTMENTS: 'alumniVisitAppointments',
   ALUMNI_CARD_BENEFITS: 'alumniCardBenefits',
-  ALUMNI_PROFILE_LIST: 'alumniProfileList'
+  ALUMNI_PROFILE_LIST: 'alumniProfileList',
+  TAKEOUT_MERCHANT_LIST: 'takeoutMerchantList',
+  FAVORITE_TAKEOUT_MERCHANTS: 'favoriteTakeoutMerchants',
+  TAKEOUT_PROMOTIONS: 'takeoutPromotions'
 };
 
 /**

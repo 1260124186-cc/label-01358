@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "校园外卖",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F8F9FA",
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "empty": "/components/empty/index",
+    "skeleton": "/components/skeleton/index"
+  }
+}

@@ -81,6 +81,7 @@
     "pages/canteen/index",
     "pages/canteen/detail",
     "pages/canteen/dish-detail",
+    "pages/takeout/index",
     "pages/forum/index/index",
     "pages/forum/publish/index",
     "pages/forum/detail/index",

@@ -524,6 +524,44 @@ const CANTEEN_TIME_SEGMENTS = [
   { value: 'dinner', label: '晚餐', icon: '🌙' }
 ];
 
+const TAKEOUT_CATEGORIES = [
+  { value: 'all', label: '全部', icon: '🍽️' },
+  { value: 'chinese', label: '中式快餐', icon: '🥡' },
+  { value: 'western', label: '西餐', icon: '🍔' },
+  { value: 'japanese', label: '日韩料理', icon: '🍣' },
+  { value: 'noodle', label: '粉面粥', icon: '🍜' },
+  { value: 'rice', label: '盖饭/炒饭', icon: '🍚' },
+  { value: 'snack', label: '小吃/炸鸡', icon: '🍟' },
+  { value: 'drink', label: '奶茶/饮品', icon: '🧋' },
+  { value: 'dessert', label: '甜点', icon: '🍰' },
+  { value: 'bbq', label: '烧烤', icon: '🍢' },
+  { value: 'hotpot', label: '火锅', icon: '🍲' },
+  { value: 'vegetarian', label: '素食', icon: '🥗' },
+  { value: 'fruit', label: '水果', icon: '🍎' }
+];
+
+const TAKEOUT_SORT_OPTIONS = [
+  { value: 'comprehensive', label: '综合', field: 'sales', order: 'desc' },
+  { value: 'sales', label: '销量', field: 'sales', order: 'desc' },
+  { value: 'rating', label: '评分', field: 'rating', order: 'desc' },
+  { value: 'delivery_time', label: '配送时间', field: 'deliveryTime', order: 'asc' },
+  { value: 'distance', label: '距离', field: 'distance', order: 'asc' }
+];
+
+const TAKEOUT_DELIVERY_TYPES = [
+  { value: 'merchant', label: '商家自配', icon: '🏪' },
+  { value: 'third_party', label: '第三方配送', icon: '🛵' },
+  { value: 'self_pickup', label: '到店自取', icon: '📦' }
+];
+
+const TAKEOUT_PROMOTION_TYPES = [
+  { value: 'discount', label: '折扣', icon: '🏷️' },
+  { value: 'full_reduction', label: '满减', icon: '💰' },
+  { value: 'coupon', label: '优惠券', icon: '🎫' },
+  { value: 'gift', label: '买赠', icon: '🎁' },
+  { value: 'free_delivery', label: '免配送费', icon: '🚚' }
+];
+
 const DISH_TAGS = [
   { value: 'signature', label: '招牌', color: '#FF6B6B' },
   { value: 'recommend', label: '推荐', color: '#52C41A' },
@@ -1704,5 +1742,9 @@ module.exports = {
   ALUMNI_APPOINTMENT_STATUS,
   ALUMNI_APPOINTMENT_STATUS_MAP,
   ALUMNI_APPOINTMENT_TIME_SLOTS,
-  ALUMNI_CARD_BENEFIT_CATEGORIES
+  ALUMNI_CARD_BENEFIT_CATEGORIES,
+  TAKEOUT_CATEGORIES,
+  TAKEOUT_SORT_OPTIONS,
+  TAKEOUT_DELIVERY_TYPES,
+  TAKEOUT_PROMOTION_TYPES
 };

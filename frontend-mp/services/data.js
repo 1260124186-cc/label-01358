@@ -25,6 +25,7 @@ let alumniPostsInitialized = false;
 let alumniMentorsInitialized = false;
 let alumniCardBenefitsInitialized = false;
 let alumniProfilesInitialized = false;
+let takeoutInitialized = false;
 
 function initVolunteerData() {
   if (volunteerInitialized) return;
@@ -5707,6 +5708,129 @@ function getAlumniIndustryDistribution() {
   };
 }
 
+function initTakeoutData() {
+  if (takeoutInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.TAKEOUT_MERCHANT_LIST);
+  if (!existing || existing.length === 0) {
+    const favoriteMerchantIds = storage.getList(STORAGE_KEYS.FAVORITE_TAKEOUT_MERCHANTS);
+    const merchants = mockData.MOCK_TAKEOUT_MERCHANTS.map((item, index) => ({
+      ...item,
+      isFavorite: favoriteMerchantIds.includes(item.id),
+      views: Math.floor(Math.random() * 500) + 100,
+      createTime: Date.now() - (index + 1) * 86400000,
+      updateTime: Date.now() - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.TAKEOUT_MERCHANT_LIST, merchants);
+  }
+  takeoutInitialized = true;
+}
+
+function getTakeoutMerchantList(filters = {}) {
+  initTakeoutData();
+  let list = storage.getList(STORAGE_KEYS.TAKEOUT_MERCHANT_LIST);
+  const favoriteMerchantIds = storage.getList(STORAGE_KEYS.FAVORITE_TAKEOUT_MERCHANTS);
+
+  list = list.map(item => ({
+    ...item,
+    isFavorite: favoriteMerchantIds.includes(item.id)
+  }));
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'location', 'tags']);
+  }
+
+  if (filters.category && filters.category !== 'all') {
+    list = list.filter(item => item.category === filters.category);
+  }
+
+  if (filters.onlyOpen) {
+    list = list.filter(item => item.isOpen);
+  }
+
+  if (filters.onlyFavorite) {
+    list = list.filter(item => item.isFavorite);
+  }
+
+  if (filters.minRating !== undefined) {
+    list = list.filter(item => item.rating >= filters.minRating);
+  }
+
+  if (filters.maxDeliveryFee !== undefined) {
+    list = list.filter(item => item.deliveryFee <= filters.maxDeliveryFee);
+  }
+
+  const sortValue = filters.sort || 'comprehensive';
+  list = sortByField(list, sortValue, constants.TAKEOUT_SORT_OPTIONS);
+
+  return list;
+}
+
+function getTakeoutMerchantDetail(id) {
+  initTakeoutData();
+  const list = storage.getList(STORAGE_KEYS.TAKEOUT_MERCHANT_LIST);
+  const merchant = list.find(item => item.id === id);
+  if (merchant) {
+    const favoriteMerchantIds = storage.getList(STORAGE_KEYS.FAVORITE_TAKEOUT_MERCHANTS);
+    return {
+      ...merchant,
+      isFavorite: favoriteMerchantIds.includes(merchant.id)
+    };
+  }
+  return null;
+}
+
+function toggleFavoriteTakeoutMerchant(merchantId) {
+  initTakeoutData();
+  let favorites = storage.getList(STORAGE_KEYS.FAVORITE_TAKEOUT_MERCHANTS);
+  const index = favorites.indexOf(merchantId);
+  if (index > -1) {
+    favorites.splice(index, 1);
+    storage.set(STORAGE_KEYS.FAVORITE_TAKEOUT_MERCHANTS, favorites);
+    return { isFavorite: false };
+  } else {
+    favorites.unshift(merchantId);
+    storage.set(STORAGE_KEYS.FAVORITE_TAKEOUT_MERCHANTS, favorites);
+    return { isFavorite: true };
+  }
+}
+
+function isFavoriteTakeoutMerchant(merchantId) {
+  const favorites = storage.getList(STORAGE_KEYS.FAVORITE_TAKEOUT_MERCHANTS);
+  return favorites.includes(merchantId);
+}
+
+function getFavoriteTakeoutMerchants() {
+  initTakeoutData();
+  const favoriteMerchantIds = storage.getList(STORAGE_KEYS.FAVORITE_TAKEOUT_MERCHANTS);
+  const list = storage.getList(STORAGE_KEYS.TAKEOUT_MERCHANT_LIST);
+  return list
+    .filter(item => favoriteMerchantIds.includes(item.id))
+    .map(item => ({ ...item, isFavorite: true }));
+}
+
+function getTakeoutPromotionBanners() {
+  return mockData.MOCK_TAKEOUT_PROMOTIONS_BANNER || [];
+}
+
+function getTodayAllDiscounts() {
+  initTakeoutData();
+  const list = storage.getList(STORAGE_KEYS.TAKEOUT_MERCHANT_LIST);
+  const allDiscounts = [];
+  list.forEach(merchant => {
+    if (merchant.todayDiscounts && merchant.todayDiscounts.length > 0) {
+      merchant.todayDiscounts.forEach(discount => {
+        allDiscounts.push({
+          ...discount,
+          merchantId: merchant.id,
+          merchantName: merchant.name,
+          merchantCover: merchant.cover
+        });
+      });
+    }
+  });
+  return allDiscounts;
+}
+
 module.exports = {
   paginateList,
 
@@ -6062,5 +6186,14 @@ module.exports = {
   getMyAlumniVisitAppointments,
   getAlumniCardBenefits,
   getAlumniIndustryDistribution,
-  getAlumniProfileList
+  getAlumniProfileList,
+
+  initTakeoutData,
+  getTakeoutMerchantList,
+  getTakeoutMerchantDetail,
+  toggleFavoriteTakeoutMerchant,
+  isFavoriteTakeoutMerchant,
+  getFavoriteTakeoutMerchants,
+  getTakeoutPromotionBanners,
+  getTodayAllDiscounts
 };

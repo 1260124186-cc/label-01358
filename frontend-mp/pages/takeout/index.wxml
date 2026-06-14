@@ -1,0 +1,281 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 搜索栏 -->
+  <view class="search-section">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索商家、菜品..."
+        placeholder-class="search-placeholder"
+        value="{{keyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+        confirm-type="search"
+      />
+    </view>
+  </view>
+
+  <scroll-view
+    class="main-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <!-- 优惠活动横幅 -->
+    <view class="banner-section" wx:if="{{promotionBanners.length > 0}}">
+      <view class="banner-grid">
+        <view
+          class="banner-card"
+          wx:for="{{promotionBanners}}"
+          wx:key="id"
+          hover-class="banner-card-hover"
+          bindtap="onBannerTap"
+          data-item="{{item}}"
+          style="background: {{item.bgColor}};"
+        >
+          <view class="banner-card-icon">{{item.icon}}</view>
+          <view class="banner-card-info">
+            <text class="banner-card-title">{{item.title}}</text>
+            <text class="banner-card-subtitle">{{item.subtitle}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 今日优惠 -->
+    <view class="section" wx:if="{{todayDiscounts.length > 0}}">
+      <view class="section-header">
+        <view class="section-title-wrap">
+          <view class="section-icon section-icon-discount"></view>
+          <text class="section-title">今日优惠</text>
+          <text class="section-subtitle">🔥 限时特惠</text>
+        </view>
+      </view>
+      <scroll-view
+        class="discount-scroll"
+        scroll-x="{{true}}"
+        enhanced="{{true}}"
+        show-scrollbar="{{false}}"
+      >
+        <view class="discount-list">
+          <view
+            class="discount-card"
+            wx:for="{{todayDiscounts}}"
+            wx:key="index"
+            hover-class="discount-card-hover"
+            bindtap="onDiscountTap"
+            data-merchant-id="{{item.merchantId}}"
+          >
+            <view class="discount-badge">-{{item.discountPercent}}%</view>
+            <image
+              class="discount-image"
+              src="{{item.merchantCover || '/assets/images/default-news.png'}}"
+              mode="aspectFill"
+            />
+            <view class="discount-info">
+              <text class="discount-name">{{item.name}}</text>
+              <view class="discount-price-row">
+                <text class="discount-price-symbol">¥</text>
+                <text class="discount-price">{{item.discountPrice}}</text>
+                <text class="discount-price-origin">¥{{item.originalPrice}}</text>
+              </view>
+              <view class="discount-limit">
+                <text class="discount-limit-text">仅剩{{item.limit}}份</text>
+              </view>
+              <text class="discount-merchant">{{item.merchantName}}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 分类导航 -->
+    <view class="section section-category">
+      <scroll-view
+        class="category-scroll"
+        scroll-x="{{true}}"
+        enhanced="{{true}}"
+        show-scrollbar="{{false}}"
+      >
+        <view class="category-list">
+          <view
+            class="category-item {{currentCategory === item.value ? 'active' : ''}}"
+            wx:for="{{categories}}"
+            wx:key="value"
+            hover-class="category-item-hover"
+            bindtap="onCategoryTap"
+            data-value="{{item.value}}"
+          >
+            <text class="category-icon">{{item.icon}}</text>
+            <text class="category-name">{{item.label}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 排序选项 -->
+    <view class="section section-sort">
+      <view class="sort-list">
+        <view
+          class="sort-item {{currentSort === item.value ? 'active' : ''}}"
+          wx:for="{{sortOptions}}"
+          wx:key="value"
+          hover-class="sort-item-hover"
+          bindtap="onSortTap"
+          data-value="{{item.value}}"
+        >
+          <text class="sort-name">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 商家列表 -->
+    <view class="section section-merchant">
+      <view class="section-header">
+        <view class="section-title-wrap">
+          <view class="section-icon section-icon-merchant"></view>
+          <text class="section-title">外卖商家</text>
+          <text class="section-subtitle">🛵 校内外卖聚合</text>
+        </view>
+      </view>
+
+      <view class="merchant-list" wx:if="{{merchantList.length > 0}}">
+        <view
+          class="merchant-card"
+          wx:for="{{merchantList}}"
+          wx:key="id"
+          wx:for-index="cardIndex"
+          hover-class="merchant-card-hover"
+          bindtap="onMerchantTap"
+          data-id="{{item.id}}"
+        >
+          <view class="merchant-top">
+            <view class="merchant-cover-wrap">
+              <image
+                class="merchant-cover"
+                src="{{item.cover || '/assets/images/default-news.png'}}"
+                mode="aspectFill"
+              />
+              <view class="merchant-status" wx:if="{{!item.isOpen}}">
+                <text class="merchant-status-text">休息中</text>
+              </view>
+              <view class="merchant-tag-row" wx:if="{{item.tags && item.tags.length > 0}}">
+                <view class="merchant-tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:for-index="tagIdx" wx:key="tagIdx">
+                  <text class="merchant-tag-text">{{tag}}</text>
+                </view>
+              </view>
+            </view>
+            <view class="merchant-favorite" catchtap="onToggleFavorite" data-id="{{item.id}}" data-index="{{cardIndex}}">
+              <text class="favorite-icon {{item.isFavorite ? 'active' : ''}}">{{item.isFavorite ? '❤️' : '🤍'}}</text>
+            </view>
+          </view>
+
+          <view class="merchant-info">
+            <view class="merchant-header">
+              <text class="merchant-name">{{item.name}}</text>
+            </view>
+
+            <view class="merchant-meta">
+              <view class="merchant-rating">
+                <view class="stars">
+                  <text
+                    wx:for="{{item.stars}}"
+                    wx:for-item="star"
+                    wx:key="index"
+                    class="star {{star}}"
+                  >{{star === 'full' ? '★' : star === 'half' ? '★' : '☆'}}</text>
+                </view>
+                <text class="rating-num">{{item.ratingText}}</text>
+              </view>
+              <text class="review-count">{{item.reviewCountText}}</text>
+              <text class="sales-text" wx:if="{{item.salesText}}">{{item.salesText}}</text>
+            </view>
+
+            <view class="merchant-basic">
+              <view class="basic-item">
+                <text class="basic-icon">{{item.deliveryTypeIcon}}</text>
+                <text class="basic-text">{{item.deliveryTypeText}}</text>
+              </view>
+              <view class="basic-divider">|</view>
+              <view class="basic-item">
+                <text class="basic-icon">⏱️</text>
+                <text class="basic-text">{{item.deliveryTime}}分钟</text>
+              </view>
+              <view class="basic-divider">|</view>
+              <view class="basic-item">
+                <text class="basic-icon">📍</text>
+                <text class="basic-text">{{item.distanceText}}</text>
+              </view>
+            </view>
+
+            <view class="merchant-price-info">
+              <view class="price-tag">
+                <text class="price-tag-text">{{item.minOrderText}}</text>
+              </view>
+              <view class="price-tag">
+                <text class="price-tag-text">{{item.deliveryFeeText}}</text>
+              </view>
+              <view class="price-tag free-tag" wx:if="{{item.freeDeliveryText}}">
+                <text class="price-tag-text">{{item.freeDeliveryText}}</text>
+              </view>
+            </view>
+
+            <view class="merchant-hours" wx:if="{{item.businessHoursText}}">
+              <text class="hours-icon">🕐</text>
+              <text class="hours-text">营业时间：{{item.businessHoursText}}</text>
+            </view>
+
+            <!-- 商家活动 -->
+            <view class="merchant-promotions" wx:if="{{item.promotions && item.promotions.length > 0}}">
+              <view
+                class="promotion-item"
+                wx:for="{{item.promotions}}"
+                wx:for-item="promo"
+                wx:key="title"
+              >
+                <view class="promotion-icon-wrap">
+                  <text class="promotion-icon">{{promotionIconMap[promo.type] || '🎁'}}</text>
+                </view>
+                <text class="promotion-text">{{promo.title}}</text>
+              </view>
+            </view>
+
+            <!-- 今日特价 -->
+            <view class="merchant-today-discount" wx:if="{{item.todayDiscounts && item.todayDiscounts.length > 0}}">
+              <view class="today-discount-label">
+                <text class="today-discount-label-text">今日特价</text>
+              </view>
+              <view class="today-discount-list">
+                <view
+                  class="today-discount-item"
+                  wx:for="{{item.todayDiscounts}}"
+                  wx:for-item="dish"
+                  wx:key="name"
+                >
+                  <text class="dish-name-text">{{dish.name}}</text>
+                  <view class="dish-price-wrap">
+                    <text class="dish-price-text">¥{{dish.discountPrice}}</text>
+                    <text class="dish-origin-text">¥{{dish.originalPrice}}</text>
+                  </view>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{!loading && merchantList.length === 0 && todayDiscounts.length === 0}}"
+      text="暂无外卖商家"
+    />
+
+    <view class="list-bottom" wx:if="{{merchantList.length > 0}}">
+      <text class="list-bottom-text">—— 已经到底啦 ——</text>
+    </view>
+
+    <view class="bottom-safe"></view>
+  </scroll-view>
+</view>
