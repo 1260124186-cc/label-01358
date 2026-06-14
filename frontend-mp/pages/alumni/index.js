@@ -3,15 +3,59 @@ const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
 
+const SAFE_MAIN_TABS = [
+  { value: 'feed', label: '校友动态', icon: '📢' },
+  { value: 'mentors', label: '导师计划', icon: '👨‍🏫' },
+  { value: 'industry', label: '行业分布', icon: '📊' },
+  { value: 'services', label: '校友服务', icon: '🎫' }
+];
+const SAFE_POST_TYPES = [
+  { value: 'all', label: '全部', icon: '📋', color: '#6B7280' },
+  { value: 'share', label: '经验分享', icon: '💡', color: '#3B82F6' },
+  { value: 'job', label: '招聘内推', icon: '💼', color: '#10B981' },
+  { value: 'activity', label: '校友活动', icon: '🎉', color: '#F59E0B' },
+  { value: 'help', label: '求助提问', icon: '❓', color: '#8B5CF6' },
+  { value: 'life', label: '生活日常', icon: '🌈', color: '#EC4899' }
+];
+const SAFE_INDUSTRIES = [
+  { value: 'internet', label: '互联网/IT', color: '#3B82F6', icon: '💻' },
+  { value: 'finance', label: '金融/投资', color: '#10B981', icon: '💰' },
+  { value: 'education', label: '教育/培训', color: '#F59E0B', icon: '📚' },
+  { value: 'medical', label: '医疗/健康', color: '#EF4444', icon: '🏥' },
+  { value: 'manufacturing', label: '制造业', color: '#8B5CF6', icon: '🏭' },
+  { value: 'consulting', label: '咨询/服务', color: '#EC4899', icon: '💼' },
+  { value: 'media', label: '传媒/广告', color: '#14B8A6', icon: '📺' },
+  { value: 'government', label: '政府/事业单位', color: '#6366F1', icon: '🏛️' },
+  { value: 'real_estate', label: '房地产/建筑', color: '#F97316', icon: '🏢' },
+  { value: 'retail', label: '零售/电商', color: '#22C55E', icon: '🛒' },
+  { value: 'other', label: '其他行业', color: '#6B7280', icon: '📌' }
+];
+const SAFE_MENTOR_TITLES = [
+  { value: 'ceo', label: '企业CEO/创始人', color: '#6366F1' },
+  { value: 'director', label: '总监/高管', color: '#3B82F6' },
+  { value: 'manager', label: '部门经理', color: '#10B981' },
+  { value: 'senior_engineer', label: '资深工程师', color: '#F59E0B' },
+  { value: 'professor', label: '教授/研究员', color: '#8B5CF6' },
+  { value: 'investor', label: '投资人', color: '#EC4899' },
+  { value: 'lawyer', label: '律师', color: '#14B8A6' },
+  { value: 'doctor', label: '医生', color: '#EF4444' }
+];
+
+function getSafeConstant(constantValue, fallback) {
+  return Array.isArray(constantValue) && constantValue.length > 0 ? constantValue : fallback;
+}
+
 mixPage({
   data: {
     darkMode: false,
     activeTab: 'feed',
     postType: 'all',
-    mainTabs: constants.ALUMNI_MAIN_TABS,
-    postTypes: [{ value: 'all', label: '全部', icon: '📋', color: '#6B7280' }, ...constants.ALUMNI_POST_TYPES],
-    industryOptions: constants.ALUMNI_INDUSTRIES,
-    titleOptions: constants.ALUMNI_MENTOR_TITLES,
+    mainTabs: getSafeConstant(constants.ALUMNI_MAIN_TABS, SAFE_MAIN_TABS),
+    postTypes: getSafeConstant(constants.ALUMNI_POST_TYPES, []).length > 0
+      ? [{ value: 'all', label: '全部', icon: '📋', color: '#6B7280' }, ...getSafeConstant(constants.ALUMNI_POST_TYPES, [])]
+      : SAFE_POST_TYPES,
+    industryOptions: getSafeConstant(constants.ALUMNI_INDUSTRIES, SAFE_INDUSTRIES),
+    titleOptions: getSafeConstant(constants.ALUMNI_MENTOR_TITLES, SAFE_MENTOR_TITLES),
     posts: [],
     filteredPosts: [],
     mentors: [],
@@ -62,10 +106,11 @@ mixPage({
       filters.type = this.data.postType;
     }
     const DEFAULT_TYPE_INFO = { label: '其他', icon: '📌', color: '#6B7280' };
+    const POST_TYPE_MAP = constants.ALUMNI_POST_TYPE_MAP || {};
     const rawPosts = dataService.getAlumniPostList(filters) || [];
     const posts = rawPosts.map(item => {
       const safeItem = item || {};
-      const typeInfo = constants.ALUMNI_POST_TYPE_MAP[safeItem.type] || DEFAULT_TYPE_INFO;
+      const typeInfo = POST_TYPE_MAP[safeItem.type] || DEFAULT_TYPE_INFO;
       return {
         id: safeItem.id || '',
         userAvatar: safeItem.userAvatar || '',
@@ -96,11 +141,13 @@ mixPage({
     };
     const DEFAULT_TITLE_INFO = { label: '其他', color: '#6B7280' };
     const DEFAULT_INDUSTRY_INFO = { label: '其他', color: '#6B7280', icon: '📌' };
+    const MENTOR_TITLES = Array.isArray(constants.ALUMNI_MENTOR_TITLES) ? constants.ALUMNI_MENTOR_TITLES : [];
+    const INDUSTRY_MAP = constants.ALUMNI_INDUSTRY_MAP || {};
     const rawMentors = dataService.getAlumniMentorList(filters) || [];
     const mentors = rawMentors.map(item => {
       const safeItem = item || {};
-      const titleInfo = constants.ALUMNI_MENTOR_TITLES.find(t => t && t.value === safeItem.title) || DEFAULT_TITLE_INFO;
-      const industryInfo = constants.ALUMNI_INDUSTRY_MAP[safeItem.industry] || DEFAULT_INDUSTRY_INFO;
+      const titleInfo = MENTOR_TITLES.find(t => t && t.value === safeItem.title) || DEFAULT_TITLE_INFO;
+      const industryInfo = INDUSTRY_MAP[safeItem.industry] || DEFAULT_INDUSTRY_INFO;
       return {
         id: safeItem.id || '',
         avatar: safeItem.avatar || '',
@@ -124,10 +171,11 @@ mixPage({
   loadVerifyInfo() {
     const info = dataService.getAlumniVerifyInfo(this.data.currentUserId);
     let verifyInfo = null;
-    if (info) {
+    if (info && typeof info === 'object' && !Array.isArray(info)) {
+      const STATUS_MAP = constants.ALUMNI_VERIFY_STATUS_MAP || {};
       verifyInfo = {
         ...info,
-        statusInfo: constants.ALUMNI_VERIFY_STATUS_MAP[info.status] || { label: '未知', color: '#6B7280', icon: '📌' }
+        statusInfo: STATUS_MAP[info.status] || { label: '未知', color: '#6B7280', icon: '📌' }
       };
     }
     this.setData({ verifyInfo });
