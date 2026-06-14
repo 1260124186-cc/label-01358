@@ -1,0 +1,239 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="page-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <!-- 实验室图片 -->
+    <view class="lab-hero">
+      <image class="hero-image" src="{{lab.cover}}" mode="aspectFill" />
+      <view class="hero-overlay"></view>
+      <view class="hero-info">
+        <view class="hero-tags">
+          <view class="hero-tag safety-tag" style="background: {{lab.safetyLevelColor}};">
+            <text class="tag-text">{{lab.safetyLevelLabel}}级安全</text>
+          </view>
+          <view class="hero-tag type-tag">
+            <text class="tag-icon">{{lab.typeIcon}}</text>
+            <text class="tag-text">{{lab.typeLabel}}</text>
+          </view>
+        </view>
+        <text class="hero-title">{{lab.name}}</text>
+      </view>
+    </view>
+
+    <!-- 基本信息 -->
+    <view class="info-section">
+      <view class="section-title">基本信息</view>
+      <view class="info-grid">
+        <view class="info-item">
+          <text class="info-icon">📍</text>
+          <view class="info-content">
+            <text class="info-label">位置</text>
+            <text class="info-value">{{lab.building}} {{lab.room}}</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">👥</text>
+          <view class="info-content">
+            <text class="info-label">容量</text>
+            <text class="info-value">{{lab.capacity}} 人</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">🛡️</text>
+          <view class="info-content">
+            <text class="info-label">安全等级</text>
+            <text class="info-value" style="color: {{lab.safetyLevelColor}};">{{lab.safetyLevelLabel}}级</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">👤</text>
+          <view class="info-content">
+            <text class="info-label">管理员</text>
+            <text class="info-value">{{lab.manager}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 实验室介绍 -->
+    <view class="info-section">
+      <view class="section-title">实验室介绍</view>
+      <view class="desc-box">
+        <text class="desc-text">{{lab.description}}</text>
+      </view>
+    </view>
+
+    <!-- 开放时段 -->
+    <view class="info-section">
+      <view class="section-title">开放时段</view>
+      <view class="time-slots-display">
+        <text class="time-slot-tag" wx:for="{{timeSlots}}" wx:key="value">
+          {{item.label}}
+        </text>
+      </view>
+    </view>
+
+    <!-- 设备设施 -->
+    <view class="info-section">
+      <view class="section-title">设备设施</view>
+      <view class="facilities-list">
+        <view class="facility-item" wx:for="{{lab.facilities}}" wx:key="*this">
+          <text class="facility-dot">●</text>
+          <text class="facility-name">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 安全须知 -->
+    <view class="info-section">
+      <view class="section-title">安全须知</view>
+      <view class="rules-box">
+        <text class="rules-text">{{lab.rules}}</text>
+      </view>
+    </view>
+
+    <!-- 预约表单 -->
+    <view class="form-section">
+      <view class="section-title">预约信息</view>
+
+      <!-- 预约限制提示 -->
+      <view class="warning-card" wx:if="{{!canBook && needTraining}}">
+        <text class="warning-icon">⚠️</text>
+        <view class="warning-content">
+          <text class="warning-title">需通过安全培训</text>
+          <text class="warning-text">{{canBookReason}}</text>
+          <view class="warning-btn" bindtap="goToSafetyTraining">
+            <text class="btn-text">去完成培训</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 日期选择 -->
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">预约日期</text>
+          <text class="required">*</text>
+        </view>
+        <picker
+          mode="date"
+          value="{{formData.appointmentDate}}"
+          start="{{minDate}}"
+          bindchange="onDateChange"
+        >
+          <view class="form-picker-wrap">
+            <text class="form-picker-text {{formData.appointmentDate ? '' : 'placeholder'}}">
+              {{formData.appointmentDate || '请选择预约日期'}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 时段选择 -->
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">预约时段</text>
+          <text class="required">*</text>
+        </view>
+        <view class="time-slot-grid">
+          <view
+            class="time-slot-item {{formData.timeSlot === item.value ? 'active' : ''}} {{timeSlotCapacity[item.value] && timeSlotCapacity[item.value].available <= 0 ? 'disabled' : ''}}"
+            wx:for="{{timeSlots}}"
+            wx:key="value"
+            bindtap="onTimeSlotTap"
+            data-value="{{item.value}}"
+          >
+            <text class="slot-text">{{item.label}}</text>
+            <text class="slot-available" wx:if="{{timeSlotCapacity[item.value]}}">
+              剩余 {{timeSlotCapacity[item.value].available}} 位
+            </text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 人数选择 -->
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">使用人数</text>
+          <text class="required">*</text>
+        </view>
+        <picker
+          mode="selector"
+          range="{{participantOptions}}"
+          value="{{participantIndex}}"
+          bindchange="onParticipantChange"
+        >
+          <view class="form-picker-wrap">
+            <text class="form-picker-text">
+              {{formData.participantCount}} 人
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <!-- 使用目的 -->
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">使用目的</text>
+          <text class="required">*</text>
+        </view>
+        <view class="form-textarea-wrap">
+          <textarea
+            class="form-textarea"
+            placeholder="请简要描述使用目的..."
+            placeholder-class="form-placeholder"
+            value="{{formData.purpose}}"
+            bindinput="onPurposeInput"
+            maxlength="200"
+            auto-height
+          />
+        </view>
+        <view class="word-count">{{formData.purpose.length}}/200</view>
+      </view>
+
+      <!-- 联系电话 -->
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">联系电话</text>
+          <text class="required">*</text>
+        </view>
+        <view class="form-input-wrap">
+          <input
+            class="form-input"
+            type="number"
+            placeholder="请输入联系电话"
+            placeholder-class="form-placeholder"
+            value="{{formData.contactPhone}}"
+            bindinput="onContactPhoneInput"
+            maxlength="11"
+          />
+        </view>
+      </view>
+    </view>
+
+    <!-- 底部留白 -->
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <!-- 底部提交按钮 -->
+  <view class="bottom-bar">
+    <btn
+      type="primary"
+      size="large"
+      bind:click="onSubmit"
+      loading="{{submitting}}"
+      disabled="{{submitting || !canBook}}"
+      block
+    >
+      {{!canBook ? (needTraining ? '需完成安全培训' : canBookReason) : (submitting ? '提交中...' : '提交预约')}}
+    </btn>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

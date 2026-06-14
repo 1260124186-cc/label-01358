@@ -6106,6 +6106,391 @@ function generateGraduationCertificate(userId) {
   return { success: true, certificate };
 }
 
+// ==================== 实验室/设备预约 ====================
+
+let labsInitialized = false;
+let labAppointmentsInitialized = false;
+
+function initLabData() {
+  if (labsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.LAB_LIST);
+  if (!existing || existing.length === 0) {
+    const labs = constants.MOCK_LABS.map((item, index) => ({
+      ...item,
+      createTime: Date.now() - index * 86400000,
+      updateTime: Date.now() - index * 86400000
+    }));
+    storage.set(STORAGE_KEYS.LAB_LIST, labs);
+  }
+  labsInitialized = true;
+}
+
+function initLabAppointments() {
+  if (labAppointmentsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.LAB_APPOINTMENT_LIST);
+  if (!existing || existing.length === 0) {
+    storage.set(STORAGE_KEYS.LAB_APPOINTMENT_LIST, []);
+  }
+  labAppointmentsInitialized = true;
+}
+
+function getLabList(filters = {}) {
+  initLabData();
+  let list = storage.getList(STORAGE_KEYS.LAB_LIST);
+
+  if (filters.type && filters.type !== 'all') {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  if (filters.keyword) {
+    const keywordLower = filters.keyword.toLowerCase();
+    list = list.filter(item =>
+      item.name.toLowerCase().includes(keywordLower) ||
+      item.building.toLowerCase().includes(keywordLower) ||
+      item.description.toLowerCase().includes(keywordLower)
+    );
+  }
+
+  return list;
+}
+
+function getLabDetail(labId) {
+  initLabData();
+  const list = storage.getList(STORAGE_KEYS.LAB_LIST);
+  const lab = list.find(item => item.id === labId) || null;
+  if (lab) {
+    const safetyLevelInfo = constants.LAB_SAFETY_LEVEL_MAP[lab.safetyLevel] || {};
+    return {
+      ...lab,
+      safetyLevelLabel: safetyLevelInfo.label,
+      safetyLevelColor: safetyLevelInfo.color,
+      safetyLevelDesc: safetyLevelInfo.desc
+    };
+  }
+  return null;
+}
+
+function getLabAppointmentList(filters = {}) {
+  initLabAppointments();
+  let list = storage.getList(STORAGE_KEYS.LAB_APPOINTMENT_LIST);
+
+  if (filters.userId) {
+    list = list.filter(item => item.userId === filters.userId);
+  }
+
+  if (filters.labId) {
+    list = list.filter(item => item.labId === filters.labId);
+  }
+
+  if (filters.status && filters.status !== 'all') {
+    if (filters.status === 'using') {
+      list = list.filter(item => item.status === 'checked_in');
+    } else if (filters.status === 'completed') {
+      list = list.filter(item => item.status === 'checked_out' || item.status === 'violation');
+    } else {
+      list = list.filter(item => item.status === filters.status);
+    }
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getLabAppointmentDetail(appointmentId) {
+  initLabAppointments();
+  const list = storage.getList(STORAGE_KEYS.LAB_APPOINTMENT_LIST);
+  const appointment = list.find(item => item.id === appointmentId) || null;
+
+  if (appointment) {
+    const lab = getLabDetail(appointment.labId);
+    const statusInfo = constants.LAB_APPOINTMENT_STATUS_MAP[appointment.status] || {};
+    return {
+      ...appointment,
+      labName: lab ? lab.name : '',
+      labType: lab ? lab.type : '',
+      building: lab ? lab.building : '',
+      room: lab ? lab.room : '',
+      statusLabel: statusInfo.label,
+      statusColor: statusInfo.color,
+      statusIcon: statusInfo.icon
+    };
+  }
+  return null;
+}
+
+function createLabAppointment(data) {
+  initLabAppointments();
+  const appointments = storage.get(STORAGE_KEYS.LAB_APPOINTMENT_LIST) || [];
+  const now = Date.now();
+
+  const appointment = {
+    id: 'lab_appt_' + now,
+    ...data,
+    status: 'pending',
+    checkInTime: null,
+    checkOutTime: null,
+    approvalTime: null,
+    approverId: null,
+    approvalRemark: '',
+    createTime: now,
+    updateTime: now
+  };
+
+  appointments.push(appointment);
+  storage.set(STORAGE_KEYS.LAB_APPOINTMENT_LIST, appointments);
+
+  return appointment;
+}
+
+function cancelLabAppointment(appointmentId, userId) {
+  initLabAppointments();
+  const appointments = storage.get(STORAGE_KEYS.LAB_APPOINTMENT_LIST) || [];
+  const index = appointments.findIndex(item => item.id === appointmentId);
+
+  if (index > -1) {
+    if (appointments[index].userId !== userId) {
+      return { success: false, message: '无权取消此预约' };
+    }
+    if (appointments[index].status !== 'pending' && appointments[index].status !== 'approved') {
+      return { success: false, message: '当前状态不可取消' };
+    }
+
+    appointments[index].status = 'cancelled';
+    appointments[index].updateTime = Date.now();
+    storage.set(STORAGE_KEYS.LAB_APPOINTMENT_LIST, appointments);
+    return { success: true, appointment: appointments[index] };
+  }
+
+  return { success: false, message: '预约不存在' };
+}
+
+function approveLabAppointment(appointmentId, approverId, remark = '') {
+  initLabAppointments();
+  const appointments = storage.get(STORAGE_KEYS.LAB_APPOINTMENT_LIST) || [];
+  const index = appointments.findIndex(item => item.id === appointmentId);
+
+  if (index > -1) {
+    if (appointments[index].status !== 'pending') {
+      return { success: false, message: '当前状态不可审批' };
+    }
+
+    appointments[index].status = 'approved';
+    appointments[index].approvalTime = Date.now();
+    appointments[index].approverId = approverId;
+    appointments[index].approvalRemark = remark;
+    appointments[index].updateTime = Date.now();
+    storage.set(STORAGE_KEYS.LAB_APPOINTMENT_LIST, appointments);
+    return { success: true, appointment: appointments[index] };
+  }
+
+  return { success: false, message: '预约不存在' };
+}
+
+function rejectLabAppointment(appointmentId, approverId, remark = '') {
+  initLabAppointments();
+  const appointments = storage.get(STORAGE_KEYS.LAB_APPOINTMENT_LIST) || [];
+  const index = appointments.findIndex(item => item.id === appointmentId);
+
+  if (index > -1) {
+    if (appointments[index].status !== 'pending') {
+      return { success: false, message: '当前状态不可审批' };
+    }
+
+    appointments[index].status = 'rejected';
+    appointments[index].approvalTime = Date.now();
+    appointments[index].approverId = approverId;
+    appointments[index].approvalRemark = remark;
+    appointments[index].updateTime = Date.now();
+    storage.set(STORAGE_KEYS.LAB_APPOINTMENT_LIST, appointments);
+    return { success: true, appointment: appointments[index] };
+  }
+
+  return { success: false, message: '预约不存在' };
+}
+
+function checkInLab(appointmentId, userId) {
+  initLabAppointments();
+  const appointments = storage.get(STORAGE_KEYS.LAB_APPOINTMENT_LIST) || [];
+  const index = appointments.findIndex(item => item.id === appointmentId);
+
+  if (index > -1) {
+    if (appointments[index].userId !== userId) {
+      return { success: false, message: '无权操作此预约' };
+    }
+    if (appointments[index].status !== 'approved') {
+      return { success: false, message: '当前状态不可签到' };
+    }
+
+    appointments[index].status = 'checked_in';
+    appointments[index].checkInTime = Date.now();
+    appointments[index].updateTime = Date.now();
+    storage.set(STORAGE_KEYS.LAB_APPOINTMENT_LIST, appointments);
+    return { success: true, appointment: appointments[index] };
+  }
+
+  return { success: false, message: '预约不存在' };
+}
+
+function checkOutLab(appointmentId, userId) {
+  initLabAppointments();
+  const userService = require('./userService');
+  const appointments = storage.get(STORAGE_KEYS.LAB_APPOINTMENT_LIST) || [];
+  const index = appointments.findIndex(item => item.id === appointmentId);
+
+  if (index > -1) {
+    if (appointments[index].userId !== userId) {
+      return { success: false, message: '无权操作此预约' };
+    }
+    if (appointments[index].status !== 'checked_in') {
+      return { success: false, message: '当前状态不可签退' };
+    }
+
+    const appointment = appointments[index];
+    const lab = getLabDetail(appointment.labId);
+
+    const isViolation = checkLabViolation(appointment, lab);
+
+    appointments[index].status = isViolation ? 'violation' : 'checked_out';
+    appointments[index].checkOutTime = Date.now();
+    appointments[index].updateTime = Date.now();
+
+    if (isViolation) {
+      appointments[index].violationType = 'late_return';
+      appointments[index].violationDesc = '未按时归还/签退';
+
+      const violationRecord = {
+        id: 'lab_violation_' + Date.now(),
+        userId: appointment.userId,
+        appointmentId: appointment.id,
+        labId: appointment.labId,
+        type: 'late_return',
+        description: '未按时归还/签退',
+        scoreChange: -5,
+        createTime: Date.now()
+      };
+
+      const violations = storage.get(STORAGE_KEYS.LAB_VIOLATION_RECORDS) || [];
+      violations.push(violationRecord);
+      storage.set(STORAGE_KEYS.LAB_VIOLATION_RECORDS, violations);
+
+      userService.updateCreditScore(appointment.userId, -5, 'violation', {
+        reason: '实验室预约超时未签退',
+        appointmentId: appointment.id
+      });
+    }
+
+    storage.set(STORAGE_KEYS.LAB_APPOINTMENT_LIST, appointments);
+    return {
+      success: true,
+      appointment: appointments[index],
+      isViolation: isViolation
+    };
+  }
+
+  return { success: false, message: '预约不存在' };
+}
+
+function checkLabViolation(appointment, lab) {
+  if (!appointment || !lab) return false;
+
+  const timeSlot = appointment.timeSlot;
+  if (!timeSlot) return false;
+
+  const timeParts = timeSlot.split('-');
+  if (timeParts.length !== 2) return false;
+
+  const endTimeStr = timeParts[1];
+  const endTimeParts = endTimeStr.split(':');
+  const endHour = parseInt(endTimeParts[0]);
+  const endMinute = parseInt(endTimeParts[1]);
+
+  const appointmentDate = new Date(appointment.appointmentDate);
+  const endDateTime = new Date(appointmentDate);
+  endDateTime.setHours(endHour, endMinute, 0, 0);
+
+  const now = Date.now();
+  const bufferTime = 10 * 60 * 1000;
+
+  return now > endDateTime.getTime() + bufferTime;
+}
+
+function getLabSafetyTrainingStatus(userId, labType) {
+  const trainingData = storage.get(STORAGE_KEYS.LAB_SAFETY_TRAINING) || {};
+  const userTraining = trainingData[userId] || {};
+
+  if (labType) {
+    return userTraining[labType] || { passed: false, passTime: null };
+  }
+
+  return userTraining;
+}
+
+function setLabSafetyTrainingPassed(userId, labType) {
+  const trainingData = storage.get(STORAGE_KEYS.LAB_SAFETY_TRAINING) || {};
+  if (!trainingData[userId]) {
+    trainingData[userId] = {};
+  }
+
+  trainingData[userId][labType] = {
+    passed: true,
+    passTime: Date.now()
+  };
+
+  storage.set(STORAGE_KEYS.LAB_SAFETY_TRAINING, trainingData);
+  return trainingData[userId][labType];
+}
+
+function canBookLab(userId, lab) {
+  if (!userId || !lab) return { canBook: false, reason: '参数错误' };
+
+  const safetyLevel = lab.safetyLevel;
+  const levelNumber = parseInt(safetyLevel.replace('level', ''));
+
+  if (levelNumber <= 2) {
+    return { canBook: true, reason: '' };
+  }
+
+  const trainingStatus = getLabSafetyTrainingStatus(userId, lab.type);
+  if (trainingStatus && trainingStatus.passed) {
+    return { canBook: true, reason: '' };
+  }
+
+  return {
+    canBook: false,
+    reason: `需通过${constants.LAB_SAFETY_LEVEL_MAP[safetyLevel]?.label || ''}安全培训`,
+    needTraining: true,
+    labType: lab.type
+  };
+}
+
+function getLabViolationRecords(userId) {
+  const records = storage.get(STORAGE_KEYS.LAB_VIOLATION_RECORDS) || [];
+  if (userId) {
+    return records.filter(r => r.userId === userId).sort((a, b) => b.createTime - a.createTime);
+  }
+  return records.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getLabTimeSlotCapacity(labId, date, timeSlot) {
+  const appointments = getLabAppointmentList({
+    labId,
+    status: 'all'
+  }).filter(a =>
+    a.appointmentDate === date &&
+    a.timeSlot === timeSlot &&
+    (a.status === 'pending' || a.status === 'approved' || a.status === 'checked_in')
+  );
+
+  const lab = getLabDetail(labId);
+  const capacity = lab ? lab.capacity : 0;
+  const used = appointments.length;
+
+  return {
+    capacity,
+    used,
+    available: Math.max(0, capacity - used)
+  };
+}
+
 module.exports = {
   paginateList,
 
@@ -6480,5 +6865,23 @@ module.exports = {
   adminSignGraduationItem,
   getAllGraduationChecklists,
   getGraduationCertificate,
-  generateGraduationCertificate
+  generateGraduationCertificate,
+
+  // ==================== 实验室/设备预约 ====================
+  initLabData,
+  getLabList,
+  getLabDetail,
+  getLabAppointmentList,
+  getLabAppointmentDetail,
+  createLabAppointment,
+  cancelLabAppointment,
+  approveLabAppointment,
+  rejectLabAppointment,
+  checkInLab,
+  checkOutLab,
+  getLabSafetyTrainingStatus,
+  setLabSafetyTrainingPassed,
+  canBookLab,
+  getLabViolationRecords,
+  getLabTimeSlotCapacity
 };

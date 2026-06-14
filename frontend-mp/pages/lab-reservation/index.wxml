@@ -1,0 +1,106 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 顶部操作栏 -->
+  <view class="top-bar">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索实验室名称、位置..."
+        placeholder-class="search-placeholder"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+      />
+      <text class="search-clear" wx:if="{{searchKeyword}}" bindtap="onSearchClear">✕</text>
+    </view>
+    <view class="my-appointments-btn" bindtap="onMyAppointmentsTap">
+      <text class="btn-icon">📋</text>
+      <text class="btn-text">我的预约</text>
+    </view>
+  </view>
+
+  <!-- 分类标签 -->
+  <scroll-view class="type-tabs" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="type-tabs-inner">
+      <view
+        class="type-tab-item {{currentType === item.value ? 'active' : ''}}"
+        wx:for="{{labTypes}}"
+        wx:key="value"
+        bindtap="onTypeTap"
+        data-value="{{item.value}}"
+      >
+        <text class="tab-icon">{{item.icon}}</text>
+        <text class="tab-label">{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 实验室列表 -->
+  <scroll-view class="lab-list" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="lab-list-inner" wx:if="{{filteredLabs.length > 0}}">
+      <view
+        class="lab-card"
+        wx:for="{{filteredLabs}}"
+        wx:key="id"
+        bindtap="onLabTap"
+        data-id="{{item.id}}"
+      >
+        <view class="lab-cover">
+          <image class="cover-image" src="{{item.cover}}" mode="aspectFill" />
+          <view class="safety-badge" style="background: {{item.safetyLevelColor}};">
+            <text class="safety-text">{{item.safetyLevelLabel}}安全</text>
+          </view>
+          <view class="type-badge">
+            <text class="type-icon">{{item.typeIcon}}</text>
+          </view>
+        </view>
+
+        <view class="lab-info">
+          <view class="lab-header">
+            <text class="lab-name">{{item.name}}</text>
+          </view>
+
+          <view class="lab-meta">
+            <view class="meta-item">
+              <text class="meta-icon">📍</text>
+              <text class="meta-text">{{item.building}} {{item.room}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">👥</text>
+              <text class="meta-text">容量 {{item.capacity}} 人</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">⏰</text>
+              <text class="meta-text">{{item.openTimeText}}</text>
+            </view>
+          </view>
+
+          <view class="lab-desc">
+            <text class="desc-text">{{item.description}}</text>
+          </view>
+
+          <view class="lab-footer">
+            <view class="facilities-preview">
+              <text class="facility-tag" wx:for="{{item.facilities}}" wx:for-item="facility" wx:key="*this" wx:if="{{index < 3}}">
+                {{facility}}
+              </text>
+              <text class="facility-more" wx:if="{{item.facilities.length > 3}}">+{{item.facilities.length - 3}}</text>
+            </view>
+            <text class="book-btn-text">立即预约 ›</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty wx:else text="暂无实验室" icon="🔬" />
+  </scroll-view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

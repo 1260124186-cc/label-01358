@@ -118,7 +118,11 @@ const STORAGE_KEYS = {
   SOS_EMERGENCY_CONTACTS: 'sosEmergencyContacts',
   SOS_HISTORY: 'sosHistory',
   SOS_SETTINGS: 'sosSettings',
-  SAFETY_ARTICLES: 'safetyArticles'
+  SAFETY_ARTICLES: 'safetyArticles',
+  LAB_LIST: 'labList',
+  LAB_APPOINTMENT_LIST: 'labAppointmentList',
+  LAB_SAFETY_TRAINING: 'labSafetyTraining',
+  LAB_VIOLATION_RECORDS: 'labViolationRecords'
 };
 
 /**

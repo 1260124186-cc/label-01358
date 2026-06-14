@@ -1658,6 +1658,171 @@ const CAMPUS_SECURITY_CONTACTS = [
   { id: 'student_affairs', name: '学生处', phone: '010-55556666', description: '工作日8:30-17:30', icon: '👨‍🏫' }
 ];
 
+const LAB_TYPES = [
+  { value: 'all', label: '全部', icon: '🔬' },
+  { value: 'chemistry', label: '化学实验室', icon: '🧪' },
+  { value: 'physics', label: '物理实验室', icon: '⚡' },
+  { value: 'biology', label: '生物实验室', icon: '🧬' },
+  { value: 'computer', label: '计算机实验室', icon: '💻' },
+  { value: 'electronic', label: '电子实验室', icon: '🔌' },
+  { value: 'mechanical', label: '机械实验室', icon: '⚙️' }
+];
+
+const LAB_SAFETY_LEVELS = [
+  { value: 'level1', label: '一级', color: '#52C41A', desc: '普通安全' },
+  { value: 'level2', label: '二级', color: '#FAAD14', desc: '低风险' },
+  { value: 'level3', label: '三级', color: '#FA8C16', desc: '中风险' },
+  { value: 'level4', label: '四级', color: '#F5222D', desc: '高风险' }
+];
+
+const LAB_SAFETY_LEVEL_MAP = LAB_SAFETY_LEVELS.reduce((acc, l) => {
+  acc[l.value] = { label: l.label, color: l.color, desc: l.desc };
+  return acc;
+}, {});
+
+const LAB_APPOINTMENT_STATUS = [
+  { value: 'pending', label: '待审批', color: '#FAAD14', icon: '⏳' },
+  { value: 'approved', label: '已通过', color: '#52C41A', icon: '✅' },
+  { value: 'rejected', label: '已拒绝', color: '#F5222D', icon: '❌' },
+  { value: 'checked_in', label: '使用中', color: '#1890FF', icon: '🔓' },
+  { value: 'checked_out', label: '已完成', color: '#52C41A', icon: '🔒' },
+  { value: 'cancelled', label: '已取消', color: '#8C8C8C', icon: '✖️' },
+  { value: 'violation', label: '已违规', color: '#F5222D', icon: '⚠️' }
+];
+
+const LAB_APPOINTMENT_STATUS_MAP = LAB_APPOINTMENT_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const LAB_TIME_SLOTS = [
+  { value: '08:00-10:00', label: '08:00 - 10:00' },
+  { value: '10:00-12:00', label: '10:00 - 12:00' },
+  { value: '14:00-16:00', label: '14:00 - 16:00' },
+  { value: '16:00-18:00', label: '16:00 - 18:00' },
+  { value: '19:00-21:00', label: '19:00 - 21:00' }
+];
+
+const LAB_MY_APPOINTMENT_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '待审批' },
+  { value: 'approved', label: '已通过' },
+  { value: 'using', label: '使用中' },
+  { value: 'completed', label: '已完成' }
+];
+
+const LAB_ADMIN_TABS = [
+  { value: 'pending', label: '待审批' },
+  { value: 'approved', label: '已通过' },
+  { value: 'rejected', label: '已拒绝' }
+];
+
+const LAB_VIOLATION_TYPES = [
+  { value: 'late_return', label: '超时未归还', score: -5, icon: '⏰' },
+  { value: 'no_show', label: '预约未使用', score: -3, icon: '🚫' },
+  { value: 'damage', label: '设备损坏', score: -10, icon: '💔' },
+  { value: 'rule_violation', label: '违规操作', score: -8, icon: '⚠️' }
+];
+
+const MOCK_LABS = [
+  {
+    id: 'lab_001',
+    name: '化学实验中心A室',
+    type: 'chemistry',
+    building: '实验楼A栋',
+    room: 'A301',
+    capacity: 30,
+    safetyLevel: 'level2',
+    openTimeSlots: ['08:00-10:00', '10:00-12:00', '14:00-16:00', '16:00-18:00'],
+    description: '配备基础化学实验设备，可进行常规化学实验',
+    facilities: ['通风橱', '实验台', '天平', '显微镜', '离心机'],
+    manager: '王老师',
+    managerPhone: '010-12345678',
+    cover: '/assets/images/default-scenery.png',
+    rules: '1. 必须穿实验服、戴护目镜\n2. 严禁饮食、吸烟\n3. 实验后清理台面\n4. 废弃物按分类处理'
+  },
+  {
+    id: 'lab_002',
+    name: '物理光学实验室',
+    type: 'physics',
+    building: '实验楼B栋',
+    room: 'B205',
+    capacity: 20,
+    safetyLevel: 'level1',
+    openTimeSlots: ['08:00-10:00', '10:00-12:00', '14:00-16:00', '16:00-18:00', '19:00-21:00'],
+    description: '光学实验平台，配备激光、光谱仪等设备',
+    facilities: ['激光器', '光谱仪', '光学平台', '示波器', '信号发生器'],
+    manager: '李老师',
+    managerPhone: '010-87654321',
+    cover: '/assets/images/default-scenery.png',
+    rules: '1. 禁止直视激光光束\n2. 保持光学镜片清洁\n3. 设备使用后归位\n4. 关闭电源后离开'
+  },
+  {
+    id: 'lab_003',
+    name: '分子生物学实验室',
+    type: 'biology',
+    building: '生命科学楼',
+    room: 'C402',
+    capacity: 15,
+    safetyLevel: 'level3',
+    openTimeSlots: ['08:00-10:00', '10:00-12:00', '14:00-16:00', '16:00-18:00'],
+    description: '微生物和分子生物学实验，需通过生物安全培训',
+    facilities: ['PCR仪', '超净工作台', '培养箱', '凝胶电泳系统', '移液器'],
+    manager: '张老师',
+    managerPhone: '010-11112222',
+    cover: '/assets/images/default-scenery.png',
+    rules: '1. 必须通过生物安全培训\n2. 严格无菌操作\n3. 实验废物高压灭菌\n4. 实验后消毒洗手'
+  },
+  {
+    id: 'lab_004',
+    name: '计算机网络实验室',
+    type: 'computer',
+    building: '信息楼',
+    room: 'E501',
+    capacity: 40,
+    safetyLevel: 'level1',
+    openTimeSlots: ['08:00-10:00', '10:00-12:00', '14:00-16:00', '16:00-18:00', '19:00-21:00'],
+    description: '网络技术实验平台，可进行网络搭建和安全实验',
+    facilities: ['交换机', '路由器', '服务器', '网络测试仪', '工作站'],
+    manager: '赵老师',
+    managerPhone: '010-33334444',
+    cover: '/assets/images/default-scenery.png',
+    rules: '1. 禁止访问非法网站\n2. 不得擅自拆卸设备\n3. 注意数据备份\n4. 下机关闭电源'
+  },
+  {
+    id: 'lab_005',
+    name: '电子电路实验室',
+    type: 'electronic',
+    building: '实验楼D栋',
+    room: 'D308',
+    capacity: 25,
+    safetyLevel: 'level2',
+    openTimeSlots: ['08:00-10:00', '10:00-12:00', '14:00-16:00', '16:00-18:00'],
+    description: '模拟/数字电路实验，配备各类电子测试仪器',
+    facilities: ['示波器', '信号发生器', '直流电源', '万用表', '面包板'],
+    manager: '陈老师',
+    managerPhone: '010-55556666',
+    cover: '/assets/images/default-scenery.png',
+    rules: '1. 注意用电安全\n2. 先接线后通电\n3. 先断电后拆线\n4. 仪器使用后归位'
+  },
+  {
+    id: 'lab_006',
+    name: '机械加工实验室',
+    type: 'mechanical',
+    building: '工程训练中心',
+    room: 'F102',
+    capacity: 20,
+    safetyLevel: 'level3',
+    openTimeSlots: ['08:00-10:00', '10:00-12:00', '14:00-16:00', '16:00-18:00'],
+    description: '金工实习和机械加工实验，配备各类机床设备',
+    facilities: ['车床', '铣床', '钻床', '磨床', '钳工台'],
+    manager: '刘老师',
+    managerPhone: '010-77778888',
+    cover: '/assets/images/default-scenery.png',
+    rules: '1. 必须穿戴防护用品\n2. 严禁戴手套操作机床\n3. 女生必须戴安全帽\n4. 严格遵守操作规程'
+  }
+];
+
 const SAFETY_ARTICLES = [
   {
     id: 'safety_001',
@@ -1915,5 +2080,15 @@ module.exports = {
   SOS_STATUS_MAP,
   SAFETY_CATEGORIES,
   CAMPUS_SECURITY_CONTACTS,
-  SAFETY_ARTICLES
+  SAFETY_ARTICLES,
+  LAB_TYPES,
+  LAB_SAFETY_LEVELS,
+  LAB_SAFETY_LEVEL_MAP,
+  LAB_APPOINTMENT_STATUS,
+  LAB_APPOINTMENT_STATUS_MAP,
+  LAB_TIME_SLOTS,
+  LAB_MY_APPOINTMENT_TABS,
+  LAB_ADMIN_TABS,
+  LAB_VIOLATION_TYPES,
+  MOCK_LABS
 };

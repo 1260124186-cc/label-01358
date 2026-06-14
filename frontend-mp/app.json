@@ -123,6 +123,7 @@
     "pages/admin/scenery-list/index",
     "pages/admin/scenery-edit/index",
     "pages/admin/graduation-verify/index",
+    "pages/admin/lab-appointment/index",
     "pages/graduation/index",
     "pages/innovation/index",
     "pages/innovation/project-detail",
@@ -158,7 +159,11 @@
     "pages/sos-settings/index",
     "pages/sos-history/index",
     "pages/safety-education/index",
-    "pages/safety-education-detail/index"
+    "pages/safety-education-detail/index",
+    "pages/lab-reservation/index",
+    "pages/lab-reservation/detail",
+    "pages/lab-reservation/my-appointments",
+    "pages/lab-reservation/appointment-detail"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",
