@@ -39,6 +39,7 @@ Page({
     currentCategory: 'all',
     sortOptions: SORT_OPTIONS,
     currentSort: 'default',
+    currentSortLabel: '默认排序',
     yearOptions: YEAR_OPTIONS,
     currentYear: 'all',
     searchKeyword: '',
@@ -50,6 +51,11 @@ Page({
     matchedList: [],
 
     applicationList: [],
+    applicationStats: {
+      total: 0,
+      approved: 0,
+      reviewing: 0
+    },
 
     materialList: [],
 
@@ -126,13 +132,30 @@ Page({
       });
     }
 
-    const filteredWithTags = filtered.map(item => ({
+    const filteredWithTags = filtered.map(item => this.formatPolicyItem(item));
+
+    const sortOption = SORT_OPTIONS.find(s => s.value === currentSort);
+
+    this.setData({
+      policyListFiltered: filteredWithTags,
+      currentSortLabel: sortOption ? sortOption.label : '默认排序'
+    });
+  },
+
+  formatPolicyItem(item) {
+    const eligibilityList = item.eligibility || [];
+    const previewEligibility = eligibilityList.slice(0, 2);
+    const hasMoreEligibility = eligibilityList.length > 2;
+    const eligibilityMoreCount = eligibilityList.length;
+
+    return {
       ...item,
       daysLeft: this.calculateDaysLeft(item.applyEndDate),
-      categoryColor: this.getCategoryColor(item.category)
-    }));
-
-    this.setData({ policyListFiltered: filteredWithTags });
+      categoryColor: this.getCategoryColor(item.category),
+      previewEligibility,
+      hasMoreEligibility,
+      eligibilityMoreCount
+    };
   },
 
   calculateDaysLeft(endDate) {
@@ -162,22 +185,27 @@ Page({
       userProfile.gpaPercent = Math.round((userProfile.gpa / 4) * 100);
       userProfile.rankPercentClass = userProfile.gpaRankPercent <= 10 ? 'excellent' :
         userProfile.gpaRankPercent <= 25 ? 'good' : 'average';
+      userProfile.awardsCount = (userProfile.awards || []).length;
+      userProfile.clubCount = (userProfile.clubPositions || []).length;
+      userProfile.researchCount = (userProfile.researchExperience || []).length;
     }
     this.setData({ userProfile });
   },
 
   loadMatchedList() {
     const matchedList = dataService.getMatchedScholarships();
-    const matchedWithUI = matchedList.map(item => ({
-      ...item,
-      matchLevelText: item.matchLevel === 'high' ? '高度匹配' :
-        item.matchLevel === 'medium' ? '较为匹配' : '一般匹配',
-      matchLevelColor: item.matchLevel === 'high' ? '#10B981' :
-        item.matchLevel === 'medium' ? '#3B82F6' : '#8B5CF6',
-      matchProgressPercent: Math.min(100, item.matchScore),
-      daysLeft: this.calculateDaysLeft(item.applyEndDate),
-      categoryColor: this.getCategoryColor(item.category)
-    }));
+    const matchedWithUI = matchedList.map(item => {
+      const formatted = this.formatPolicyItem(item);
+      return {
+        ...formatted,
+        matchLevelText: item.matchLevel === 'high' ? '高度匹配' :
+          item.matchLevel === 'medium' ? '较为匹配' : '一般匹配',
+        matchLevelColor: item.matchLevel === 'high' ? '#10B981' :
+          item.matchLevel === 'medium' ? '#3B82F6' : '#8B5CF6',
+        matchProgressPercent: Math.min(100, item.matchScore),
+        matchReasonsPreview: (item.matchReasons || []).slice(0, 3)
+      };
+    });
     this.setData({ matchedList: matchedWithUI });
   },
 
@@ -190,9 +218,21 @@ Page({
       progressPercent: Math.round((item.currentStep / item.totalSteps) * 100),
       applyTimeText: util.formatDate(item.applyTime),
       completedSteps: item.steps.slice(0, item.currentStep),
-      pendingSteps: item.steps.slice(item.currentStep)
+      pendingSteps: item.steps.slice(item.currentStep),
+      hasRemark: !!item.remark
     }));
-    this.setData({ applicationList: listWithUI });
+
+    const approved = listWithUI.filter(a => a.status === 'approved').length;
+    const reviewing = listWithUI.filter(a => a.status === 'reviewing' || a.status === 'pending').length;
+
+    this.setData({
+      applicationList: listWithUI,
+      applicationStats: {
+        total: listWithUI.length,
+        approved,
+        reviewing
+      }
+    });
   },
 
   getApplicationStatusText(status) {
@@ -219,12 +259,16 @@ Page({
 
   loadMaterialList() {
     const materialList = dataService.getScholarshipMaterialList();
-    const materialWithUI = materialList.map(item => ({
+    const materialWithUI = materialList.map(item => this.formatMaterialItem(item));
+    this.setData({ materialList: materialWithUI });
+  },
+
+  formatMaterialItem(item) {
+    return {
       ...item,
       requiredText: item.required ? '必填' : '选填',
       requiredColor: item.required ? '#EF4444' : '#6B7280'
-    }));
-    this.setData({ materialList: materialWithUI });
+    };
   },
 
   loadPublicList() {
@@ -233,12 +277,18 @@ Page({
       filters.year = this.data.currentYear;
     }
     const list = dataService.getScholarshipPublicList(filters);
-    const listWithUI = list.map(item => ({
-      ...item,
-      publishTimeText: util.formatDate(item.publishTime),
-      totalAmount: item.list.reduce((sum, i) => sum + i.amount, 0),
-      studentCount: item.list.length
-    }));
+    const listWithUI = list.map(item => {
+      const winnerList = item.list || [];
+      return {
+        ...item,
+        publishTimeText: util.formatDate(item.publishTime),
+        totalAmount: winnerList.reduce((sum, i) => sum + i.amount, 0),
+        studentCount: winnerList.length,
+        previewWinners: winnerList.slice(0, 4),
+        moreWinnersCount: Math.max(0, winnerList.length - 4),
+        hasMoreWinners: winnerList.length > 4
+      };
+    });
     this.setData({ publicList: listWithUI });
   },
 
@@ -392,7 +442,8 @@ ${policy.contactName}：${policy.contactPhone}`;
   onViewMaterials(e) {
     e.stopPropagation();
     const id = e.currentTarget.dataset.id;
-    const modalMaterials = dataService.getScholarshipMaterialList(id);
+    const rawMaterials = dataService.getScholarshipMaterialList(id);
+    const modalMaterials = rawMaterials.map(item => this.formatMaterialItem(item));
     this.setData({
       showMaterialModal: true,
       modalMaterials,

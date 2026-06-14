@@ -43,7 +43,7 @@
         </scroll-view>
         <view class="sort-btn" bindtap="onSortChange" data-value="{{currentSort === 'amount' ? 'deadline' : currentSort === 'deadline' ? 'default' : 'amount'}}">
           <text class="sort-icon">📊</text>
-          <text class="sort-text">{{sortOptions[0].value === currentSort ? '排序' : sortOptions.find(s => s.value === currentSort).label}}</text>
+          <text class="sort-text">{{currentSortLabel}}</text>
         </view>
       </view>
 
@@ -97,10 +97,10 @@
           <view class="eligibility-preview">
             <text class="eligibility-title">📋 申请条件</text>
             <view class="eligibility-list">
-              <text class="eligibility-item" wx:for="{{item.eligibility}}" wx:for-item="cond" wx:key="index" wx:if="{{index < 2}}">
+              <text class="eligibility-item" wx:for="{{item.previewEligibility}}" wx:for-item="cond" wx:key="index">
                 • {{cond}}
               </text>
-              <text class="eligibility-more" wx:if="{{item.eligibility.length > 2}}">... 共{{item.eligibility.length}}项条件</text>
+              <text class="eligibility-more" wx:if="{{item.hasMoreEligibility}}">... 共{{item.eligibilityMoreCount}}项条件</text>
             </view>
           </view>
 
@@ -160,17 +160,17 @@
         </view>
 
         <view class="profile-tags">
-          <view class="profile-tag" wx:if="{{userProfile.awards.length > 0}}">
+          <view class="profile-tag" wx:if="{{userProfile.awardsCount > 0}}">
             <text class="tag-icon">🏆</text>
-            <text class="tag-text">{{userProfile.awards.length}}项获奖</text>
+            <text class="tag-text">{{userProfile.awardsCount}}项获奖</text>
           </view>
-          <view class="profile-tag" wx:if="{{userProfile.clubPositions.length > 0}}">
+          <view class="profile-tag" wx:if="{{userProfile.clubCount > 0}}">
             <text class="tag-icon">🎖️</text>
-            <text class="tag-text">{{userProfile.clubPositions.length}}项学生干部</text>
+            <text class="tag-text">{{userProfile.clubCount}}项学生干部</text>
           </view>
-          <view class="profile-tag" wx:if="{{userProfile.researchExperience.length > 0}}">
+          <view class="profile-tag" wx:if="{{userProfile.researchCount > 0}}">
             <text class="tag-icon">🔬</text>
-            <text class="tag-text">{{userProfile.researchExperience.length}}项科研</text>
+            <text class="tag-text">{{userProfile.researchCount}}项科研</text>
           </view>
           <view class="profile-tag">
             <text class="tag-icon">💝</text>
@@ -210,7 +210,7 @@
           </view>
 
           <view class="match-reasons">
-            <view class="reason-tag" wx:for="{{item.matchReasons}}" wx:for-item="reason" wx:key="index" wx:if="{{index < 3}}">
+            <view class="reason-tag" wx:for="{{item.matchReasonsPreview}}" wx:for-item="reason" wx:key="index">
               ✓ {{reason}}
             </view>
           </view>
@@ -238,17 +238,17 @@
       <view class="progress-overview gradient-card progress-gradient">
         <view class="overview-row">
           <view class="overview-item">
-            <text class="overview-value">{{applicationList.length}}</text>
+            <text class="overview-value">{{applicationStats.total}}</text>
             <text class="overview-label">申请总数</text>
           </view>
           <view class="overview-divider"></view>
           <view class="overview-item">
-            <text class="overview-value success">{{applicationList.filter(a => a.status === 'approved').length}}</text>
+            <text class="overview-value success">{{applicationStats.approved}}</text>
             <text class="overview-label">已通过</text>
           </view>
           <view class="overview-divider"></view>
           <view class="overview-item">
-            <text class="overview-value warning">{{applicationList.filter(a => a.status === 'reviewing' || a.status === 'pending').length}}</text>
+            <text class="overview-value warning">{{applicationStats.reviewing}}</text>
             <text class="overview-label">审核中</text>
           </view>
         </view>
@@ -256,7 +256,7 @@
 
       <view class="section-header">
         <text class="section-title">📊 申请进度</text>
-        <text class="section-count">共 {{applicationList.length}} 条记录</text>
+        <text class="section-count">共 {{applicationStats.total}} 条记录</text>
       </view>
 
       <view class="application-list" wx:if="{{applicationList.length > 0}}">
@@ -303,7 +303,7 @@
             </view>
           </view>
 
-          <view class="app-remark" wx:if="{{item.remark}}">
+          <view class="app-remark" wx:if="{{item.hasRemark}}">
             <text class="remark-icon">💬</text>
             <text class="remark-text">{{item.remark}}</text>
           </view>
@@ -425,11 +425,11 @@
           <view class="public-list-preview">
             <text class="list-title">获奖名单（部分）：</text>
             <view class="winner-chips">
-              <view class="winner-chip" wx:for="{{item.list}}" wx:for-item="winner" wx:key="index" wx:if="{{index < 4}}">
+              <view class="winner-chip" wx:for="{{item.previewWinners}}" wx:for-item="winner" wx:key="index">
                 <text class="winner-name">{{winner.name}}</text>
                 <text class="winner-major">{{winner.major}}</text>
               </view>
-              <text class="more-winners" wx:if="{{item.list.length > 4}}">+{{item.list.length - 4}}人</text>
+              <text class="more-winners" wx:if="{{item.hasMoreWinners}}">+{{item.moreWinnersCount}}人</text>
             </view>
           </view>
 
@@ -475,8 +475,8 @@
             <view class="material-info">
               <view class="material-title-row">
                 <text class="material-name">{{item.name}}</text>
-                <view class="required-tag" style="color: {{item.required ? '#EF4444' : '#6B7280'}};">
-                  {{item.required ? '必填' : '选填'}}
+                <view class="required-tag" style="color: {{item.requiredColor}};">
+                  {{item.requiredText}}
                 </view>
               </view>
               <text class="material-desc">{{item.description}}</text>
