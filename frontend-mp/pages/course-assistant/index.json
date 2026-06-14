@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "选课助手",
+  "navigationBarBackgroundColor": "#FF6B6B",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F8F9FA",
+  "usingComponents": {}
+}

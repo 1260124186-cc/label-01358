@@ -6491,6 +6491,572 @@ function getLabTimeSlotCapacity(labId, date, timeSlot) {
   };
 }
 
+// ==================== 选课助手模块 ====================
+
+let trainingPlanInitialized = false;
+let trainingPlanCoursesInitialized = false;
+let courseReviewsInitialized = false;
+let selectedCoursesInitialized = false;
+
+function initTrainingPlanData() {
+  if (trainingPlanInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.TRAINING_PLAN_LIST);
+  if (!existing || existing.length === 0) {
+    storage.set(STORAGE_KEYS.TRAINING_PLAN_LIST, [...mockData.MOCK_TRAINING_PLANS]);
+  }
+  trainingPlanInitialized = true;
+}
+
+function initTrainingPlanCourses() {
+  if (trainingPlanCoursesInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.TRAINING_PLAN_COURSES);
+  if (!existing || existing.length === 0) {
+    storage.set(STORAGE_KEYS.TRAINING_PLAN_COURSES, [...mockData.MOCK_TRAINING_PLAN_COURSES]);
+  }
+  trainingPlanCoursesInitialized = true;
+}
+
+function initCourseReviews() {
+  if (courseReviewsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.COURSE_REVIEWS);
+  if (!existing || existing.length === 0) {
+    storage.set(STORAGE_KEYS.COURSE_REVIEWS, [...mockData.MOCK_COURSE_REVIEWS]);
+  }
+  courseReviewsInitialized = true;
+}
+
+function initSelectedCourses() {
+  if (selectedCoursesInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.SELECTED_COURSES);
+  if (!existing) {
+    storage.set(STORAGE_KEYS.SELECTED_COURSES, []);
+  }
+  selectedCoursesInitialized = true;
+}
+
+function initCourseAssistantData() {
+  initTrainingPlanData();
+  initTrainingPlanCourses();
+  initCourseReviews();
+  initSelectedCourses();
+}
+
+function getTrainingPlanList() {
+  initTrainingPlanData();
+  return storage.getList(STORAGE_KEYS.TRAINING_PLAN_LIST);
+}
+
+function getTrainingPlanDetail(planId) {
+  initTrainingPlanData();
+  const list = storage.getList(STORAGE_KEYS.TRAINING_PLAN_LIST);
+  return list.find(item => item.id === planId) || null;
+}
+
+function getTrainingPlanCourses(filters = {}) {
+  initTrainingPlanCourses();
+  let list = storage.getList(STORAGE_KEYS.TRAINING_PLAN_COURSES);
+
+  if (filters.planId) {
+    list = list.filter(item => item.planId === filters.planId);
+  }
+  if (filters.semester) {
+    list = list.filter(item => item.semester === filters.semester);
+  }
+  if (filters.type) {
+    list = list.filter(item => item.type === filters.type);
+  }
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'courseCode', 'teacher']);
+  }
+
+  return list.sort((a, b) => {
+    if (a.semester !== b.semester) return a.semester.localeCompare(b.semester);
+    if (a.type !== b.type) {
+      const typeOrder = { required: 0, major: 1, elective: 2, general: 3, practice: 4 };
+      return (typeOrder[a.type] || 99) - (typeOrder[b.type] || 99);
+    }
+    return a.courseCode.localeCompare(b.courseCode);
+  });
+}
+
+function getTrainingPlanCourseDetail(id) {
+  initTrainingPlanCourses();
+  const list = storage.getList(STORAGE_KEYS.TRAINING_PLAN_COURSES);
+  return list.find(item => item.id === id) || null;
+}
+
+function getTrainingPlanCourseByCode(courseCode) {
+  initTrainingPlanCourses();
+  const list = storage.getList(STORAGE_KEYS.TRAINING_PLAN_COURSES);
+  return list.find(item => item.courseCode === courseCode) || null;
+}
+
+function updateTrainingPlanCourseStatus(id, status, score = null) {
+  initTrainingPlanCourses();
+  const updates = { status };
+  if (score !== null) {
+    updates.score = score;
+  }
+  return storage.updateInList(STORAGE_KEYS.TRAINING_PLAN_COURSES, id, updates);
+}
+
+function calculateTrainingPlanProgress(planId) {
+  const courses = getTrainingPlanCourses({ planId });
+  const plan = getTrainingPlanDetail(planId);
+
+  const result = {
+    totalCourses: courses.length,
+    completedCourses: 0,
+    studyingCourses: 0,
+    pendingCourses: 0,
+    failedCourses: 0,
+    totalCredits: plan ? plan.totalCredits : 0,
+    earnedCredits: 0,
+    requiredCredits: plan ? plan.requiredCredits : 0,
+    earnedRequiredCredits: 0,
+    electiveCredits: plan ? plan.electiveCredits : 0,
+    earnedElectiveCredits: 0,
+    generalCredits: 0,
+    earnedGeneralCredits: 0,
+    majorCredits: 0,
+    earnedMajorCredits: 0,
+    practiceCredits: 0,
+    earnedPracticeCredits: 0
+  };
+
+  courses.forEach(course => {
+    if (course.status === 'completed') {
+      result.completedCourses++;
+      result.earnedCredits += course.credit;
+      if (course.type === 'required') {
+        result.earnedRequiredCredits += course.credit;
+      } else if (course.type === 'elective') {
+        result.earnedElectiveCredits += course.credit;
+      } else if (course.type === 'general') {
+        result.earnedGeneralCredits += course.credit;
+      } else if (course.type === 'major') {
+        result.earnedMajorCredits += course.credit;
+      } else if (course.type === 'practice') {
+        result.earnedPracticeCredits += course.credit;
+      }
+    } else if (course.status === 'studying') {
+      result.studyingCourses++;
+    } else if (course.status === 'pending') {
+      result.pendingCourses++;
+    } else if (course.status === 'failed') {
+      result.failedCourses++;
+    }
+
+    if (course.type === 'required') {
+      result.requiredCredits += course.credit;
+    } else if (course.type === 'general') {
+      result.generalCredits += course.credit;
+    } else if (course.type === 'major') {
+      result.majorCredits += course.credit;
+    } else if (course.type === 'practice') {
+      result.practiceCredits += course.credit;
+    }
+  });
+
+  result.progressPercent = result.totalCredits > 0
+    ? Math.min(100, Math.round(result.earnedCredits / result.totalCredits * 100))
+    : 0;
+
+  return result;
+}
+
+function getSelectedCourses(filters = {}) {
+  initSelectedCourses();
+  let list = storage.getList(STORAGE_KEYS.SELECTED_COURSES);
+
+  if (filters.semester) {
+    list = list.filter(item => item.semester === filters.semester);
+  }
+
+  return list;
+}
+
+function getSelectedCourseById(id) {
+  initSelectedCourses();
+  const list = storage.getList(STORAGE_KEYS.SELECTED_COURSES);
+  return list.find(item => item.id === id) || null;
+}
+
+function getSelectedCoursesBySemester(semester) {
+  return getSelectedCourses({ semester });
+}
+
+function calculateSelectedCredits(semester) {
+  const selected = getSelectedCoursesBySemester(semester);
+  return selected.reduce((sum, item) => sum + item.credit, 0);
+}
+
+function checkTimeConflict(selectedCourses, newCourseClass) {
+  if (!newCourseClass) return null;
+
+  for (const selected of selectedCourses) {
+    if (!selected.selectedClass) continue;
+
+    if (selected.selectedClass.dayOfWeek === newCourseClass.dayOfWeek) {
+      const selectedStart = selected.selectedClass.startSlot;
+      const selectedEnd = selected.selectedClass.endSlot;
+      const newStart = newCourseClass.startSlot;
+      const newEnd = newCourseClass.endSlot;
+
+      if (!(newEnd < selectedStart || newStart > selectedEnd)) {
+        return {
+          type: 'time',
+          message: `与"${selected.name}"时间冲突`,
+          conflictWith: selected,
+          details: {
+            day: newCourseClass.dayOfWeek,
+            slots: `${Math.min(selectedStart, newStart)}-${Math.max(selectedEnd, newEnd)}节`
+          }
+        };
+      }
+    }
+  }
+
+  return null;
+}
+
+function checkPrerequisite(planCourses, course) {
+  if (!course.prerequisites || course.prerequisites.length === 0) return null;
+
+  const completedCourseCodes = planCourses
+    .filter(c => c.status === 'completed')
+    .map(c => c.courseCode);
+
+  for (const prereq of course.prerequisites) {
+    if (!completedCourseCodes.includes(prereq)) {
+      const prereqCourse = planCourses.find(c => c.courseCode === prereq);
+      return {
+        type: 'prerequisite',
+        message: `先修课程"${prereqCourse ? prereqCourse.name : prereq}"未完成`,
+        prerequisite: prereq
+      };
+    }
+  }
+
+  return null;
+}
+
+function checkCreditLimit(semester, currentSelected, newCredit, maxCredits = constants.DEFAULT_MAX_CREDITS) {
+  const currentCredits = currentSelected.reduce((sum, item) => sum + item.credit, 0);
+  const totalAfterAdd = currentCredits + newCredit;
+
+  if (totalAfterAdd > maxCredits) {
+    return {
+      type: 'credit',
+      message: `学分超限：当前${currentCredits}学分，添加后${totalAfterAdd}学分，上限${maxCredits}学分`,
+      details: {
+        current: currentCredits,
+        adding: newCredit,
+        total: totalAfterAdd,
+        limit: maxCredits
+      }
+    };
+  }
+
+  return null;
+}
+
+function checkAlreadyCompleted(course) {
+  if (course.status === 'completed') {
+    return {
+      type: 'completed',
+      message: `"${course.name}"已修完成，绩点${course.score ? (course.score >= 90 ? '4.0' : (course.score >= 85 ? '3.7' : '3.3')) : '—'}`
+    };
+  }
+  return null;
+}
+
+function checkAllConflicts(planCourses, selectedCourses, course, selectedClass, semester, maxCredits) {
+  const conflicts = [];
+
+  const completedConflict = checkAlreadyCompleted(course);
+  if (completedConflict) conflicts.push(completedConflict);
+
+  const prereqConflict = checkPrerequisite(planCourses, course);
+  if (prereqConflict) conflicts.push(prereqConflict);
+
+  const timeConflict = checkTimeConflict(selectedCourses, selectedClass);
+  if (timeConflict) conflicts.push(timeConflict);
+
+  const creditConflict = checkCreditLimit(semester, selectedCourses, course.credit, maxCredits);
+  if (creditConflict) conflicts.push(creditConflict);
+
+  return {
+    hasConflict: conflicts.length > 0,
+    hasError: conflicts.some(c => c.type === 'time' || c.type === 'prerequisite'),
+    hasWarning: conflicts.some(c => c.type === 'credit' || c.type === 'completed'),
+    conflicts
+  };
+}
+
+function addSelectedCourse(course, selectedClass, semester) {
+  initSelectedCourses();
+  const selectedCourses = getSelectedCourses();
+
+  const existingIndex = selectedCourses.findIndex(item =>
+    item.courseCode === course.courseCode && item.semester === semester
+  );
+
+  if (existingIndex > -1) {
+    selectedCourses[existingIndex] = {
+      ...selectedCourses[existingIndex],
+      selectedClass,
+      updateTime: Date.now()
+    };
+  } else {
+    const colorIndex = Math.floor(Math.random() * constants.COURSE_COLORS.length);
+    selectedCourses.push({
+      id: util.generateId(),
+      courseCode: course.courseCode,
+      name: course.name,
+      type: course.type,
+      credit: course.credit,
+      semester,
+      selectedClass,
+      colorIndex,
+      description: course.description,
+      teacher: selectedClass ? selectedClass.teacher : '',
+      createTime: Date.now(),
+      updateTime: Date.now()
+    });
+  }
+
+  storage.set(STORAGE_KEYS.SELECTED_COURSES, selectedCourses);
+  return true;
+}
+
+function removeSelectedCourse(id) {
+  initSelectedCourses();
+  return storage.removeFromList(STORAGE_KEYS.SELECTED_COURSES, id);
+}
+
+function clearSelectedCourses(semester) {
+  initSelectedCourses();
+  if (semester) {
+    const list = storage.getList(STORAGE_KEYS.SELECTED_COURSES);
+    const filtered = list.filter(item => item.semester !== semester);
+    storage.set(STORAGE_KEYS.SELECTED_COURSES, filtered);
+    return true;
+  }
+  return storage.set(STORAGE_KEYS.SELECTED_COURSES, []);
+}
+
+function getSelectedCoursesByWeek(semester) {
+  const selected = getSelectedCoursesBySemester(semester);
+  const result = {};
+
+  for (let day = 1; day <= 7; day++) {
+    result[day] = [];
+    const slotMap = {};
+
+    selected.forEach(course => {
+      if (!course.selectedClass || course.selectedClass.dayOfWeek !== day) return;
+
+      const color = constants.COURSE_COLORS[course.colorIndex % constants.COURSE_COLORS.length];
+      const slotSpan = course.selectedClass.endSlot - course.selectedClass.startSlot + 1;
+      const slotLabel = course.selectedClass.startSlot === course.selectedClass.endSlot
+        ? `第${course.selectedClass.startSlot}节`
+        : `第${course.selectedClass.startSlot}-${course.selectedClass.endSlot}节`;
+
+      for (let s = course.selectedClass.startSlot; s <= course.selectedClass.endSlot; s++) {
+        slotMap[s] = course.id;
+      }
+
+      result[day].push({
+        ...course,
+        color,
+        slotSpan,
+        slotLabel,
+        topIndex: course.selectedClass.startSlot - 1,
+        classroom: course.selectedClass.classroom,
+        teacher: course.selectedClass.teacher,
+        weeks: course.selectedClass.weeks
+      });
+    });
+
+    result[day].slotMap = slotMap;
+  }
+
+  return result;
+}
+
+function syncSelectedToSchedule(semester) {
+  const selected = getSelectedCoursesBySemester(semester);
+
+  selected.forEach(course => {
+    if (!course.selectedClass) return;
+
+    const existingCourse = getCourseList().find(c =>
+      c.name === course.name && c.semester === semester
+    );
+
+    if (!existingCourse) {
+      addCourse({
+        name: course.name,
+        teacher: course.selectedClass.teacher,
+        classroom: course.selectedClass.classroom,
+        dayOfWeek: course.selectedClass.dayOfWeek,
+        startSlot: course.selectedClass.startSlot,
+        endSlot: course.selectedClass.endSlot,
+        weeks: course.selectedClass.weeks,
+        semester,
+        colorIndex: course.colorIndex
+      });
+    }
+  });
+
+  return true;
+}
+
+function getCourseReviews(filters = {}) {
+  initCourseReviews();
+  let list = storage.getList(STORAGE_KEYS.COURSE_REVIEWS);
+
+  if (filters.courseCode) {
+    list = list.filter(item => item.courseCode === filters.courseCode);
+  }
+  if (filters.courseName) {
+    list = list.filter(item => item.courseName.includes(filters.courseName));
+  }
+  if (filters.minRating) {
+    list = list.filter(item => item.rating >= filters.minRating);
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getCourseReviewStats(courseCode) {
+  const reviews = getCourseReviews({ courseCode });
+  if (reviews.length === 0) {
+    return {
+      totalReviews: 0,
+      avgRating: 0,
+      avgDifficulty: 0,
+      avgWorkload: 0,
+      ratingDistribution: [0, 0, 0, 0, 0]
+    };
+  }
+
+  const difficultyMap = { very_easy: 1, easy: 2, medium: 3, hard: 4, very_hard: 5 };
+  const workloadMap = { very_light: 1, light: 2, medium: 3, heavy: 4, very_heavy: 5 };
+
+  const totalReviews = reviews.length;
+  const avgRating = reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews;
+  const avgDifficulty = reviews.reduce((sum, r) => sum + (difficultyMap[r.difficulty] || 3), 0) / totalReviews;
+  const avgWorkload = reviews.reduce((sum, r) => sum + (workloadMap[r.workload] || 3), 0) / totalReviews;
+
+  const ratingDistribution = [0, 0, 0, 0, 0];
+  reviews.forEach(r => {
+    if (r.rating >= 1 && r.rating <= 5) {
+      ratingDistribution[r.rating - 1]++;
+    }
+  });
+
+  return {
+    totalReviews,
+    avgRating: Math.round(avgRating * 10) / 10,
+    avgDifficulty: Math.round(avgDifficulty * 10) / 10,
+    avgWorkload: Math.round(avgWorkload * 10) / 10,
+    ratingDistribution
+  };
+}
+
+function addCourseReview(reviewData) {
+  initCourseReviews();
+  const review = {
+    id: util.generateId(),
+    ...reviewData,
+    createTime: Date.now(),
+    likes: 0
+  };
+  return storage.addToList(STORAGE_KEYS.COURSE_REVIEWS, review);
+}
+
+function likeCourseReview(reviewId) {
+  initCourseReviews();
+  const list = storage.getList(STORAGE_KEYS.COURSE_REVIEWS);
+  const index = list.findIndex(item => item.id === reviewId);
+  if (index > -1) {
+    list[index].likes = (list[index].likes || 0) + 1;
+    storage.set(STORAGE_KEYS.COURSE_REVIEWS, list);
+    return true;
+  }
+  return false;
+}
+
+function getForumCoursePosts(courseName) {
+  if (!courseName) return [];
+  const filters = { topic: 'course_selection', keyword: courseName };
+  return getForumPostList(filters);
+}
+
+function getCourseAssistantSettings() {
+  return storage.get(STORAGE_KEYS.COURSE_ASSISTANT_SETTINGS) || {
+    maxCredits: constants.DEFAULT_MAX_CREDITS,
+    minCredits: constants.DEFAULT_MIN_CREDITS,
+    currentSemester: '3',
+    currentPlanId: 'plan_cs_2024'
+  };
+}
+
+function updateCourseAssistantSettings(updates) {
+  const current = getCourseAssistantSettings();
+  const newSettings = { ...current, ...updates };
+  storage.set(STORAGE_KEYS.COURSE_ASSISTANT_SETTINGS, newSettings);
+  return newSettings;
+}
+
+function importTrainingPlanCourses(courses, planId) {
+  initTrainingPlanCourses();
+  const existing = storage.getList(STORAGE_KEYS.TRAINING_PLAN_COURSES);
+  const now = Date.now();
+
+  const imported = courses.map((course, index) => ({
+    id: 'imported_' + index + '_' + now,
+    planId,
+    status: 'pending',
+    score: null,
+    availableClasses: [],
+    ...course
+  }));
+
+  const merged = [...existing, ...imported];
+  storage.set(STORAGE_KEYS.TRAINING_PLAN_COURSES, merged);
+  return imported;
+}
+
+function getSemesterOptions() {
+  return [
+    { value: '1', label: '第1学期' },
+    { value: '2', label: '第2学期' },
+    { value: '3', label: '第3学期' },
+    { value: '4', label: '第4学期' },
+    { value: '5', label: '第5学期' },
+    { value: '6', label: '第6学期' },
+    { value: '7', label: '第7学期' },
+    { value: '8', label: '第8学期' }
+  ];
+}
+
+function getCategoryOptions() {
+  return [
+    { value: 'all', label: '全部' },
+    { value: 'required', label: '必修' },
+    { value: 'major', label: '专业' },
+    { value: 'elective', label: '选修' },
+    { value: 'general', label: '通识' },
+    { value: 'practice', label: '实践' }
+  ];
+}
+
 module.exports = {
   paginateList,
 
@@ -6883,5 +7449,39 @@ module.exports = {
   setLabSafetyTrainingPassed,
   canBookLab,
   getLabViolationRecords,
-  getLabTimeSlotCapacity
+  getLabTimeSlotCapacity,
+
+  // ==================== 选课助手模块 ====================
+  initCourseAssistantData,
+  getTrainingPlanList,
+  getTrainingPlanDetail,
+  getTrainingPlanCourses,
+  getTrainingPlanCourseDetail,
+  getTrainingPlanCourseByCode,
+  updateTrainingPlanCourseStatus,
+  calculateTrainingPlanProgress,
+  getSelectedCourses,
+  getSelectedCourseById,
+  getSelectedCoursesBySemester,
+  calculateSelectedCredits,
+  checkTimeConflict,
+  checkPrerequisite,
+  checkCreditLimit,
+  checkAlreadyCompleted,
+  checkAllConflicts,
+  addSelectedCourse,
+  removeSelectedCourse,
+  clearSelectedCourses,
+  getSelectedCoursesByWeek,
+  syncSelectedToSchedule,
+  getCourseReviews,
+  getCourseReviewStats,
+  addCourseReview,
+  likeCourseReview,
+  getForumCoursePosts,
+  getCourseAssistantSettings,
+  updateCourseAssistantSettings,
+  importTrainingPlanCourses,
+  getSemesterOptions,
+  getCategoryOptions
 };

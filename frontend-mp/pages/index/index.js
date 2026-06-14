@@ -147,6 +147,13 @@ Page({
         url: '/pages/academic/index'
       },
       {
+        id: 'course-assistant',
+        name: '选课助手',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)',
+        url: '/pages/course-assistant/index'
+      },
+      {
         id: 'classroom-query',
         name: '空教室',
         icon: '/assets/icons/nav-broadcast.png',

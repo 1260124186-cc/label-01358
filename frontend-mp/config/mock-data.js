@@ -7710,6 +7710,503 @@ const MOCK_TAKEOUT_PROMOTIONS_BANNER = [
   }
 ];
 
+const MOCK_TRAINING_PLANS = [
+  {
+    id: 'plan_cs_2024',
+    name: '计算机科学与技术专业培养方案（2024版）',
+    major: '计算机科学与技术',
+    grade: '2024',
+    totalCredits: 140,
+    requiredCredits: 100,
+    electiveCredits: 40,
+    description: '本专业培养具有良好的科学素养，系统地掌握计算机科学与技术的基本理论、基本知识和基本技能与方法的高级专门科学技术人才。'
+  }
+];
+
+const MOCK_TRAINING_PLAN_COURSES = [
+  {
+    id: 'tp_course_1',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS1001',
+    name: '高等数学',
+    type: 'required',
+    credit: 5,
+    semester: '1',
+    category: '公共基础课',
+    status: 'completed',
+    score: 85,
+    prerequisites: [],
+    description: '微积分、线性代数等数学基础',
+    availableClasses: [
+      { id: 'class_1_1', teacher: '张建国教授', classroom: 'A栋301', dayOfWeek: 1, startSlot: 1, endSlot: 2, weeks: '1-16周' },
+      { id: 'class_1_2', teacher: '李明副教授', classroom: 'B栋201', dayOfWeek: 3, startSlot: 3, endSlot: 4, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_2',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS1002',
+    name: '大学英语',
+    type: 'required',
+    credit: 3,
+    semester: '1',
+    category: '公共基础课',
+    status: 'completed',
+    score: 88,
+    prerequisites: [],
+    description: '英语听说读写综合能力培养',
+    availableClasses: [
+      { id: 'class_2_1', teacher: '王芳教授', classroom: 'C栋101', dayOfWeek: 2, startSlot: 1, endSlot: 2, weeks: '1-16周' },
+      { id: 'class_2_2', teacher: '赵丽讲师', classroom: 'C栋102', dayOfWeek: 4, startSlot: 5, endSlot: 6, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_3',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS1003',
+    name: '程序设计基础',
+    type: 'required',
+    credit: 4,
+    semester: '1',
+    category: '专业基础课',
+    status: 'completed',
+    score: 92,
+    prerequisites: [],
+    description: 'C语言程序设计入门',
+    availableClasses: [
+      { id: 'class_3_1', teacher: '陈强教授', classroom: 'E栋301', dayOfWeek: 2, startSlot: 3, endSlot: 4, weeks: '1-16周' },
+      { id: 'class_3_2', teacher: '刘洋副教授', classroom: 'E栋302', dayOfWeek: 5, startSlot: 1, endSlot: 2, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_4',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS1004',
+    name: '思想道德与法治',
+    type: 'required',
+    credit: 3,
+    semester: '1',
+    category: '公共基础课',
+    status: 'completed',
+    score: 82,
+    prerequisites: [],
+    description: '思想政治教育课程',
+    availableClasses: [
+      { id: 'class_4_1', teacher: '周明教授', classroom: 'D栋101', dayOfWeek: 1, startSlot: 5, endSlot: 6, weeks: '1-8周' }
+    ]
+  },
+  {
+    id: 'tp_course_5',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS2001',
+    name: '离散数学',
+    type: 'required',
+    credit: 4,
+    semester: '2',
+    category: '专业基础课',
+    status: 'completed',
+    score: 78,
+    prerequisites: ['CS1001'],
+    description: '集合论、图论、数理逻辑',
+    availableClasses: [
+      { id: 'class_5_1', teacher: '吴涛教授', classroom: 'A栋201', dayOfWeek: 1, startSlot: 3, endSlot: 4, weeks: '1-16周' },
+      { id: 'class_5_2', teacher: '郑华副教授', classroom: 'A栋202', dayOfWeek: 4, startSlot: 1, endSlot: 2, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_6',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS2002',
+    name: '数据结构',
+    type: 'required',
+    credit: 5,
+    semester: '2',
+    category: '专业基础课',
+    status: 'completed',
+    score: 85,
+    prerequisites: ['CS1003'],
+    description: '线性表、树、图等数据结构',
+    availableClasses: [
+      { id: 'class_6_1', teacher: '孙伟教授', classroom: 'E栋401', dayOfWeek: 2, startSlot: 5, endSlot: 6, weeks: '1-16周' },
+      { id: 'class_6_2', teacher: '马明副教授', classroom: 'E栋402', dayOfWeek: 3, startSlot: 1, endSlot: 2, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_7',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS2003',
+    name: '大学物理',
+    type: 'required',
+    credit: 4,
+    semester: '2',
+    category: '公共基础课',
+    status: 'failed',
+    score: 55,
+    prerequisites: ['CS1001'],
+    description: '力学、电磁学、光学',
+    availableClasses: [
+      { id: 'class_7_1', teacher: '黄强教授', classroom: 'B栋301', dayOfWeek: 3, startSlot: 5, endSlot: 6, weeks: '1-16周' },
+      { id: 'class_7_2', teacher: '杨光副教授', classroom: 'B栋302', dayOfWeek: 5, startSlot: 3, endSlot: 4, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_8',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS3001',
+    name: '计算机组成原理',
+    type: 'required',
+    credit: 4,
+    semester: '3',
+    category: '专业课',
+    status: 'pending',
+    score: null,
+    prerequisites: ['CS2002'],
+    description: '计算机硬件系统组成',
+    availableClasses: [
+      { id: 'class_8_1', teacher: '胡军教授', classroom: 'E栋501', dayOfWeek: 1, startSlot: 3, endSlot: 4, weeks: '1-16周' },
+      { id: 'class_8_2', teacher: '林平副教授', classroom: 'E栋502', dayOfWeek: 4, startSlot: 3, endSlot: 4, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_9',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS3002',
+    name: '操作系统',
+    type: 'required',
+    credit: 4,
+    semester: '3',
+    category: '专业课',
+    status: 'pending',
+    score: null,
+    prerequisites: ['CS2002'],
+    description: '进程管理、内存管理、文件系统',
+    availableClasses: [
+      { id: 'class_9_1', teacher: '何峰教授', classroom: 'E栋503', dayOfWeek: 2, startSlot: 1, endSlot: 2, weeks: '1-16周' },
+      { id: 'class_9_2', teacher: '罗强副教授', classroom: 'E栋504', dayOfWeek: 5, startSlot: 1, endSlot: 2, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_10',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS3003',
+    name: '计算机网络',
+    type: 'required',
+    credit: 4,
+    semester: '3',
+    category: '专业课',
+    status: 'pending',
+    score: null,
+    prerequisites: ['CS2002'],
+    description: 'TCP/IP协议栈、网络编程',
+    availableClasses: [
+      { id: 'class_10_1', teacher: '郭伟教授', classroom: 'E栋601', dayOfWeek: 3, startSlot: 3, endSlot: 4, weeks: '1-16周' },
+      { id: 'class_10_2', teacher: '梁杰副教授', classroom: 'E栋602', dayOfWeek: 4, startSlot: 5, endSlot: 6, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_11',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS3004',
+    name: '数据库系统原理',
+    type: 'required',
+    credit: 4,
+    semester: '4',
+    category: '专业课',
+    status: 'pending',
+    score: null,
+    prerequisites: ['CS2002'],
+    description: '关系型数据库、SQL、数据库设计',
+    availableClasses: [
+      { id: 'class_11_1', teacher: '宋涛教授', classroom: 'E栋603', dayOfWeek: 1, startSlot: 5, endSlot: 6, weeks: '1-16周' },
+      { id: 'class_11_2', teacher: '唐亮副教授', classroom: 'E栋604', dayOfWeek: 3, startSlot: 1, endSlot: 2, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_12',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS4001',
+    name: '软件工程',
+    type: 'required',
+    credit: 4,
+    semester: '4',
+    category: '专业课',
+    status: 'pending',
+    score: null,
+    prerequisites: ['CS3004'],
+    description: '软件需求分析、设计、测试',
+    availableClasses: [
+      { id: 'class_12_1', teacher: '韩梅教授', classroom: 'E栋701', dayOfWeek: 2, startSlot: 3, endSlot: 4, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_13',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS4002',
+    name: '机器学习',
+    type: 'elective',
+    credit: 3,
+    semester: '4',
+    category: '专业选修课',
+    status: 'pending',
+    score: null,
+    prerequisites: ['CS2001', 'CS1001'],
+    description: '监督学习、无监督学习、神经网络',
+    availableClasses: [
+      { id: 'class_13_1', teacher: '董明教授', classroom: 'E栋702', dayOfWeek: 4, startSlot: 1, endSlot: 2, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_14',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS4003',
+    name: 'Web前端开发',
+    type: 'elective',
+    credit: 3,
+    semester: '4',
+    category: '专业选修课',
+    status: 'pending',
+    score: null,
+    prerequisites: ['CS1003'],
+    description: 'HTML/CSS/JavaScript、React/Vue框架',
+    availableClasses: [
+      { id: 'class_14_1', teacher: '于洋副教授', classroom: 'E栋703', dayOfWeek: 5, startSlot: 5, endSlot: 6, weeks: '1-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_15',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS5001',
+    name: '毕业设计',
+    type: 'required',
+    credit: 12,
+    semester: '8',
+    category: '实践环节',
+    status: 'pending',
+    score: null,
+    prerequisites: ['CS4001'],
+    description: '综合运用所学知识完成项目',
+    availableClasses: []
+  },
+  {
+    id: 'tp_course_16',
+    planId: 'plan_cs_2024',
+    courseCode: 'GS1001',
+    name: '音乐鉴赏',
+    type: 'general',
+    credit: 2,
+    semester: '1',
+    category: '通识选修课',
+    status: 'completed',
+    score: 90,
+    prerequisites: [],
+    description: '音乐基础知识与名曲欣赏',
+    availableClasses: [
+      { id: 'class_16_1', teacher: '张雅琴讲师', classroom: 'F栋101', dayOfWeek: 6, startSlot: 1, endSlot: 2, weeks: '1-8周' }
+    ]
+  },
+  {
+    id: 'tp_course_17',
+    planId: 'plan_cs_2024',
+    courseCode: 'GS1002',
+    name: '美术鉴赏',
+    type: 'general',
+    credit: 2,
+    semester: '2',
+    category: '通识选修课',
+    status: 'pending',
+    score: null,
+    prerequisites: [],
+    description: '中外美术史与作品赏析',
+    availableClasses: [
+      { id: 'class_17_1', teacher: '李思远讲师', classroom: 'F栋102', dayOfWeek: 6, startSlot: 3, endSlot: 4, weeks: '1-8周' }
+    ]
+  },
+  {
+    id: 'tp_course_18',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS3005',
+    name: 'Python程序设计',
+    type: 'elective',
+    credit: 2,
+    semester: '3',
+    category: '专业选修课',
+    status: 'pending',
+    score: null,
+    prerequisites: ['CS1003'],
+    description: 'Python语言基础与数据分析应用',
+    availableClasses: [
+      { id: 'class_18_1', teacher: '冯晓副教授', classroom: 'E栋403', dayOfWeek: 4, startSlot: 7, endSlot: 8, weeks: '9-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_19',
+    planId: 'plan_cs_2024',
+    courseCode: 'CS3006',
+    name: 'Linux操作系统',
+    type: 'elective',
+    credit: 2,
+    semester: '3',
+    category: '专业选修课',
+    status: 'pending',
+    score: null,
+    prerequisites: ['CS3002'],
+    description: 'Linux系统管理与Shell脚本',
+    availableClasses: [
+      { id: 'class_19_1', teacher: '曹振教授', classroom: 'E栋404', dayOfWeek: 2, startSlot: 7, endSlot: 8, weeks: '9-16周' }
+    ]
+  },
+  {
+    id: 'tp_course_20',
+    planId: 'plan_cs_2024',
+    courseCode: 'GS1003',
+    name: '创新创业基础',
+    type: 'general',
+    credit: 2,
+    semester: '3',
+    category: '通识选修课',
+    status: 'pending',
+    score: null,
+    prerequisites: [],
+    description: '创新思维培养与创业基础',
+    availableClasses: [
+      { id: 'class_20_1', teacher: '田甜讲师', classroom: 'F栋201', dayOfWeek: 5, startSlot: 7, endSlot: 8, weeks: '1-8周' }
+    ]
+  }
+];
+
+const MOCK_COURSE_REVIEWS = [
+  {
+    id: 'review_1',
+    courseCode: 'CS1001',
+    courseName: '高等数学',
+    userId: 'user_001',
+    userName: '张同学',
+    rating: 4,
+    difficulty: 'hard',
+    workload: 'heavy',
+    content: '张建国教授讲课非常清晰，但是作业量很大，每次都要花很长时间完成。建议上课认真听讲，课后及时复习，不然很容易跟不上。',
+    createTime: Date.now() - 86400000 * 30,
+    likes: 45
+  },
+  {
+    id: 'review_2',
+    courseCode: 'CS1001',
+    courseName: '高等数学',
+    userId: 'user_002',
+    userName: '李同学',
+    rating: 5,
+    difficulty: 'medium',
+    workload: 'medium',
+    content: '李明副教授的课比较适合基础一般的同学，讲得比较慢，会照顾到大多数人。考试题目都是课后习题变形，认真复习的话80分以上没问题。',
+    createTime: Date.now() - 86400000 * 20,
+    likes: 32
+  },
+  {
+    id: 'review_3',
+    courseCode: 'CS2002',
+    courseName: '数据结构',
+    userId: 'user_003',
+    userName: '王同学',
+    rating: 5,
+    difficulty: 'hard',
+    workload: 'heavy',
+    content: '孙伟教授的课干货满满，虽然难但是能学到真东西。建议提前预习，不然上课容易听不懂。实验课一定要自己动手写代码，不要抄作业。',
+    createTime: Date.now() - 86400000 * 15,
+    likes: 78
+  },
+  {
+    id: 'review_4',
+    courseCode: 'CS2002',
+    courseName: '数据结构',
+    userId: 'user_004',
+    userName: '赵同学',
+    rating: 3,
+    difficulty: 'very_hard',
+    workload: 'very_heavy',
+    content: '这门课真的很难，马明副教授讲课太快了，我全程懵。期末考试挂了一半人，建议选孙伟教授的班。',
+    createTime: Date.now() - 86400000 * 10,
+    likes: 56
+  },
+  {
+    id: 'review_5',
+    courseCode: 'CS3002',
+    courseName: '操作系统',
+    userId: 'user_005',
+    userName: '刘同学',
+    rating: 4,
+    difficulty: 'hard',
+    workload: 'heavy',
+    content: '何峰教授很有水平，讲得深入浅出。实验是写mini操作系统，虽然难但是做完很有成就感。这门课建议多花时间理解概念。',
+    createTime: Date.now() - 86400000 * 5,
+    likes: 41
+  },
+  {
+    id: 'review_6',
+    courseCode: 'CS3003',
+    courseName: '计算机网络',
+    userId: 'user_006',
+    userName: '陈同学',
+    rating: 5,
+    difficulty: 'medium',
+    workload: 'medium',
+    content: '郭伟教授讲课很有趣，会结合很多实际案例。期末考试考的都是上课讲过的重点，平时认真听课的话不用太担心。',
+    createTime: Date.now() - 86400000 * 3,
+    likes: 35
+  },
+  {
+    id: 'review_7',
+    courseCode: 'CS1003',
+    courseName: '程序设计基础',
+    userId: 'user_007',
+    userName: '杨同学',
+    rating: 5,
+    difficulty: 'easy',
+    workload: 'light',
+    content: '陈强教授对新手很友好，从最基础的语法讲起。零基础的同学也不用担心，跟着进度走就能学好。',
+    createTime: Date.now() - 86400000 * 25,
+    likes: 62
+  },
+  {
+    id: 'review_8',
+    courseCode: 'CS4002',
+    courseName: '机器学习',
+    userId: 'user_008',
+    userName: '黄同学',
+    rating: 4,
+    difficulty: 'very_hard',
+    workload: 'very_heavy',
+    content: '董明教授要求很严，数学基础不好的话会很吃力。需要有扎实的线性代数和概率论基础。作业都是实现算法，花时间但是很有收获。',
+    createTime: Date.now() - 86400000 * 8,
+    likes: 89
+  },
+  {
+    id: 'review_9',
+    courseCode: 'GS1001',
+    courseName: '音乐鉴赏',
+    userId: 'user_009',
+    userName: '周同学',
+    rating: 5,
+    difficulty: 'very_easy',
+    workload: 'very_light',
+    content: '超级水的课，老师人很好，几乎不点名。期末交一篇小论文就行，轻轻松松90+。想刷学分的强烈推荐！',
+    createTime: Date.now() - 86400000 * 40,
+    likes: 120
+  },
+  {
+    id: 'review_10',
+    courseCode: 'CS2003',
+    courseName: '大学物理',
+    userId: 'user_010',
+    userName: '吴同学',
+    rating: 2,
+    difficulty: 'very_hard',
+    workload: 'very_heavy',
+    content: '黄强教授的课真的听不懂，考试也很难。我们班挂了快一半了。建议能不选就不选，或者选其他老师的班。',
+    createTime: Date.now() - 86400000 * 12,
+    likes: 67
+  }
+];
+
 module.exports = {
   ..._firstExports,
   MOCK_CLUBS,
@@ -7744,5 +8241,8 @@ module.exports = {
   MOCK_ALUMNI_CARD_BENEFITS,
   MOCK_ALUMNI_PROFILES,
   MOCK_TAKEOUT_MERCHANTS,
-  MOCK_TAKEOUT_PROMOTIONS_BANNER
+  MOCK_TAKEOUT_PROMOTIONS_BANNER,
+  MOCK_TRAINING_PLANS,
+  MOCK_TRAINING_PLAN_COURSES,
+  MOCK_COURSE_REVIEWS
 };

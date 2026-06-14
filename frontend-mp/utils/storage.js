@@ -122,7 +122,13 @@ const STORAGE_KEYS = {
   LAB_LIST: 'labList',
   LAB_APPOINTMENT_LIST: 'labAppointmentList',
   LAB_SAFETY_TRAINING: 'labSafetyTraining',
-  LAB_VIOLATION_RECORDS: 'labViolationRecords'
+  LAB_VIOLATION_RECORDS: 'labViolationRecords',
+
+  TRAINING_PLAN_LIST: 'trainingPlanList',
+  TRAINING_PLAN_COURSES: 'trainingPlanCourses',
+  SELECTED_COURSES: 'selectedCourses',
+  COURSE_REVIEWS: 'courseReviews',
+  COURSE_ASSISTANT_SETTINGS: 'courseAssistantSettings'
 };
 
 /**

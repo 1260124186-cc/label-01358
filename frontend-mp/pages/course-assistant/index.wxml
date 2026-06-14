@@ -1,0 +1,510 @@
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header">
+    <view class="header-title">选课助手</view>
+    <view class="header-subtitle">智能选课 · 冲突检测 · 评价参考</view>
+  </view>
+
+  <view class="tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="value"
+      class="tab-item {{activeTab === item.value ? 'active' : ''}}"
+      data-value="{{item.value}}"
+      bindtap="onTabChange"
+    >
+      <text class="tab-icon">{{item.icon}}</text>
+      <text class="tab-label">{{item.label}}</text>
+    </view>
+  </view>
+
+  <view wx:if="{{activeTab === 'plan'}}" class="content">
+    <view class="plan-header">
+      <view class="plan-info" wx:if="{{planDetail}}">
+        <view class="plan-name">{{planDetail.name}}</view>
+        <view class="plan-meta">总学分 {{planDetail.totalCredits}} | 必修 {{planDetail.requiredCredits}} | 选修 {{planDetail.electiveCredits}}</view>
+      </view>
+      <view class="import-btn" bindtap="onImportPlan">
+        <text>📥 导入</text>
+      </view>
+    </view>
+
+    <view class="progress-card" wx:if="{{planProgress}}">
+      <view class="progress-header">
+        <text class="progress-title">培养进度</text>
+        <text class="progress-percent">{{planProgress.progressPercent}}%</text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{planProgress.progressPercent}}%;"></view>
+      </view>
+      <view class="progress-stats">
+        <view class="stat-item">
+          <view class="stat-value">{{planProgress.earnedCredits}}/{{planProgress.totalCredits}}</view>
+          <view class="stat-label">已修学分</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-value">{{planProgress.completedCourses}}/{{planProgress.totalCourses}}</view>
+          <view class="stat-label">已修课程</view>
+        </view>
+        <view class="stat-item">
+          <view class="stat-value" style="color: #EF4444;">{{planProgress.failedCourses}}</view>
+          <view class="stat-label">挂科</view>
+        </view>
+      </view>
+      <view class="credits-breakdown">
+        <view class="credit-item">
+          <view class="credit-bar">
+            <view class="credit-fill" style="width: {{planProgress.requiredCredits > 0 ? planProgress.earnedRequiredCredits / planProgress.requiredCredits * 100 : 0}}%; background: #EF4444;"></view>
+          </view>
+          <view class="credit-label">必修 {{planProgress.earnedRequiredCredits}}/{{planProgress.requiredCredits}}</view>
+        </view>
+        <view class="credit-item">
+          <view class="credit-bar">
+            <view class="credit-fill" style="width: {{planProgress.electiveCredits > 0 ? planProgress.earnedElectiveCredits / planProgress.electiveCredits * 100 : 0}}%; background: #3B82F6;"></view>
+          </view>
+          <view class="credit-label">选修 {{planProgress.earnedElectiveCredits}}/{{planProgress.electiveCredits}}</view>
+        </view>
+        <view class="credit-item">
+          <view class="credit-bar">
+            <view class="credit-fill" style="width: {{planProgress.generalCredits > 0 ? planProgress.earnedGeneralCredits / planProgress.generalCredits * 100 : 0}}%; background: #10B981;"></view>
+          </view>
+          <view class="credit-label">通识 {{planProgress.earnedGeneralCredits}}/{{planProgress.generalCredits}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="filters">
+      <view class="filter-row">
+        <scroll-view scroll-x class="category-filters">
+          <view
+            wx:for="{{categoryOptions}}"
+            wx:key="value"
+            class="category-chip {{categoryFilter === item.value ? 'active' : ''}}"
+            data-value="{{item.value}}"
+            bindtap="onCategoryFilterChange"
+          >
+            {{item.label}}
+          </view>
+        </scroll-view>
+        <view class="search-btn" bindtap="onToggleSearch">
+          <text>{{showSearch ? '✕' : '🔍'}}</text>
+        </view>
+      </view>
+      <view class="search-input" wx:if="{{showSearch}}">
+        <input
+          placeholder="搜索课程名称、代码..."
+          value="{{searchKeyword}}"
+          bindinput="onSearchInput"
+          confirm-type="search"
+        />
+      </view>
+      <scroll-view scroll-x class="status-filters">
+        <view
+          class="status-chip {{statusFilter === 'all' ? 'active' : ''}}"
+          data-value="all"
+          bindtap="onStatusFilterChange"
+        >
+          全部
+        </view>
+        <view
+          wx:for="{{courseStatuses}}"
+          wx:key="value"
+          class="status-chip {{statusFilter === item.value ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="onStatusFilterChange"
+          style="--chip-color: {{item.color}};"
+        >
+          {{item.label}}
+        </view>
+      </scroll-view>
+    </view>
+
+    <view class="course-list">
+      <view
+        wx:for="{{filteredPlanCourses}}"
+        wx:key="id"
+        class="course-card"
+        data-course="{{item}}"
+        bindtap="onPlanCourseTap"
+      >
+        <view class="course-left">
+          <view class="course-type-badge" style="background: {{item.typeColor}};">
+            {{item.typeLabel}}
+          </view>
+          <view class="course-name">{{item.name}}</view>
+          <view class="course-meta">
+            <text class="course-code">{{item.courseCode}}</text>
+            <text class="course-credit">{{item.credit}}学分</text>
+            <text class="course-semester">第{{item.semester}}学期</text>
+          </view>
+          <view class="course-desc">{{item.description}}</view>
+          <view class="course-prereq" wx:if="{{item.prerequisites && item.prerequisites.length > 0}}">
+            先修: {{item.prerequisites}}
+          </view>
+        </view>
+        <view class="course-right">
+          <view class="course-status" style="background: {{item.statusColor}};">
+            {{item.statusLabel}}
+          </view>
+          <view class="course-score" wx:if="{{item.score}}">
+            {{item.score}}分
+          </view>
+          <view class="review-btn" data-course="{{item}}" catchtap="onViewReviews">
+            <text>⭐ 评价</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{filteredPlanCourses.length === 0}}" class="empty-state">
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">暂无课程数据</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{activeTab === 'schedule'}}" class="content">
+    <view class="schedule-header">
+      <view class="semester-selector">
+        <text class="semester-label">当前学期：</text>
+        <scroll-view scroll-x class="semester-tabs">
+          <view
+            wx:for="{{semesterOptions}}"
+            wx:key="value"
+            class="semester-tab {{currentSemester === item.value ? 'active' : ''}}"
+            data-value="{{item.value}}"
+            bindtap="onSemesterChange"
+          >
+            {{item.label}}
+          </view>
+        </scroll-view>
+      </view>
+      <view class="credits-info">
+        <text class="credits-text">已选 {{selectedCredits}} / {{maxCredits}} 学分</text>
+        <text class="credits-bar">
+          <view class="credits-fill" style="width: {{selectedCredits / maxCredits * 100}}%;"></view>
+        </text>
+      </view>
+    </view>
+
+    <view class="schedule-actions">
+      <view class="action-btn" bindtap="onClearSelected">
+        <text>🗑️ 清空</text>
+      </view>
+      <view class="action-btn primary" bindtap="onSyncToSchedule">
+        <text>✅ 同步到课表</text>
+      </view>
+    </view>
+
+    <view class="schedule-section">
+      <view class="section-title">📅 课程表</view>
+      <view class="schedule-grid">
+        <view class="grid-header">
+          <view class="header-cell time-header">时间</view>
+          <view
+            wx:for="{{weekDays}}"
+            wx:key="value"
+            class="header-cell"
+          >
+            {{item.label}}
+          </view>
+        </view>
+        <view class="grid-body">
+          <view
+            wx:for="{{timeSlots}}"
+            wx:for-item="slot"
+            wx:key="slot"
+            class="grid-row"
+          >
+            <view class="time-cell">
+              <view class="slot-num">{{slot.slot}}</view>
+              <view class="slot-time">{{slot.start}}</view>
+            </view>
+            <view
+              wx:for="{{weekDays}}"
+              wx:for-item="day"
+              wx:for-index="dayIndex"
+              wx:key="value"
+              class="grid-cell"
+            >
+              <block wx:for="{{weekCourses[day.value]}}" wx:for-item="course" wx:key="id">
+                <view
+                  wx:if="{{course.topIndex === index}}"
+                  class="course-slot"
+                  style="top: {{course.topIndex * 60}}px; height: {{course.slotSpan * 60 - 4}}px; background: {{course.color.bg}}; border-color: {{course.color.border}}; color: {{course.color.text}};"
+                  data-course="{{course}}"
+                  bindtap="onCourseTap"
+                >
+                  <view class="slot-course-name">{{course.name}}</view>
+                  <view class="slot-course-info">{{course.classroom}}</view>
+                  <view class="slot-course-info">{{course.weeks}}</view>
+                </view>
+              </block>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="schedule-section">
+      <view class="section-title">📚 可选课程 <text class="hint">（拖拽到课表区域添加）</text></view>
+      <scroll-view scroll-y class="draggable-courses">
+        <view
+          wx:for="{{filteredPlanCourses}}"
+          wx:key="id"
+          wx:if="{{item.status !== 'completed' && item.semester === currentSemester}}"
+          class="draggable-course"
+          data-course="{{item}}"
+          bindtouchstart="onCourseTouchStart"
+          bindtouchmove="onCourseTouchMove"
+          bindtouchend="onCourseTouchEnd"
+          style="opacity: {{draggingCourse && draggingCourse.id === item.id ? 0.3 : 1}};"
+        >
+          <view class="drag-handle">⋮⋮</view>
+          <view class="drag-course-info">
+            <view class="drag-course-name">{{item.name}}</view>
+            <view class="drag-course-meta">
+              <text class="drag-course-credit" style="color: {{item.typeColor}};">{{item.typeLabel}} · {{item.credit}}学分</text>
+              <text class="drag-course-classes">{{item.availableClasses.length}}个班</text>
+            </view>
+          </view>
+          <view class="drag-review-btn" data-course="{{item}}" catchtap="onViewReviews">
+            ⭐
+          </view>
+        </view>
+        <view wx:if="{{selectedCourses.length > 0}}" class="section-subtitle">已选课程</view>
+        <view
+          wx:for="{{selectedCourses}}"
+          wx:key="id"
+          class="selected-course-item"
+        >
+          <view class="selected-info">
+            <view class="selected-name">{{item.name}}</view>
+            <view class="selected-meta">
+              {{item.selectedClass.teacher}} · {{item.selectedClass.classroom}} · 第{{item.selectedClass.dayOfWeek}}天 {{item.selectedClass.startSlot}}-{{item.selectedClass.endSlot}}节
+            </view>
+          </view>
+          <view class="remove-btn" data-id="{{item.id}}" bindtap="onRemoveSelectedCourse">
+            ✕
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <view wx:if="{{activeTab === 'reviews'}}" class="content">
+    <view class="reviews-header">
+      <view class="reviews-title">课程评价</view>
+      <view class="reviews-subtitle">查看学长学姐的真实评价</view>
+    </view>
+    <view class="course-list">
+      <view
+        wx:for="{{filteredPlanCourses}}"
+        wx:key="id"
+        class="course-card review-card"
+        data-course="{{item}}"
+        bindtap="onViewReviews"
+      >
+        <view class="course-left">
+          <view class="course-type-badge" style="background: {{item.typeColor}};">
+            {{item.typeLabel}}
+          </view>
+          <view class="course-name">{{item.name}}</view>
+          <view class="course-meta">
+            <text class="course-code">{{item.courseCode}}</text>
+            <text class="course-credit">{{item.credit}}学分</text>
+          </view>
+        </view>
+        <view class="course-right">
+          <view class="review-entry-btn">
+            <text>查看评价 →</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showCourseModal}}" class="modal-overlay" bindtap="onCloseCourseModal">
+    <view class="modal-content course-modal" catchtap="preventDefault">
+      <view class="modal-header">
+        <view class="modal-title">{{selectedPlanCourse.name}}</view>
+        <view class="modal-close" bindtap="onCloseCourseModal">✕</view>
+      </view>
+      <view class="modal-body">
+        <view class="course-info-row">
+          <text class="info-label">课程代码</text>
+          <text class="info-value">{{selectedPlanCourse.courseCode}}</text>
+        </view>
+        <view class="course-info-row">
+          <text class="info-label">学分</text>
+          <text class="info-value">{{selectedPlanCourse.credit}} 学分</text>
+        </view>
+        <view class="course-info-row">
+          <text class="info-label">课程类型</text>
+          <text class="info-value">{{selectedPlanCourse.category}}</text>
+        </view>
+        <view class="course-info-row">
+          <text class="info-label">课程描述</text>
+          <text class="info-value">{{selectedPlanCourse.description}}</text>
+        </view>
+
+        <view wx:if="{{conflictCheckResult && conflictCheckResult.conflicts.length > 0}}" class="conflict-alerts">
+          <view
+            wx:for="{{conflictCheckResult.conflicts}}"
+            wx:key="type"
+            class="conflict-alert {{item.type}}"
+          >
+            <text class="alert-icon">{{item.type === 'time' ? '⚠️' : item.type === 'prerequisite' ? '❌' : item.type === 'credit' ? '⚡' : '✅'}}</text>
+            <text class="alert-message">{{item.message}}</text>
+          </view>
+        </view>
+
+        <view class="class-selector" wx:if="{{selectedPlanCourse.availableClasses && selectedPlanCourse.availableClasses.length > 0}}">
+          <view class="selector-title">选择上课班</view>
+          <view
+            wx:for="{{selectedPlanCourse.availableClasses}}"
+            wx:key="id"
+            class="class-option {{selectedClassIndex === index ? 'selected' : ''}}"
+            data-index="{{index}}"
+            bindtap="onClassSelect"
+          >
+            <view class="class-teacher">{{item.teacher}}</view>
+            <view class="class-info">
+              <text class="class-room">{{item.classroom}}</text>
+              <text class="class-time">周{{weekDays[item.dayOfWeek - 1].label}} 第{{item.startSlot}}-{{item.endSlot}}节</text>
+              <text class="class-weeks">{{item.weeks}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="onCloseCourseModal">取消</view>
+        <view
+          class="modal-btn confirm {{conflictCheckResult && conflictCheckResult.hasError ? 'disabled' : ''}}"
+          bindtap="onConfirmSelect"
+        >
+          确认选课
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showStatusPicker}}" class="modal-overlay" bindtap="onCloseStatusPicker">
+    <view class="modal-content status-modal" catchtap="preventDefault">
+      <view class="modal-header">
+        <view class="modal-title">标记课程状态</view>
+        <view class="modal-close" bindtap="onCloseStatusPicker">✕</view>
+      </view>
+      <view class="modal-body">
+        <view class="status-course-name">{{statusPickerCourse.name}}</view>
+        <view class="status-options">
+          <view
+            wx:for="{{courseStatuses}}"
+            wx:key="value"
+            class="status-option"
+            data-status="{{item.value}}"
+            bindtap="onStatusSelect"
+            style="--status-color: {{item.color}};"
+          >
+            <view class="status-dot"></view>
+            <text class="status-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showReviewModal}}" class="modal-overlay" bindtap="onCloseReviewModal">
+    <view class="modal-content review-modal" catchtap="preventDefault">
+      <view class="modal-header">
+        <view class="modal-title">{{reviewCourse.name}} - 课程评价</view>
+        <view class="modal-close" bindtap="onCloseReviewModal">✕</view>
+      </view>
+      <view class="modal-body">
+        <view wx:if="{{reviewStats}}" class="review-stats">
+          <view class="stats-main">
+            <view class="avg-rating">{{reviewStats.avgRating}}</view>
+            <view class="rating-stars">
+              <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this">
+                {{item <= reviewStats.avgRating ? '★' : '☆'}}
+              </text>
+            </view>
+            <view class="reviews-count">{{reviewStats.totalReviews}}条评价</view>
+          </view>
+          <view class="stats-detail">
+            <view class="detail-item">
+              <text class="detail-label">难度</text>
+              <view class="detail-bar">
+                <view class="detail-fill" style="width: {{reviewStats.avgDifficulty / 5 * 100}}%;"></view>
+              </view>
+              <text class="detail-value">{{reviewStats.avgDifficulty}}</text>
+            </view>
+            <view class="detail-item">
+              <text class="detail-label">工作量</text>
+              <view class="detail-bar">
+                <view class="detail-fill" style="width: {{reviewStats.avgWorkload / 5 * 100}}%;"></view>
+              </view>
+              <text class="detail-value">{{reviewStats.avgWorkload}}</text>
+            </view>
+          </view>
+        </view>
+
+        <scroll-view scroll-y class="reviews-list">
+          <view wx:if="{{courseReviews.length === 0}}" class="empty-state small">
+            <text class="empty-text">暂无评价</text>
+          </view>
+          <view
+            wx:for="{{courseReviews}}"
+            wx:key="id"
+            class="review-item"
+          >
+            <view class="review-header">
+              <view class="reviewer-info">
+                <text class="reviewer-name">{{item.userName}}</text>
+                <text class="review-time">{{item.timeText}}</text>
+              </view>
+              <view class="review-rating">
+                <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="star" wx:key="*this">
+                  {{star <= item.rating ? '★' : '☆'}}
+                </text>
+              </view>
+            </view>
+            <view class="review-tags">
+              <text class="review-tag">{{item.difficultyLabel}}</text>
+              <text class="review-tag">{{item.workloadLabel}}</text>
+            </view>
+            <view class="review-content">{{item.content}}</view>
+            <view class="review-footer">
+              <view class="like-btn" data-id="{{item.id}}" bindtap="onLikeReview">
+                👍 {{item.likes}}
+              </view>
+            </view>
+          </view>
+        </scroll-view>
+
+        <view wx:if="{{forumPosts && forumPosts.length > 0}}" class="forum-section">
+          <view class="forum-title">💬 论坛相关讨论</view>
+          <view
+            wx:for="{{forumPosts}}"
+            wx:key="id"
+            class="forum-post-item"
+            data-id="{{item.id}}"
+            bindtap="onForumPostTap"
+          >
+            <view class="post-title">{{item.title}}</view>
+            <view class="post-meta">
+              <text>{{item.userName}}</text>
+              <text>💬 {{item.commentCount || 0}}</text>
+              <text>❤️ {{item.likes || 0}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view
+    wx:if="{{isDragging && draggingCourse}}"
+    class="drag-ghost"
+    style="left: {{dragCurrentX - 50}}px; top: {{dragCurrentY - 30}}px;"
+  >
+    {{draggingCourse.name}}
+  </view>
+</view>

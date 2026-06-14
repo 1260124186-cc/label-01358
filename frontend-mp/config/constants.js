@@ -756,6 +756,47 @@ const SCHEDULE_TABS = [
   { value: 'exam', label: '考试安排', icon: '📝' }
 ];
 
+const COURSE_ASSISTANT_TABS = [
+  { value: 'plan', label: '培养方案', icon: '📋' },
+  { value: 'schedule', label: '模拟选课', icon: '📅' },
+  { value: 'reviews', label: '课程评价', icon: '⭐' }
+];
+
+const COURSE_TYPES = [
+  { value: 'required', label: '必修', color: '#EF4444' },
+  { value: 'elective', label: '选修', color: '#3B82F6' },
+  { value: 'general', label: '通识', color: '#10B981' },
+  { value: 'major', label: '专业', color: '#F59E0B' },
+  { value: 'practice', label: '实践', color: '#8B5CF6' }
+];
+
+const COURSE_TYPE_MAP = COURSE_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, color: t.color };
+  return acc;
+}, {});
+
+const COURSE_STATUS = [
+  { value: 'pending', label: '待修', color: '#9CA3AF' },
+  { value: 'studying', label: '在修', color: '#3B82F6' },
+  { value: 'completed', label: '已修', color: '#10B981' },
+  { value: 'failed', label: '挂科', color: '#EF4444' }
+];
+
+const COURSE_STATUS_MAP = COURSE_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const CONFLICT_TYPES = [
+  { value: 'time', label: '时间冲突', severity: 'error', color: '#EF4444' },
+  { value: 'credit', label: '学分超限', severity: 'warning', color: '#F59E0B' },
+  { value: 'prerequisite', label: '先修未完成', severity: 'error', color: '#EF4444' },
+  { value: 'completed', label: '已修课程', severity: 'info', color: '#10B981' }
+];
+
+const DEFAULT_MAX_CREDITS = 25;
+const DEFAULT_MIN_CREDITS = 15;
+
 const SCORE_LEVELS = [
   { min: 90, max: 100, label: '优秀', color: '#10B981', gpa: 4.0 },
   { min: 85, max: 89, label: '良好', color: '#3B82F6', gpa: 3.7 },
@@ -1980,6 +2021,14 @@ module.exports = {
   COURSE_COLORS,
   SCHEDULE_VIEW_TABS,
   SCHEDULE_TABS,
+  COURSE_ASSISTANT_TABS,
+  COURSE_TYPES,
+  COURSE_TYPE_MAP,
+  COURSE_STATUS,
+  COURSE_STATUS_MAP,
+  CONFLICT_TYPES,
+  DEFAULT_MAX_CREDITS,
+  DEFAULT_MIN_CREDITS,
   SCORE_LEVELS,
   CLASSROOM_BUILDINGS,
   REMINDER_MINUTES_OPTIONS,

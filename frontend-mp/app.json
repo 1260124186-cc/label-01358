@@ -103,6 +103,7 @@
     "pages/schedule/index",
     "pages/schedule-edit/index",
     "pages/academic/index",
+    "pages/course-assistant/index",
     "pages/classroom-query/index",
     "pages/feedback/index",
     "pages/changelog/index",
