@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "返校预约",
+  "backgroundTextStyle": "dark",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "btn": "/components/btn/index",
+    "empty": "/components/empty/index"
+  }
+}

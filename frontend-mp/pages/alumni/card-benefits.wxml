@@ -1,0 +1,110 @@
+<wxs src="../../utils/filters.wxs" module="f" />
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 校友卡展示 -->
+  <view class="card-section">
+    <view class="alumni-card">
+      <view class="card-bg"></view>
+      <view class="card-content">
+        <view class="card-header">
+          <view class="card-logo">🎓</view>
+          <text class="card-title">校友卡</text>
+          <text class="card-type">校友专属</text>
+        </view>
+        <view class="card-info">
+          <text class="card-name">{{alumniInfo ? alumniInfo.name : '未认证'}}</text>
+          <text class="card-number">卡号：{{cardNumber || '---- ---- ----'}}</text>
+        </view>
+        <view class="card-footer">
+          <view class="valid-date">
+            <text class="valid-label">有效期至</text>
+            <text class="valid-value">{{validDate || '----'}}</text>
+          </view>
+          <view class="card-chip">💳</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card-tip" wx:if="{{!alumniInfo}}">
+      <text class="tip-icon">🔒</text>
+      <text class="tip-text">完成校友认证即可激活校友卡，享受专属权益</text>
+    </view>
+  </view>
+
+  <!-- 权益分类标签 -->
+  <view class="category-section">
+    <scroll-view class="category-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="category-list">
+        <view
+          class="category-item {{activeCategory === 'all' ? 'active' : ''}}"
+          bindtap="onCategoryTap"
+          data-value="all"
+        >
+          <text class="category-icon">🏷️</text>
+          <text class="category-label">全部</text>
+        </view>
+        <view
+          class="category-item {{activeCategory === item.value ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="value"
+          bindtap="onCategoryTap"
+          data-value="{{item.value}}"
+          style="--category-color: {{item.color}}"
+        >
+          <text class="category-icon">{{item.icon}}</text>
+          <text class="category-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 权益列表 -->
+  <scroll-view class="benefits-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="benefits-list" wx:if="{{filteredBenefits.length > 0}}">
+      <view
+        class="benefit-card {{expandedBenefitId === item.id ? 'expanded' : ''}}"
+        wx:for="{{filteredBenefits}}"
+        wx:key="id"
+        bindtap="onBenefitTap"
+        data-id="{{item.id}}"
+      >
+        <view class="benefit-header">
+          <view class="benefit-icon" style="background: {{item.color}}15;">
+            <text style="color: {{item.color}}">{{item.icon}}</text>
+          </view>
+          <view class="benefit-main">
+            <view class="benefit-title-row">
+              <text class="benefit-title">{{item.title}}</text>
+              <view class="benefit-tag" style="background: {{item.color}}15; color: {{item.color}}">
+                {{item.categoryInfo ? item.categoryInfo.label : ''}}
+              </view>
+            </view>
+            <text class="benefit-subtitle">{{item.subtitle}}</text>
+          </view>
+          <view class="benefit-arrow {{expandedBenefitId === item.id ? 'up' : ''}}">›</view>
+        </view>
+
+        <view class="benefit-desc">{{item.description}}</view>
+
+        <view class="benefit-details" wx:if="{{expandedBenefitId === item.id}}">
+          <view class="details-title">权益详情</view>
+          <view class="details-list">
+            <view class="detail-item" wx:for="{{item.details}}" wx:key="index" wx:for-item="detail">
+              <text class="detail-icon" style="color: {{item.color}}">✓</text>
+              <text class="detail-text">{{detail}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    <empty wx:else text="暂无权益信息" icon="🎁"/>
+  </scroll-view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

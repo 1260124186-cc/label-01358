@@ -1,0 +1,321 @@
+<wxs src="../../utils/filters.wxs" module="f" />
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 搜索栏 -->
+  <view class="search-section">
+    <view class="search-bar">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索动态、导师、服务..."
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        placeholder-class="search-placeholder"
+      />
+    </view>
+  </view>
+
+  <!-- 快捷入口导航 -->
+  <view class="quick-nav">
+    <view class="nav-item" bindtap="onPublishTap">
+      <view class="nav-icon">📝</view>
+      <text class="nav-label">发布动态</text>
+    </view>
+    <view class="nav-item" bindtap="onMentorsTap">
+      <view class="nav-icon">👨‍🏫</view>
+      <text class="nav-label">导师预约</text>
+    </view>
+    <view class="nav-item" bindtap="onIndustryTap">
+      <view class="nav-icon">📊</view>
+      <text class="nav-label">行业分布</text>
+    </view>
+    <view class="nav-item" bindtap="onServicesTap">
+      <view class="nav-icon">🎫</view>
+      <text class="nav-label">校友服务</text>
+    </view>
+    <view class="nav-item" bindtap="onVerifyTap">
+      <view class="nav-icon">✅</view>
+      <text class="nav-label">校友认证</text>
+    </view>
+  </view>
+
+  <!-- 主标签栏 -->
+  <view class="main-tabs">
+    <view
+      class="main-tab-item {{activeTab === item.value ? 'active' : ''}}"
+      wx:for="{{mainTabs}}"
+      wx:key="value"
+      bindtap="onTabChange"
+      data-value="{{item.value}}"
+    >
+      <text class="tab-icon">{{item.icon}}</text>
+      <text class="tab-label">{{item.label}}</text>
+    </view>
+  </view>
+
+  <!-- 动态标签页 -->
+  <view class="tab-content" wx:if="{{activeTab === 'feed'}}">
+    <!-- 动态类型子标签 -->
+    <view class="sub-tabs">
+      <scroll-view class="sub-tabs-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+        <view
+          class="sub-tab-item {{postType === item.value ? 'active' : ''}}"
+          wx:for="{{postTypes}}"
+          wx:key="value"
+          bindtap="onPostTypeChange"
+          data-value="{{item.value}}"
+        >
+          {{item.icon}} {{item.label}}
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 发布按钮 -->
+    <view class="publish-section">
+      <btn type="primary" size="medium" bind:click="onPublishTap">
+        <text class="publish-icon">➕</text>
+        发布动态
+      </btn>
+    </view>
+
+    <!-- 动态列表 -->
+    <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="post-list" wx:if="{{filteredPosts.length > 0}}">
+        <view
+          class="post-card"
+          wx:for="{{filteredPosts}}"
+          wx:key="id"
+          bindtap="onPostTap"
+          data-id="{{item.id}}"
+        >
+          <view class="post-header">
+            <image class="post-avatar" src="{{item.userAvatar}}" mode="aspectFill"/>
+            <view class="post-user-info">
+              <view class="post-user-row">
+                <text class="post-user-name">{{item.userName}}</text>
+                <view class="post-type-tag" style="background: {{item.typeInfo.color}}15; color: {{item.typeInfo.color}}">
+                  {{item.typeInfo.icon}} {{item.typeInfo.label}}
+                </view>
+              </view>
+              <text class="post-user-meta">{{item.graduationYear ? item.graduationYear + '届' : ''}} {{item.company || ''}}</text>
+            </view>
+          </view>
+
+          <view class="post-title">{{item.title}}</view>
+          <view class="post-content">{{item.content}}</view>
+
+          <view class="post-images" wx:if="{{item.images && item.images.length > 0}}">
+            <image
+              class="post-img"
+              wx:for="{{item.images}}"
+              wx:key="index"
+              wx:for-item="img"
+              src="{{img}}"
+              mode="aspectFill"
+            />
+          </view>
+
+          <view class="post-footer">
+            <text class="post-time">{{item.formattedTime}}</text>
+            <view class="post-stats">
+              <text class="stat-item">👁 {{item.views}}</text>
+              <text class="stat-item">👍 {{item.likes}}</text>
+              <text class="stat-item">💬 {{item.comments}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <empty wx:else text="暂无动态，快来发布第一条吧！" icon="📢"/>
+    </scroll-view>
+  </view>
+
+  <!-- 导师标签页 -->
+  <view class="tab-content" wx:if="{{activeTab === 'mentors'}}">
+    <view class="sub-tabs">
+      <view class="sub-tab-item active">推荐导师</view>
+      <view class="filter-btn" bindtap="onIndustryFilterTap">
+        <text class="filter-icon">📊</text>
+        <text class="filter-text">{{selectedIndustry ? (f.getLabel(industryOptions, selectedIndustry) || '行业') : '行业'}}</text>
+      </view>
+      <view class="filter-btn" style="margin-left: 16rpx;" bindtap="onTitleFilterTap">
+        <text class="filter-icon">👔</text>
+        <text class="filter-text">{{selectedTitle ? (f.getLabel(titleOptions, selectedTitle) || '职称') : '职称'}}</text>
+      </view>
+    </view>
+
+    <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="mentor-list" wx:if="{{filteredMentors.length > 0}}">
+        <view
+          class="mentor-card"
+          wx:for="{{filteredMentors}}"
+          wx:key="id"
+          bindtap="onMentorTap"
+          data-id="{{item.id}}"
+        >
+          <view class="mentor-avatar">
+            <image class="avatar-img" src="{{item.avatar}}" mode="aspectFill"/>
+            <view class="mentor-badge" style="background: {{item.titleInfo.color}}">
+              {{item.titleInfo.label}}
+            </view>
+          </view>
+          <view class="mentor-info">
+            <view class="mentor-name-row">
+              <text class="mentor-name">{{item.name}}</text>
+              <view class="mentor-rating">
+                <text class="star">⭐</text>
+                <text class="rating-value">{{item.rating}}</text>
+              </view>
+            </view>
+            <text class="mentor-dept">{{item.company}} · {{item.position}}</text>
+            <text class="mentor-research">擅长领域：{{item.expertiseText}}</text>
+            <view class="mentor-stats">
+              <text class="stat-item">成功案例 {{item.successCases}} 个</text>
+              <text class="stat-item">可约 {{item.availableSlots}} 个</text>
+            </view>
+          </view>
+          <text class="arrow">›</text>
+        </view>
+      </view>
+      <empty wx:else text="暂无导师信息" icon="👨‍🏫"/>
+    </scroll-view>
+  </view>
+
+  <!-- 行业标签页 -->
+  <view class="tab-content" wx:if="{{activeTab === 'industry'}}">
+    <view class="industry-entry">
+      <view class="industry-entry-card" bindtap="onIndustryDistributionTap">
+        <view class="entry-icon">📊</view>
+        <view class="entry-content">
+          <text class="entry-title">校友行业分布</text>
+          <text class="entry-desc">查看各行业校友分布情况</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="industry-grid">
+        <view
+          class="industry-item"
+          wx:for="{{industryOptions}}"
+          wx:key="value"
+          bindtap="onIndustryItemTap"
+          data-value="{{item.value}}"
+          style="background: {{item.color}}15;"
+        >
+          <view class="industry-icon" style="color: {{item.color}};">{{item.icon}}</view>
+          <text class="industry-label" style="color: {{item.color}};">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 服务标签页 -->
+  <view class="tab-content" wx:if="{{activeTab === 'services'}}">
+    <scroll-view class="list-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <!-- 校友认证 -->
+      <view class="service-card" bindtap="onVerifyTap">
+        <view class="service-icon" style="background: rgba(16, 185, 129, 0.15);">
+          <text style="color: #10B981;">✅</text>
+        </view>
+        <view class="service-content">
+          <text class="service-title">校友认证</text>
+          <text class="service-desc">完成认证，解锁更多校友权益</text>
+        </view>
+        <view class="service-status" wx:if="{{verifyInfo}}">
+          <text class="status-text" style="color: {{verifyInfo.statusInfo.color}};">{{verifyInfo.statusInfo.icon}} {{verifyInfo.statusInfo.label}}</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+
+      <!-- 返校预约 -->
+      <view class="service-card" bindtap="onVisitTap">
+        <view class="service-icon" style="background: rgba(59, 130, 246, 0.15);">
+          <text style="color: #3B82F6;">🏫</text>
+        </view>
+        <view class="service-content">
+          <text class="service-title">返校预约</text>
+          <text class="service-desc">预约返校，重温校园时光</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+
+      <!-- 校友卡权益 -->
+      <view class="service-card" bindtap="onCardBenefitsTap">
+        <view class="service-icon" style="background: rgba(245, 158, 11, 0.15);">
+          <text style="color: #F59E0B;">🎫</text>
+        </view>
+        <view class="service-content">
+          <text class="service-title">校友卡权益</text>
+          <text class="service-desc">查看专属校友权益</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+
+      <!-- 导师预约 -->
+      <view class="service-card" bindtap="onMentorsTap">
+        <view class="service-icon" style="background: rgba(139, 92, 246, 0.15);">
+          <text style="color: #8B5CF6;">👨‍🏫</text>
+        </view>
+        <view class="service-content">
+          <text class="service-title">导师预约</text>
+          <text class="service-desc">预约校友导师一对一指导</text>
+        </view>
+        <text class="arrow">›</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 行业筛选弹窗 -->
+  <view class="picker-mask {{showIndustryFilter ? 'show' : ''}}" bindtap="onCloseFilter">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择行业</text>
+        <text class="picker-clear" bindtap="onClearIndustryFilter">清除</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{selectedIndustry === item.value ? 'active' : ''}}"
+          wx:for="{{industryOptions}}"
+          wx:key="value"
+          bindtap="onIndustrySelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{selectedIndustry === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 职称筛选弹窗 -->
+  <view class="picker-mask {{showTitleFilter ? 'show' : ''}}" bindtap="onCloseFilter">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择职称</text>
+        <text class="picker-clear" bindtap="onClearTitleFilter">清除</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{selectedTitle === item.value ? 'active' : ''}}"
+          wx:for="{{titleOptions}}"
+          wx:key="value"
+          bindtap="onTitleSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{selectedTitle === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

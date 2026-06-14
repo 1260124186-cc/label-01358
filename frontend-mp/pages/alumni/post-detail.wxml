@@ -1,0 +1,96 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{post}}">
+  <scroll-view class="content-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="post-section">
+      <view class="post-header">
+        <image class="post-avatar" src="{{post.userAvatar}}" mode="aspectFill"/>
+        <view class="post-user-info">
+          <view class="post-user-row">
+            <text class="post-user-name">{{post.userName}}</text>
+            <view class="post-type-tag" style="background: {{post.typeInfo.color}}15; color: {{post.typeInfo.color}}">
+              {{post.typeInfo.icon}} {{post.typeInfo.label}}
+            </view>
+          </view>
+          <text class="post-user-meta">{{post.graduationYear ? post.graduationYear + '届' : ''}} {{post.company || ''}}</text>
+        </view>
+      </view>
+
+      <view class="post-title">{{post.title}}</view>
+      <view class="post-content">{{post.content}}</view>
+
+      <view class="post-images" wx:if="{{post.images && post.images.length > 0}}">
+        <image
+          class="post-img"
+          wx:for="{{post.images}}"
+          wx:key="index"
+          src="{{item}}"
+          mode="aspectFill"
+          bindtap="onImagePreview"
+          data-index="{{index}}"
+        />
+      </view>
+
+      <view class="post-meta-row">
+        <text class="meta-item">👁 {{post.views}} 浏览</text>
+        <text class="meta-item">👍 {{post.likes}} 点赞</text>
+        <text class="meta-item">💬 {{post.commentCount}} 评论</text>
+        <text class="meta-item">📅 {{post.formattedTime}}</text>
+      </view>
+
+      <view class="action-bar">
+        <view class="action-item {{isLiked ? 'active' : ''}}" bindtap="onLikeTap">
+          <text class="action-icon">{{isLiked ? '❤️' : '🤍'}}</text>
+          <text class="action-text">{{isLiked ? '已点赞' : '点赞'}}</text>
+        </view>
+        <view class="action-item">
+          <text class="action-icon">💬</text>
+          <text class="action-text">评论</text>
+        </view>
+        <view class="action-item">
+          <text class="action-icon">📤</text>
+          <text class="action-text">分享</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="comments-section">
+      <view class="section-title">💬 评论 ({{comments.length}})</view>
+      <view class="comments-list" wx:if="{{comments.length > 0}}">
+        <view class="comment-item" wx:for="{{comments}}" wx:key="id">
+          <image class="comment-avatar" src="{{item.userAvatar}}" mode="aspectFill"/>
+          <view class="comment-content">
+            <view class="comment-header">
+              <text class="comment-name">{{item.userName}}</text>
+              <text class="comment-time">{{item.formattedTime}}</text>
+            </view>
+            <text class="comment-text">{{item.content}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="empty-comments" wx:else>
+        <text class="empty-text">暂无评论，快来抢沙发吧～</text>
+      </view>
+    </view>
+
+    <view class="bottom-spacing"></view>
+  </scroll-view>
+
+  <view class="comment-bar">
+    <input
+      class="comment-input"
+      placeholder="说点什么..."
+      value="{{commentInput}}"
+      bindinput="onCommentInput"
+      confirm-type="send"
+      bindconfirm="onSubmitComment"
+    />
+    <view class="send-btn" bindtap="onSubmitComment">发送</view>
+  </view>
+
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

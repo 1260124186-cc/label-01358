@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "校友认证",
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "btn": "/components/btn/index"
+  }
+}

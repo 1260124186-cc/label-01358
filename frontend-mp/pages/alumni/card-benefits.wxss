@@ -1,0 +1,358 @@
+.page {
+  min-height: 100vh;
+  background: var(--color-bg-page);
+  padding-bottom: 40rpx;
+}
+
+.page.dark {
+  --color-bg-page: #0F1117;
+  --color-bg-card: #1A1D29;
+  --color-text-primary: #E8ECF1;
+  --color-text-secondary: #9CA3AF;
+  --color-border: #2D3142;
+}
+
+.card-section {
+  padding: 24rpx 32rpx;
+}
+
+.alumni-card {
+  position: relative;
+  border-radius: 24rpx;
+  overflow: hidden;
+  height: 360rpx;
+  box-shadow: 0 8rpx 32rpx rgba(59, 130, 246, 0.3);
+}
+
+.card-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #3B82F6 0%, #8B5CF6 50%, #EC4899 100%);
+}
+
+.page.dark .card-bg {
+  background: linear-gradient(135deg, #1E40AF 0%, #6D28D9 50%, #BE185D 100%);
+}
+
+.card-content {
+  position: relative;
+  z-index: 1;
+  padding: 32rpx;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+}
+
+.card-logo {
+  font-size: 48rpx;
+  margin-right: 12rpx;
+}
+
+.card-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  flex: 1;
+}
+
+.card-type {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8rpx 16rpx;
+  border-radius: 20rpx;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.card-name {
+  font-size: 44rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  letter-spacing: 2rpx;
+}
+
+.card-number {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: 2rpx;
+  font-family: monospace;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.valid-date {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.valid-label {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.valid-value {
+  font-size: 26rpx;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+
+.card-chip {
+  font-size: 56rpx;
+  opacity: 0.8;
+}
+
+.card-tip {
+  display: flex;
+  align-items: center;
+  background: var(--color-bg-card);
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  margin-top: 20rpx;
+  box-shadow: var(--shadow-card);
+}
+
+.tip-icon {
+  font-size: 32rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.tip-text {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  flex: 1;
+  line-height: 1.5;
+}
+
+.category-section {
+  margin-bottom: 24rpx;
+}
+
+.category-scroll {
+  white-space: nowrap;
+  padding: 0 24rpx;
+}
+
+.category-list {
+  display: inline-flex;
+  gap: 16rpx;
+  padding: 8rpx 0;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 28rpx;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.category-item.active {
+  background: linear-gradient(135deg, var(--category-color, #3B82F6), var(--category-color, #8B5CF6));
+  transform: translateY(-2rpx);
+}
+
+.category-icon {
+  font-size: 36rpx;
+  margin-bottom: 6rpx;
+}
+
+.category-label {
+  font-size: 24rpx;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.category-item.active .category-label {
+  color: #FFFFFF;
+}
+
+.benefits-scroll {
+  height: calc(100vh - 620rpx);
+  padding: 0 32rpx;
+}
+
+.benefits-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.benefit-card {
+  background: var(--color-bg-card);
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s ease;
+}
+
+.benefit-card.expanded {
+  transform: translateY(-2rpx);
+}
+
+.benefit-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.benefit-icon {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44rpx;
+  flex-shrink: 0;
+  margin-right: 20rpx;
+}
+
+.benefit-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.benefit-title-row {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  margin-bottom: 8rpx;
+}
+
+.benefit-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.benefit-tag {
+  font-size: 20rpx;
+  padding: 4rpx 12rpx;
+  border-radius: 16rpx;
+  flex-shrink: 0;
+}
+
+.benefit-subtitle {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  display: block;
+}
+
+.benefit-arrow {
+  font-size: 40rpx;
+  color: var(--color-text-secondary);
+  margin-left: 12rpx;
+  transition: transform 0.3s ease;
+  flex-shrink: 0;
+}
+
+.benefit-arrow.up {
+  transform: rotate(180deg);
+}
+
+.benefit-desc {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16rpx;
+}
+
+.benefit-details {
+  padding-top: 20rpx;
+  border-top: 1rpx solid var(--color-border, #F0F0F0);
+}
+
+.details-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 16rpx;
+}
+
+.details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.detail-item {
+  display: flex;
+  align-items: flex-start;
+}
+
+.detail-icon {
+  font-size: 24rpx;
+  margin-right: 12rpx;
+  margin-top: 2rpx;
+  flex-shrink: 0;
+  font-weight: bold;
+}
+
+.detail-text {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  flex: 1;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--color-bg-page);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loading-spinner {
+  width: 64rpx;
+  height: 64rpx;
+  border: 4rpx solid var(--color-border);
+  border-top-color: var(--color-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 24rpx;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+}

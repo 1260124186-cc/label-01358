@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "预约咨询",
+  "usingComponents": {
+    "btn": "/components/btn/index",
+    "card": "/components/card/index"
+  }
+}

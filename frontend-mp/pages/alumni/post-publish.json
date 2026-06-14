@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "发布动态",
+  "navigationStyle": "default",
+  "usingComponents": {
+    "btn": "/components/btn/btn"
+  }
+}

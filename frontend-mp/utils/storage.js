@@ -101,7 +101,14 @@ const STORAGE_KEYS = {
   INTL_MY_BUDDY: 'intlMyBuddy',
   INTL_BUDDY_MATCH_REQUESTS: 'intlBuddyMatchRequests',
   INTL_CULTURAL_EVENTS: 'intlCulturalEvents',
-  INTL_EVENT_REGISTRATIONS: 'intlEventRegistrations'
+  INTL_EVENT_REGISTRATIONS: 'intlEventRegistrations',
+  ALUMNI_VERIFY_INFO: 'alumniVerifyInfo',
+  ALUMNI_POST_LIST: 'alumniPostList',
+  ALUMNI_MENTOR_LIST: 'alumniMentorList',
+  ALUMNI_MENTOR_APPOINTMENTS: 'alumniMentorAppointments',
+  ALUMNI_VISIT_APPOINTMENTS: 'alumniVisitAppointments',
+  ALUMNI_CARD_BENEFITS: 'alumniCardBenefits',
+  ALUMNI_PROFILE_LIST: 'alumniProfileList'
 };
 
 /**

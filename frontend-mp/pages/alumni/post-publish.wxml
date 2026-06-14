@@ -1,0 +1,90 @@
+<wxs src="../../utils/filters.wxs" module="f" />
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="form-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="form-section">
+      <view class="section-title">📝 发布动态</view>
+
+      <view class="form-item">
+        <text class="form-label">动态类型 <text class="required">*</text></text>
+        <view class="form-picker" bindtap="onTypePickerTap">
+          <text class="picker-value {{form.type ? '' : 'placeholder'}}">
+            {{form.type ? (f.getIconLabel(typeOptions, form.type) || '请选择') : '请选择动态类型'}}
+          </text>
+          <text class="picker-arrow">›</text>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">标题 <text class="required">*</text></text>
+        <input
+          class="form-input"
+          placeholder="请输入标题（5-50个字符）"
+          value="{{form.title}}"
+          data-field="title"
+          bindinput="onInputChange"
+          maxlength="50"
+        />
+      </view>
+
+      <view class="form-item">
+        <text class="form-label">内容 <text class="required">*</text></text>
+        <textarea
+          class="form-textarea large"
+          placeholder="请输入动态内容（10-2000个字符）"
+          value="{{form.content}}"
+          data-field="content"
+          bindinput="onInputChange"
+          maxlength="2000"
+          auto-height="{{true}}"
+        />
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">🖼 图片</view>
+      <view class="image-upload-grid">
+        <view
+          class="image-item"
+          wx:for="{{form.images}}"
+          wx:key="index"
+        >
+          <image class="uploaded-img" src="{{item}}" mode="aspectFill"/>
+          <view class="remove-img-btn" bindtap="onRemoveImage" data-index="{{index}}">×</view>
+        </view>
+        <view class="add-image-btn" bindtap="onChooseImage" wx:if="{{form.images.length < 9}}">
+          <text class="add-img-icon">+</text>
+          <text class="add-img-text">添加图片</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-footer">
+      <btn type="primary" size="large" block="{{true}}" bind:click="onSubmit" loading="{{submitting}}">
+        发布动态
+      </btn>
+    </view>
+  </scroll-view>
+
+  <view class="picker-mask {{showTypePicker ? 'show' : ''}}" bindtap="onClosePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择动态类型</text>
+        <view class="picker-close" bindtap="onClosePicker">✕</view>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{form.type === item.value ? 'active' : ''}}"
+          wx:for="{{typeOptions}}"
+          wx:key="value"
+          bindtap="onTypeSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+          <text class="option-check" wx:if="{{form.type === item.value}}">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

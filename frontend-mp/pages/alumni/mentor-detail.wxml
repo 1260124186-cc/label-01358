@@ -1,0 +1,120 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{mentor}}">
+  <view class="header-section">
+    <view class="header-bg"></view>
+    <view class="mentor-info">
+      <image class="mentor-avatar" src="{{mentor.avatar}}" mode="aspectFill"/>
+      <view class="mentor-badge" style="background: {{mentor.titleInfo.color}}">
+        {{mentor.titleInfo.label}}
+      </view>
+      <view class="mentor-name">{{mentor.name}}</view>
+      <view class="mentor-company">{{mentor.company}} · {{mentor.position}}</view>
+      <view class="mentor-rating">
+        <text>⭐</text>
+        <text class="rating-value">{{mentor.rating}}</text>
+        <text class="rating-count">({{mentor.reviewCount}}条评价)</text>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view class="content-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="info-section">
+      <view class="section-title">🎓 毕业信息</view>
+      <view class="info-grid">
+        <view class="info-item">
+          <text class="info-label">毕业年份</text>
+          <text class="info-value">{{mentor.graduationYear}}届</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">所在学院</text>
+          <text class="info-value">{{mentor.collegeInfo ? mentor.collegeInfo.label : mentor.college}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">工作年限</text>
+          <text class="info-value">{{mentor.yearsOfExperience}}年</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">💼 职业信息</view>
+      <view class="info-grid">
+        <view class="info-item">
+          <text class="info-label">所在公司</text>
+          <text class="info-value">{{mentor.company}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">职位</text>
+          <text class="info-value">{{mentor.position}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-label">所在城市</text>
+          <text class="info-value">{{mentor.city}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">🎯 专长领域</view>
+      <view class="tags-container">
+        <view class="tag-chip" wx:for="{{mentor.expertiseChips}}" wx:key="index">{{item}}</view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">📊 指导数据</view>
+      <view class="stats-grid">
+        <view class="stat-card">
+          <text class="stat-value">{{mentor.successCases}}</text>
+          <text class="stat-label">成功案例</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">{{mentor.availableSlots}}</text>
+          <text class="stat-label">可预约名额</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">¥{{mentor.appointmentFee}}</text>
+          <text class="stat-label">咨询费用</text>
+        </view>
+        <view class="stat-card">
+          <text class="stat-value">{{mentor.yearsOfExperience}}</text>
+          <text class="stat-label">从业年限</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">📝 个人简介</view>
+      <view class="bio-content">{{mentor.bio}}</view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">⏰ 可预约时间段</view>
+      <view class="time-slots">
+        <view class="time-slot-item" wx:for="{{availableTimeSlots}}" wx:key="value">
+          <text class="time-slot-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacing"></view>
+  </scroll-view>
+
+  <view class="bottom-bar">
+    <view class="fee-info">
+      <text class="fee-label">咨询费用</text>
+      <text class="fee-value">¥{{mentor.appointmentFee}}<text class="fee-unit">/次</text></text>
+    </view>
+    <btn type="primary" size="large" bind:click="onAppointmentTap">
+      <text class="btn-icon">📅</text>
+      立即预约
+    </btn>
+  </view>
+
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

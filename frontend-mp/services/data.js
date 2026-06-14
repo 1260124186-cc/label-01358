@@ -21,6 +21,10 @@ let innovationMentorsInitialized = false;
 let innovationRoadshowsInitialized = false;
 let innovationPoliciesInitialized = false;
 let innovationIncubatorsInitialized = false;
+let alumniPostsInitialized = false;
+let alumniMentorsInitialized = false;
+let alumniCardBenefitsInitialized = false;
+let alumniProfilesInitialized = false;
 
 function initVolunteerData() {
   if (volunteerInitialized) return;
@@ -5424,6 +5428,285 @@ function getWeeklyCarbonReport(userId) {
   };
 }
 
+// ==================== 校友圈 ====================
+
+function initAllAlumniData() {
+  initAlumniPosts();
+  initAlumniMentors();
+  initAlumniCardBenefits();
+  initAlumniProfiles();
+}
+
+function initAlumniPosts() {
+  if (alumniPostsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.ALUMNI_POST_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const posts = mockData.MOCK_ALUMNI_POSTS.map((item, index) => ({
+      id: 'alumni_post_' + index + '_' + now,
+      ...item,
+      likes: item.likes || 0,
+      comments: item.comments || [],
+      views: item.views || 0,
+      createTime: now - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.ALUMNI_POST_LIST, posts);
+  }
+  alumniPostsInitialized = true;
+}
+
+function getAlumniPostList(filters = {}) {
+  initAlumniPosts();
+  let list = storage.getList(STORAGE_KEYS.ALUMNI_POST_LIST);
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'content', 'authorName']);
+  }
+
+  if (filters.type) {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getAlumniPostDetail(id) {
+  initAlumniPosts();
+  const list = storage.getList(STORAGE_KEYS.ALUMNI_POST_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function publishAlumniPost(data) {
+  initAlumniPosts();
+  const now = Date.now();
+  const post = {
+    id: 'alumni_post_' + now,
+    ...data,
+    likes: 0,
+    comments: [],
+    views: 0,
+    createTime: now
+  };
+  storage.addToList(STORAGE_KEYS.ALUMNI_POST_LIST, post);
+  return post;
+}
+
+function likeAlumniPost(id) {
+  initAlumniPosts();
+  const list = storage.getList(STORAGE_KEYS.ALUMNI_POST_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    list[index].likes = (list[index].likes || 0) + 1;
+    storage.set(STORAGE_KEYS.ALUMNI_POST_LIST, list);
+    return list[index];
+  }
+  return null;
+}
+
+function initAlumniMentors() {
+  if (alumniMentorsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.ALUMNI_MENTOR_LIST);
+  if (!existing || existing.length === 0) {
+    const mentors = mockData.MOCK_ALUMNI_MENTORS.map((item, index) => ({
+      id: 'alumni_mentor_' + index,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.ALUMNI_MENTOR_LIST, mentors);
+  }
+  alumniMentorsInitialized = true;
+}
+
+function getAlumniMentorList(filters = {}) {
+  initAlumniMentors();
+  let list = storage.getList(STORAGE_KEYS.ALUMNI_MENTOR_LIST);
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'title', 'company', 'industry', 'college']);
+  }
+
+  if (filters.industry) {
+    list = list.filter(item => item.industry === filters.industry);
+  }
+
+  if (filters.title) {
+    list = list.filter(item => item.title === filters.title);
+  }
+
+  if (filters.college) {
+    list = list.filter(item => item.college === filters.college);
+  }
+
+  return list;
+}
+
+function getAlumniMentorDetail(id) {
+  initAlumniMentors();
+  const list = storage.getList(STORAGE_KEYS.ALUMNI_MENTOR_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function createAlumniMentorAppointment(mentorId, data) {
+  initAlumniMentors();
+  const appointments = storage.get(STORAGE_KEYS.ALUMNI_MENTOR_APPOINTMENTS) || [];
+  const now = Date.now();
+  const appointment = {
+    id: 'alumni_appt_' + now,
+    mentorId,
+    ...data,
+    status: 'pending',
+    createTime: now
+  };
+  appointments.push(appointment);
+  storage.set(STORAGE_KEYS.ALUMNI_MENTOR_APPOINTMENTS, appointments);
+  return appointment;
+}
+
+function getMyAlumniMentorAppointments(userId) {
+  const appointments = storage.get(STORAGE_KEYS.ALUMNI_MENTOR_APPOINTMENTS) || [];
+  const mentorMap = {};
+  const mentors = storage.getList(STORAGE_KEYS.ALUMNI_MENTOR_LIST);
+  mentors.forEach(m => { mentorMap[m.id] = m; });
+
+  return appointments
+    .filter(a => a.userId === userId)
+    .map(a => ({
+      ...a,
+      mentorInfo: mentorMap[a.mentorId] || null
+    }))
+    .sort((a, b) => b.createTime - a.createTime);
+}
+
+function updateAlumniAppointmentStatus(appointmentId, status) {
+  const appointments = storage.get(STORAGE_KEYS.ALUMNI_MENTOR_APPOINTMENTS) || [];
+  const index = appointments.findIndex(a => a.id === appointmentId);
+  if (index > -1) {
+    appointments[index].status = status;
+    storage.set(STORAGE_KEYS.ALUMNI_MENTOR_APPOINTMENTS, appointments);
+    return appointments[index];
+  }
+  return null;
+}
+
+function getAlumniVerifyInfo(userId) {
+  const verifyInfo = storage.get(STORAGE_KEYS.ALUMNI_VERIFY_INFO) || {};
+  return verifyInfo[userId] || null;
+}
+
+function submitAlumniVerify(userId, data) {
+  const verifyInfo = storage.get(STORAGE_KEYS.ALUMNI_VERIFY_INFO) || {};
+  const now = Date.now();
+  verifyInfo[userId] = {
+    ...data,
+    userId,
+    status: 'pending',
+    submitTime: now,
+    updateTime: now
+  };
+  storage.set(STORAGE_KEYS.ALUMNI_VERIFY_INFO, verifyInfo);
+  return verifyInfo[userId];
+}
+
+function submitAlumniVisitAppointment(data) {
+  const appointments = storage.get(STORAGE_KEYS.ALUMNI_VISIT_APPOINTMENTS) || [];
+  const now = Date.now();
+  const appointment = {
+    id: 'visit_appt_' + now,
+    ...data,
+    status: 'pending',
+    createTime: now
+  };
+  appointments.push(appointment);
+  storage.set(STORAGE_KEYS.ALUMNI_VISIT_APPOINTMENTS, appointments);
+  return appointment;
+}
+
+function getMyAlumniVisitAppointments(userId) {
+  const appointments = storage.get(STORAGE_KEYS.ALUMNI_VISIT_APPOINTMENTS) || [];
+  return appointments
+    .filter(a => a.userId === userId)
+    .sort((a, b) => b.createTime - a.createTime);
+}
+
+function initAlumniCardBenefits() {
+  if (alumniCardBenefitsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.ALUMNI_CARD_BENEFITS);
+  if (!existing || existing.length === 0) {
+    const benefits = mockData.MOCK_ALUMNI_CARD_BENEFITS.map((item, index) => ({
+      id: 'alumni_benefit_' + index,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.ALUMNI_CARD_BENEFITS, benefits);
+  }
+  alumniCardBenefitsInitialized = true;
+}
+
+function getAlumniCardBenefits() {
+  initAlumniCardBenefits();
+  return storage.getList(STORAGE_KEYS.ALUMNI_CARD_BENEFITS);
+}
+
+function initAlumniProfiles() {
+  if (alumniProfilesInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.ALUMNI_PROFILE_LIST);
+  if (!existing || existing.length === 0) {
+    const profiles = mockData.MOCK_ALUMNI_PROFILES.map((item, index) => ({
+      id: 'alumni_profile_' + index,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.ALUMNI_PROFILE_LIST, profiles);
+  }
+  alumniProfilesInitialized = true;
+}
+
+function getAlumniProfileList(filters = {}) {
+  initAlumniProfiles();
+  let list = storage.getList(STORAGE_KEYS.ALUMNI_PROFILE_LIST);
+
+  if (filters.industry) {
+    list = list.filter(item => item.industry === filters.industry);
+  }
+
+  if (filters.college) {
+    list = list.filter(item => item.college === filters.college);
+  }
+
+  if (filters.graduationYear) {
+    list = list.filter(item => item.graduationYear === filters.graduationYear);
+  }
+
+  return list;
+}
+
+function getAlumniIndustryDistribution() {
+  initAlumniProfiles();
+  const profiles = storage.getList(STORAGE_KEYS.ALUMNI_PROFILE_LIST);
+  const industryCount = {};
+
+  profiles.forEach(p => {
+    if (p.industry) {
+      industryCount[p.industry] = (industryCount[p.industry] || 0) + 1;
+    }
+  });
+
+  const industries = constants.ALUMNI_INDUSTRIES;
+  const distribution = industries.map(ind => ({
+    value: ind.value,
+    label: ind.label,
+    count: industryCount[ind.value] || 0,
+    color: ind.color
+  }));
+
+  const total = distribution.reduce((sum, d) => sum + d.count, 0);
+  distribution.forEach(d => {
+    d.percent = total > 0 ? Math.round((d.count / total) * 100) : 0;
+  });
+
+  return {
+    total,
+    distribution: distribution.sort((a, b) => b.count - a.count)
+  };
+}
+
 module.exports = {
   paginateList,
 
@@ -5761,5 +6044,23 @@ module.exports = {
   getLowCarbonRewardList,
   redeemReward,
   getLowCarbonRedeemOrders,
-  getWeeklyCarbonReport
+  getWeeklyCarbonReport,
+
+  initAllAlumniData,
+  getAlumniVerifyInfo,
+  submitAlumniVerify,
+  getAlumniPostList,
+  getAlumniPostDetail,
+  publishAlumniPost,
+  likeAlumniPost,
+  getAlumniMentorList,
+  getAlumniMentorDetail,
+  createAlumniMentorAppointment,
+  getMyAlumniMentorAppointments,
+  updateAlumniAppointmentStatus,
+  submitAlumniVisitAppointment,
+  getMyAlumniVisitAppointments,
+  getAlumniCardBenefits,
+  getAlumniIndustryDistribution,
+  getAlumniProfileList
 };

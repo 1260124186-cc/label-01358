@@ -1400,7 +1400,24 @@ module.exports = {
   INTL_BUDDY_LANGUAGES,
   INTL_EVENT_CATEGORIES,
   INTL_EVENT_STATUS,
-  INTL_EMERGENCY_CONTACTS
+  INTL_EMERGENCY_CONTACTS,
+  ALUMNI_MAIN_TABS,
+  ALUMNI_VERIFY_STATUS,
+  ALUMNI_VERIFY_STATUS_MAP,
+  ALUMNI_COLLEGES,
+  ALUMNI_GRADUATION_YEARS,
+  ALUMNI_INDUSTRIES,
+  ALUMNI_INDUSTRY_MAP,
+  ALUMNI_MENTOR_TITLES,
+  ALUMNI_POST_TYPES,
+  ALUMNI_POST_TYPE_MAP,
+  ALUMNI_VISIT_TYPES,
+  ALUMNI_VISIT_STATUS,
+  ALUMNI_VISIT_STATUS_MAP,
+  ALUMNI_APPOINTMENT_STATUS,
+  ALUMNI_APPOINTMENT_STATUS_MAP,
+  ALUMNI_APPOINTMENT_TIME_SLOTS,
+  ALUMNI_CARD_BENEFIT_CATEGORIES
 };
 
 const INTL_GUIDE_CATEGORIES = [
@@ -1550,4 +1567,145 @@ const INTL_EMERGENCY_CONTACTS = [
     color: '#F59E0B',
     priority: 3
   }
+];
+
+const ALUMNI_MAIN_TABS = [
+  { value: 'feed', label: '校友动态', icon: '📢' },
+  { value: 'mentors', label: '导师计划', icon: '👨‍🏫' },
+  { value: 'industry', label: '行业分布', icon: '📊' },
+  { value: 'services', label: '校友服务', icon: '🎫' }
+];
+
+const ALUMNI_VERIFY_STATUS = [
+  { value: 'pending', label: '审核中', color: '#F59E0B', icon: '⏳' },
+  { value: 'approved', label: '已认证', color: '#10B981', icon: '✅' },
+  { value: 'rejected', label: '未通过', color: '#EF4444', icon: '❌' },
+  { value: 'unverified', label: '未认证', color: '#6B7280', icon: '📝' }
+];
+
+const ALUMNI_VERIFY_STATUS_MAP = ALUMNI_VERIFY_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const ALUMNI_COLLEGES = [
+  { value: 'cs', label: '计算机学院' },
+  { value: 'ee', label: '电子信息学院' },
+  { value: 'me', label: '机械工程学院' },
+  { value: 'ce', label: '土木工程学院' },
+  { value: 'business', label: '经济管理学院' },
+  { value: 'law', label: '法学院' },
+  { value: 'medicine', label: '医学院' },
+  { value: 'art', label: '艺术设计学院' },
+  { value: 'foreign', label: '外国语学院' },
+  { value: 'science', label: '理学院' },
+  { value: 'humanities', label: '人文学院' },
+  { value: 'education', label: '教育学院' }
+];
+
+const ALUMNI_GRADUATION_YEARS = (() => {
+  const years = [];
+  const currentYear = new Date().getFullYear();
+  for (let i = 0; i < 40; i++) {
+    const year = currentYear - i;
+    years.push({ value: String(year), label: `${year}届` });
+  }
+  return years;
+})();
+
+const ALUMNI_INDUSTRIES = [
+  { value: 'internet', label: '互联网/IT', color: '#3B82F6', icon: '💻' },
+  { value: 'finance', label: '金融/投资', color: '#10B981', icon: '💰' },
+  { value: 'education', label: '教育/培训', color: '#F59E0B', icon: '📚' },
+  { value: 'medical', label: '医疗/健康', color: '#EF4444', icon: '🏥' },
+  { value: 'manufacturing', label: '制造业', color: '#8B5CF6', icon: '🏭' },
+  { value: 'consulting', label: '咨询/服务', color: '#EC4899', icon: '💼' },
+  { value: 'media', label: '传媒/广告', color: '#14B8A6', icon: '📺' },
+  { value: 'government', label: '政府/事业单位', color: '#6366F1', icon: '🏛️' },
+  { value: 'real_estate', label: '房地产/建筑', color: '#F97316', icon: '🏢' },
+  { value: 'retail', label: '零售/电商', color: '#22C55E', icon: '🛒' },
+  { value: 'other', label: '其他行业', color: '#6B7280', icon: '📌' }
+];
+
+const ALUMNI_INDUSTRY_MAP = ALUMNI_INDUSTRIES.reduce((acc, i) => {
+  acc[i.value] = { label: i.label, color: i.color, icon: i.icon };
+  return acc;
+}, {});
+
+const ALUMNI_MENTOR_TITLES = [
+  { value: 'ceo', label: '企业CEO/创始人', color: '#6366F1' },
+  { value: 'director', label: '总监/高管', color: '#3B82F6' },
+  { value: 'manager', label: '部门经理', color: '#10B981' },
+  { value: 'senior_engineer', label: '资深工程师', color: '#F59E0B' },
+  { value: 'professor', label: '教授/研究员', color: '#8B5CF6' },
+  { value: 'investor', label: '投资人', color: '#EC4899' },
+  { value: 'lawyer', label: '律师', color: '#14B8A6' },
+  { value: 'doctor', label: '医生', color: '#EF4444' }
+];
+
+const ALUMNI_POST_TYPES = [
+  { value: 'share', label: '经验分享', icon: '💡', color: '#3B82F6' },
+  { value: 'job', label: '招聘内推', icon: '💼', color: '#10B981' },
+  { value: 'activity', label: '校友活动', icon: '🎉', color: '#F59E0B' },
+  { value: 'help', label: '求助提问', icon: '❓', color: '#8B5CF6' },
+  { value: 'life', label: '生活日常', icon: '🌈', color: '#EC4899' }
+];
+
+const ALUMNI_POST_TYPE_MAP = ALUMNI_POST_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, icon: t.icon, color: t.color };
+  return acc;
+}, {});
+
+const ALUMNI_VISIT_TYPES = [
+  { value: 'personal', label: '个人返校', icon: '👤', color: '#3B82F6' },
+  { value: 'class_reunion', label: '班级聚会', icon: '👥', color: '#10B981' },
+  { value: 'business', label: '商务交流', icon: '🤝', color: '#F59E0B' },
+  { value: 'lecture', label: '讲座分享', icon: '🎤', color: '#8B5CF6' },
+  { value: 'other', label: '其他事由', icon: '📌', color: '#6B7280' }
+];
+
+const ALUMNI_VISIT_STATUS = [
+  { value: 'pending', label: '待审核', color: '#F59E0B', icon: '⏳' },
+  { value: 'approved', label: '已通过', color: '#10B981', icon: '✅' },
+  { value: 'rejected', label: '已拒绝', color: '#EF4444', icon: '❌' },
+  { value: 'completed', label: '已完成', color: '#6B7280', icon: '🎉' }
+];
+
+const ALUMNI_VISIT_STATUS_MAP = ALUMNI_VISIT_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const ALUMNI_APPOINTMENT_STATUS = [
+  { value: 'pending', label: '待确认', color: '#F59E0B', icon: '⏳' },
+  { value: 'confirmed', label: '已确认', color: '#10B981', icon: '✅' },
+  { value: 'rejected', label: '已拒绝', color: '#EF4444', icon: '❌' },
+  { value: 'completed', label: '已完成', color: '#6B7280', icon: '🎉' },
+  { value: 'cancelled', label: '已取消', color: '#9CA3AF', icon: '✕' }
+];
+
+const ALUMNI_APPOINTMENT_STATUS_MAP = ALUMNI_APPOINTMENT_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const ALUMNI_APPOINTMENT_TIME_SLOTS = [
+  { value: '09:00-10:00', label: '09:00 - 10:00' },
+  { value: '10:00-11:00', label: '10:00 - 11:00' },
+  { value: '14:00-15:00', label: '14:00 - 15:00' },
+  { value: '15:00-16:00', label: '15:00 - 16:00' },
+  { value: '16:00-17:00', label: '16:00 - 17:00' },
+  { value: '19:00-20:00', label: '19:00 - 20:00' },
+  { value: '20:00-21:00', label: '20:00 - 21:00' }
+];
+
+const ALUMNI_CARD_BENEFIT_CATEGORIES = [
+  { value: 'education', label: '学习教育', icon: '📚', color: '#3B82F6' },
+  { value: 'library', label: '图书资源', icon: '📖', color: '#10B981' },
+  { value: 'sports', label: '体育健身', icon: '🏃', color: '#F59E0B' },
+  { value: 'dining', label: '餐饮服务', icon: '🍜', color: '#EF4444' },
+  { value: 'medical', label: '医疗服务', icon: '🏥', color: '#8B5CF6' },
+  { value: 'culture', label: '文化活动', icon: '🎭', color: '#EC4899' },
+  { value: 'travel', label: '出行优惠', icon: '✈️', color: '#14B8A6' },
+  { value: 'shopping', label: '购物优惠', icon: '🛍️', color: '#6366F1' }
 ];
