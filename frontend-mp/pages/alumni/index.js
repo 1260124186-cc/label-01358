@@ -61,11 +61,27 @@ mixPage({
     if (this.data.postType !== 'all') {
       filters.type = this.data.postType;
     }
-    const posts = dataService.getAlumniPostList(filters).map(item => ({
-      ...item,
-      typeInfo: constants.ALUMNI_POST_TYPE_MAP[item.type] || { label: '其他', icon: '📌', color: '#6B7280' },
-      formattedTime: util.formatDate(item.createTime)
-    }));
+    const DEFAULT_TYPE_INFO = { label: '其他', icon: '📌', color: '#6B7280' };
+    const rawPosts = dataService.getAlumniPostList(filters) || [];
+    const posts = rawPosts.map(item => {
+      const safeItem = item || {};
+      const typeInfo = constants.ALUMNI_POST_TYPE_MAP[safeItem.type] || DEFAULT_TYPE_INFO;
+      return {
+        id: safeItem.id || '',
+        userAvatar: safeItem.userAvatar || '',
+        userName: safeItem.userName || '',
+        graduationYear: safeItem.graduationYear || '',
+        company: safeItem.company || '',
+        title: safeItem.title || '',
+        content: safeItem.content || '',
+        images: Array.isArray(safeItem.images) ? safeItem.images : [],
+        views: safeItem.views || 0,
+        likes: safeItem.likes || 0,
+        comments: safeItem.comments || 0,
+        typeInfo,
+        formattedTime: util.formatDate(safeItem.createTime) || ''
+      };
+    });
     this.setData({
       posts,
       filteredPosts: posts
@@ -78,12 +94,27 @@ mixPage({
       industry: this.data.selectedIndustry,
       title: this.data.selectedTitle
     };
-    const mentors = dataService.getAlumniMentorList(filters).map(item => ({
-      ...item,
-      titleInfo: constants.ALUMNI_MENTOR_TITLES.find(t => t.value === item.title) || { label: '其他', color: '#6B7280' },
-      industryInfo: constants.ALUMNI_INDUSTRY_MAP[item.industry] || { label: '其他', color: '#6B7280', icon: '📌' },
-      expertiseText: (item.expertise || []).join('、')
-    }));
+    const DEFAULT_TITLE_INFO = { label: '其他', color: '#6B7280' };
+    const DEFAULT_INDUSTRY_INFO = { label: '其他', color: '#6B7280', icon: '📌' };
+    const rawMentors = dataService.getAlumniMentorList(filters) || [];
+    const mentors = rawMentors.map(item => {
+      const safeItem = item || {};
+      const titleInfo = constants.ALUMNI_MENTOR_TITLES.find(t => t && t.value === safeItem.title) || DEFAULT_TITLE_INFO;
+      const industryInfo = constants.ALUMNI_INDUSTRY_MAP[safeItem.industry] || DEFAULT_INDUSTRY_INFO;
+      return {
+        id: safeItem.id || '',
+        avatar: safeItem.avatar || '',
+        name: safeItem.name || '',
+        company: safeItem.company || '',
+        position: safeItem.position || '',
+        rating: safeItem.rating || 0,
+        successCases: safeItem.successCases || 0,
+        availableSlots: safeItem.availableSlots || 0,
+        titleInfo,
+        industryInfo,
+        expertiseText: (Array.isArray(safeItem.expertise) ? safeItem.expertise : []).join('、')
+      };
+    });
     this.setData({
       mentors,
       filteredMentors: mentors
@@ -103,19 +134,20 @@ mixPage({
   },
 
   onTabChange(e) {
-    const { value } = e.currentTarget.dataset;
-    this.setData({ activeTab: value });
+    const value = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.value;
+    this.setData({ activeTab: value || 'feed' });
   },
 
   onPostTypeChange(e) {
-    const { value } = e.currentTarget.dataset;
-    this.setData({ postType: value }, () => {
+    const value = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.value;
+    this.setData({ postType: value || 'all' }, () => {
       this.loadPosts();
     });
   },
 
   onSearchInput(e) {
-    this.setData({ searchKeyword: e.detail.value }, () => {
+    const val = (e && e.detail && e.detail.value) || '';
+    this.setData({ searchKeyword: val }, () => {
       this.applyFilters();
     });
   },
@@ -136,9 +168,9 @@ mixPage({
   },
 
   onIndustrySelect(e) {
-    const { value } = e.currentTarget.dataset;
+    const value = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.value;
     this.setData({
-      selectedIndustry: value,
+      selectedIndustry: value || '',
       showIndustryFilter: false
     }, () => {
       this.loadMentors();
@@ -159,9 +191,9 @@ mixPage({
   },
 
   onTitleSelect(e) {
-    const { value } = e.currentTarget.dataset;
+    const value = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.value;
     this.setData({
-      selectedTitle: value,
+      selectedTitle: value || '',
       showTitleFilter: false
     }, () => {
       this.loadMentors();
@@ -185,10 +217,12 @@ mixPage({
   },
 
   onPostTap(e) {
-    const { id } = e.currentTarget.dataset;
-    wx.navigateTo({
-      url: `/pages/alumni/post-detail?id=${id}`
-    });
+    const id = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id;
+    if (id) {
+      wx.navigateTo({
+        url: `/pages/alumni/post-detail?id=${id}`
+      });
+    }
   },
 
   onPublishTap() {
@@ -198,10 +232,12 @@ mixPage({
   },
 
   onMentorTap(e) {
-    const { id } = e.currentTarget.dataset;
-    wx.navigateTo({
-      url: `/pages/alumni/mentor-detail?id=${id}`
-    });
+    const id = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.id;
+    if (id) {
+      wx.navigateTo({
+        url: `/pages/alumni/mentor-detail?id=${id}`
+      });
+    }
   },
 
   onMentorsTap() {
@@ -223,10 +259,12 @@ mixPage({
   },
 
   onIndustryItemTap(e) {
-    const { value } = e.currentTarget.dataset;
-    wx.navigateTo({
-      url: `/pages/alumni/industry-distribution?industry=${value}`
-    });
+    const value = e && e.currentTarget && e.currentTarget.dataset && e.currentTarget.dataset.value;
+    if (value !== undefined && value !== null) {
+      wx.navigateTo({
+        url: `/pages/alumni/industry-distribution?industry=${value}`
+      });
+    }
   },
 
   onVerifyTap() {

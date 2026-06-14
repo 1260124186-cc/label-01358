@@ -92,8 +92,8 @@
             <image class="post-avatar" src="{{item.userAvatar}}" mode="aspectFill"/>
             <view class="post-user-info">
               <view class="post-user-row">
-                <text class="post-user-name">{{item.userName}}</text>
-                <view class="post-type-tag" style="background: {{item.typeInfo.color}}15; color: {{item.typeInfo.color}}">
+                <text class="post-user-name">{{item.userName || ''}}</text>
+                <view wx:if="{{item.typeInfo}}" class="post-type-tag" style="background: {{item.typeInfo.color}}15; color: {{item.typeInfo.color}}">
                   {{item.typeInfo.icon}} {{item.typeInfo.label}}
                 </view>
               </view>
@@ -153,24 +153,24 @@
           data-id="{{item.id}}"
         >
           <view class="mentor-avatar">
-            <image class="avatar-img" src="{{item.avatar}}" mode="aspectFill"/>
-            <view class="mentor-badge" style="background: {{item.titleInfo.color}}">
+            <image class="avatar-img" src="{{item.avatar || ''}}" mode="aspectFill"/>
+            <view wx:if="{{item.titleInfo}}" class="mentor-badge" style="background: {{item.titleInfo.color}}">
               {{item.titleInfo.label}}
             </view>
           </view>
           <view class="mentor-info">
             <view class="mentor-name-row">
-              <text class="mentor-name">{{item.name}}</text>
+              <text class="mentor-name">{{item.name || ''}}</text>
               <view class="mentor-rating">
                 <text class="star">⭐</text>
-                <text class="rating-value">{{item.rating}}</text>
+                <text class="rating-value">{{item.rating || 0}}</text>
               </view>
             </view>
-            <text class="mentor-dept">{{item.company}} · {{item.position}}</text>
-            <text class="mentor-research">擅长领域：{{item.expertiseText}}</text>
+            <text class="mentor-dept">{{item.company || ''}} · {{item.position || ''}}</text>
+            <text class="mentor-research">擅长领域：{{item.expertiseText || ''}}</text>
             <view class="mentor-stats">
-              <text class="stat-item">成功案例 {{item.successCases}} 个</text>
-              <text class="stat-item">可约 {{item.availableSlots}} 个</text>
+              <text class="stat-item">成功案例 {{item.successCases || 0}} 个</text>
+              <text class="stat-item">可约 {{item.availableSlots || 0}} 个</text>
             </view>
           </view>
           <text class="arrow">›</text>
@@ -222,7 +222,7 @@
           <text class="service-title">校友认证</text>
           <text class="service-desc">完成认证，解锁更多校友权益</text>
         </view>
-        <view class="service-status" wx:if="{{verifyInfo}}">
+        <view class="service-status" wx:if="{{verifyInfo && verifyInfo.statusInfo}}">
           <text class="status-text" style="color: {{verifyInfo.statusInfo.color}};">{{verifyInfo.statusInfo.icon}} {{verifyInfo.statusInfo.label}}</text>
         </view>
         <text class="arrow">›</text>

@@ -36,6 +36,13 @@ function formatTime(date, format = 'YYYY-MM-DD HH:mm') {
 }
 
 /**
+ * 格式化日期
+ */
+function formatDate(date) {
+  return formatTime(date, 'MM-DD');
+}
+
+/**
  * 相对时间
  */
 function relativeTime(date) {
@@ -278,6 +285,7 @@ function maskPhone(phone) {
 module.exports = {
   generateId,
   formatTime,
+  formatDate,
   relativeTime,
   showSuccess,
   showError,
