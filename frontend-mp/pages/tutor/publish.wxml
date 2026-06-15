@@ -1,0 +1,188 @@
+<page-meta page-style="{{darkMode ? '--dark-mode: 1;' : ''}}" />
+
+<view class="publish-page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="form-scroll" scroll-y>
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📚</text>
+        <text class="section-title">擅长科目</text>
+        <text class="section-required">*多选</text>
+      </view>
+      <view class="multi-select-group">
+        <view
+          class="multi-select-item {{formData.subjects.indexOf(item.value) > -1 ? 'active' : ''}}"
+          wx:for="{{subjects}}"
+          wx:key="value"
+          bindtap="onSubjectToggle"
+          data-value="{{item.value}}"
+        >
+          <text class="select-item-icon">{{item.icon}}</text>
+          <text class="select-item-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">🎓</text>
+        <text class="section-title">辅导年级</text>
+        <text class="section-required">*多选</text>
+      </view>
+      <view class="multi-select-group">
+        <view
+          class="multi-select-item {{formData.grades.indexOf(item.value) > -1 ? 'active' : ''}}"
+          wx:for="{{grades}}"
+          wx:key="value"
+          bindtap="onGradeToggle"
+          data-value="{{item.value}}"
+        >
+          <text class="select-item-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">💴</text>
+        <text class="section-title">时薪设置</text>
+        <text class="section-required">*必填</text>
+      </view>
+      <view class="form-item">
+        <view class="hourly-input-wrap">
+          <text class="hourly-prefix">¥</text>
+          <input
+            class="hourly-input"
+            type="digit"
+            placeholder="请输入时薪金额"
+            placeholder-class="input-placeholder"
+            value="{{formData.hourlyRate}}"
+            bindinput="onHourlyRateInput"
+            maxlength="5"
+          />
+          <text class="hourly-suffix">/小时</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">🔄</text>
+        <text class="section-title">辅导方式</text>
+        <text class="section-required">*单选</text>
+      </view>
+      <view class="radio-group">
+        <view
+          class="radio-item {{formData.teachingMethod === item.value ? 'active' : ''}}"
+          wx:for="{{teachingMethods}}"
+          wx:key="value"
+          bindtap="onMethodSelect"
+          data-value="{{item.value}}"
+        >
+          <view class="radio-icon-wrap">
+            <text class="radio-icon">{{item.icon}}</text>
+          </view>
+          <text class="radio-label">{{item.label}}</text>
+          <view class="radio-check" wx:if="{{formData.teachingMethod === item.value}}">✓</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📅</text>
+        <text class="section-title">可辅导时间</text>
+        <text class="section-required">*多选</text>
+      </view>
+      <view class="time-select-wrap">
+        <view class="time-select-label">可辅导日期</view>
+        <view class="multi-select-group weekday-group">
+          <view
+            class="weekday-item {{formData.availableDays.indexOf(item.value) > -1 ? 'active' : ''}}"
+            wx:for="{{weekdays}}"
+            wx:key="value"
+            bindtap="onWeekdayToggle"
+            data-value="{{item.value}}"
+          >
+            <text class="weekday-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="time-select-wrap">
+        <view class="time-select-label">可辅导时段</view>
+        <view class="multi-select-group">
+          <view
+            class="multi-select-item {{formData.availableTimeSlots.indexOf(item.value) > -1 ? 'active' : ''}}"
+            wx:for="{{timeSlots}}"
+            wx:key="value"
+            bindtap="onTimeSlotToggle"
+            data-value="{{item.value}}"
+          >
+            <text class="select-item-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📝</text>
+        <text class="section-title">个人简介</text>
+        <text class="section-required">*10-500字</text>
+      </view>
+      <view class="form-item">
+        <textarea
+          class="form-textarea"
+          placeholder="请详细介绍自己的优势、教学经验、教学风格等"
+          placeholder-class="input-placeholder"
+          value="{{formData.intro}}"
+          bindinput="onIntroInput"
+          maxlength="500"
+          auto-height
+        />
+        <view class="char-count">{{formData.intro.length || 0}}/500</view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">🏆</text>
+        <text class="section-title">成绩证明</text>
+        <text class="section-hint">最多{{proofImageLimit}}张</text>
+      </view>
+      <view class="image-upload-group">
+        <view
+          class="image-item"
+          wx:for="{{formData.gradeProofImages}}"
+          wx:key="*this"
+          bindtap="onPreviewProofImage"
+          data-index="{{index}}"
+        >
+          <image class="uploaded-image" src="{{item}}" mode="aspectFill" />
+          <view class="image-remove" catchtap="onRemoveProofImage" data-index="{{index}}">
+            <text class="remove-icon">×</text>
+          </view>
+        </view>
+        <view
+          class="image-add-btn"
+          wx:if="{{formData.gradeProofImages.length < proofImageLimit}}"
+          bindtap="onChooseProofImages"
+        >
+          <text class="add-icon">+</text>
+          <text class="add-text">上传图片</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="submit-bar">
+    <button
+      class="submit-btn {{submitting ? 'disabled' : ''}}"
+      bindtap="onSubmit"
+      disabled="{{submitting}}"
+    >
+      {{submitting ? '发布中...' : '发布导师信息'}}
+    </button>
+  </view>
+</view>

@@ -188,7 +188,18 @@
     "pages/voting/create/index",
     "pages/voting/detail/index",
     "pages/voting/result/index",
-    "pages/admin/voting-list/index"
+    "pages/admin/voting-list/index",
+    "pages/tutor/index",
+    "pages/tutor/publish",
+    "pages/tutor/detail",
+    "pages/tutor-demand/publish",
+    "pages/tutor-demand/detail",
+    "pages/tutor-match/index",
+    "pages/tutor-appointment/index",
+    "pages/tutor-appointment/create",
+    "pages/tutor-appointment/detail",
+    "pages/tutor-review/index",
+    "pages/tutor-credit/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

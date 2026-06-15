@@ -8863,3 +8863,722 @@ function getWorkStudySalaryList(filters = {}) {
 function getApprovedApplications(userId = 'test_user') {
   return getWorkStudyApplicationList({ userId, status: 'approved' });
 }
+
+let tutorDataInitialized = false;
+
+function initTutorData() {
+  if (tutorDataInitialized) return;
+  const existingTutors = storage.get(STORAGE_KEYS.TUTOR_LIST);
+  if (!existingTutors || existingTutors.length === 0) {
+    const tutors = mockData.MOCK_TUTOR_LIST.map((item, index) => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.TUTOR_LIST, tutors);
+
+    const demands = mockData.MOCK_TUTOR_DEMAND_LIST.map(item => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.TUTOR_DEMAND_LIST, demands);
+
+    const appointments = mockData.MOCK_TUTOR_APPOINTMENT_LIST.map(item => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.TUTOR_APPOINTMENT_LIST, appointments);
+
+    const reviews = mockData.MOCK_TUTOR_REVIEW_LIST.map(item => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.TUTOR_REVIEW_LIST, reviews);
+
+    const creditBinds = mockData.MOCK_TUTOR_CREDIT_BIND_LIST.map(item => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.TUTOR_CREDIT_BIND_LIST, creditBinds);
+  }
+  tutorDataInitialized = true;
+}
+
+function getTutorList(filters = {}) {
+  initTutorData();
+  let list = storage.getList(STORAGE_KEYS.TUTOR_LIST);
+
+  if (filters.subject) {
+    list = list.filter(item => (item.subjects || []).includes(filters.subject));
+  }
+  if (filters.grade) {
+    list = list.filter(item => (item.grades || []).includes(filters.grade));
+  }
+  if (filters.teachingMethod && filters.teachingMethod !== 'both') {
+    list = list.filter(item =>
+      item.teachingMethod === 'both' || item.teachingMethod === filters.teachingMethod
+    );
+  }
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+  if (filters.minHourlyRate !== undefined) {
+    list = list.filter(item => item.hourlyRate >= filters.minHourlyRate);
+  }
+  if (filters.maxHourlyRate !== undefined) {
+    list = list.filter(item => item.hourlyRate <= filters.maxHourlyRate);
+  }
+  if (filters.minCreditScore !== undefined) {
+    list = list.filter(item => (item.creditScore || 0) >= filters.minCreditScore);
+  }
+  if (filters.minRating !== undefined) {
+    list = list.filter(item => (item.rating || 0) >= filters.minRating);
+  }
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['tutorName', 'intro', 'college', 'major']);
+  }
+
+  list = sortByField(list, filters.sort || 'latest', constants.TUTOR_SORT_OPTIONS);
+  return list;
+}
+
+function getTutorDetail(id) {
+  initTutorData();
+  const list = storage.getList(STORAGE_KEYS.TUTOR_LIST);
+  const tutor = list.find(item => item.id === id) || null;
+  if (tutor) {
+    tutor.views = (tutor.views || 0) + 1;
+    storage.updateInList(STORAGE_KEYS.TUTOR_LIST, id, { views: tutor.views });
+  }
+  return tutor;
+}
+
+function publishTutorProfile(data) {
+  initTutorData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const item = {
+    id: util.generateId(),
+    tutorId: userInfo.id || 'anonymous',
+    tutorName: userInfo.nickName || '匿名用户',
+    tutorAvatar: userInfo.avatarUrl || '',
+    college: userInfo.college || '',
+    grade: userInfo.grade || '',
+    subjects: [],
+    grades: [],
+    hourlyRate: 0,
+    teachingMethod: 'both',
+    availableDays: [],
+    availableTimeSlots: [],
+    intro: '',
+    gradeProofImages: [],
+    tags: [],
+    status: 'active',
+    rating: 0,
+    reviewCount: 0,
+    sessionCount: 0,
+    creditScore: 0,
+    views: 0,
+    ...data,
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.TUTOR_LIST, item);
+  return success ? item : null;
+}
+
+function updateTutorProfile(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.TUTOR_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+}
+
+function updateTutorStatus(id, status) {
+  return storage.updateInList(STORAGE_KEYS.TUTOR_LIST, id, {
+    status,
+    updateTime: Date.now()
+  });
+}
+
+function getMyTutorProfile(userId) {
+  initTutorData();
+  const list = storage.getList(STORAGE_KEYS.TUTOR_LIST);
+  return list.find(item => item.tutorId === userId) || null;
+}
+
+function getTutorDemandList(filters = {}) {
+  initTutorData();
+  let list = storage.getList(STORAGE_KEYS.TUTOR_DEMAND_LIST);
+
+  if (filters.subject) {
+    list = list.filter(item => item.subject === filters.subject);
+  }
+  if (filters.grade) {
+    list = list.filter(item => item.grade === filters.grade);
+  }
+  if (filters.teachingMethod && filters.teachingMethod !== 'both') {
+    list = list.filter(item =>
+      item.teachingMethod === 'both' || item.teachingMethod === filters.teachingMethod
+    );
+  }
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+  if (filters.maxBudget !== undefined) {
+    list = list.filter(item => (item.maxBudget || item.budget) <= filters.maxBudget);
+  }
+  if (filters.urgent) {
+    list = list.filter(item => item.urgent === true);
+  }
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['studentName', 'description', 'location', 'targetGrade']);
+  }
+
+  return list.sort((a, b) => {
+    if (a.urgent !== b.urgent) return a.urgent ? -1 : 1;
+    return b.createTime - a.createTime;
+  });
+}
+
+function getTutorDemandDetail(id) {
+  initTutorData();
+  const list = storage.getList(STORAGE_KEYS.TUTOR_DEMAND_LIST);
+  const demand = list.find(item => item.id === id) || null;
+  if (demand) {
+    demand.views = (demand.views || 0) + 1;
+    storage.updateInList(STORAGE_KEYS.TUTOR_DEMAND_LIST, id, { views: demand.views });
+  }
+  return demand;
+}
+
+function publishTutorDemand(data) {
+  initTutorData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const item = {
+    id: util.generateId(),
+    publisherId: userInfo.id || 'anonymous',
+    studentName: userInfo.nickName || '匿名用户',
+    studentAvatar: userInfo.avatarUrl || '',
+    subject: '',
+    grade: '',
+    targetGrade: '',
+    budget: 0,
+    maxBudget: 0,
+    teachingMethod: 'both',
+    preferredDays: [],
+    preferredTimeSlots: [],
+    duration: 2,
+    description: '',
+    location: '',
+    urgent: false,
+    status: 'open',
+    views: 0,
+    ...data,
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.TUTOR_DEMAND_LIST, item);
+  return success ? item : null;
+}
+
+function updateTutorDemand(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.TUTOR_DEMAND_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+}
+
+function closeTutorDemand(id) {
+  return updateTutorDemand(id, { status: 'closed' });
+}
+
+function getMyTutorDemands(userId) {
+  initTutorData();
+  const list = storage.getList(STORAGE_KEYS.TUTOR_DEMAND_LIST);
+  return list.filter(item => item.publisherId === userId).sort((a, b) => b.createTime - a.createTime);
+}
+
+function matchTutorsForDemand(demandId) {
+  const demand = getTutorDemandDetail(demandId);
+  if (!demand) return [];
+
+  const tutors = getTutorList();
+
+  return tutors.map(tutor => {
+    let matchScore = 0;
+    const matchReasons = [];
+    const unmetConditions = [];
+
+    if ((tutor.subjects || []).includes(demand.subject)) {
+      matchScore += 30;
+      matchReasons.push('擅长科目匹配');
+    } else {
+      unmetConditions.push('科目不匹配');
+    }
+
+    if ((tutor.grades || []).includes(demand.grade)) {
+      matchScore += 20;
+      matchReasons.push('辅导年级匹配');
+    } else {
+      unmetConditions.push('辅导年级不匹配');
+    }
+
+    if (tutor.teachingMethod === 'both' || tutor.teachingMethod === demand.teachingMethod || demand.teachingMethod === 'both') {
+      matchScore += 15;
+      matchReasons.push('辅导方式匹配');
+    } else {
+      unmetConditions.push('辅导方式不匹配');
+    }
+
+    const tutorRate = tutor.hourlyRate || 0;
+    const maxBudget = demand.maxBudget || demand.budget || 0;
+    if (tutorRate <= maxBudget) {
+      matchScore += 15;
+      matchReasons.push('时薪在预算内');
+      if (tutorRate <= (demand.budget || 0)) {
+        matchScore += 5;
+        matchReasons.push('低于预期预算');
+      }
+    } else {
+      unmetConditions.push('时薪超出预算');
+    }
+
+    const hasCommonDay = (tutor.availableDays || []).some(d =>
+      (demand.preferredDays || []).includes(d)
+    );
+    const hasCommonTime = (tutor.availableTimeSlots || []).some(t =>
+      (demand.preferredTimeSlots || []).includes(t)
+    );
+    if (hasCommonDay && hasCommonTime) {
+      matchScore += 15;
+      matchReasons.push('辅导时间匹配');
+    } else if (hasCommonDay || hasCommonTime) {
+      matchScore += 8;
+      matchReasons.push('部分时间匹配');
+    }
+
+    const rating = tutor.rating || 0;
+    if (rating >= 4.5) {
+      matchScore += 8;
+      matchReasons.push('高评分导师');
+    } else if (rating >= 4.0) {
+      matchScore += 5;
+    }
+
+    const creditScore = tutor.creditScore || 0;
+    if (creditScore >= 80) {
+      matchScore += 5;
+      matchReasons.push('高信用分');
+    }
+
+    if (tutor.status !== 'active') {
+      matchScore = Math.max(0, matchScore - 20);
+      unmetConditions.push('导师当前不在接单状态');
+    }
+
+    let matchLevel = 'low';
+    if (matchScore >= 65) {
+      matchLevel = 'high';
+    } else if (matchScore >= 40) {
+      matchLevel = 'medium';
+    }
+
+    return {
+      ...tutor,
+      matchScore,
+      matchLevel,
+      matchReasons,
+      unmetConditions
+    };
+  })
+    .filter(t => t.matchScore > 0)
+    .sort((a, b) => b.matchScore - a.matchScore);
+}
+
+function matchDemandsForTutor(tutorId) {
+  const tutor = getTutorDetail(tutorId);
+  if (!tutor) return [];
+
+  const demands = getTutorDemandList({ status: 'open' });
+
+  return demands.map(demand => {
+    let matchScore = 0;
+    const matchReasons = [];
+    const unmetConditions = [];
+
+    if ((tutor.subjects || []).includes(demand.subject)) {
+      matchScore += 30;
+      matchReasons.push('擅长科目匹配');
+    } else {
+      unmetConditions.push('科目不匹配');
+    }
+
+    if ((tutor.grades || []).includes(demand.grade)) {
+      matchScore += 20;
+      matchReasons.push('辅导年级匹配');
+    } else {
+      unmetConditions.push('辅导年级不匹配');
+    }
+
+    if (tutor.teachingMethod === 'both' || tutor.teachingMethod === demand.teachingMethod || demand.teachingMethod === 'both') {
+      matchScore += 15;
+      matchReasons.push('辅导方式匹配');
+    } else {
+      unmetConditions.push('辅导方式不匹配');
+    }
+
+    const tutorRate = tutor.hourlyRate || 0;
+    const maxBudget = demand.maxBudget || demand.budget || 0;
+    if (tutorRate <= maxBudget) {
+      matchScore += 15;
+      matchReasons.push('时薪在预算内');
+    } else {
+      unmetConditions.push('时薪超出预算');
+    }
+
+    const hasCommonDay = (tutor.availableDays || []).some(d =>
+      (demand.preferredDays || []).includes(d)
+    );
+    const hasCommonTime = (tutor.availableTimeSlots || []).some(t =>
+      (demand.preferredTimeSlots || []).includes(t)
+    );
+    if (hasCommonDay && hasCommonTime) {
+      matchScore += 15;
+      matchReasons.push('辅导时间匹配');
+    }
+
+    if (demand.urgent) {
+      matchScore += 5;
+      matchReasons.push('紧急需求');
+    }
+
+    let matchLevel = 'low';
+    if (matchScore >= 65) {
+      matchLevel = 'high';
+    } else if (matchScore >= 40) {
+      matchLevel = 'medium';
+    }
+
+    return {
+      ...demand,
+      matchScore,
+      matchLevel,
+      matchReasons,
+      unmetConditions
+    };
+  })
+    .filter(d => d.matchScore > 0)
+    .sort((a, b) => b.matchScore - a.matchScore);
+}
+
+function getTutorAppointmentList(filters = {}) {
+  initTutorData();
+  let list = storage.getList(STORAGE_KEYS.TUTOR_APPOINTMENT_LIST);
+
+  if (filters.tutorId) {
+    list = list.filter(item => item.tutorId === filters.tutorId);
+  }
+  if (filters.studentId) {
+    list = list.filter(item => item.studentId === filters.studentId);
+  }
+  if (filters.userId) {
+    list = list.filter(item => item.tutorId === filters.userId || item.studentId === filters.userId);
+  }
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+  if (filters.statuses && Array.isArray(filters.statuses)) {
+    list = list.filter(item => filters.statuses.includes(item.status));
+  }
+  if (filters.demandId) {
+    list = list.filter(item => item.demandId === filters.demandId);
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getTutorAppointmentDetail(id) {
+  initTutorData();
+  const list = storage.getList(STORAGE_KEYS.TUTOR_APPOINTMENT_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function createTutorAppointment(data) {
+  initTutorData();
+
+  const appointment = {
+    id: util.generateId(),
+    isTrial: true,
+    status: 'pending',
+    tutorReviewed: false,
+    studentReviewed: false,
+    ...data,
+    createTime: Date.now()
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.TUTOR_APPOINTMENT_LIST, appointment);
+  if (success && appointment.demandId) {
+    updateTutorDemand(appointment.demandId, { status: 'matched', matchedTutorId: appointment.tutorId });
+  }
+
+  return success ? appointment : null;
+}
+
+function updateTutorAppointment(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.TUTOR_APPOINTMENT_LIST, id, updates);
+}
+
+function confirmTutorAppointment(id) {
+  return updateTutorAppointment(id, { status: 'confirmed' });
+}
+
+function startTutorSession(id) {
+  return updateTutorAppointment(id, { status: 'trial' });
+}
+
+function completeTutorAppointment(id) {
+  const success = updateTutorAppointment(id, { status: 'completed' });
+  if (success) {
+    const appointment = getTutorAppointmentDetail(id);
+    if (appointment) {
+      const tutor = getTutorDetail(appointment.tutorId);
+      if (tutor) {
+        storage.updateInList(STORAGE_KEYS.TUTOR_LIST, appointment.tutorId, {
+          sessionCount: (tutor.sessionCount || 0) + 1
+        });
+      }
+    }
+  }
+  return success;
+}
+
+function cancelTutorAppointment(id, reason = '') {
+  return updateTutorAppointment(id, { status: 'cancelled', cancelReason: reason });
+}
+
+function getTutorReviews(filters = {}) {
+  initTutorData();
+  let list = storage.getList(STORAGE_KEYS.TUTOR_REVIEW_LIST);
+
+  if (filters.tutorId) {
+    list = list.filter(item => item.tutorId === filters.tutorId && item.targetRole === 'tutor');
+  }
+  if (filters.targetRole) {
+    list = list.filter(item => item.targetRole === filters.targetRole);
+  }
+  if (filters.appointmentId) {
+    list = list.filter(item => item.appointmentId === filters.appointmentId);
+  }
+  if (filters.reviewerId) {
+    list = list.filter(item => item.reviewerId === filters.reviewerId);
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function addTutorReview(data) {
+  initTutorData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const review = {
+    id: util.generateId(),
+    reviewerId: userInfo.id || 'anonymous',
+    reviewerName: userInfo.nickName || '匿名用户',
+    reviewerAvatar: userInfo.avatarUrl || '',
+    tags: [],
+    rating: 5,
+    content: '',
+    ...data,
+    createTime: Date.now()
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.TUTOR_REVIEW_LIST, review);
+
+  if (success) {
+    const appointment = getTutorAppointmentDetail(data.appointmentId);
+    if (appointment) {
+      const updates = {};
+      if (data.reviewerRole === 'tutor') {
+        updates.tutorReviewed = true;
+      } else {
+        updates.studentReviewed = true;
+      }
+      updateTutorAppointment(data.appointmentId, updates);
+    }
+
+    if (data.tutorId && data.targetRole === 'tutor') {
+      const reviews = getTutorReviews({ tutorId: data.tutorId });
+      const totalRating = reviews.reduce((sum, r) => sum + (r.rating || 0), 0);
+      const avgRating = Math.round(totalRating / reviews.length * 10) / 10;
+      storage.updateInList(STORAGE_KEYS.TUTOR_LIST, data.tutorId, {
+        rating: avgRating,
+        reviewCount: reviews.length
+      });
+    }
+  }
+
+  return success ? review : null;
+}
+
+function hasReviewedAppointment(appointmentId, role) {
+  const reviews = getTutorReviews({ appointmentId });
+  return reviews.some(r => r.reviewerRole === role);
+}
+
+function getTutorCreditBinds(filters = {}) {
+  initTutorData();
+  let list = storage.getList(STORAGE_KEYS.TUTOR_CREDIT_BIND_LIST);
+
+  if (filters.userId) {
+    list = list.filter(item => item.userId === filters.userId);
+  }
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+  if (filters.type) {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  return list.sort((a, b) => b.submitTime - a.submitTime);
+}
+
+function submitTutorCreditBind(data) {
+  initTutorData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const bind = {
+    id: util.generateId(),
+    userId: userInfo.id || 'anonymous',
+    status: 'pending',
+    submitTime: Date.now(),
+    reviewTime: null,
+    ...data
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.TUTOR_CREDIT_BIND_LIST, bind);
+  if (success) {
+    recalculateUserCreditScore(bind.userId);
+  }
+  return success ? bind : null;
+}
+
+function approveTutorCreditBind(id) {
+  const success = storage.updateInList(STORAGE_KEYS.TUTOR_CREDIT_BIND_LIST, id, {
+    status: 'approved',
+    reviewTime: Date.now()
+  });
+  if (success) {
+    const bind = getTutorCreditBinds({}).find(b => b.id === id);
+    if (bind) {
+      recalculateUserCreditScore(bind.userId);
+    }
+  }
+  return success;
+}
+
+function rejectTutorCreditBind(id, reason = '') {
+  return storage.updateInList(STORAGE_KEYS.TUTOR_CREDIT_BIND_LIST, id, {
+    status: 'rejected',
+    rejectReason: reason,
+    reviewTime: Date.now()
+  });
+}
+
+function recalculateUserCreditScore(userId) {
+  const binds = getTutorCreditBinds({ userId, status: 'approved' });
+  let score = 0;
+  const typeScoreMap = {};
+  constants.TUTOR_CREDIT_TYPES.forEach(t => {
+    typeScoreMap[t.value] = t.score;
+  });
+  binds.forEach(b => {
+    score += typeScoreMap[b.type] || 0;
+  });
+
+  const reviews = getTutorReviews({ tutorId: userId });
+  if (reviews.length >= 10) {
+    score += 10;
+  } else if (reviews.length >= 5) {
+    score += 5;
+  }
+
+  const appointments = getTutorAppointmentList({ tutorId: userId, statuses: ['completed'] });
+  if (appointments.length >= 50) {
+    score += 15;
+  } else if (appointments.length >= 20) {
+    score += 10;
+  } else if (appointments.length >= 10) {
+    score += 5;
+  }
+
+  score = Math.min(100, score);
+
+  const list = storage.getList(STORAGE_KEYS.TUTOR_LIST);
+  const index = list.findIndex(item => item.tutorId === userId);
+  if (index > -1) {
+    list[index].creditScore = score;
+    storage.set(STORAGE_KEYS.TUTOR_LIST, list);
+  }
+
+  return score;
+}
+
+function getUserCreditScore(userId) {
+  const binds = getTutorCreditBinds({ userId, status: 'approved' });
+  let score = 0;
+  const typeScoreMap = {};
+  constants.TUTOR_CREDIT_TYPES.forEach(t => {
+    typeScoreMap[t.value] = t.score;
+  });
+  binds.forEach(b => {
+    score += typeScoreMap[b.type] || 0;
+  });
+  return Math.min(100, score);
+}
+
+Object.assign(module.exports, {
+  initTutorData,
+  getTutorList,
+  getTutorDetail,
+  publishTutorProfile,
+  updateTutorProfile,
+  updateTutorStatus,
+  getMyTutorProfile,
+
+  getTutorDemandList,
+  getTutorDemandDetail,
+  publishTutorDemand,
+  updateTutorDemand,
+  closeTutorDemand,
+  getMyTutorDemands,
+
+  matchTutorsForDemand,
+  matchDemandsForTutor,
+
+  getTutorAppointmentList,
+  getTutorAppointmentDetail,
+  createTutorAppointment,
+  updateTutorAppointment,
+  confirmTutorAppointment,
+  startTutorSession,
+  completeTutorAppointment,
+  cancelTutorAppointment,
+
+  getTutorReviews,
+  addTutorReview,
+  hasReviewedAppointment,
+
+  getTutorCreditBinds,
+  submitTutorCreditBind,
+  approveTutorCreditBind,
+  rejectTutorCreditBind,
+  recalculateUserCreditScore,
+  getUserCreditScore
+});

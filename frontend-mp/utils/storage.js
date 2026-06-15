@@ -151,7 +151,14 @@ const STORAGE_KEYS = {
 
   VENUE_LIST: 'venueList',
   VENUE_APPOINTMENT_LIST: 'venueAppointmentList',
-  VENUE_VIOLATION_RECORDS: 'venueViolationRecords'
+  VENUE_VIOLATION_RECORDS: 'venueViolationRecords',
+
+  TUTOR_LIST: 'tutorList',
+  TUTOR_DEMAND_LIST: 'tutorDemandList',
+  TUTOR_APPOINTMENT_LIST: 'tutorAppointmentList',
+  TUTOR_REVIEW_LIST: 'tutorReviewList',
+  TUTOR_CREDIT_BIND_LIST: 'tutorCreditBindList',
+  TUTOR_MATCH_HISTORY: 'tutorMatchHistory'
 };
 
 /**

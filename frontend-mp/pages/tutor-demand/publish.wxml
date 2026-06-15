@@ -1,0 +1,221 @@
+<page-meta page-style="{{darkMode ? '--dark-mode: 1;' : ''}}" />
+
+<view class="publish-page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="form-scroll" scroll-y>
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📚</text>
+        <text class="section-title">基本信息</text>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">辅导科目</view>
+        <picker
+          mode="selector"
+          range="{{subjects}}"
+          range-key="label"
+          value="{{subjectIndex}}"
+          bindchange="onSubjectChange"
+        >
+          <view class="picker-view">
+            <text wx:if="{{subjectIndex >= 0}}" class="picker-value">
+              {{subjects[subjectIndex].icon}} {{subjects[subjectIndex].label}}
+            </text>
+            <text wx:else class="picker-placeholder">请选择科目</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">辅导年级</view>
+        <picker
+          mode="selector"
+          range="{{grades}}"
+          range-key="label"
+          value="{{gradeIndex}}"
+          bindchange="onGradeChange"
+        >
+          <view class="picker-view">
+            <text wx:if="{{gradeIndex >= 0}}" class="picker-value">
+              {{grades[gradeIndex].label}}
+            </text>
+            <text wx:else class="picker-placeholder">请选择年级</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">💰</text>
+        <text class="section-title">预算与方式</text>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">时薪预算（元/小时）</view>
+        <picker
+          mode="selector"
+          range="{{hourlyRanges}}"
+          range-key="label"
+          value="{{budgetRangeIndex}}"
+          bindchange="onBudgetRangeChange"
+        >
+          <view class="picker-view">
+            <text class="picker-value">
+              {{hourlyRanges[budgetRangeIndex].label}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+        <view wx:if="{{showCustomBudget}}" class="custom-budget-row">
+          <input
+            class="form-input custom-budget-input"
+            type="digit"
+            placeholder="最低"
+            placeholder-class="input-placeholder"
+            value="{{formData.customBudgetMin}}"
+            data-field="customBudgetMin"
+            bindinput="onInputChange"
+          />
+          <text class="budget-separator">~</text>
+          <input
+            class="form-input custom-budget-input"
+            type="digit"
+            placeholder="最高"
+            placeholder-class="input-placeholder"
+            value="{{formData.customBudgetMax}}"
+            data-field="customBudgetMax"
+            bindinput="onInputChange"
+          />
+          <text class="budget-unit">元/小时</text>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">辅导方式</view>
+        <picker
+          mode="selector"
+          range="{{teachingMethods}}"
+          range-key="label"
+          value="{{teachingMethodIndex}}"
+          bindchange="onTeachingMethodChange"
+        >
+          <view class="picker-view">
+            <text wx:if="{{teachingMethodIndex >= 0}}" class="picker-value">
+              {{teachingMethods[teachingMethodIndex].icon}} {{teachingMethods[teachingMethodIndex].label}}
+            </text>
+            <text wx:else class="picker-placeholder">请选择辅导方式</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📅</text>
+        <text class="section-title">时间要求</text>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">周几</view>
+        <view class="tag-group">
+          <view
+            wx:for="{{weekdays}}"
+            wx:key="value"
+            class="tag-item {{formData.weekdays.indexOf(item.value) > -1 ? 'active' : ''}}"
+            data-value="{{item.value}}"
+            bindtap="onWeekdayToggle"
+          >
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">时间段</view>
+        <view class="tag-group">
+          <view
+            wx:for="{{timeSlots}}"
+            wx:key="value"
+            class="tag-item {{formData.timeSlots.indexOf(item.value) > -1 ? 'active' : ''}}"
+            data-value="{{item.value}}"
+            bindtap="onTimeSlotToggle"
+          >
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📝</text>
+        <text class="section-title">详细信息</text>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">详细描述</view>
+        <textarea
+          class="form-textarea"
+          placeholder="请详细描述辅导需求，如学习目标、薄弱环节、特殊要求等"
+          placeholder-class="input-placeholder"
+          value="{{formData.description}}"
+          data-field="description"
+          bindinput="onInputChange"
+          maxlength="500"
+          auto-height
+        />
+        <view class="char-count">{{formData.description.length || 0}}/500</view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📞</text>
+        <text class="section-title">联系方式</text>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">联系人</view>
+        <input
+          class="form-input"
+          placeholder="请输入联系人姓名"
+          placeholder-class="input-placeholder"
+          value="{{formData.contactName}}"
+          data-field="contactName"
+          bindinput="onInputChange"
+          maxlength="20"
+        />
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">联系电话</view>
+        <input
+          class="form-input"
+          type="number"
+          placeholder="请输入联系电话"
+          placeholder-class="input-placeholder"
+          value="{{formData.contactPhone}}"
+          data-field="contactPhone"
+          bindinput="onInputChange"
+          maxlength="11"
+        />
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="submit-bar">
+    <button
+      class="submit-btn {{submitting ? 'disabled' : ''}}"
+      bindtap="onSubmit"
+      disabled="{{submitting}}"
+    >
+      {{submitting ? '发布中...' : '发布需求'}}
+    </button>
+  </view>
+</view>

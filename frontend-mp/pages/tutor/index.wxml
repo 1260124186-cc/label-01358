@@ -1,0 +1,194 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="main-tab-section">
+    <view class="main-tab-bar">
+      <view
+        class="main-tab-item {{currentMainTab === item.value ? 'active' : ''}}"
+        wx:for="{{mainTabs}}"
+        wx:key="value"
+        bindtap="onMainTabTap"
+        data-value="{{item.value}}"
+      >
+        <text class="main-tab-icon">{{item.icon}}</text>
+        <text class="main-tab-text">{{item.label}}</text>
+        <view class="main-tab-underline" wx:if="{{currentMainTab === item.value}}"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="filter-section">
+    <view class="filter-label">科目</view>
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-chips">
+        <view
+          class="filter-chip {{currentSubject === item.value ? 'active' : ''}}"
+          wx:for="{{subjects}}"
+          wx:key="value"
+          bindtap="onSubjectTap"
+          data-value="{{item.value}}"
+        >
+          <text class="filter-chip-icon">{{item.icon}}</text>
+          <text class="filter-chip-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="filter-section">
+    <view class="filter-label">年级</view>
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-chips">
+        <view
+          class="filter-chip {{currentGrade === item.value ? 'active' : ''}}"
+          wx:for="{{grades}}"
+          wx:key="value"
+          bindtap="onGradeTap"
+          data-value="{{item.value}}"
+        >
+          <text class="filter-chip-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="filter-section filter-last">
+    <view class="filter-label">方式</view>
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-chips">
+        <view
+          class="filter-chip {{currentTeachingMethod === item.value ? 'active' : ''}}"
+          wx:for="{{teachingMethods}}"
+          wx:key="value"
+          bindtap="onMethodTap"
+          data-value="{{item.value}}"
+        >
+          <text class="filter-chip-icon">{{item.icon}}</text>
+          <text class="filter-chip-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <block wx:if="{{currentMainTab === 'tutor'}}">
+      <view class="list-container" wx:if="{{tutorList.length > 0}}">
+        <view
+          class="tutor-card"
+          wx:for="{{tutorList}}"
+          wx:key="id"
+          hover-class="card-hover"
+          bindtap="onNavToTutorDetail"
+          data-id="{{item.id}}"
+        >
+          <view class="card-left">
+            <image class="tutor-avatar" src="{{item.tutorAvatar}}" mode="aspectFill" />
+          </view>
+          <view class="card-right">
+            <view class="card-header">
+              <text class="tutor-name">{{item.tutorName}}</text>
+              <view class="status-tag" style="color: {{item.statusColor}}; background-color: {{item.statusColor}}15;">
+                {{item.statusLabel}}
+              </view>
+            </view>
+            <view class="tutor-subjects">{{item.subjectsText}}</view>
+            <view class="tutor-meta-row">
+              <view class="meta-item">
+                <text class="meta-icon">💴</text>
+                <text class="meta-text meta-price">{{item.hourlyRateText}}</text>
+              </view>
+              <view class="meta-item">
+                <text class="meta-icon">⭐</text>
+                <text class="meta-text">{{item.ratingText}}</text>
+              </view>
+              <view class="meta-item">
+                <text class="meta-icon">🛡️</text>
+                <text class="meta-text">{{item.creditScoreText}}</text>
+              </view>
+            </view>
+            <view class="tutor-college" wx:if="{{item.college}}">{{item.college}} · {{item.major}}</view>
+          </view>
+        </view>
+      </view>
+      <empty wx:if="{{tutorList.length === 0}}" text="暂无导师信息" />
+    </block>
+
+    <block wx:else>
+      <view class="list-container" wx:if="{{demandList.length > 0}}">
+        <view
+          class="demand-card"
+          wx:for="{{demandList}}"
+          wx:key="id"
+          hover-class="card-hover"
+          bindtap="onNavToDemandDetail"
+          data-id="{{item.id}}"
+        >
+          <view class="demand-card-top">
+            <view class="subject-tag" style="background-color: #FF6B6B20; color: #FF6B6B">
+              <text class="subject-tag-icon">{{item.subjectIcon}}</text>
+              <text class="subject-tag-text">{{item.subjectLabel}}</text>
+            </view>
+            <view class="status-tag" style="color: {{item.statusColor}}; background-color: {{item.statusColor}}15;">
+              {{item.statusLabel}}
+            </view>
+            <view class="urgent-tag" wx:if="{{item.urgent}}">急</view>
+          </view>
+          <view class="demand-title" wx:if="{{item.targetGradeText}}">{{item.targetGradeText}}{{item.subjectLabel}}辅导</view>
+          <view class="demand-info-row">
+            <view class="demand-info-item">
+              <text class="demand-info-icon">🎓</text>
+              <text class="demand-info-text">{{item.gradeLabel}}</text>
+            </view>
+            <view class="demand-info-item">
+              <text class="demand-info-icon">💴</text>
+              <text class="demand-info-text demand-budget">{{item.budgetText}}</text>
+            </view>
+          </view>
+          <view class="demand-info-row">
+            <view class="demand-info-item">
+              <text class="demand-info-icon">📅</text>
+              <text class="demand-info-text">{{item.timeText}}</text>
+            </view>
+            <view class="demand-info-item">
+              <text class="demand-info-icon">{{item.methodIcon}}</text>
+              <text class="demand-info-text">{{item.methodLabel}}</text>
+            </view>
+          </view>
+          <view class="demand-desc">{{item.description}}</view>
+        </view>
+      </view>
+      <empty wx:if="{{demandList.length === 0}}" text="暂无学生需求" />
+    </block>
+  </scroll-view>
+
+  <view class="bottom-bar">
+    <view class="bottom-bar-inner">
+      <view class="bottom-btn" bindtap="onMyAppointments">
+        <text class="bottom-btn-icon">📅</text>
+        <text class="bottom-btn-text">我的预约</text>
+      </view>
+      <view class="bottom-divider"></view>
+      <view class="bottom-btn" bindtap="onCreditBind">
+        <text class="bottom-btn-icon">🛡️</text>
+        <text class="bottom-btn-text">信用绑定</text>
+      </view>
+      <view class="bottom-divider"></view>
+      <view class="bottom-btn" bindtap="onPublishDemand">
+        <text class="bottom-btn-icon">📝</text>
+        <text class="bottom-btn-text">发布需求</text>
+      </view>
+      <view class="bottom-divider"></view>
+      <view class="bottom-btn bottom-btn-primary" bindtap="onPublishTutor">
+        <text class="bottom-btn-icon">👨‍🏫</text>
+        <text class="bottom-btn-text">发布导师</text>
+      </view>
+    </view>
+  </view>
+
+</view>

@@ -208,6 +208,13 @@ Page({
         icon: '/assets/icons/nav-broadcast.png',
         bgColor: 'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)',
         url: '/pages/voting/list/index'
+      },
+      {
+        id: 'tutor',
+        name: '家教辅导',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #84fab0 0%, #8fd3f4 100%)',
+        url: '/pages/tutor/index'
       }
     ],
     weatherData: null,

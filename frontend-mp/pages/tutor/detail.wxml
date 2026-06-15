@@ -1,0 +1,181 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+
+<view class="tutor-detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
+  <scroll-view class="detail-scroll" scroll-y>
+    <view class="header-section">
+      <view class="tutor-info-row">
+        <image class="tutor-avatar" src="{{detail.tutorAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="tutor-basic-info">
+          <view class="tutor-name-row">
+            <text class="tutor-name">{{detail.tutorName}}</text>
+            <view wx:if="{{statusInfo}}" class="status-tag" style="background: {{statusInfo.color}}15; color: {{statusInfo.color}}">
+              {{statusInfo.label}}
+            </view>
+          </view>
+          <view class="tutor-rating-row">
+            <view class="rating-score">
+              <text class="rating-icon">⭐</text>
+              <text class="rating-value">{{averageRating}}</text>
+              <text class="rating-count">({{reviewCount}})</text>
+            </view>
+            <view class="credit-score">
+              <text class="credit-icon">💎</text>
+              <text class="credit-value">信用分 {{detail.creditScore || 0}}</text>
+            </view>
+          </view>
+          <view wx:if="{{detail.college || detail.major}}" class="tutor-school">
+            <text class="school-text">{{detail.college}}{{detail.major ? ' · ' + detail.major : ''}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{creditTags.length > 0}}" class="credit-tags-row">
+        <view wx:for="{{creditTags}}" wx:key="type" class="credit-tag">
+          <text class="credit-tag-icon">{{item.icon}}</text>
+          <text class="credit-tag-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card info-card">
+      <view class="section-title">辅导信息</view>
+      <view class="info-row">
+        <text class="info-icon">📚</text>
+        <view class="info-content">
+          <text class="info-label">擅长科目</text>
+          <text class="info-value highlight">
+            {{subjectInfo.icon || ''}} {{subjectInfo.label || detail.subject}}
+          </text>
+        </view>
+      </view>
+      <view class="info-row" wx:if="{{gradeLabels.length > 0}}">
+        <text class="info-icon">🎓</text>
+        <view class="info-content">
+          <text class="info-label">辅导年级</text>
+          <view class="multi-tags">
+            <text wx:for="{{gradeLabels}}" wx:for-item="grade" wx:key="*this" class="inline-tag">{{grade}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-icon">💰</text>
+        <view class="info-content">
+          <text class="info-label">时薪</text>
+          <text class="info-value price">
+            ¥{{detail.hourlyRate || detail.budget || 0}}
+            <text wx:if="{{detail.maxBudget && detail.maxBudget > detail.hourlyRate}}"> - ¥{{detail.maxBudget}}</text>
+            <text class="price-unit">/小时</text>
+          </text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-icon">{{teachingMethodInfo.icon || '🔄'}}</text>
+        <view class="info-content">
+          <text class="info-label">辅导方式</text>
+          <text class="info-value">{{teachingMethodInfo.label || detail.teachingMethod}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card time-card">
+      <view class="section-title">可辅导时间</view>
+      <view wx:if="{{weekdayLabels.length > 0}}" class="info-row">
+        <text class="info-icon">📅</text>
+        <view class="info-content">
+          <text class="info-label">周几</text>
+          <view class="multi-tags">
+            <text wx:for="{{weekdayLabels}}" wx:for-item="day" wx:key="*this" class="inline-tag">{{day}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{timeSlotLabels.length > 0}}" class="info-row">
+        <text class="info-icon">⏰</text>
+        <view class="info-content">
+          <text class="info-label">时间段</text>
+          <view class="multi-tags">
+            <text wx:for="{{timeSlotLabels}}" wx:for-item="slot" wx:key="*this" class="inline-tag">{{slot}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{detail.intro || detail.description}}" class="card intro-card">
+      <view class="section-title">个人简介</view>
+      <text class="description-text">{{detail.intro || detail.description}}</text>
+    </view>
+
+    <view wx:if="{{detail.proofImages && detail.proofImages.length > 0}}" class="card proof-card">
+      <view class="section-title">成绩证明</view>
+      <view class="proof-images">
+        <image
+          wx:for="{{detail.proofImages}}"
+          wx:key="*this"
+          class="proof-image"
+          src="{{item}}"
+          mode="aspectFill"
+          data-url="{{item}}"
+          bindtap="onPreviewImage"
+        />
+      </view>
+    </view>
+
+    <view wx:if="{{reviews.length > 0}}" class="card reviews-card">
+      <view class="section-title">
+        评价 ({{reviewCount}})
+      </view>
+      <view class="reviews-list">
+        <view wx:for="{{reviews}}" wx:key="id" class="review-item">
+          <view class="review-header">
+            <image class="reviewer-avatar" src="{{item.reviewerAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+            <view class="reviewer-info">
+              <text class="reviewer-name">{{item.reviewerName}}</text>
+              <text class="review-time">{{item.createTimeText}}</text>
+            </view>
+            <view class="review-rating">
+              <text class="stars">{{'★'.repeat(item.rating)}}{{'☆'.repeat(5 - item.rating)}}</text>
+            </view>
+          </view>
+          <view wx:if="{{item.tags && item.tags.length > 0}}" class="review-tags">
+            <text wx:for="{{item.tags}}" wx:for-item="tag" wx:key="*this" class="review-tag">{{tag}}</text>
+          </view>
+          <text wx:if="{{item.content}}" class="review-content">{{item.content}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{detail.sessionCount || detail.views}}" class="card stats-card">
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-value">{{detail.sessionCount || 0}}</text>
+          <text class="stat-label">授课次数</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{detail.views || 0}}</text>
+          <text class="stat-label">浏览量</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{createTimeText}}</text>
+          <text class="stat-label">入驻时间</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="action-bar">
+    <view class="action-btn outline" bindtap="onViewMatchedDemands">
+      查看匹配需求
+    </view>
+    <view class="action-btn primary" bindtap="onBookAppointment">
+      预约试课
+    </view>
+  </view>
+</view>
+
+<view wx:else class="empty-state">
+  <text class="empty-icon">👨‍🏫</text>
+  <text class="empty-text">导师不存在或已下线</text>
+</view>

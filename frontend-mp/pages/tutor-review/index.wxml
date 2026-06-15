@@ -1,0 +1,103 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="preview-card" wx:if="{{appointment}}">
+    <view class="preview-header">
+      <view class="preview-avatar">
+        <image wx:if="{{targetUser.avatar}}" class="avatar-img" src="{{targetUser.avatar}}" mode="aspectFill"/>
+        <text wx:else class="avatar-default">👤</text>
+      </view>
+      <view class="preview-info">
+        <text class="preview-name">{{targetUser.name}}</text>
+        <text class="preview-role">{{targetRole === 'tutor' ? '家教老师' : '学生'}}</text>
+      </view>
+    </view>
+    <view class="preview-divider"></view>
+    <view class="preview-detail">
+      <view class="detail-row">
+        <text class="detail-icon">📚</text>
+        <text class="detail-label">课程科目</text>
+        <text class="detail-value">{{appointment.subject || '未填写'}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-icon">🕐</text>
+        <text class="detail-label">预约时间</text>
+        <text class="detail-value">{{appointment.appointmentTimeText || (appointment.startTime ? '' : '未安排')}}</text>
+      </view>
+      <view class="detail-row" wx:if="{{appointment.location}}">
+        <text class="detail-icon">📍</text>
+        <text class="detail-label">上课地点</text>
+        <text class="detail-value">{{appointment.location}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <text class="section-title">综合评分</text>
+    <view class="rating-container">
+      <view
+        class="star-item {{item <= rating ? 'active' : ''}}"
+        wx:for="{{[1,2,3,4,5]}}"
+        wx:key="*this"
+        bindtap="onRatingTap"
+        data-value="{{item}}"
+      >
+        <text class="star-icon">{{item <= rating ? '★' : '☆'}}</text>
+      </view>
+      <text class="rating-text">{{rating}} 分</text>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{positiveTags.length > 0}}">
+    <text class="section-title">正面评价</text>
+    <view class="tags-wrap">
+      <view
+        class="tag-item positive {{selectedPositiveTags.indexOf(item.value) > -1 ? 'selected' : ''}}"
+        wx:for="{{positiveTags}}"
+        wx:key="value"
+        bindtap="onPositiveTagTap"
+        data-value="{{item.value}}"
+      >
+        <text class="tag-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{negativeTags.length > 0}}">
+    <text class="section-title">待改进</text>
+    <view class="tags-wrap">
+      <view
+        class="tag-item negative {{selectedNegativeTags.indexOf(item.value) > -1 ? 'selected' : ''}}"
+        wx:for="{{negativeTags}}"
+        wx:key="value"
+        bindtap="onNegativeTagTap"
+        data-value="{{item.value}}"
+      >
+        <text class="tag-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <text class="section-title">文字评价</text>
+    <view class="textarea-wrap">
+      <textarea
+        class="review-textarea"
+        placeholder="说说本次课程的感受吧，帮助更多同学/老师了解TA..."
+        placeholder-class="textarea-placeholder"
+        value="{{content}}"
+        bindinput="onContentInput"
+        maxlength="500"
+        auto-height
+      />
+      <text class="textarea-counter">{{content.length}}/500</text>
+    </view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="onSubmit">
+      <text class="submit-text">{{submitting ? '提交中...' : '提交评价'}}</text>
+    </view>
+  </view>
+
+</view>

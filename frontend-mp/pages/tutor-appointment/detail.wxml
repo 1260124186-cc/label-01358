@@ -1,0 +1,166 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
+  <scroll-view class="detail-scroll" scroll-y>
+
+    <view class="status-banner" style="background: linear-gradient(135deg, {{statusInfo.color || '#6B7280'}} 0%, {{statusInfo.color || '#6B7280'}}CC 100%);">
+      <text class="status-icon">{{statusInfo.icon || ''}}</text>
+      <text class="status-text">{{statusInfo.label || detail.status}}</text>
+    </view>
+
+    <view class="user-card card">
+      <view class="user-section">
+        <view class="user-item" bindtap="onNavToTutor" data-id="{{detail.tutorId}}">
+          <view class="user-avatar-wrapper">
+            <image class="user-avatar" src="{{detail.tutorAvatar}}" mode="aspectFill" wx:if="{{detail.tutorAvatar}}"/>
+            <view class="user-avatar-placeholder tutor" wx:else>{{detail.tutorName[0]}}</view>
+          </view>
+          <view class="user-info">
+            <view class="user-role-tag tutor-tag">导师</view>
+            <text class="user-name">{{detail.tutorName}}</text>
+          </view>
+        </view>
+        <view class="user-divider">
+          <text class="divider-icon">🤝</text>
+        </view>
+        <view class="user-item">
+          <view class="user-avatar-wrapper">
+            <image class="user-avatar" src="{{detail.studentAvatar}}" mode="aspectFill" wx:if="{{detail.studentAvatar}}"/>
+            <view class="user-avatar-placeholder student" wx:else>{{detail.studentName[0]}}</view>
+          </view>
+          <view class="user-info">
+            <view class="user-role-tag student-tag">学生</view>
+            <text class="user-name">{{detail.studentName}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-card card">
+      <view class="card-section">
+        <text class="section-title">预约信息</text>
+
+        <view class="info-row" wx:if="{{subjectLabel}}">
+          <text class="info-icon">📚</text>
+          <view class="info-content">
+            <text class="info-label">辅导科目</text>
+            <text class="info-value">{{subjectLabel}}</text>
+          </view>
+        </view>
+
+        <view class="info-row">
+          <text class="info-icon">📅</text>
+          <view class="info-content">
+            <text class="info-label">预约时间</text>
+            <text class="info-value">{{appointmentTimeText || '暂无'}}</text>
+          </view>
+        </view>
+
+        <view class="info-row">
+          <text class="info-icon">🎯</text>
+          <view class="info-content">
+            <text class="info-label">辅导方式</text>
+            <text class="info-value">{{methodText || '未选择'}}</text>
+          </view>
+        </view>
+
+        <view class="info-row" wx:if="{{detail.location}}">
+          <text class="info-icon">📍</text>
+          <view class="info-content">
+            <text class="info-label">辅导地点</text>
+            <text class="info-value">{{detail.location}}</text>
+          </view>
+        </view>
+
+        <view class="info-row" wx:if="{{detail.remark}}">
+          <text class="info-icon">📝</text>
+          <view class="info-content">
+            <text class="info-label">备注信息</text>
+            <text class="info-value remark">{{detail.remark}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="meta-card card">
+      <view class="card-section">
+        <text class="section-title">其他信息</text>
+
+        <view class="info-row">
+          <text class="info-icon">⏰</text>
+          <view class="info-content">
+            <text class="info-label">创建时间</text>
+            <text class="info-value">{{createTimeText}}</text>
+          </view>
+        </view>
+
+        <view class="info-row" wx:if="{{detail.demandId}}">
+          <text class="info-icon">📋</text>
+          <view class="info-content">
+            <text class="info-label">关联需求</text>
+            <text class="info-value link" bindtap="onNavToDemand">查看需求详情 ›</text>
+          </view>
+        </view>
+
+        <view class="info-row" wx:if="{{detail.cancelReason}}">
+          <text class="info-icon">❌</text>
+          <view class="info-content">
+            <text class="info-label">取消原因</text>
+            <text class="info-value">{{detail.cancelReason}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="review-entry card" wx:if="{{detail.status === 'completed'}}">
+      <view class="review-content">
+        <text class="review-icon">⭐</text>
+        <view class="review-info">
+          <text class="review-title">{{isTutorSide ? '评价学生' : '评价导师'}}</text>
+          <text class="review-desc">{{isTutorSide ? '您已完成此次试课，快去评价一下吧～' : '感谢完成试课，期待您的真实评价'}}</text>
+        </view>
+        <text class="review-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="action-bar" wx:if="{{detail.status !== 'cancelled'}}">
+    <block wx:if="{{detail.status === 'pending'}}">
+      <view class="action-btn outline" bindtap="onCancel">
+        取消预约
+      </view>
+      <view class="action-btn primary" bindtap="onConfirm" wx:if="{{isTutorSide}}">
+        确认预约
+      </view>
+    </block>
+
+    <block wx:elif="{{detail.status === 'confirmed'}}">
+      <view class="action-btn primary full" bindtap="onStartSession">
+        开始试课
+      </view>
+    </block>
+
+    <block wx:elif="{{detail.status === 'trial'}}">
+      <view class="action-btn primary full" bindtap="onComplete">
+        完成试课
+      </view>
+    </block>
+
+    <block wx:elif="{{detail.status === 'completed'}}">
+      <view class="action-btn primary full" bindtap="onReview">
+        {{isTutorSide ? '去评价学生' : '去评价导师'}}
+      </view>
+    </block>
+  </view>
+
+  <view class="action-bar" wx:elif="{{detail.status === 'cancelled'}}">
+    <view class="action-bar-hint">预约已取消</view>
+  </view>
+
+</view>
+
+<view wx:else class="empty-state">
+  <text class="empty-icon">📋</text>
+  <text class="empty-text">预约不存在或已删除</text>
+</view>

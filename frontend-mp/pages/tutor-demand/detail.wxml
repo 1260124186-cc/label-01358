@@ -1,0 +1,164 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+
+<view class="demand-detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{detail}}">
+  <scroll-view class="detail-scroll" scroll-y>
+    <view class="header-section">
+      <view class="category-row">
+        <view class="subject-tag">
+          <text class="subject-icon">{{subjectInfo.icon || '📚'}}</text>
+          <text class="subject-label">{{subjectInfo.label || detail.subject}}</text>
+        </view>
+        <view wx:if="{{statusInfo}}" class="status-tag" style="background: {{statusInfo.color}}15; color: {{statusInfo.color}}">
+          {{statusInfo.label}}
+        </view>
+      </view>
+      <text class="demand-title">{{subjectInfo.label || detail.subject}} · {{gradeInfo.label || detail.grade}}辅导</text>
+
+      <view class="publisher-row">
+        <image class="publisher-avatar" src="{{detail.studentAvatar || '/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="publisher-info">
+          <text class="publisher-name">{{detail.studentName || '匿名用户'}}</text>
+          <text class="publish-time">{{createTimeText}}发布</text>
+        </view>
+        <view wx:if="{{detail.views !== undefined}}" class="views-count">
+          <text class="views-icon">👁️</text>
+          <text class="views-text">{{detail.views}}次浏览</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card info-card">
+      <view class="section-title">需求信息</view>
+      <view class="info-row">
+        <text class="info-icon">📚</text>
+        <view class="info-content">
+          <text class="info-label">辅导科目</text>
+          <text class="info-value highlight">
+            {{subjectInfo.icon || ''}} {{subjectInfo.label || detail.subject}}
+          </text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-icon">🎓</text>
+        <view class="info-content">
+          <text class="info-label">辅导年级</text>
+          <text class="info-value">{{gradeInfo.label || detail.grade}}</text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-icon">💰</text>
+        <view class="info-content">
+          <text class="info-label">预算范围</text>
+          <text class="info-value price">{{budgetText || '面议'}}</text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-icon">{{teachingMethodInfo.icon || '🔄'}}</text>
+        <view class="info-content">
+          <text class="info-label">辅导方式</text>
+          <text class="info-value">{{teachingMethodInfo.label || detail.teachingMethod}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card time-card">
+      <view class="section-title">时间要求</view>
+      <view wx:if="{{weekdayLabels.length > 0}}" class="info-row">
+        <text class="info-icon">📅</text>
+        <view class="info-content">
+          <text class="info-label">周几</text>
+          <view class="multi-tags">
+            <text wx:for="{{weekdayLabels}}" wx:for-item="day" wx:key="*this" class="inline-tag">{{day}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{timeSlotLabels.length > 0}}" class="info-row">
+        <text class="info-icon">⏰</text>
+        <view class="info-content">
+          <text class="info-label">时间段</text>
+          <view class="multi-tags">
+            <text wx:for="{{timeSlotLabels}}" wx:for-item="slot" wx:key="*this" class="inline-tag">{{slot}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{detail.duration}}" class="info-row">
+        <text class="info-icon">⏱️</text>
+        <view class="info-content">
+          <text class="info-label">每次时长</text>
+          <text class="info-value">{{detail.duration}}小时</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{detail.description}}" class="card desc-card">
+      <view class="section-title">详细描述</view>
+      <text class="description-text">{{detail.description}}</text>
+    </view>
+
+    <view wx:if="{{detail.location}}" class="card location-card">
+      <view class="section-title">辅导地点</view>
+      <view class="info-row" style="border-bottom: none; padding: 0;">
+        <text class="info-icon">📍</text>
+        <view class="info-content">
+          <text class="info-value">{{detail.location}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card contact-card" wx:if="{{detail.contactName || detail.contactPhone}}">
+      <view class="section-title">联系方式</view>
+      <view class="info-row" wx:if="{{detail.contactName}}">
+        <text class="info-icon">👤</text>
+        <view class="info-content">
+          <text class="info-label">联系人</text>
+          <text class="info-value">{{detail.contactName}}</text>
+        </view>
+      </view>
+      <view class="info-row" wx:if="{{detail.contactPhone}}" style="border-bottom: none;">
+        <text class="info-icon">📞</text>
+        <view class="info-content">
+          <text class="info-label">联系电话</text>
+          <view class="phone-row">
+            <text class="info-value">{{detail.contactPhone}}</text>
+            <text class="call-btn" bindtap="onCallPhone">拨打</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="card stats-card">
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-value">{{detail.views || 0}}</text>
+          <text class="stat-label">浏览量</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{publishTimeText}}</text>
+          <text class="stat-label">发布时间</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{detail.urgent ? '加急' : '普通'}}</text>
+          <text class="stat-label">紧急程度</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="action-bar">
+    <view class="action-btn outline" bindtap="onViewMatchedTutors">
+      查看匹配导师
+    </view>
+    <view class="action-btn primary" bindtap="onApplyTutor">
+      申请辅导
+    </view>
+  </view>
+</view>
+
+<view wx:else class="empty-state">
+  <text class="empty-icon">📝</text>
+  <text class="empty-text">需求不存在或已关闭</text>
+</view>

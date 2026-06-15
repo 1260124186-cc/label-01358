@@ -2309,6 +2309,153 @@ const SAFETY_ARTICLES = [
   }
 ];
 
+const TUTOR_SUBJECTS = [
+  { value: 'chinese', label: '语文', icon: '📖' },
+  { value: 'math', label: '数学', icon: '📐' },
+  { value: 'english', label: '英语', icon: '🔤' },
+  { value: 'physics', label: '物理', icon: '⚛️' },
+  { value: 'chemistry', label: '化学', icon: '🧪' },
+  { value: 'biology', label: '生物', icon: '🧬' },
+  { value: 'history', label: '历史', icon: '📜' },
+  { value: 'geography', label: '地理', icon: '🌍' },
+  { value: 'politics', label: '政治', icon: '🏛️' },
+  { value: 'programming', label: '编程', icon: '💻' },
+  { value: 'art', label: '美术', icon: '🎨' },
+  { value: 'music', label: '音乐', icon: '🎵' },
+  { value: 'sports', label: '体育', icon: '⚽' },
+  { value: 'other', label: '其他', icon: '📚' }
+];
+
+const TUTOR_GRADES = [
+  { value: 'primary', label: '小学' },
+  { value: 'junior', label: '初中' },
+  { value: 'senior', label: '高中' },
+  { value: 'college', label: '大学' },
+  { value: 'other', label: '其他' }
+];
+
+const TUTOR_TEACHING_METHODS = [
+  { value: 'online', label: '线上辅导', icon: '💻' },
+  { value: 'offline', label: '线下辅导', icon: '🏫' },
+  { value: 'both', label: '线上/线下均可', icon: '🔄' }
+];
+
+const TUTOR_STATUS = [
+  { value: 'active', label: '接单中', color: '#10B981' },
+  { value: 'busy', label: '忙碌中', color: '#F59E0B' },
+  { value: 'offline', label: '已暂停', color: '#6B7280' }
+];
+
+const TUTOR_STATUS_MAP = TUTOR_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const TUTOR_DEMAND_STATUS = [
+  { value: 'open', label: '招募中', color: '#10B981' },
+  { value: 'matched', label: '已匹配', color: '#3B82F6' },
+  { value: 'closed', label: '已结束', color: '#6B7280' }
+];
+
+const TUTOR_DEMAND_STATUS_MAP = TUTOR_DEMAND_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const TUTOR_HOURLY_RANGES = [
+  { value: '', label: '不限', min: 0, max: Infinity },
+  { value: '0-50', label: '50元以下', min: 0, max: 50 },
+  { value: '50-100', label: '50-100元', min: 50, max: 100 },
+  { value: '100-200', label: '100-200元', min: 100, max: 200 },
+  { value: '200-300', label: '200-300元', min: 200, max: 300 },
+  { value: '300+', label: '300元以上', min: 300, max: Infinity }
+];
+
+const TUTOR_TIME_SLOTS = [
+  { value: 'morning', label: '上午', start: '08:00', end: '12:00' },
+  { value: 'afternoon', label: '下午', start: '14:00', end: '18:00' },
+  { value: 'evening', label: '晚上', start: '19:00', end: '22:00' },
+  { value: 'weekend', label: '周末全天', start: '09:00', end: '21:00' },
+  { value: 'flexible', label: '时间灵活', start: '', end: '' }
+];
+
+const TUTOR_WEEKDAYS = [
+  { value: '1', label: '周一' },
+  { value: '2', label: '周二' },
+  { value: '3', label: '周三' },
+  { value: '4', label: '周四' },
+  { value: '5', label: '周五' },
+  { value: '6', label: '周六' },
+  { value: '7', label: '周日' }
+];
+
+const TUTOR_APPOINTMENT_STATUS = [
+  { value: 'pending', label: '待确认', color: '#F59E0B', icon: '⏳' },
+  { value: 'confirmed', label: '已确认', color: '#3B82F6', icon: '✅' },
+  { value: 'trial', label: '试课中', color: '#8B5CF6', icon: '📚' },
+  { value: 'completed', label: '已完成', color: '#10B981', icon: '🎉' },
+  { value: 'cancelled', label: '已取消', color: '#EF4444', icon: '❌' }
+];
+
+const TUTOR_APPOINTMENT_STATUS_MAP = TUTOR_APPOINTMENT_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const TUTOR_APPOINTMENT_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '待确认' },
+  { value: 'confirmed', label: '已确认' },
+  { value: 'trial', label: '试课中' },
+  { value: 'completed', label: '已完成' }
+];
+
+const TUTOR_REVIEW_TAGS = [
+  { value: 'professional', label: '专业度高', positive: true },
+  { value: 'patient', label: '耐心细致', positive: true },
+  { value: 'punctual', label: '准时守信', positive: true },
+  { value: 'effective', label: '效果显著', positive: true },
+  { value: 'friendly', label: '亲切友善', positive: true },
+  { value: 'prepared', label: '备课充分', positive: true },
+  { value: 'unprofessional', label: '不够专业', positive: false },
+  { value: 'impatient', label: '缺乏耐心', positive: false },
+  { value: 'late', label: '经常迟到', positive: false },
+  { value: 'ineffective', label: '效果一般', positive: false }
+];
+
+const TUTOR_CREDIT_TYPES = [
+  { value: 'student_id', label: '学生证认证', icon: '🎓', score: 20 },
+  { value: 'identity', label: '实名认证', icon: '🆔', score: 15 },
+  { value: 'transcript', label: '成绩单认证', icon: '📊', score: 25 },
+  { value: 'certificate', label: '获奖证书', icon: '🏆', score: 20 },
+  { value: 'campus_card', label: '校园卡绑定', icon: '💳', score: 10 },
+  { value: 'social_account', label: '社交账号', icon: '📱', score: 5 }
+];
+
+const TUTOR_CREDIT_STATUS = [
+  { value: 'pending', label: '审核中', color: '#F59E0B' },
+  { value: 'approved', label: '已认证', color: '#10B981' },
+  { value: 'rejected', label: '未通过', color: '#EF4444' }
+];
+
+const TUTOR_CREDIT_STATUS_MAP = TUTOR_CREDIT_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const TUTOR_MAIN_TABS = [
+  { value: 'tutor', label: '找导师', icon: '👨‍🏫' },
+  { value: 'demand', label: '找学生', icon: '📝' }
+];
+
+const TUTOR_SORT_OPTIONS = [
+  { value: 'latest', label: '最新发布', field: 'createTime', order: 'desc' },
+  { value: 'rating_desc', label: '评分最高', field: 'rating', order: 'desc' },
+  { value: 'price_asc', label: '价格最低', field: 'hourlyRate', order: 'asc' },
+  { value: 'price_desc', label: '价格最高', field: 'hourlyRate', order: 'desc' },
+  { value: 'sessions', label: '课时最多', field: 'sessionCount', order: 'desc' }
+];
+
 module.exports = {
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
@@ -2554,5 +2701,25 @@ module.exports = {
   VOTING_VISIBILITY,
   VOTING_ELIGIBILITY_TYPES,
   COLLEGES,
-  GRADES
+  GRADES,
+
+  TUTOR_SUBJECTS,
+  TUTOR_GRADES,
+  TUTOR_TEACHING_METHODS,
+  TUTOR_STATUS,
+  TUTOR_STATUS_MAP,
+  TUTOR_DEMAND_STATUS,
+  TUTOR_DEMAND_STATUS_MAP,
+  TUTOR_HOURLY_RANGES,
+  TUTOR_TIME_SLOTS,
+  TUTOR_WEEKDAYS,
+  TUTOR_APPOINTMENT_STATUS,
+  TUTOR_APPOINTMENT_STATUS_MAP,
+  TUTOR_APPOINTMENT_TABS,
+  TUTOR_REVIEW_TAGS,
+  TUTOR_CREDIT_TYPES,
+  TUTOR_CREDIT_STATUS,
+  TUTOR_CREDIT_STATUS_MAP,
+  TUTOR_MAIN_TABS,
+  TUTOR_SORT_OPTIONS
 };

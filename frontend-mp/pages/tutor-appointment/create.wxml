@@ -1,0 +1,138 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="create-page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="form-scroll" scroll-y>
+
+    <view class="target-card" wx:if="{{targetInfo}}">
+      <view class="target-header">
+        <view class="target-label">{{isTutorMode ? '预约导师' : '预约学生'}}</view>
+      </view>
+      <view class="target-body">
+        <view class="avatar-wrapper">
+          <image class="avatar" src="{{targetInfo.displayAvatar}}" mode="aspectFill" wx:if="{{targetInfo.displayAvatar}}"/>
+          <view class="avatar-placeholder" wx:else>{{targetInfo.displayName[0]}}</view>
+        </view>
+        <view class="target-info">
+          <text class="target-name">{{targetInfo.displayName}}</text>
+          <view class="target-tags">
+            <view class="target-tag" wx:if="{{targetInfo.subjectListText}}">
+              <text class="tag-text">{{targetInfo.subjectListText}}</text>
+            </view>
+            <view class="target-tag rate-tag" wx:if="{{targetInfo.rateText}}">
+              <text class="tag-text">{{targetInfo.rateText}}</text>
+            </view>
+          </view>
+          <view class="target-extra" wx:if="{{targetInfo.ratingText || targetInfo.collegeText || targetInfo.gradeText}}">
+            <text class="extra-text" wx:if="{{targetInfo.ratingText}}">⭐ {{targetInfo.ratingText}}</text>
+            <text class="extra-dot" wx:if="{{targetInfo.ratingText && (targetInfo.collegeText || targetInfo.gradeText)}}">·</text>
+            <text class="extra-text" wx:if="{{targetInfo.collegeText}}">{{targetInfo.collegeText}}</text>
+            <text class="extra-text" wx:if="{{targetInfo.gradeText}}">{{targetInfo.gradeText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📅</text>
+        <text class="section-title">试课时间</text>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">试课日期</view>
+        <picker mode="date" value="{{formData.appointmentDate}}" bindchange="onDateChange">
+          <view class="picker-view">
+            <text wx:if="{{formData.appointmentDate}}" class="picker-value">{{formData.appointmentDate}}</text>
+            <text wx:else class="picker-placeholder">请选择试课日期</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">试课时间段</view>
+        <view class="time-slot-grid">
+          <view
+            class="time-slot-item {{timeSlotIndex === index ? 'active' : ''}}"
+            wx:for="{{timeSlots}}"
+            wx:key="value"
+            data-index="{{index}}"
+            bindtap="onTimeSlotTap"
+          >
+            <text class="slot-label">{{item.label}}</text>
+            <text class="slot-time">{{item.start}}-{{item.end}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">🎯</text>
+        <text class="section-title">辅导方式</text>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label required">选择方式</view>
+        <view class="method-options">
+          <view
+            class="method-item {{formData.teachingMethod === item.value ? 'active' : ''}}"
+            wx:for="{{methodOptions}}"
+            wx:key="value"
+            data-value="{{item.value}}"
+            bindtap="onMethodTap"
+          >
+            <text class="method-icon">{{item.icon}}</text>
+            <text class="method-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-item" wx:if="{{formData.teachingMethod === 'offline'}}">
+        <view class="form-label required">线下地点</view>
+        <input
+          class="form-input"
+          placeholder="请输入线下辅导地点"
+          placeholder-class="input-placeholder"
+          value="{{formData.location}}"
+          data-field="location"
+          bindinput="onInputChange"
+          maxlength="100"
+        />
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-icon">📝</text>
+        <text class="section-title">其他信息</text>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">备注信息</view>
+        <textarea
+          class="form-textarea"
+          placeholder="请输入备注信息，如学习目标、特殊要求等（选填）"
+          placeholder-class="input-placeholder"
+          value="{{formData.remark}}"
+          data-field="remark"
+          bindinput="onInputChange"
+          maxlength="300"
+          auto-height
+        />
+        <view class="char-count">{{formData.remark.length || 0}}/300</view>
+      </view>
+    </view>
+
+    <view class="bottom-spacer"></view>
+  </scroll-view>
+
+  <view class="submit-bar">
+    <button
+      class="submit-btn {{submitting ? 'disabled' : ''}}"
+      bindtap="onSubmit"
+      disabled="{{submitting}}"
+    >
+      {{submitting ? '提交中...' : '提交预约'}}
+    </button>
+  </view>
+</view>

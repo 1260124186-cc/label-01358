@@ -1,0 +1,97 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="tab-section">
+    <scroll-view class="tab-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="tab-bar">
+        <view
+          class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabTap"
+          data-value="{{item.value}}"
+        >
+          <text class="tab-text">{{item.label}}</text>
+          <view class="tab-underline" wx:if="{{currentTab === item.value}}"></view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{appointmentList.length > 0}}">
+      <view
+        class="appointment-card"
+        wx:for="{{appointmentList}}"
+        wx:key="id"
+        hover-class="appointment-card-hover"
+        bindtap="onNavToDetail"
+        data-id="{{item.id}}"
+      >
+        <view class="card-header">
+          <view class="user-section">
+            <view class="avatar-wrapper">
+              <image class="avatar" src="{{item.otherAvatar}}" mode="aspectFill" wx:if="{{item.otherAvatar}}"/>
+              <view class="avatar-placeholder" wx:else>{{item.otherName[0]}}</view>
+            </view>
+            <view class="user-info">
+              <text class="user-name">{{item.otherName}}</text>
+              <text class="user-role">{{item.isTutorSide ? '学生' : '导师'}}</text>
+            </view>
+          </view>
+          <view class="status-tag" style="color: {{item.statusColor}}; background-color: {{item.statusColor}}15;">
+            <text class="status-icon">{{item.statusIcon}}</text>
+            <text class="status-label">{{item.statusLabel}}</text>
+          </view>
+        </view>
+
+        <view class="card-body">
+          <view class="info-row">
+            <view class="info-tag subject-tag" wx:if="{{item.subjectLabel}}">
+              <text class="tag-icon">{{item.subjectIcon}}</text>
+              <text class="tag-text">{{item.subjectLabel}}</text>
+            </view>
+            <view class="info-tag method-tag" wx:if="{{item.methodText}}">
+              <text class="tag-text">{{item.methodText}}</text>
+            </view>
+          </view>
+
+          <view class="detail-row">
+            <text class="detail-icon">📅</text>
+            <text class="detail-text">{{item.appointmentTimeText || '暂无时间'}}</text>
+          </view>
+
+          <view class="detail-row" wx:if="{{item.location}}">
+            <text class="detail-icon">📍</text>
+            <text class="detail-text">{{item.location}}</text>
+          </view>
+
+          <view class="detail-row" wx:if="{{item.remark}}">
+            <text class="detail-icon">📝</text>
+            <text class="detail-text remark">{{item.remark}}</text>
+          </view>
+        </view>
+
+        <view class="card-footer">
+          <view class="footer-divider"></view>
+          <view class="view-detail">
+            <text class="view-detail-text">查看详情</text>
+            <text class="view-detail-arrow">›</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{appointmentList.length === 0}}"
+      text="暂无预约记录"
+    />
+  </scroll-view>
+
+</view>

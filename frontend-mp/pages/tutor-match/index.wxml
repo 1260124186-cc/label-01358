@@ -1,0 +1,110 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="tab-section">
+    <scroll-view class="tab-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="tab-bar">
+        <view
+          class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabTap"
+          data-value="{{item.value}}"
+        >
+          <text class="tab-text">{{item.label}}</text>
+          <view class="tab-underline" wx:if="{{currentTab === item.value}}"></view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{matchList.length > 0}}">
+      <view
+        class="match-card"
+        wx:for="{{matchList}}"
+        wx:key="id"
+        hover-class="match-card-hover"
+        bindtap="onNavToDetail"
+        data-id="{{item.id}}"
+        data-type="{{item.isTutor ? 'tutor' : 'demand'}}"
+      >
+        <view class="card-top">
+          <view class="match-level-tag" style="background-color: {{item.matchLevelColor}}20; color: {{item.matchLevelColor}}">
+            <text class="level-dot" style="background-color: {{item.matchLevelColor}}"></text>
+            <text class="level-label">{{item.matchLevelLabel}}</text>
+            <text class="level-score">{{item.matchScore}}分</text>
+          </view>
+        </view>
+
+        <view class="card-main">
+          <view class="avatar-section">
+            <view class="avatar-wrapper">
+              <image class="avatar" src="{{item.displayAvatar}}" mode="aspectFill" wx:if="{{item.displayAvatar}}"/>
+              <view class="avatar-placeholder" wx:else>{{item.displayName[0]}}</view>
+            </view>
+            <view class="match-score-ring">
+              <text class="score-number">{{item.matchScore}}</text>
+            </view>
+          </view>
+
+          <view class="info-section">
+            <view class="name-row">
+              <text class="name-text">{{item.displayName}}</text>
+              <view class="subject-tag" wx:if="{{item.subjectLabel}}">
+                <text class="subject-icon">{{item.subjectIcon}}</text>
+                <text class="subject-text">{{item.subjectLabel}}</text>
+              </view>
+            </view>
+
+            <view class="info-row">
+              <text class="info-label" wx:if="{{item.gradeLabel}}">{{item.gradeLabel}}</text>
+              <text class="info-dot" wx:if="{{item.gradeLabel && item.rateText}}">·</text>
+              <text class="info-value">{{item.rateText}}</text>
+            </view>
+
+            <view class="info-row" wx:if="{{item.isTutor && item.ratingText}}">
+              <text class="rating-star">⭐</text>
+              <text class="rating-text">{{item.ratingText}}</text>
+              <text class="session-text" wx:if="{{item.sessionCount}}"> · {{item.sessionCount}}次课时</text>
+            </view>
+
+            <view class="info-row" wx:if="{{!item.isTutor && item.targetGrade}}">
+              <text class="info-label">目标年级：{{item.targetGrade}}</text>
+            </view>
+
+            <view class="info-row" wx:if="{{item.college}}">
+              <text class="info-label">{{item.college}}</text>
+            </view>
+
+            <view class="intro-text" wx:if="{{item.introText}}">{{item.introText}}</view>
+          </view>
+        </view>
+
+        <view class="reasons-row" wx:if="{{item.matchReasons && item.matchReasons.length > 0}}">
+          <view class="reason-chip" wx:for="{{item.matchReasons}}" wx:for-item="reason" wx:key="*this">
+            ✓ {{reason}}
+          </view>
+        </view>
+
+        <view class="card-bottom">
+          <view class="appointment-btn" catchtap="onStartAppointment" data-id="{{item.id}}" data-type="{{item.isTutor ? 'tutor' : 'demand'}}">
+            发起试课预约
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{matchList.length === 0}}"
+      text="{{demandId || tutorId ? '暂无匹配结果' : '请从需求或导师详情页进入匹配'}}"
+    />
+  </scroll-view>
+
+</view>
