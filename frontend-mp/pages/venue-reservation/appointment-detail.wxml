@@ -1,0 +1,229 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="page-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="status-card">
+      <view class="status-icon" style="background: {{appointment.statusColor}}15;">
+        <text class="icon-text">{{appointment.statusIcon}}</text>
+      </view>
+      <view class="status-info">
+        <text class="status-text" style="color: {{appointment.statusColor}};">
+          {{appointment.statusLabel}}
+        </text>
+        <text class="status-hint" wx:if="{{appointment.status === 'pending'}}">等待管理员审核</text>
+        <text class="status-hint" wx:if="{{appointment.status === 'approved'}}">请按时前往使用</text>
+        <text class="status-hint" wx:if="{{appointment.status === 'checked_in'}}">使用中，请遵守规定</text>
+        <text class="status-hint" wx:if="{{appointment.status === 'checked_out'}}">使用已完成</text>
+        <text class="status-hint" wx:if="{{appointment.status === 'rejected'}}">预约申请未通过</text>
+        <text class="status-hint" wx:if="{{appointment.status === 'cancelled'}}">您已取消预约</text>
+        <text class="status-hint" wx:if="{{appointment.status === 'violation'}}">已违规，扣除信用分</text>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">场馆信息</view>
+      <view class="venue-card">
+        <image class="venue-cover" src="{{venue.cover}}" mode="aspectFill" />
+        <view class="venue-content">
+          <text class="venue-name">{{venue.name}}</text>
+          <view class="venue-meta">
+            <view class="meta-item">
+              <text class="meta-icon">📍</text>
+              <text class="meta-text">{{venue.building}} {{venue.room}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">👥</text>
+              <text class="meta-text">容纳 {{venue.capacity}} 人</text>
+            </view>
+          </view>
+        </view>
+        <view class="venue-type-badge">
+          <text class="type-icon">{{venue.typeIcon}}</text>
+          <text class="type-text">{{venue.typeLabel}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">预约信息</view>
+      <view class="detail-list">
+        <view class="detail-item">
+          <text class="detail-label">预约日期</text>
+          <text class="detail-value">{{appointment.appointmentDate}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">预约时段</text>
+          <text class="detail-value">{{timeSlotText}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">时段数量</text>
+          <text class="detail-value">{{appointment.slotCount}} 小时</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">使用人数</text>
+          <text class="detail-value">{{appointment.participantCount}} 人</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">使用目的</text>
+          <text class="detail-value">{{appointment.purpose}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">联系电话</text>
+          <text class="detail-value">{{appointment.contactPhone}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">费用信息</view>
+      <view class="detail-list">
+        <view class="detail-item">
+          <text class="detail-label">单价</text>
+          <text class="detail-value">
+            ¥{{appointment.unitPrice}}/小时
+            <text class="price-type-tag" wx:if="{{appointment.isStudent}}">学生价</text>
+            <text class="price-type-tag normal" wx:else>普通价</text>
+          </text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">基础费用</text>
+          <text class="detail-value">{{appointment.totalAmountText}}</text>
+        </view>
+        <view class="detail-item" wx:if="{{appointment.overtimeFee > 0}}">
+          <text class="detail-label">超时费用</text>
+          <text class="detail-value overtime">{{appointment.overtimeFeeText}}</text>
+        </view>
+        <view class="detail-item total">
+          <text class="detail-label">实付金额</text>
+          <text class="detail-value total-price">{{appointment.actualFeeText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section" wx:if="{{isAdmin && userInfo}}">
+      <view class="section-title">预约人信息</view>
+      <view class="user-card">
+        <image class="user-avatar" src="{{userInfo.avatarUrl || '/assets/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="user-detail">
+          <text class="user-name">{{userInfo.nickName}}</text>
+          <text class="user-id">账号：{{userInfo.account}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section" wx:if="{{appointment.checkInTime || appointment.checkOutTime}}">
+      <view class="section-title">使用记录</view>
+      <view class="detail-list">
+        <view class="detail-item" wx:if="{{appointment.checkInTime}}">
+          <text class="detail-label">签到时间</text>
+          <text class="detail-value">{{appointment.checkInTimeText}}</text>
+        </view>
+        <view class="detail-item" wx:if="{{appointment.checkOutTime}}">
+          <text class="detail-label">签退时间</text>
+          <text class="detail-value">{{appointment.checkOutTimeText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section" wx:if="{{appointment.violationType}}">
+      <view class="section-title">违约记录</view>
+      <view class="violation-card">
+        <view class="violation-header">
+          <text class="violation-icon">⚠️</text>
+          <text class="violation-title">{{appointment.violationDesc}}</text>
+        </view>
+        <view class="violation-detail">
+          <text class="violation-text">已计入信用记录</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section" wx:if="{{appointment.approvalTime || appointment.approvalRemark}}">
+      <view class="section-title">审批信息</view>
+      <view class="detail-list">
+        <view class="detail-item" wx:if="{{appointment.approvalTime}}">
+          <text class="detail-label">审批时间</text>
+          <text class="detail-value">{{appointment.approvalTimeText}}</text>
+        </view>
+        <view class="detail-item" wx:if="{{appointment.approvalRemark}}">
+          <text class="detail-label">审批备注</text>
+          <text class="detail-value remark">{{appointment.approvalRemark}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="detail-list">
+        <view class="detail-item">
+          <text class="detail-label">申请时间</text>
+          <text class="detail-value">{{appointment.createTimeText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="bottom-bar" wx:if="{{appointment && (appointment.status === 'pending' || appointment.status === 'approved' || appointment.status === 'checked_in')}}">
+    <block wx:if="{{isAdmin && appointment.status === 'pending'}}">
+      <view class="bottom-btn secondary" bindtap="onReject">
+        <text class="btn-text">拒绝</text>
+      </view>
+      <view class="bottom-btn primary" bindtap="onApprove">
+        <text class="btn-text">通过</text>
+      </view>
+    </block>
+
+    <block wx:if="{{!isAdmin && (appointment.status === 'pending' || appointment.status === 'approved')}}">
+      <view class="bottom-btn secondary" bindtap="onCancel" wx:if="{{appointment.status === 'pending' || appointment.status === 'approved'}}">
+        <text class="btn-text">取消预约</text>
+      </view>
+      <view class="bottom-btn primary" bindtap="onCheckIn" wx:if="{{appointment.status === 'approved'}}">
+        <text class="btn-text">签到使用</text>
+      </view>
+    </block>
+
+    <block wx:if="{{!isAdmin && appointment.status === 'checked_in'}}">
+      <view class="bottom-btn primary" bindtap="onCheckOut">
+        <text class="btn-text">签退离开</text>
+      </view>
+    </block>
+  </view>
+
+  <view class="modal-mask {{showRejectModal ? 'show' : ''}}" bindtap="onCancelReject">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">拒绝预约</text>
+        <text class="modal-close" bindtap="onCancelReject">✕</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">拒绝原因</text>
+          <textarea
+            class="form-textarea"
+            placeholder="请输入拒绝原因"
+            placeholder-class="form-placeholder"
+            value="{{rejectRemark}}"
+            bindinput="onRejectRemarkInput"
+            maxlength="200"
+            auto-height
+          />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel-btn" bindtap="onCancelReject">
+          <text class="btn-text">取消</text>
+        </view>
+        <view class="modal-btn confirm-btn" bindtap="onConfirmReject">
+          <text class="btn-text">确认拒绝</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

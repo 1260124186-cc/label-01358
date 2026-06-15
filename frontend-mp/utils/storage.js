@@ -147,7 +147,11 @@ const STORAGE_KEYS = {
   CAMPUS_CARD_TRANSACTION_LIST: 'campusCardTransactionList',
 
   VOTING_LIST: 'votingList',
-  VOTING_RECORDS: 'votingRecords'
+  VOTING_RECORDS: 'votingRecords',
+
+  VENUE_LIST: 'venueList',
+  VENUE_APPOINTMENT_LIST: 'venueAppointmentList',
+  VENUE_VIOLATION_RECORDS: 'venueViolationRecords'
 };
 
 /**

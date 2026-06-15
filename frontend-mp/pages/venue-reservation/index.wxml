@@ -1,0 +1,101 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="top-bar">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索场馆名称、位置..."
+        placeholder-class="search-placeholder"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+      />
+      <text class="search-clear" wx:if="{{searchKeyword}}" bindtap="onSearchClear">✕</text>
+    </view>
+    <view class="my-appointments-btn" bindtap="onMyAppointmentsTap">
+      <text class="btn-icon">📋</text>
+      <text class="btn-text">我的预约</text>
+    </view>
+  </view>
+
+  <scroll-view class="type-tabs" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="type-tabs-inner">
+      <view
+        class="type-tab-item {{currentType === item.value ? 'active' : ''}}"
+        wx:for="{{venueTypes}}"
+        wx:key="value"
+        bindtap="onTypeTap"
+        data-value="{{item.value}}"
+      >
+        <text class="tab-icon">{{item.icon}}</text>
+        <text class="tab-label">{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <scroll-view class="venue-list" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="venue-list-inner" wx:if="{{filteredVenues.length > 0}}">
+      <view
+        class="venue-card"
+        wx:for="{{filteredVenues}}"
+        wx:key="id"
+        bindtap="onVenueTap"
+        data-id="{{item.id}}"
+      >
+        <view class="venue-cover">
+          <image class="cover-image" src="{{item.cover}}" mode="aspectFill" />
+          <view class="approval-badge" wx:if="{{item.needApproval}}">
+            <text class="approval-text">需审批</text>
+          </view>
+          <view class="type-badge">
+            <text class="type-icon">{{item.typeIcon}}</text>
+          </view>
+        </view>
+
+        <view class="venue-info">
+          <view class="venue-header">
+            <text class="venue-name">{{item.name}}</text>
+          </view>
+
+          <view class="venue-meta">
+            <view class="meta-item">
+              <text class="meta-icon">📍</text>
+              <text class="meta-text">{{item.building}} {{item.room}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">👥</text>
+              <text class="meta-text">容纳 {{item.capacity}} 人</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">⏰</text>
+              <text class="meta-text">{{item.openTimeText}}</text>
+            </view>
+          </view>
+
+          <view class="venue-desc">
+            <text class="desc-text">{{item.description}}</text>
+          </view>
+
+          <view class="venue-footer">
+            <view class="price-info">
+              <text class="student-price">¥{{item.studentPrice}}</text>
+              <text class="price-unit">/小时 学生价</text>
+              <text class="normal-price">¥{{item.normalPrice}}</text>
+            </view>
+            <text class="book-btn-text">立即预约 ›</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty wx:else text="暂无可预约场馆" icon="🏟️" />
+  </scroll-view>
+
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

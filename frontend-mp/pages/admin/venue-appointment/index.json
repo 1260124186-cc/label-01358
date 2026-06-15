@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "场馆预约审批",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "/components/empty/index"
+  }
+}

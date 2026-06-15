@@ -6905,6 +6905,471 @@ function getLabTimeSlotCapacity(labId, date, timeSlot) {
   };
 }
 
+// ==================== 场馆预约模块 ====================
+
+let venuesInitialized = false;
+let venueAppointmentsInitialized = false;
+
+function initVenueData() {
+  if (venuesInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.VENUE_LIST);
+  if (!existing || existing.length === 0) {
+    const venues = constants.MOCK_VENUES.map((item, index) => ({
+      ...item,
+      createTime: Date.now() - index * 86400000,
+      updateTime: Date.now() - index * 86400000
+    }));
+    storage.set(STORAGE_KEYS.VENUE_LIST, venues);
+  }
+  venuesInitialized = true;
+}
+
+function initVenueAppointments() {
+  if (venueAppointmentsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.VENUE_APPOINTMENT_LIST);
+  if (!existing || existing.length === 0) {
+    storage.set(STORAGE_KEYS.VENUE_APPOINTMENT_LIST, []);
+  }
+  venueAppointmentsInitialized = true;
+}
+
+function getVenueList(filters = {}) {
+  initVenueData();
+  let list = storage.getList(STORAGE_KEYS.VENUE_LIST);
+
+  if (filters.type && filters.type !== 'all') {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  if (filters.keyword) {
+    const keywordLower = filters.keyword.toLowerCase();
+    list = list.filter(item =>
+      item.name.toLowerCase().includes(keywordLower) ||
+      item.building.toLowerCase().includes(keywordLower) ||
+      item.description.toLowerCase().includes(keywordLower)
+    );
+  }
+
+  return list;
+}
+
+function getVenueDetail(venueId) {
+  initVenueData();
+  const list = storage.getList(STORAGE_KEYS.VENUE_LIST);
+  const venue = list.find(item => item.id === venueId) || null;
+  if (venue) {
+    const typeInfo = constants.VENUE_TYPES.find(t => t.value === venue.type) || {};
+    return {
+      ...venue,
+      typeIcon: typeInfo.icon || '🏟️',
+      typeLabel: typeInfo.label || '其他'
+    };
+  }
+  return null;
+}
+
+function getVenueAppointmentList(filters = {}) {
+  initVenueAppointments();
+  let list = storage.getList(STORAGE_KEYS.VENUE_APPOINTMENT_LIST);
+
+  if (filters.userId) {
+    list = list.filter(item => item.userId === filters.userId);
+  }
+
+  if (filters.venueId) {
+    list = list.filter(item => item.venueId === filters.venueId);
+  }
+
+  if (filters.status && filters.status !== 'all') {
+    if (filters.status === 'using') {
+      list = list.filter(item => item.status === 'checked_in');
+    } else if (filters.status === 'completed') {
+      list = list.filter(item => item.status === 'checked_out' || item.status === 'violation');
+    } else {
+      list = list.filter(item => item.status === filters.status);
+    }
+  }
+
+  list = list.map(appt => {
+    const venue = getVenueDetail(appt.venueId);
+    const statusInfo = constants.VENUE_APPOINTMENT_STATUS_MAP[appt.status] || {};
+    const typeInfo = venue ? (constants.VENUE_TYPES.find(t => t.value === venue.type) || {}) : {};
+    return {
+      ...appt,
+      venueName: venue ? venue.name : '',
+      venueTypeIcon: typeInfo.icon || '',
+      venueTypeLabel: typeInfo.label || '',
+      statusLabel: statusInfo.label,
+      statusColor: statusInfo.color,
+      statusIcon: statusInfo.icon
+    };
+  });
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getVenueAppointmentDetail(appointmentId) {
+  initVenueAppointments();
+  const list = storage.getList(STORAGE_KEYS.VENUE_APPOINTMENT_LIST);
+  const appointment = list.find(item => item.id === appointmentId) || null;
+
+  if (appointment) {
+    const venue = getVenueDetail(appointment.venueId);
+    const statusInfo = constants.VENUE_APPOINTMENT_STATUS_MAP[appointment.status] || {};
+    const typeInfo = venue ? (constants.VENUE_TYPES.find(t => t.value === venue.type) || {}) : {};
+    const price = appointment.isStudent ? (venue ? venue.studentPrice : 0) : (venue ? venue.normalPrice : 0);
+    const totalPrice = price * appointment.slotCount;
+
+    return {
+      ...appointment,
+      venueName: venue ? venue.name : '',
+      venueType: venue ? venue.type : '',
+      venueTypeIcon: typeInfo.icon || '',
+      venueTypeLabel: typeInfo.label || '',
+      building: venue ? venue.building : '',
+      room: venue ? venue.room : '',
+      statusLabel: statusInfo.label,
+      statusColor: statusInfo.color,
+      statusIcon: statusInfo.icon,
+      unitPrice: price,
+      totalPrice: totalPrice,
+      totalAmount: appointment.totalAmount !== undefined ? appointment.totalAmount : totalPrice,
+      venueCover: venue ? venue.cover : ''
+    };
+  }
+  return null;
+}
+
+function createVenueAppointment(data) {
+  initVenueAppointments();
+  const appointments = storage.get(STORAGE_KEYS.VENUE_APPOINTMENT_LIST) || [];
+  const venue = getVenueDetail(data.venueId);
+  const now = Date.now();
+
+  const slotCount = Array.isArray(data.timeSlots) ? data.timeSlots.length : 1;
+  const timeSlotStr = Array.isArray(data.timeSlots) ? data.timeSlots.join(',') : data.timeSlot;
+  const isStudent = data.isStudent !== undefined ? data.isStudent : true;
+  const unitPrice = venue ? (isStudent ? venue.studentPrice : venue.normalPrice) : 0;
+  const totalAmount = unitPrice * slotCount;
+
+  const appointment = {
+    id: 'venue_appt_' + now,
+    ...data,
+    timeSlot: timeSlotStr,
+    timeSlots: Array.isArray(data.timeSlots) ? data.timeSlots : [data.timeSlot],
+    slotCount: slotCount,
+    status: venue && venue.needApproval ? 'pending' : 'approved',
+    checkInTime: null,
+    checkOutTime: null,
+    approvalTime: venue && venue.needApproval ? null : now,
+    approverId: venue && venue.needApproval ? null : 'system_auto',
+    approvalRemark: venue && venue.needApproval ? '' : '系统自动审批通过',
+    isStudent: isStudent,
+    unitPrice: unitPrice,
+    totalAmount: totalAmount,
+    actualFee: 0,
+    overtimeFee: 0,
+    violationType: null,
+    violationDesc: null,
+    createTime: now,
+    updateTime: now
+  };
+
+  appointments.push(appointment);
+  storage.set(STORAGE_KEYS.VENUE_APPOINTMENT_LIST, appointments);
+
+  return appointment;
+}
+
+function cancelVenueAppointment(appointmentId, userId) {
+  initVenueAppointments();
+  const appointments = storage.get(STORAGE_KEYS.VENUE_APPOINTMENT_LIST) || [];
+  const index = appointments.findIndex(item => item.id === appointmentId);
+
+  if (index > -1) {
+    if (appointments[index].userId !== userId) {
+      return { success: false, message: '无权取消此预约' };
+    }
+    if (appointments[index].status !== 'pending' && appointments[index].status !== 'approved') {
+      return { success: false, message: '当前状态不可取消' };
+    }
+
+    appointments[index].status = 'cancelled';
+    appointments[index].updateTime = Date.now();
+    storage.set(STORAGE_KEYS.VENUE_APPOINTMENT_LIST, appointments);
+    return { success: true, appointment: appointments[index] };
+  }
+
+  return { success: false, message: '预约不存在' };
+}
+
+function approveVenueAppointment(appointmentId, approverId, remark = '') {
+  initVenueAppointments();
+  const appointments = storage.get(STORAGE_KEYS.VENUE_APPOINTMENT_LIST) || [];
+  const index = appointments.findIndex(item => item.id === appointmentId);
+
+  if (index > -1) {
+    if (appointments[index].status !== 'pending') {
+      return { success: false, message: '当前状态不可审批' };
+    }
+
+    appointments[index].status = 'approved';
+    appointments[index].approvalTime = Date.now();
+    appointments[index].approverId = approverId;
+    appointments[index].approvalRemark = remark;
+    appointments[index].updateTime = Date.now();
+    storage.set(STORAGE_KEYS.VENUE_APPOINTMENT_LIST, appointments);
+    return { success: true, appointment: appointments[index] };
+  }
+
+  return { success: false, message: '预约不存在' };
+}
+
+function rejectVenueAppointment(appointmentId, approverId, remark = '') {
+  initVenueAppointments();
+  const appointments = storage.get(STORAGE_KEYS.VENUE_APPOINTMENT_LIST) || [];
+  const index = appointments.findIndex(item => item.id === appointmentId);
+
+  if (index > -1) {
+    if (appointments[index].status !== 'pending') {
+      return { success: false, message: '当前状态不可审批' };
+    }
+
+    appointments[index].status = 'rejected';
+    appointments[index].approvalTime = Date.now();
+    appointments[index].approverId = approverId;
+    appointments[index].approvalRemark = remark;
+    appointments[index].updateTime = Date.now();
+    storage.set(STORAGE_KEYS.VENUE_APPOINTMENT_LIST, appointments);
+    return { success: true, appointment: appointments[index] };
+  }
+
+  return { success: false, message: '预约不存在' };
+}
+
+function checkInVenue(appointmentId, userId) {
+  initVenueAppointments();
+  const appointments = storage.get(STORAGE_KEYS.VENUE_APPOINTMENT_LIST) || [];
+  const index = appointments.findIndex(item => item.id === appointmentId);
+
+  if (index > -1) {
+    if (appointments[index].userId !== userId) {
+      return { success: false, message: '无权操作此预约' };
+    }
+    if (appointments[index].status !== 'approved') {
+      return { success: false, message: '当前状态不可签到' };
+    }
+
+    appointments[index].status = 'checked_in';
+    appointments[index].checkInTime = Date.now();
+    appointments[index].updateTime = Date.now();
+    storage.set(STORAGE_KEYS.VENUE_APPOINTMENT_LIST, appointments);
+    return { success: true, appointment: appointments[index] };
+  }
+
+  return { success: false, message: '预约不存在' };
+}
+
+function checkOutVenue(appointmentId, userId) {
+  initVenueAppointments();
+  const userService = require('./userService');
+  const appointments = storage.get(STORAGE_KEYS.VENUE_APPOINTMENT_LIST) || [];
+  const index = appointments.findIndex(item => item.id === appointmentId);
+
+  if (index > -1) {
+    if (appointments[index].userId !== userId) {
+      return { success: false, message: '无权操作此预约' };
+    }
+    if (appointments[index].status !== 'checked_in') {
+      return { success: false, message: '当前状态不可签退' };
+    }
+
+    const appointment = appointments[index];
+    const venue = getVenueDetail(appointment.venueId);
+
+    const result = checkVenueViolation(appointment, venue);
+
+    appointments[index].status = result.isViolation ? 'violation' : 'checked_out';
+    appointments[index].checkOutTime = Date.now();
+    appointments[index].actualFee = result.actualFee;
+    appointments[index].overtimeFee = result.overtimeFee;
+    appointments[index].updateTime = Date.now();
+
+    if (result.isViolation) {
+      appointments[index].violationType = result.violationType;
+      appointments[index].violationDesc = result.violationDesc;
+
+      const violationRecord = {
+        id: 'venue_violation_' + Date.now(),
+        userId: appointment.userId,
+        appointmentId: appointment.id,
+        venueId: appointment.venueId,
+        type: result.violationType,
+        description: result.violationDesc,
+        fee: result.overtimeFee,
+        createTime: Date.now()
+      };
+
+      const violations = storage.get(STORAGE_KEYS.VENUE_VIOLATION_RECORDS) || [];
+      violations.push(violationRecord);
+      storage.set(STORAGE_KEYS.VENUE_VIOLATION_RECORDS, violations);
+
+      const violationInfo = constants.VENUE_VIOLATION_TYPES_MAP[result.violationType] || {};
+      if (violationInfo.score) {
+        userService.updateCreditScore(
+          appointment.userId,
+          violationInfo.score,
+          `场馆预约违约：${violationInfo.label}`
+        );
+      }
+    }
+
+    storage.set(STORAGE_KEYS.VENUE_APPOINTMENT_LIST, appointments);
+    return {
+      success: true,
+      appointment: appointments[index],
+      isViolation: result.isViolation,
+      violationType: result.violationType,
+      actualFee: result.actualFee,
+      overtimeFee: result.overtimeFee
+    };
+  }
+
+  return { success: false, message: '预约不存在' };
+}
+
+function checkVenueViolation(appointment, venue) {
+  if (!appointment || !venue || !appointment.checkInTime) {
+    return { isViolation: false, actualFee: 0, overtimeFee: 0 };
+  }
+
+  const now = Date.now();
+  const timeSlots = appointment.timeSlots || [];
+  const slotCount = timeSlots.length;
+  const unitPrice = appointment.isStudent ? venue.studentPrice : venue.normalPrice;
+  const baseFee = unitPrice * slotCount;
+
+  const lastSlot = timeSlots[timeSlots.length - 1];
+  const slotInfo = constants.VENUE_TIME_SLOTS.find(s => s.value === lastSlot);
+
+  if (!slotInfo) {
+    return { isViolation: false, actualFee: baseFee, overtimeFee: 0 };
+  }
+
+  const appointmentDate = appointment.appointmentDate;
+  const [year, month, day] = appointmentDate.split('-').map(Number);
+  const endHour = Math.floor(slotInfo.endMinute / 60);
+  const endMinute = slotInfo.endMinute % 60;
+  const scheduledEndTime = new Date(year, month - 1, day, endHour, endMinute, 0).getTime();
+
+  const overtimeMs = now - scheduledEndTime;
+  const overtimeMinutes = Math.floor(overtimeMs / 60000);
+
+  if (overtimeMinutes > 15) {
+    const overtimeHours = Math.ceil((overtimeMinutes - 15) / 60);
+    const overtimeFee = overtimeHours * unitPrice * 1.5;
+    const violationInfo = constants.VENUE_VIOLATION_TYPES_MAP.late_checkout || {};
+
+    return {
+      isViolation: true,
+      violationType: 'late_checkout',
+      violationDesc: `超时${overtimeMinutes}分钟签退，超时费用${overtimeFee.toFixed(2)}元`,
+      actualFee: baseFee + overtimeFee,
+      overtimeFee: overtimeFee
+    };
+  }
+
+  return {
+    isViolation: false,
+    actualFee: baseFee,
+    overtimeFee: 0
+  };
+}
+
+function canBookVenue(userId, venue) {
+  if (!userId) {
+    return { canBook: false, reason: '请先登录' };
+  }
+
+  if (!venue) {
+    return { canBook: false, reason: '场馆不存在' };
+  }
+
+  const userService = require('./userService');
+  const user = userService.getUserById(userId);
+  if (!user) {
+    return { canBook: false, reason: '用户不存在' };
+  }
+
+  if (user.creditScore < 60) {
+    return { canBook: false, reason: '信用分不足60分，无法预约' };
+  }
+
+  const activeAppointments = getVenueAppointmentList({
+    userId,
+    status: 'approved'
+  });
+
+  if (activeAppointments.length >= 3) {
+    return { canBook: false, reason: '已有3个待使用预约，请先使用后再预约' };
+  }
+
+  return { canBook: true, reason: '' };
+}
+
+function getVenueViolationRecords(userId) {
+  const records = storage.get(STORAGE_KEYS.VENUE_VIOLATION_RECORDS) || [];
+  if (userId) {
+    return records.filter(r => r.userId === userId).sort((a, b) => b.createTime - a.createTime);
+  }
+  return records.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getVenueTimeSlotCapacity(venueId, date, timeSlot) {
+  const appointments = getVenueAppointmentList({
+    venueId,
+    status: 'all'
+  }).filter(a =>
+    a.appointmentDate === date &&
+    (a.timeSlots || []).includes(timeSlot) &&
+    (a.status === 'pending' || a.status === 'approved' || a.status === 'checked_in')
+  );
+
+  const venue = getVenueDetail(venueId);
+  const capacity = venue ? venue.capacity : 0;
+  const used = appointments.length;
+
+  return {
+    capacity,
+    used,
+    available: Math.max(0, capacity - used)
+  };
+}
+
+function getVenueDateSlotsInfo(venueId, date) {
+  const venue = getVenueDetail(venueId);
+  if (!venue) return [];
+
+  const openSlots = venue.openTimeSlots || [];
+  const result = [];
+
+  openSlots.forEach(slotValue => {
+    const slotInfo = constants.VENUE_TIME_SLOTS.find(s => s.value === slotValue);
+    if (slotInfo) {
+      const capacityInfo = getVenueTimeSlotCapacity(venueId, date, slotValue);
+      result.push({
+        ...slotInfo,
+        capacity: capacityInfo.capacity,
+        used: capacityInfo.used,
+        available: capacityInfo.available,
+        isAvailable: capacityInfo.available > 0
+      });
+    }
+  });
+
+  return result;
+}
+
 // ==================== 选课助手模块 ====================
 
 let trainingPlanInitialized = false;
@@ -7885,6 +8350,23 @@ module.exports = {
   canBookLab,
   getLabViolationRecords,
   getLabTimeSlotCapacity,
+
+  // ==================== 场馆预约模块 ====================
+  initVenueData,
+  getVenueList,
+  getVenueDetail,
+  getVenueAppointmentList,
+  getVenueAppointmentDetail,
+  createVenueAppointment,
+  cancelVenueAppointment,
+  approveVenueAppointment,
+  rejectVenueAppointment,
+  checkInVenue,
+  checkOutVenue,
+  canBookVenue,
+  getVenueViolationRecords,
+  getVenueTimeSlotCapacity,
+  getVenueDateSlotsInfo,
 
   // ==================== 选课助手模块 ====================
   initCourseAssistantData,

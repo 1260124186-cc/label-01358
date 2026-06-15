@@ -1,0 +1,259 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="page-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="venue-hero">
+      <image class="hero-image" src="{{venue.cover}}" mode="aspectFill" />
+      <view class="hero-overlay"></view>
+      <view class="hero-info">
+        <view class="hero-tags">
+          <view class="hero-tag approval-tag" wx:if="{{venue.needApproval}}">
+            <text class="tag-text">需审批</text>
+          </view>
+          <view class="hero-tag type-tag">
+            <text class="tag-icon">{{venue.typeIcon}}</text>
+            <text class="tag-text">{{venue.typeLabel}}</text>
+          </view>
+        </view>
+        <text class="hero-title">{{venue.name}}</text>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">基本信息</view>
+      <view class="info-grid">
+        <view class="info-item">
+          <text class="info-icon">📍</text>
+          <view class="info-content">
+            <text class="info-label">位置</text>
+            <text class="info-value">{{venue.building}} {{venue.room}}</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">👥</text>
+          <view class="info-content">
+            <text class="info-label">容纳</text>
+            <text class="info-value">{{venue.capacity}} 人</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">👤</text>
+          <view class="info-content">
+            <text class="info-label">管理员</text>
+            <text class="info-value">{{venue.manager}}</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">📞</text>
+          <view class="info-content">
+            <text class="info-label">联系电话</text>
+            <text class="info-value">{{venue.managerPhone}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">价格信息</view>
+      <view class="price-section">
+        <view class="price-card {{isStudent ? 'active' : ''}}" bindtap="togglePriceType">
+          <text class="price-label">学生价</text>
+          <view class="price-row">
+            <text class="price-symbol">¥</text>
+            <text class="price-value">{{venue.studentPrice}}</text>
+            <text class="price-unit">/小时</text>
+          </view>
+          <view class="price-check" wx:if="{{isStudent}}">✓</view>
+        </view>
+        <view class="price-card {{!isStudent ? 'active' : ''}}" bindtap="togglePriceType">
+          <text class="price-label">普通价</text>
+          <view class="price-row">
+            <text class="price-symbol">¥</text>
+            <text class="price-value">{{venue.normalPrice}}</text>
+            <text class="price-unit">/小时</text>
+          </view>
+          <view class="price-check" wx:if="{{!isStudent}}">✓</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">场馆介绍</view>
+      <view class="desc-box">
+        <text class="desc-text">{{venue.description}}</text>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">设施设备</view>
+      <view class="facilities-list">
+        <view class="facility-item" wx:for="{{venue.facilities}}" wx:key="*this">
+          <text class="facility-dot">●</text>
+          <text class="facility-name">{{item}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">使用须知</view>
+      <view class="rules-box">
+        <text class="rules-text">{{venue.rules}}</text>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">选择日期</view>
+      
+      <view class="calendar-container">
+        <view class="calendar-header">
+          <view class="calendar-nav" bindtap="prevMonth">
+            <text class="nav-icon">‹</text>
+          </view>
+          <text class="calendar-title">{{currentMonth}}</text>
+          <view class="calendar-nav" bindtap="nextMonth">
+            <text class="nav-icon">›</text>
+          </view>
+        </view>
+        
+        <view class="calendar-weekdays">
+          <text class="weekday" wx:for="{{weekDays}}" wx:key="*this">{{item}}</text>
+        </view>
+        
+        <view class="calendar-days">
+          <view class="calendar-week" wx:for="{{calendarData}}" wx:for-item="week" wx:key="index">
+            <view
+              class="calendar-day {{item.isEmpty ? 'empty' : ''}} {{item.isPast ? 'past' : ''}} {{item.isToday ? 'today' : ''}} {{item.isSelected ? 'selected' : ''}}"
+              wx:for="{{week}}"
+              wx:for-item="item"
+              wx:key="day"
+              bindtap="onDateTap"
+              data-date="{{item.date}}"
+            >
+              <text class="day-text">{{item.day}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section" wx:if="{{selectedDate}}">
+      <view class="section-title">
+        选择时段
+        <text class="section-subtitle">已选 {{selectedSlots.length}} 个时段</text>
+      </view>
+      <view class="time-slot-grid">
+        <view
+          class="time-slot-item {{selectedSlots.indexOf(item.value) > -1 ? 'active' : ''}} {{!item.isAvailable ? 'disabled' : ''}}"
+          wx:for="{{timeSlots}}"
+          wx:key="value"
+          bindtap="onTimeSlotTap"
+          data-value="{{item.value}}"
+        >
+          <text class="slot-text">{{item.label}}</text>
+          <text class="slot-available" wx:if="{{item.available !== undefined}}">
+            剩余 {{item.available}} 位
+          </text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">预约信息</view>
+
+      <view class="warning-card" wx:if="{{!canBook}}">
+        <text class="warning-icon">⚠️</text>
+        <view class="warning-content">
+          <text class="warning-title">无法预约</text>
+          <text class="warning-text">{{canBookReason}}</text>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">使用人数</text>
+          <text class="required">*</text>
+        </view>
+        <picker
+          mode="selector"
+          range="{{participantOptions}}"
+          value="{{participantIndex}}"
+          bindchange="onParticipantChange"
+        >
+          <view class="form-picker-wrap">
+            <text class="form-picker-text">
+              {{formData.participantCount}} 人
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">使用目的</text>
+          <text class="required">*</text>
+        </view>
+        <view class="form-textarea-wrap">
+          <textarea
+            class="form-textarea"
+            placeholder="请简要描述使用目的..."
+            placeholder-class="form-placeholder"
+            value="{{formData.purpose}}"
+            bindinput="onPurposeInput"
+            maxlength="200"
+            auto-height
+          />
+        </view>
+        <view class="word-count">{{formData.purpose.length}}/200</view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">联系电话</text>
+          <text class="required">*</text>
+        </view>
+        <view class="form-input-wrap">
+          <input
+            class="form-input"
+            type="number"
+            placeholder="请输入联系电话"
+            placeholder-class="form-placeholder"
+            value="{{formData.contactPhone}}"
+            bindinput="onContactPhoneInput"
+            maxlength="11"
+          />
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="bottom-bar">
+    <view class="price-summary">
+      <text class="summary-label">合计</text>
+      <view class="summary-price">
+        <text class="price-symbol">¥</text>
+        <text class="price-amount">{{totalPrice}}</text>
+      </view>
+      <text class="summary-detail" wx:if="{{selectedSlots.length > 0}}">
+        {{selectedSlots.length}} 小时 × ¥{{unitPrice}}
+      </text>
+    </view>
+    <btn
+      type="primary"
+      size="large"
+      bind:click="onSubmit"
+      loading="{{submitting}}"
+      disabled="{{submitting || !canBook || selectedSlots.length === 0}}"
+    >
+      {{!canBook ? canBookReason : (submitting ? '提交中...' : '立即预约')}}
+    </btn>
+  </view>
+
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

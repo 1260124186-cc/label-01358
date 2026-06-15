@@ -1832,6 +1832,253 @@ const LAB_VIOLATION_TYPES = [
   { value: 'rule_violation', label: '违规操作', score: -8, icon: '⚠️' }
 ];
 
+const VENUE_TYPES = [
+  { value: 'all', label: '全部', icon: '🏟️' },
+  { value: 'stadium', label: '体育馆场地', icon: '🏀' },
+  { value: 'badminton', label: '羽毛球馆', icon: '🏸' },
+  { value: 'meeting_room', label: '会议室', icon: '🏢' },
+  { value: 'study_room', label: '自习室包间', icon: '📚' }
+];
+
+const VENUE_APPOINTMENT_STATUS = [
+  { value: 'pending', label: '待审批', color: '#FAAD14', icon: '⏳' },
+  { value: 'approved', label: '已通过', color: '#52C41A', icon: '✅' },
+  { value: 'rejected', label: '已拒绝', color: '#F5222D', icon: '❌' },
+  { value: 'checked_in', label: '使用中', color: '#1890FF', icon: '🔓' },
+  { value: 'checked_out', label: '已完成', color: '#52C41A', icon: '🔒' },
+  { value: 'cancelled', label: '已取消', color: '#8C8C8C', icon: '✖️' },
+  { value: 'violation', label: '已违约', color: '#F5222D', icon: '⚠️' }
+];
+
+const VENUE_APPOINTMENT_STATUS_MAP = VENUE_APPOINTMENT_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const VENUE_TIME_SLOTS = [
+  { value: '08:00-09:00', label: '08:00 - 09:00', startMinute: 480, endMinute: 540 },
+  { value: '09:00-10:00', label: '09:00 - 10:00', startMinute: 540, endMinute: 600 },
+  { value: '10:00-11:00', label: '10:00 - 11:00', startMinute: 600, endMinute: 660 },
+  { value: '11:00-12:00', label: '11:00 - 12:00', startMinute: 660, endMinute: 720 },
+  { value: '14:00-15:00', label: '14:00 - 15:00', startMinute: 840, endMinute: 900 },
+  { value: '15:00-16:00', label: '15:00 - 16:00', startMinute: 900, endMinute: 960 },
+  { value: '16:00-17:00', label: '16:00 - 17:00', startMinute: 960, endMinute: 1020 },
+  { value: '17:00-18:00', label: '17:00 - 18:00', startMinute: 1020, endMinute: 1080 },
+  { value: '19:00-20:00', label: '19:00 - 20:00', startMinute: 1140, endMinute: 1200 },
+  { value: '20:00-21:00', label: '20:00 - 21:00', startMinute: 1200, endMinute: 1260 },
+  { value: '21:00-22:00', label: '21:00 - 22:00', startMinute: 1260, endMinute: 1320 }
+];
+
+const VENUE_MY_APPOINTMENT_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '待审批' },
+  { value: 'approved', label: '待使用' },
+  { value: 'using', label: '使用中' },
+  { value: 'completed', label: '已完成' }
+];
+
+const VENUE_ADMIN_TABS = [
+  { value: 'pending', label: '待审批' },
+  { value: 'approved', label: '已通过' },
+  { value: 'rejected', label: '已拒绝' }
+];
+
+const VENUE_VIOLATION_TYPES = [
+  { value: 'late_checkout', label: '超时签退', score: -3, icon: '⏰', fee: 10 },
+  { value: 'no_show', label: '预约未使用', score: -5, icon: '🚫', fee: 0 },
+  { value: 'damage', label: '设施损坏', score: -10, icon: '💔', fee: 50 },
+  { value: 'rule_violation', label: '违规使用', score: -8, icon: '⚠️', fee: 20 }
+];
+
+const VENUE_VIOLATION_TYPES_MAP = VENUE_VIOLATION_TYPES.reduce((acc, v) => {
+  acc[v.value] = { label: v.label, score: v.score, icon: v.icon, fee: v.fee };
+  return acc;
+}, {});
+
+const MOCK_VENUES = [
+  {
+    id: 'venue_001',
+    name: '体育馆篮球场地A',
+    type: 'stadium',
+    building: '体育馆',
+    room: '篮球场A区',
+    capacity: 10,
+    needApproval: false,
+    normalPrice: 50,
+    studentPrice: 30,
+    unit: '小时',
+    openTimeSlots: ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00', '19:00-20:00', '20:00-21:00', '21:00-22:00'],
+    description: '标准室内篮球场地，木质地板，配有篮球架和计分牌',
+    facilities: ['篮球架', '计分牌', '木地板', '休息长椅', '饮水机'],
+    manager: '李老师',
+    managerPhone: '010-12345678',
+    cover: 'https://picsum.photos/seed/venue_basketball/800/400',
+    rules: '1. 请穿着运动鞋入场\n2. 严禁在场地内饮食\n3. 请勿携带尖锐物品\n4. 使用后请整理场地',
+    images: [
+      'https://picsum.photos/seed/venue_bball1/800/600',
+      'https://picsum.photos/seed/venue_bball2/800/600'
+    ]
+  },
+  {
+    id: 'venue_002',
+    name: '体育馆羽毛球馆1号场',
+    type: 'badminton',
+    building: '体育馆',
+    room: '羽毛球馆1号',
+    capacity: 4,
+    needApproval: false,
+    normalPrice: 40,
+    studentPrice: 25,
+    unit: '小时',
+    openTimeSlots: ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00', '19:00-20:00', '20:00-21:00', '21:00-22:00'],
+    description: '专业羽毛球场地，PVC塑胶地板，配有标准羽毛球网',
+    facilities: ['羽毛球网', 'PVC地板', '休息椅', '置物架', '空调'],
+    manager: '张老师',
+    managerPhone: '010-12345679',
+    cover: 'https://picsum.photos/seed/venue_badminton/800/400',
+    rules: '1. 请穿着羽毛球鞋入场\n2. 严禁在场地内饮食\n3. 请勿携带黑色鞋底鞋子入场\n4. 保持场地整洁',
+    images: [
+      'https://picsum.photos/seed/venue_badm1/800/600',
+      'https://picsum.photos/seed/venue_badm2/800/600'
+    ]
+  },
+  {
+    id: 'venue_003',
+    name: '学术报告厅',
+    type: 'meeting_room',
+    building: '行政楼',
+    room: '三楼学术报告厅',
+    capacity: 200,
+    needApproval: true,
+    normalPrice: 200,
+    studentPrice: 100,
+    unit: '小时',
+    openTimeSlots: ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00'],
+    description: '大型学术报告厅，配备专业音响设备和投影设备，适合举办讲座、会议等活动',
+    facilities: ['投影仪', '音响系统', '麦克风', '空调', '座椅', '讲台'],
+    manager: '王老师',
+    managerPhone: '010-12345680',
+    cover: 'https://picsum.photos/seed/venue_meeting/800/400',
+    rules: '1. 需提前3天申请预约\n2. 需有指导老师签字同意\n3. 使用后请恢复场地原状\n4. 严禁擅自挪动设备',
+    images: [
+      'https://picsum.photos/seed/venue_meet1/800/600',
+      'https://picsum.photos/seed/venue_meet2/800/600'
+    ]
+  },
+  {
+    id: 'venue_004',
+    name: '小型会议室A',
+    type: 'meeting_room',
+    building: '行政楼',
+    room: '二楼小会议室A',
+    capacity: 15,
+    needApproval: true,
+    normalPrice: 50,
+    studentPrice: 30,
+    unit: '小时',
+    openTimeSlots: ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00'],
+    description: '小型会议室，适合小组讨论、社团会议等',
+    facilities: ['会议桌', '座椅', '白板', '投影仪', '空调', '饮水机'],
+    manager: '刘老师',
+    managerPhone: '010-12345681',
+    cover: 'https://picsum.photos/seed/venue_meeting_s/800/400',
+    rules: '1. 需提前1天申请预约\n2. 使用后请整理桌椅\n3. 关闭电器设备\n4. 保持环境卫生',
+    images: [
+      'https://picsum.photos/seed/venue_ms1/800/600',
+      'https://picsum.photos/seed/venue_ms2/800/600'
+    ]
+  },
+  {
+    id: 'venue_005',
+    name: '图书馆自习包间101',
+    type: 'study_room',
+    building: '图书馆',
+    room: '三楼自习包间101',
+    capacity: 6,
+    needApproval: false,
+    normalPrice: 15,
+    studentPrice: 10,
+    unit: '小时',
+    openTimeSlots: ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00', '19:00-20:00', '20:00-21:00', '21:00-22:00'],
+    description: '独立自习包间，安静舒适，适合小组学习讨论',
+    facilities: ['大书桌', '座椅', '台灯', '插座', '空调', '白板'],
+    manager: '陈老师',
+    managerPhone: '010-12345682',
+    cover: 'https://picsum.photos/seed/venue_study/800/400',
+    rules: '1. 保持安静，避免影响他人\n2. 请勿大声讨论\n3. 离开时请关灯\n4. 严禁占座',
+    images: [
+      'https://picsum.photos/seed/venue_study1/800/600',
+      'https://picsum.photos/seed/venue_study2/800/600'
+    ]
+  },
+  {
+    id: 'venue_006',
+    name: '图书馆自习包间102',
+    type: 'study_room',
+    building: '图书馆',
+    room: '三楼自习包间102',
+    capacity: 4,
+    needApproval: false,
+    normalPrice: 12,
+    studentPrice: 8,
+    unit: '小时',
+    openTimeSlots: ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00', '19:00-20:00', '20:00-21:00', '21:00-22:00'],
+    description: '小型自习包间，适合2-4人学习讨论',
+    facilities: ['书桌', '座椅', '台灯', '插座', '空调'],
+    manager: '陈老师',
+    managerPhone: '010-12345682',
+    cover: 'https://picsum.photos/seed/venue_study_s/800/400',
+    rules: '1. 保持安静，避免影响他人\n2. 请勿大声讨论\n3. 离开时请关灯\n4. 严禁占座',
+    images: [
+      'https://picsum.photos/seed/venue_ss1/800/600'
+    ]
+  },
+  {
+    id: 'venue_007',
+    name: '体育馆羽毛球馆2号场',
+    type: 'badminton',
+    building: '体育馆',
+    room: '羽毛球馆2号',
+    capacity: 4,
+    needApproval: false,
+    normalPrice: 40,
+    studentPrice: 25,
+    unit: '小时',
+    openTimeSlots: ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00', '19:00-20:00', '20:00-21:00', '21:00-22:00'],
+    description: '专业羽毛球场地，PVC塑胶地板，配有标准羽毛球网',
+    facilities: ['羽毛球网', 'PVC地板', '休息椅', '置物架', '空调'],
+    manager: '张老师',
+    managerPhone: '010-12345679',
+    cover: 'https://picsum.photos/seed/venue_badminton2/800/400',
+    rules: '1. 请穿着羽毛球鞋入场\n2. 严禁在场地内饮食\n3. 请勿携带黑色鞋底鞋子入场\n4. 保持场地整洁',
+    images: [
+      'https://picsum.photos/seed/venue_badm3/800/600'
+    ]
+  },
+  {
+    id: 'venue_008',
+    name: '体育馆篮球场地B',
+    type: 'stadium',
+    building: '体育馆',
+    room: '篮球场B区',
+    capacity: 10,
+    needApproval: false,
+    normalPrice: 50,
+    studentPrice: 30,
+    unit: '小时',
+    openTimeSlots: ['08:00-09:00', '09:00-10:00', '10:00-11:00', '11:00-12:00', '14:00-15:00', '15:00-16:00', '16:00-17:00', '17:00-18:00', '19:00-20:00', '20:00-21:00', '21:00-22:00'],
+    description: '标准室内篮球场地，木质地板，配有篮球架和计分牌',
+    facilities: ['篮球架', '计分牌', '木地板', '休息长椅', '饮水机'],
+    manager: '李老师',
+    managerPhone: '010-12345678',
+    cover: 'https://picsum.photos/seed/venue_basketball2/800/400',
+    rules: '1. 请穿着运动鞋入场\n2. 严禁在场地内饮食\n3. 请勿携带尖锐物品\n4. 使用后请整理场地',
+    images: [
+      'https://picsum.photos/seed/venue_bball3/800/600'
+    ]
+  }
+];
+
 const WORK_STUDY_JOB_STATUS = [
   { value: 'recruiting', label: '招聘中', color: '#10B981', icon: '💼' },
   { value: 'closed', label: '已结束', color: '#6B7280', icon: '📦' }
@@ -2278,6 +2525,16 @@ module.exports = {
   LAB_ADMIN_TABS,
   LAB_VIOLATION_TYPES,
   MOCK_LABS,
+
+  VENUE_TYPES,
+  VENUE_APPOINTMENT_STATUS,
+  VENUE_APPOINTMENT_STATUS_MAP,
+  VENUE_TIME_SLOTS,
+  VENUE_MY_APPOINTMENT_TABS,
+  VENUE_ADMIN_TABS,
+  VENUE_VIOLATION_TYPES,
+  VENUE_VIOLATION_TYPES_MAP,
+  MOCK_VENUES,
 
   WORK_STUDY_JOB_STATUS,
   WORK_STUDY_JOB_STATUS_MAP,
