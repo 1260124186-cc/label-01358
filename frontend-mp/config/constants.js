@@ -258,6 +258,23 @@ const EXPRESS_PICKUP_POINTS = [
   { value: 'other', label: '其他快递', icon: '📋' }
 ];
 
+const EXPRESS_LOCKER_STATUS = [
+  { value: 'pending', label: '待取件', color: '#F59E0B', icon: '📦' },
+  { value: 'picked', label: '已取件', color: '#10B981', icon: '✅' },
+  { value: 'expired', label: '已过期', color: '#EF4444', icon: '⏰' }
+];
+
+const EXPRESS_LOCKER_STATUS_MAP = EXPRESS_LOCKER_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const EXPRESS_LOCKER_TABS = [
+  { value: 'pending', label: '待取件' },
+  { value: 'picked', label: '已取件' },
+  { value: 'all', label: '全部' }
+];
+
 const ERRAND_TASK_TYPES = [
   { value: 'express', label: '取快递', icon: '📦', color: '#FF6B6B', gradient: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)' },
   { value: 'purchase', label: '代买', icon: '🛒', color: '#4ECDC4', gradient: 'linear-gradient(135deg, #4ECDC4 0%, #6EE7DE 100%)' },
@@ -2030,6 +2047,9 @@ module.exports = {
   VOLUNTEER_CATEGORIES,
   VOLUNTEER_TABS,
   EXPRESS_PICKUP_POINTS,
+  EXPRESS_LOCKER_STATUS,
+  EXPRESS_LOCKER_STATUS_MAP,
+  EXPRESS_LOCKER_TABS,
   ERRAND_TASK_TYPES,
   ERRAND_ORDER_STATUS,
   ERRAND_HALL_STATUS,

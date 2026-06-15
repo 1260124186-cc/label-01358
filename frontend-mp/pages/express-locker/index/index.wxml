@@ -1,0 +1,79 @@
+<view class="container {{darkMode ? 'dark' : ''}}">
+  <view class="tabs">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="value"
+      class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+      data-tab="{{item.value}}"
+      bindtap="onTabChange"
+    >
+      {{item.label}}
+      <view wx:if="{{item.value === 'pending' && expiringCount > 0}}" class="badge">{{expiringCount}}</view>
+    </view>
+  </view>
+
+  <view wx:if="{{list.length === 0 && !loading}}" class="empty">
+    <view class="empty-icon">📦</view>
+    <view class="empty-text">暂无取件记录</view>
+    <view class="empty-desc">点击下方按钮添加取件码</view>
+  </view>
+
+  <view wx:else class="list">
+    <view
+      wx:for="{{list}}"
+      wx:key="id"
+      class="card-item {{item.currentStatus === 'expired' ? 'expired' : ''}} {{item.currentStatus === 'picked' ? 'picked' : ''}}"
+      data-item="{{item}}"
+      bindtap="onItemTap"
+    >
+      <view class="card-header">
+        <view class="express-info">
+          <text class="express-icon">{{item.expressIcon}}</text>
+          <text class="express-name">{{item.expressName}}</text>
+        </view>
+        <view class="status-tag" style="background-color: {{item.statusColor}}20; color: {{item.statusColor}};">
+          {{item.statusIcon}} {{item.statusText}}
+        </view>
+      </view>
+
+      <view class="card-body">
+        <view class="code-row">
+          <text class="code-label">取件码：</text>
+          <text class="code-value" data-code="{{item.pickupCode}}" catchtap="onCopyCode">{{item.pickupCode}}</text>
+          <text class="copy-hint">点击复制</text>
+        </view>
+
+        <view wx:if="{{item.lockerLocation}}" class="info-row">
+          <text class="info-icon">📍</text>
+          <text class="info-text">{{item.lockerLocation}}</text>
+        </view>
+
+        <view wx:if="{{item.deadline}}" class="deadline-row">
+          <text class="info-icon">⏰</text>
+          <text class="info-text {{item.isExpiringSoon ? 'urgent' : ''}}">
+            截止：{{item.deadlineText}}
+          </text>
+          <text wx:if="{{item.remainingText && item.currentStatus !== 'picked'}}" class="remaining {{item.isExpiringSoon ? 'urgent' : ''}}">
+            {{item.remainingText}}
+          </text>
+        </view>
+
+        <view wx:if="{{item.remark}}" class="remark-row">
+          <text class="remark-text">{{item.remark}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{item.currentStatus === 'pending'}}" class="card-footer">
+        <button class="btn-pick" data-id="{{item.id}}" catchtap="onMarkPickedTap">
+          标记已取件
+        </button>
+      </view>
+    </view>
+  </view>
+
+  <view class="fab-wrapper">
+    <button class="fab-button" bindtap="onAddTap">
+      <text class="fab-icon">+</text>
+    </button>
+  </view>
+</view>

@@ -1,0 +1,103 @@
+<view class="container {{darkMode ? 'dark' : ''}}">
+  <view class="form-section">
+    <view class="section-title">快递信息</view>
+
+    <view class="form-item" bindtap="onShowExpressPicker">
+      <view class="item-label">快递公司</view>
+      <view class="item-value {{selectedExpress ? '' : 'placeholder'}}">
+        {{expressName || '请选择快递公司'}}
+        <text class="arrow">›</text>
+      </view>
+    </view>
+
+    <view class="form-item">
+      <view class="item-label">柜机位置</view>
+      <input
+        class="item-input"
+        placeholder="如：东门菜鸟驿站A柜"
+        placeholder-class="input-placeholder"
+        value="{{lockerLocation}}"
+        bindinput="onLockerLocationInput"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="item-label">取件码</view>
+      <input
+        class="item-input code-input"
+        placeholder="请输入取件码"
+        placeholder-class="input-placeholder"
+        value="{{pickupCode}}"
+        bindinput="onPickupCodeInput"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">截止时间</view>
+
+    <view class="form-item">
+      <view class="item-label">取件日期</view>
+      <picker mode="date" value="{{deadlineDate}}" start="{{minDate}}" bindchange="onDateChange">
+        <view class="picker-value">
+          {{deadlineDate || '请选择日期'}}
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <view class="form-item">
+      <view class="item-label">取件时间</view>
+      <picker mode="time" value="{{deadlineTime}}" bindchange="onTimeChange">
+        <view class="picker-value">
+          {{deadlineTime || '请选择时间'}}
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">备注信息</view>
+    <view class="form-item form-textarea">
+      <textarea
+        class="item-textarea"
+        placeholder="可以添加备注信息，如物品大小、特殊说明等"
+        placeholder-class="input-placeholder"
+        value="{{remark}}"
+        bindinput="onRemarkInput"
+        maxlength="200"
+        auto-height
+      />
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <button class="submit-btn" bindtap="onSubmit">
+      {{isEdit ? '保存修改' : '添加取件码'}}
+    </button>
+  </view>
+
+  <view wx:if="{{showExpressPicker}}" class="picker-mask" bindtap="onCloseExpressPicker">
+    <view class="picker-container" catchtap="preventBubble">
+      <view class="picker-header">
+        <text class="picker-title">选择快递公司</text>
+        <text class="picker-close" bindtap="onCloseExpressPicker">✕</text>
+      </view>
+      <view class="picker-list">
+        <view
+          wx:for="{{expressCompanies}}"
+          wx:key="value"
+          class="picker-item {{selectedExpress === item.value ? 'selected' : ''}}"
+          data-value="{{item.value}}"
+          data-label="{{item.label}}"
+          bindtap="onExpressSelect"
+        >
+          <text class="item-icon">{{item.icon}}</text>
+          <text class="item-text">{{item.label}}</text>
+          <text wx:if="{{selectedExpress === item.value}}" class="item-check">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

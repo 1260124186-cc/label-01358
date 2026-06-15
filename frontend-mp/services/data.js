@@ -2043,6 +2043,107 @@ function calculatePrintPrice(colorType, sideType, copies, pages) {
   return Math.max(0.1, colorOption.pricePerPage * sideOption.priceMultiplier * copies * pages);
 }
 
+// ==================== 快递柜取件码模块 ====================
+
+function getExpressLockerList(status = 'all') {
+  let list = storage.getList(STORAGE_KEYS.EXPRESS_LOCKER_LIST);
+  const now = Date.now();
+  list = list.map(item => {
+    let currentStatus = item.status;
+    if (currentStatus === 'pending' && item.deadline && item.deadline < now) {
+      currentStatus = 'expired';
+    }
+    const statusInfo = constants.EXPRESS_LOCKER_STATUS_MAP[currentStatus] || {};
+    const expressInfo = constants.EXPRESS_PICKUP_POINTS.find(e => e.value === item.expressCompany) || {};
+    return {
+      ...item,
+      currentStatus,
+      statusText: statusInfo.label || currentStatus,
+      statusColor: statusInfo.color || '#666',
+      statusIcon: statusInfo.icon || '📦',
+      expressName: expressInfo.label || item.expressCompany,
+      expressIcon: expressInfo.icon || '📦',
+      deadlineText: item.deadline ? util.formatTime(item.deadline, 'MM-dd HH:mm') : '-',
+      remainingText: _getRemainingTime(item.deadline, currentStatus),
+      isExpiringSoon: _isExpiringSoon(item.deadline, currentStatus)
+    };
+  });
+  if (status !== 'all') {
+    list = list.filter(item => item.currentStatus === status);
+  }
+  return list.sort((a, b) => {
+    if (a.currentStatus === 'picked' && b.currentStatus !== 'picked') return 1;
+    if (a.currentStatus !== 'picked' && b.currentStatus === 'picked') return -1;
+    if (a.currentStatus === 'expired' && b.currentStatus === 'pending') return 1;
+    if (a.currentStatus === 'pending' && b.currentStatus === 'expired') return -1;
+    return b.createTime - a.createTime;
+  });
+}
+
+function _getRemainingTime(deadline, status) {
+  if (!deadline || status === 'picked') return '';
+  const now = Date.now();
+  const diff = deadline - now;
+  if (diff <= 0) return '已过期';
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  if (days > 0) return `剩余 ${days}天${hours}小时`;
+  if (hours > 0) return `剩余 ${hours}小时${minutes}分钟`;
+  return `剩余 ${minutes}分钟`;
+}
+
+function _isExpiringSoon(deadline, status) {
+  if (!deadline || status !== 'pending') return false;
+  const now = Date.now();
+  const diff = deadline - now;
+  return diff > 0 && diff < 24 * 60 * 60 * 1000;
+}
+
+function getExpressLockerDetail(id) {
+  return storage.getList(STORAGE_KEYS.EXPRESS_LOCKER_LIST).find(item => item.id === id) || null;
+}
+
+function addExpressLockerCode(data) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const item = {
+    id: util.generateId(),
+    ...data,
+    userId: userInfo.id || 'test_user',
+    status: 'pending',
+    createTime: Date.now(),
+    updateTime: Date.now(),
+    pickedTime: null
+  };
+  storage.addToList(STORAGE_KEYS.EXPRESS_LOCKER_LIST, item);
+  return item;
+}
+
+function updateExpressLockerCode(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.EXPRESS_LOCKER_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+}
+
+function markAsPicked(id) {
+  return storage.updateInList(STORAGE_KEYS.EXPRESS_LOCKER_LIST, id, {
+    status: 'picked',
+    pickedTime: Date.now(),
+    updateTime: Date.now()
+  });
+}
+
+function deleteExpressLockerCode(id) {
+  return storage.removeFromList(STORAGE_KEYS.EXPRESS_LOCKER_LIST, id);
+}
+
+function getExpiringSoonCount() {
+  const list = getExpressLockerList('pending');
+  return list.filter(item => item.isExpiringSoon).length;
+}
+
 // ==================== 租房模块 ====================
 
 let rentalInitialized = false;
@@ -7191,6 +7292,14 @@ module.exports = {
   deleteAddress,
   getDefaultAddress,
   calculatePrintPrice,
+
+  getExpressLockerList,
+  getExpressLockerDetail,
+  addExpressLockerCode,
+  updateExpressLockerCode,
+  markAsPicked,
+  deleteExpressLockerCode,
+  getExpiringSoonCount,
 
   getRentalList,
   getRentalDetail,

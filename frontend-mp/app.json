@@ -75,6 +75,8 @@
     "pages/errand/order-detail/index",
     "pages/errand/address/index",
     "pages/errand/credit/index",
+    "pages/express-locker/index",
+    "pages/express-locker/edit/index",
     "pages/carpool/index",
     "pages/carpool-publish/index",
     "pages/carpool-detail/index",

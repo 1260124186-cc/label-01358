@@ -1,0 +1,263 @@
+.container {
+  min-height: 100vh;
+  background-color: #F8F9FA;
+  padding-bottom: 160rpx;
+}
+
+.container.dark {
+  background-color: #1a1a2e;
+}
+
+.form-section {
+  background-color: #FFFFFF;
+  margin: 20rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+
+.container.dark .form-section {
+  background-color: #16213e;
+}
+
+.section-title {
+  padding: 28rpx 28rpx 16rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.container.dark .section-title {
+  color: #fff;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  padding: 28rpx;
+  border-top: 1rpx solid #F0F0F0;
+}
+
+.container.dark .form-item {
+  border-top-color: #2d3748;
+}
+
+.item-label {
+  width: 180rpx;
+  font-size: 28rpx;
+  color: #333;
+  flex-shrink: 0;
+}
+
+.container.dark .item-label {
+  color: #fff;
+}
+
+.item-value {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.container.dark .item-value {
+  color: #fff;
+}
+
+.item-value.placeholder {
+  color: #999;
+}
+
+.container.dark .item-value.placeholder {
+  color: #666;
+}
+
+.arrow {
+  font-size: 32rpx;
+  color: #999;
+  margin-left: 8rpx;
+}
+
+.item-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+  text-align: right;
+}
+
+.container.dark .item-input {
+  color: #fff;
+}
+
+.code-input {
+  font-weight: 600;
+  color: #FF6B6B;
+  letter-spacing: 2rpx;
+}
+
+.input-placeholder {
+  color: #999;
+}
+
+.container.dark .input-placeholder {
+  color: #666;
+}
+
+.picker-value {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+  text-align: right;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.container.dark .picker-value {
+  color: #fff;
+}
+
+.form-textarea {
+  display: block;
+  padding: 20rpx 28rpx 28rpx;
+}
+
+.item-textarea {
+  width: 100%;
+  min-height: 160rpx;
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+.container.dark .item-textarea {
+  color: #fff;
+}
+
+.submit-section {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 24rpx 40rpx;
+  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
+  background-color: #FFFFFF;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+
+.container.dark .submit-section {
+  background-color: #16213e;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.2);
+}
+
+.submit-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  color: #fff;
+  border-radius: 44rpx;
+  border: none;
+}
+
+.submit-btn::after {
+  border: none;
+}
+
+.picker-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+}
+
+.picker-container {
+  width: 100%;
+  background-color: #FFFFFF;
+  border-radius: 24rpx 24rpx 0 0;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container.dark .picker-container {
+  background-color: #16213e;
+}
+
+.picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 32rpx;
+  border-bottom: 1rpx solid #F0F0F0;
+}
+
+.container.dark .picker-header {
+  border-bottom-color: #2d3748;
+}
+
+.picker-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.container.dark .picker-title {
+  color: #fff;
+}
+
+.picker-close {
+  font-size: 36rpx;
+  color: #999;
+  padding: 8rpx;
+}
+
+.picker-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16rpx 0;
+}
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 32rpx;
+}
+
+.picker-item.selected {
+  background-color: #FFF5F5;
+}
+
+.container.dark .picker-item.selected {
+  background-color: #2d1f2f;
+}
+
+.item-icon {
+  font-size: 40rpx;
+  margin-right: 20rpx;
+}
+
+.item-text {
+  flex: 1;
+  font-size: 30rpx;
+  color: #333;
+}
+
+.container.dark .item-text {
+  color: #fff;
+}
+
+.item-check {
+  font-size: 32rpx;
+  color: #FF6B6B;
+  font-weight: bold;
+}

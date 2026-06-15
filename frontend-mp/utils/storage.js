@@ -141,6 +141,8 @@ const STORAGE_KEYS = {
   WORK_STUDY_HOURS_RECORD_LIST: 'workStudyHoursRecordList',
   WORK_STUDY_SALARY_LIST: 'workStudySalaryList',
 
+  EXPRESS_LOCKER_LIST: 'expressLockerList',
+
   CAMPUS_CARD_BIND_INFO: 'campusCardBindInfo',
   CAMPUS_CARD_TRANSACTION_LIST: 'campusCardTransactionList'
 };
