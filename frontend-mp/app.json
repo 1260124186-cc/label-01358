@@ -123,6 +123,7 @@
     "pages/news-detail/index",
     "pages/news-list/index",
     "pages/admin/index/index",
+    "pages/admin/dashboard/index",
     "pages/admin/announcement-list/index",
     "pages/admin/announcement-edit/index",
     "pages/admin/news-list/index",

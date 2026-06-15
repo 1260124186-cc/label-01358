@@ -1135,6 +1135,7 @@ const GRADUATION_ITEMS = [
 ];
 
 const ADMIN_MODULES = [
+  { id: 'dashboard', name: '运营数据', icon: '📊', color: '#6366F1', desc: '查看运营数据概览' },
   { id: 'announcement', name: '公告管理', icon: '📢', color: '#FF6B6B', desc: '管理校园公告通知' },
   { id: 'news', name: '校园动态', icon: '📰', color: '#4ECDC4', desc: '管理校园新闻动态' },
   { id: 'broadcast', name: '广播节目', icon: '🎙️', color: '#F59E0B', desc: '管理校园广播节目' },

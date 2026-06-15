@@ -1,0 +1,295 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="header-info">
+      <view class="header-title">运营数据看板</view>
+      <view class="header-desc">数据更新时间：{{updateTime}}</view>
+    </view>
+    <view class="export-btn" bindtap="onExportCSV" hover-class="export-btn-hover">
+      <text class="export-icon">📥</text>
+      <text>导出CSV</text>
+    </view>
+  </view>
+
+  <!-- 核心指标卡片 -->
+  <view class="section">
+    <view class="section-title">核心指标</view>
+    <view class="kpi-grid">
+      <view class="kpi-card kpi-1">
+        <view class="kpi-icon">👥</view>
+        <view class="kpi-content">
+          <view class="kpi-value">{{kpi.dau}}</view>
+          <view class="kpi-label">DAU 日活用户</view>
+          <view class="kpi-trend {{kpi.dauTrend >= 0 ? 'up' : 'down'}}">
+            {{kpi.dauTrend >= 0 ? '↑' : '↓'}} {{Math.abs(kpi.dauTrend)}}%
+          </view>
+        </view>
+      </view>
+
+      <view class="kpi-card kpi-2">
+        <view class="kpi-icon">📝</view>
+        <view class="kpi-content">
+          <view class="kpi-value">{{kpi.totalPublish}}</view>
+          <view class="kpi-label">今日发布总量</view>
+          <view class="kpi-trend {{kpi.publishTrend >= 0 ? 'up' : 'down'}}">
+            {{kpi.publishTrend >= 0 ? '↑' : '↓'}} {{Math.abs(kpi.publishTrend)}}%
+          </view>
+        </view>
+      </view>
+
+      <view class="kpi-card kpi-3">
+        <view class="kpi-icon">🔥</view>
+        <view class="kpi-content">
+          <view class="kpi-value">{{kpi.hotSearchCount}}</view>
+          <view class="kpi-label">搜索热词数</view>
+          <view class="kpi-trend up">↑ {{kpi.searchGrowth}}%</view>
+        </view>
+      </view>
+
+      <view class="kpi-card kpi-4">
+        <view class="kpi-icon">🚨</view>
+        <view class="kpi-content">
+          <view class="kpi-value">{{kpi.reportRate}}%</view>
+          <view class="kpi-label">举报率</view>
+          <view class="kpi-trend {{kpi.reportTrend <= 0 ? 'up' : 'down'}}">
+            {{kpi.reportTrend >= 0 ? '↑' : '↓'}} {{Math.abs(kpi.reportTrend)}}%
+          </view>
+        </view>
+      </view>
+
+      <view class="kpi-card kpi-5">
+        <view class="kpi-icon">✅</view>
+        <view class="kpi-content">
+          <view class="kpi-value">{{kpi.completionRate}}%</view>
+          <view class="kpi-label">跑腿完单率</view>
+          <view class="kpi-trend {{kpi.completionTrend >= 0 ? 'up' : 'down'}}">
+            {{kpi.completionTrend >= 0 ? '↑' : '↓'}} {{Math.abs(kpi.completionTrend)}}%
+          </view>
+        </view>
+      </view>
+
+      <view class="kpi-card kpi-6">
+        <view class="kpi-icon">📦</view>
+        <view class="kpi-content">
+          <view class="kpi-value">{{kpi.errandOrders}}</view>
+          <view class="kpi-label">跑腿订单量</view>
+          <view class="kpi-trend up">↑ {{kpi.errandGrowth}}%</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 7日趋势图 -->
+  <view class="section">
+    <view class="section-title">
+      <text>7 日数据趋势</text>
+      <view class="trend-legend">
+        <view class="legend-item"><view class="legend-dot legend-1"></view>DAU</view>
+        <view class="legend-item"><view class="legend-dot legend-2"></view>发布量</view>
+        <view class="legend-item"><view class="legend-dot legend-3"></view>订单量</view>
+      </view>
+    </view>
+    <view class="chart-card">
+      <view class="line-chart">
+        <view class="y-axis">
+          <text wx:for="{{yAxisLabels}}" wx:key="index">{{item}}</text>
+        </view>
+        <view class="chart-area">
+          <view class="grid-lines">
+            <view wx:for="{{5}}" wx:key="index" class="grid-line"></view>
+          </view>
+          <view class="lines-container">
+            <!-- DAU 折线 -->
+            <view class="polyline polyline-1" style="clip-path: polygon({{trendClipPaths.dau}})"></view>
+            <view class="polyline-area polyline-area-1" style="clip-path: polygon({{trendClipPaths.dauArea}})"></view>
+            <!-- 发布量 折线 -->
+            <view class="polyline polyline-2" style="clip-path: polygon({{trendClipPaths.publish}})"></view>
+            <!-- 订单量 折线 -->
+            <view class="polyline polyline-3" style="clip-path: polygon({{trendClipPaths.errand}})"></view>
+            <!-- 数据点 -->
+            <block wx:for="{{trendData}}" wx:key="date" wx:for-index="idx">
+              <view class="data-points">
+                <view class="data-point point-1" style="left: {{item.posX}}%; bottom: {{item.dauY}}%;"></view>
+                <view class="data-point point-2" style="left: {{item.posX}}%; bottom: {{item.publishY}}%;"></view>
+                <view class="data-point point-3" style="left: {{item.posX}}%; bottom: {{item.errandY}}%;"></view>
+              </view>
+            </block>
+          </view>
+          <view class="x-axis">
+            <text wx:for="{{trendData}}" wx:key="date">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 模块占比饼图 & 搜索热词 -->
+  <view class="section row-2">
+    <view class="col">
+      <view class="section-title">模块发布占比</view>
+      <view class="chart-card">
+        <view class="pie-chart-container">
+          <view class="pie-chart">
+            <view class="pie-slice pie-1" style="transform: rotate(0deg) skewY({{modulePieAngles[0]}}deg);"></view>
+            <view class="pie-slice pie-2" style="transform: rotate({{modulePieAngles[1]}}deg) skewY({{modulePieAngles[2]}}deg);"></view>
+            <view class="pie-slice pie-3" style="transform: rotate({{modulePieAngles[3]}}deg) skewY({{modulePieAngles[4]}}deg);"></view>
+            <view class="pie-slice pie-4" style="transform: rotate({{modulePieAngles[5]}}deg) skewY({{modulePieAngles[6]}}deg);"></view>
+            <view class="pie-slice pie-5" style="transform: rotate({{modulePieAngles[7]}}deg) skewY({{modulePieAngles[8]}}deg);"></view>
+            <view class="pie-center"></view>
+          </view>
+          <view class="pie-total">
+            <view class="pie-total-value">{{kpi.totalPublish}}</view>
+            <view class="pie-total-label">总计</view>
+          </view>
+        </view>
+        <view class="pie-legend">
+          <view wx:for="{{modulePublishData}}" wx:key="name" class="pie-legend-item">
+            <view class="legend-dot pie-legend-{{index + 1}}"></view>
+            <text class="pie-legend-name">{{item.name}}</text>
+            <text class="pie-legend-value">{{item.count}} ({{item.percent}}%)</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="col">
+      <view class="section-title">搜索热词 TOP10</view>
+      <view class="chart-card">
+        <view class="hot-words-list">
+          <view wx:for="{{hotWords}}" wx:key="word" class="hot-word-item">
+            <view class="hot-word-rank rank-{{index < 3 ? index + 1 : 'other'}}">{{index + 1}}</view>
+            <view class="hot-word-info">
+              <text class="hot-word">{{item.word}}</text>
+              <view class="hot-word-bar">
+                <view class="hot-word-bar-fill" style="width: {{item.percent}}%;"></view>
+              </view>
+            </view>
+            <text class="hot-word-count">{{item.count}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 用户信用分布 & 违规用户列表 -->
+  <view class="section row-2">
+    <view class="col">
+      <view class="section-title">用户信用分布</view>
+      <view class="chart-card">
+        <view class="credit-distribution">
+          <view wx:for="{{creditDistribution}}" wx:key="level" class="credit-item">
+            <view class="credit-label">
+              <text class="credit-icon">{{item.icon}}</text>
+              <text>{{item.label}}</text>
+            </view>
+            <view class="credit-bar-bg">
+              <view class="credit-bar-fill credit-{{index}}" style="width: {{item.percent}}%;"></view>
+            </view>
+            <view class="credit-value">
+              <text class="credit-count">{{item.count}}</text>
+              <text class="credit-percent">{{item.percent}}%</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="col">
+      <view class="section-title">违规用户列表</view>
+      <view class="chart-card">
+        <view class="violation-list">
+          <view class="violation-header">
+            <text class="col-user">用户</text>
+            <text class="col-type">违规类型</text>
+            <text class="col-time">次数</text>
+            <text class="col-status">状态</text>
+          </view>
+          <scroll-view scroll-y class="violation-scroll">
+            <view wx:for="{{violationUsers}}" wx:key="id" class="violation-item">
+              <view class="col-user">
+                <view class="user-avatar" style="background-color: {{item.avatarColor}};">{{item.name.charAt(0)}}</view>
+                <view class="user-info">
+                  <text class="user-name">{{item.name}}</text>
+                  <text class="user-id">ID: {{item.userId}}</text>
+                </view>
+              </view>
+              <text class="col-type">{{item.type}}</text>
+              <text class="col-time">{{item.count}}</text>
+              <view class="col-status">
+                <text class="status-tag status-{{item.status}}">{{item.statusText}}</text>
+              </view>
+            </view>
+          </scroll-view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 内容健康度 -->
+  <view class="section">
+    <view class="section-title">内容健康度</view>
+    <view class="health-grid">
+      <view class="health-card health-1">
+        <view class="health-header">
+          <text class="health-icon">⏳</text>
+          <text class="health-label">待审核内容</text>
+        </view>
+        <view class="health-value">{{contentHealth.pendingReview}}</view>
+        <view class="health-breakdown">
+          <view wx:for="{{contentHealth.pendingBreakdown}}" wx:key="name" class="breakdown-item">
+            <text class="breakdown-name">{{item.name}}</text>
+            <text class="breakdown-value">{{item.count}}</text>
+          </view>
+        </view>
+        <view class="health-bar-container">
+          <view class="health-bar">
+            <view class="health-bar-fill" style="width: {{contentHealth.pendingPercent}}%;"></view>
+          </view>
+          <text class="health-bar-text">处理率 {{100 - contentHealth.pendingPercent}}%</text>
+        </view>
+      </view>
+
+      <view class="health-card health-2">
+        <view class="health-header">
+          <text class="health-icon">🚫</text>
+          <text class="health-label">敏感词命中</text>
+        </view>
+        <view class="health-value">{{contentHealth.sensitiveHit}}</view>
+        <view class="health-trend {{contentHealth.sensitiveTrend <= 0 ? 'down' : 'up'}}">
+          {{contentHealth.sensitiveTrend >= 0 ? '+' : ''}}{{contentHealth.sensitiveTrend}}% 较昨日
+        </view>
+        <view class="sensitive-list">
+          <view wx:for="{{contentHealth.topSensitive}}" wx:key="word" class="sensitive-item">
+            <text class="sensitive-word">{{item.word}}</text>
+            <text class="sensitive-count">{{item.count}}次</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="health-card health-3">
+        <view class="health-header">
+          <text class="health-icon">🛡️</text>
+          <text class="health-label">健康指数</text>
+        </view>
+        <view class="health-score">
+          <view class="score-ring">
+            <view class="score-ring-bg"></view>
+            <view class="score-ring-fill" style="background: conic-gradient(#10B981 {{contentHealth.healthScore * 3.6}}deg, transparent 0deg);"></view>
+            <view class="score-ring-inner">
+              <text class="score-value">{{contentHealth.healthScore}}</text>
+              <text class="score-label">分</text>
+            </view>
+          </view>
+        </view>
+        <view class="health-tips">
+          <text wx:if="{{contentHealth.healthScore >= 90}}" class="tip-good">✨ 内容生态健康</text>
+          <text wx:elif="{{contentHealth.healthScore >= 70}}" class="tip-normal">⚠️ 需关注敏感内容</text>
+          <text wx:else class="tip-bad">🚨 需加强内容审核</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+</view>

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "运营数据看板",
+  "navigationBarBackgroundColor": "#6366F1",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#F8F9FA",
+  "enablePullDownRefresh": true
+}

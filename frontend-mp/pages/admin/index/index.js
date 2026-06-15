@@ -102,6 +102,7 @@ mixPage({
     }
 
     const routeMap = {
+      dashboard: '/pages/admin/dashboard/index',
       announcement: '/pages/admin/announcement-list/index',
       news: '/pages/admin/news-list/index',
       broadcast: '/pages/admin/broadcast-list/index',
