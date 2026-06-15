@@ -192,7 +192,14 @@ const STORAGE_KEYS = {
   LIBRARY_SEAT_LIST: 'librarySeatList',
   LIBRARY_SEAT_RESERVATION_LIST: 'librarySeatReservationList',
   LIBRARY_RECOMMEND_LIST: 'libraryRecommendList',
-  LIBRARY_REMINDER_LIST: 'libraryReminderList'
+  LIBRARY_REMINDER_LIST: 'libraryReminderList',
+
+  CURRENT_CAMPUS_ID: 'currentCampusId',
+  CAMPUS_LIST: 'campusList',
+  CAMPUS_SELECTED: 'campusSelected',
+  FAVORITES_CROSS_CAMPUS: 'favoritesCrossCampus',
+  VIEW_CACHE: 'viewCache',
+  ADMIN_MANAGED_CAMPUSES: 'adminManagedCampuses'
 };
 
 /**

@@ -3,6 +3,25 @@
   <view class="header">
     <view class="header-title">内容管理中心</view>
     <view class="header-desc">管理校园公告、动态、广播和风光内容</view>
+
+    <!-- 管理校区切换 -->
+    <view class="admin-campus-bar" bindtap="onCampusTap" hover-class="admin-campus-bar-hover">
+      <view class="campus-bar-left">
+        <text class="campus-bar-icon">{{currentCampusIcon || '🏫'}}</text>
+        <view class="campus-bar-info">
+          <text class="campus-bar-tag">
+            {{isSuperAdmin ? '超级管理员' : '校区管理员'}}
+          </text>
+          <text class="campus-bar-name">
+            {{currentCampusName || '请选择管理校区'}}
+            <text wx:if="{{managedCampuses.length > 0 && managedCampuses[0] !== 'all'}}">
+              （{{managedCampuses.length}}个校区）
+            </text>
+          </text>
+        </view>
+      </view>
+      <text class="campus-bar-arrow" wx:if="{{managedCampuses.length > 1 || isSuperAdmin}}">›</text>
+    </view>
   </view>
 
   <view class="stats-grid">
@@ -46,4 +65,14 @@
       </view>
     </view>
   </view>
+
+  <!-- 校区选择器 -->
+  <campus-selector
+    visible="{{showCampusSelector}}"
+    required="{{false}}"
+    showClose="{{true}}"
+    title="选择管理校区"
+    bind:confirm="onCampusConfirm"
+    bind:close="onCampusClose"
+  />
 </view>

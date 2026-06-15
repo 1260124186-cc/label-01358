@@ -1,3 +1,4 @@
+const app = getApp();
 const dataService = require('../../services/data');
 const constants = require('../../config/constants');
 const util = require('../../utils/util');
@@ -6,6 +7,7 @@ const { mixPage } = require('../../utils/withTheme');
 mixPage({
   data: {
     darkMode: false,
+    currentCampusName: '',
     searchKeyword: '',
     showSearchFocus: false,
     searchHistory: [],
@@ -67,10 +69,18 @@ mixPage({
       mapType: settings.mapType,
       showLabels: settings.showLabels
     });
+
+    this.loadCampusInfo();
   },
 
   onShow() {
+    this.loadCampusInfo();
     this.loadData();
+  },
+
+  loadCampusInfo() {
+    const campusName = app.getCurrentCampusName();
+    this.setData({ currentCampusName: campusName || '' });
   },
 
   onPullDownRefresh() {

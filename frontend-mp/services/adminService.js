@@ -2,6 +2,7 @@ const storage = require('../utils/storage');
 const { STORAGE_KEYS } = storage;
 const util = require('../utils/util');
 const mockData = require('../config/mock-data');
+const campusService = require('./campusService');
 
 let announcementsInitialized = false;
 let campusNewsInitialized = false;
@@ -104,9 +105,10 @@ function initSceneryManage() {
   sceneryInitialized = true;
 }
 
-function getAnnouncements() {
+function getAnnouncements(campusId) {
   initAnnouncements();
-  const list = storage.getList(STORAGE_KEYS.ANNOUNCEMENTS);
+  let list = storage.getList(STORAGE_KEYS.ANNOUNCEMENTS);
+  list = campusService.filterListByCampus(list, campusId);
   return list.slice().sort((a, b) => {
     if (a.isTop !== b.isTop) return b.isTop ? 1 : -1;
     if (a.sort !== b.sort) return a.sort - b.sort;
@@ -134,7 +136,8 @@ function createAnnouncement(data) {
     publishTime: data.publishTime || now,
     createTime: now,
     updateTime: now,
-    sort: data.sort != null ? data.sort : list.length
+    sort: data.sort != null ? data.sort : list.length,
+    campusId: data.campusId || campusService.getCurrentCampusId()
   };
   list.unshift(item);
   storage.set(STORAGE_KEYS.ANNOUNCEMENTS, list);
@@ -172,9 +175,10 @@ function toggleAnnouncementTop(id) {
   return true;
 }
 
-function getCampusNewsList() {
+function getCampusNewsList(campusId) {
   initCampusNews();
-  const list = storage.getList(STORAGE_KEYS.CAMPUS_NEWS);
+  let list = storage.getList(STORAGE_KEYS.CAMPUS_NEWS);
+  list = campusService.filterListByCampus(list, campusId);
   return list.slice().sort((a, b) => {
     if (a.isTop !== b.isTop) return b.isTop ? 1 : -1;
     if (a.sort !== b.sort) return a.sort - b.sort;
@@ -207,7 +211,8 @@ function createCampusNews(data) {
     createTime: now,
     updateTime: now,
     views: 0,
-    sort: data.sort != null ? data.sort : list.length
+    sort: data.sort != null ? data.sort : list.length,
+    campusId: data.campusId || campusService.getCurrentCampusId()
   };
   list.unshift(item);
   storage.set(STORAGE_KEYS.CAMPUS_NEWS, list);
@@ -245,9 +250,10 @@ function toggleCampusNewsTop(id) {
   return true;
 }
 
-function getBroadcastPrograms() {
+function getBroadcastPrograms(campusId) {
   initBroadcastPrograms();
-  const list = storage.getList(STORAGE_KEYS.BROADCAST_PROGRAMS);
+  let list = storage.getList(STORAGE_KEYS.BROADCAST_PROGRAMS);
+  list = campusService.filterListByCampus(list, campusId);
   return list.slice().sort((a, b) => {
     if (a.sort !== b.sort) return a.sort - b.sort;
     return (b.publishTime || 0) - (a.publishTime || 0);
@@ -278,7 +284,8 @@ function createBroadcastProgram(data) {
     publishTime: data.publishTime || now,
     createTime: now,
     updateTime: now,
-    sort: data.sort != null ? data.sort : list.length
+    sort: data.sort != null ? data.sort : list.length,
+    campusId: data.campusId || campusService.getCurrentCampusId()
   };
   list.unshift(item);
   storage.set(STORAGE_KEYS.BROADCAST_PROGRAMS, list);
@@ -322,9 +329,10 @@ function moveBroadcastProgram(id, direction) {
   return true;
 }
 
-function getSceneryList() {
+function getSceneryList(campusId) {
   initSceneryManage();
-  const list = storage.getList(STORAGE_KEYS.SCENERY_MANAGE);
+  let list = storage.getList(STORAGE_KEYS.SCENERY_MANAGE);
+  list = campusService.filterListByCampus(list, campusId);
   return list.slice().sort((a, b) => {
     if (a.sort !== b.sort) return a.sort - b.sort;
     return (b.publishTime || 0) - (a.publishTime || 0);
@@ -351,7 +359,8 @@ function createScenery(data) {
     publishTime: data.publishTime || now,
     createTime: now,
     updateTime: now,
-    sort: data.sort != null ? data.sort : list.length
+    sort: data.sort != null ? data.sort : list.length,
+    campusId: data.campusId || campusService.getCurrentCampusId()
   };
   list.unshift(item);
   storage.set(STORAGE_KEYS.SCENERY_MANAGE, list);
@@ -395,12 +404,12 @@ function moveScenery(id, direction) {
   return true;
 }
 
-function getStats() {
+function getStats(campusId) {
   return {
-    announcementCount: getAnnouncements().length,
-    newsCount: getCampusNewsList().length,
-    broadcastCount: getBroadcastPrograms().length,
-    sceneryCount: getSceneryList().length
+    announcementCount: getAnnouncements(campusId).length,
+    newsCount: getCampusNewsList(campusId).length,
+    broadcastCount: getBroadcastPrograms(campusId).length,
+    sceneryCount: getSceneryList(campusId).length
   };
 }
 

@@ -75,4 +75,14 @@
       <text class="switch-link" bindtap="toggleMode">{{isLogin ? '立即注册' : '去登录'}}</text>
     </view>
   </view>
+
+  <!-- 校区选择器 -->
+  <campus-selector
+    visible="{{showCampusSelector}}"
+    required="{{true}}"
+    showClose="{{false}}"
+    title="选择您的校区"
+    bind:confirm="onCampusConfirm"
+    bind:close="onCampusClose"
+  />
 </view>

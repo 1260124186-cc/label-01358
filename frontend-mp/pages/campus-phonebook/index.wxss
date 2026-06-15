@@ -3,6 +3,47 @@
   background-color: var(--color-bg-page);
 }
 
+/* ==================== 校区头部 ==================== */
+.campus-header {
+  padding: 28rpx 24rpx 20rpx;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.campus-header-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+.campus-header-icon {
+  width: 72rpx;
+  height: 72rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 20rpx;
+  font-size: 36rpx;
+  box-shadow: 0 4rpx 12rpx rgba(24, 144, 255, 0.1);
+}
+
+.campus-header-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.campus-header-label {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #0369a1;
+}
+
+.campus-header-desc {
+  font-size: 22rpx;
+  color: #0ea5e9;
+}
+
 /* ==================== 搜索区域 ==================== */
 .search-section {
   padding: 20rpx 24rpx;

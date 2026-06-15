@@ -5,6 +5,14 @@
     <view class="select-mode-cancel" bindtap="onCancelSelect">取消</view>
   </view>
 
+  <view class="campus-header">
+    <text class="campus-header-icon">🗺️</text>
+    <view class="campus-header-info">
+      <text class="campus-header-label">当前校区</text>
+      <text class="campus-header-name">{{currentCampusName || '全部校区'}}</text>
+    </view>
+  </view>
+
   <view class="search-bar">
     <view class="search-input-wrap">
       <text class="search-icon">🔍</text>

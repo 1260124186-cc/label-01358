@@ -1,3 +1,4 @@
+const app = getApp();
 const dataService = require('../../services/data');
 const constants = require('../../config/constants');
 const util = require('../../utils/util');
@@ -6,6 +7,7 @@ const { mixPage } = require('../../utils/withTheme');
 mixPage({
   data: {
     darkMode: false,
+    currentCampusName: '',
     keyword: '',
     currentTab: 'all',
     tabs: constants.PHONEBOOK_TABS,
@@ -24,12 +26,17 @@ mixPage({
 
   onShow() {
     this.loadThemeState();
+    this.loadCampusInfo();
   },
 
   loadThemeState() {
-    const app = getApp();
     const { isDark } = app.globalData;
     this.setData({ darkMode: isDark || false });
+  },
+
+  loadCampusInfo() {
+    const campusName = app.getCurrentCampusName();
+    this.setData({ currentCampusName: campusName || '' });
   },
 
   onPullDownRefresh() {

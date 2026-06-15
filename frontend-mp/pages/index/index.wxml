@@ -1,5 +1,20 @@
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
 <view class="page {{darkMode ? 'dark' : ''}} color-scheme-{{colorScheme}} {{fontSizeClass}}" aria-role="main" aria-label="校园生活服务首页">
+  <!-- 校区切换栏 -->
+  <view class="campus-bar" bindtap="onCampusTap" hover-class="campus-bar-hover">
+    <view class="campus-bar-left">
+      <text class="campus-bar-icon">{{currentCampusIcon || '🏫'}}</text>
+      <view class="campus-bar-info">
+        <text class="campus-bar-label">当前校区</text>
+        <text class="campus-bar-name">{{currentCampusName || '请选择校区'}}</text>
+      </view>
+    </view>
+    <view class="campus-bar-right">
+      <text class="campus-bar-switch">切换</text>
+      <text class="campus-bar-arrow">›</text>
+    </view>
+  </view>
+
   <!-- 搜索入口 -->
   <view class="search-entry" bindtap="onSearchTap">
     <view class="search-entry-bar">
@@ -167,4 +182,14 @@
 
   <!-- SOS 一键求助按钮 -->
   <sos-button bind:sosTriggered="onSOSTriggered" />
+
+  <!-- 校区选择器 -->
+  <campus-selector
+    visible="{{showCampusSelector}}"
+    required="{{!currentCampusId}}"
+    showClose="{{true}}"
+    title="选择校区"
+    bind:confirm="onCampusConfirm"
+    bind:close="onCampusClose"
+  />
 </view>

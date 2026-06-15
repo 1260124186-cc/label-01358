@@ -230,6 +230,25 @@
   margin-right: 8rpx;
 }
 
+.menu-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.menu-info .menu-text {
+  flex: none;
+}
+
+.menu-info .menu-desc {
+  margin-right: 0;
+}
+
+.theme-switch.no-border {
+  border-bottom: none;
+}
+
 .color-scheme-list {
   display: flex;
   padding: 0 8rpx;

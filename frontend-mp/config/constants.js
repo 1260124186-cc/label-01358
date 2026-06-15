@@ -3000,7 +3000,102 @@ const LIBRARY_REMINDER_TYPE_MAP = LIBRARY_REMINDER_TYPES.reduce((acc, t) => {
   return acc;
 }, {});
 
+const DEFAULT_CAMPUSES = [
+  {
+    id: 'campus_main',
+    name: '主校区',
+    shortName: '主校',
+    address: '北京市海淀区学院路100号',
+    latitude: 39.9042,
+    longitude: 116.4074,
+    logo: '',
+    color: '#3B82F6',
+    type: 'main',
+    description: '学校主校区，行政及主要教学区',
+    enabled: true,
+    sort: 1
+  },
+  {
+    id: 'campus_east',
+    name: '东校区',
+    shortName: '东校',
+    address: '北京市朝阳区学府路88号',
+    latitude: 39.9250,
+    longitude: 116.4500,
+    logo: '',
+    color: '#10B981',
+    type: 'branch',
+    description: '东校区，理工科为主',
+    enabled: true,
+    sort: 2
+  },
+  {
+    id: 'campus_west',
+    name: '西校区',
+    shortName: '西校',
+    address: '北京市石景山区杏石口路66号',
+    latitude: 39.9100,
+    longitude: 116.2800,
+    logo: '',
+    color: '#F59E0B',
+    type: 'branch',
+    description: '西校区，文科及艺术学院',
+    enabled: true,
+    sort: 3
+  },
+  {
+    id: 'campus_south',
+    name: '南校区',
+    shortName: '南校',
+    address: '北京市大兴区清源北路20号',
+    latitude: 39.7500,
+    longitude: 116.3500,
+    logo: '',
+    color: '#8B5CF6',
+    type: 'branch',
+    description: '南校区，医学及生命科学学院',
+    enabled: true,
+    sort: 4
+  }
+];
+
+const CAMPUS_ID_DEFAULT = 'campus_main';
+
+const CAMPUS_SWITCH_CONFIG = {
+  clearViewCache: true,
+  preserveAccountData: true,
+  favoritesCrossCampus: true,
+  historyCrossCampus: false,
+  notifyOnSwitch: true
+};
+
+const CAMPUS_DATA_SCOPES = [
+  { key: 'lostFound', label: '失物招领', campusScoped: true },
+  { key: 'market', label: '二手市场', campusScoped: true },
+  { key: 'rental', label: '校园租房', campusScoped: true },
+  { key: 'poi', label: 'POI地点', campusScoped: true },
+  { key: 'canteen', label: '食堂菜谱', campusScoped: true },
+  { key: 'campusShop', label: '校园商家', campusScoped: true },
+  { key: 'forum', label: '校园论坛', campusScoped: true },
+  { key: 'club', label: '社团活动', campusScoped: true },
+  { key: 'volunteer', label: '志愿活动', campusScoped: true },
+  { key: 'errand', label: '跑腿服务', campusScoped: true },
+  { key: 'carpool', label: '拼车出行', campusScoped: true },
+  { key: 'groupBuy', label: '团购拼单', campusScoped: true },
+  { key: 'news', label: '校园动态', campusScoped: true },
+  { key: 'announcement', label: '公告通知', campusScoped: true },
+  { key: 'broadcast', label: '校园广播', campusScoped: false },
+  { key: 'studyMaterials', label: '学习资料', campusScoped: false },
+  { key: 'library', label: '图书馆', campusScoped: true },
+  { key: 'schedule', label: '课程表', campusScoped: true },
+  { key: 'canteenReviews', label: '食堂评价', campusScoped: true }
+];
+
 module.exports = {
+  DEFAULT_CAMPUSES,
+  CAMPUS_ID_DEFAULT,
+  CAMPUS_SWITCH_CONFIG,
+  CAMPUS_DATA_SCOPES,
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
   ADMIN_MODULES,

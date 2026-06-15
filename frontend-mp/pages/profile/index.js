@@ -3,6 +3,7 @@ const dataService = require('../../services/data');
 const util = require('../../utils/util');
 const themeUtil = require('../../utils/theme');
 const fontsizeUtil = require('../../utils/fontsize');
+const campusService = require('../../services/campusService');
 
 Page({
   data: {
@@ -15,13 +16,19 @@ Page({
     colorScheme: 'coral',
     fontSize: 'standard',
     fontSizeClass: 'font-size-standard',
-    colorSchemes: []
+    colorSchemes: [],
+    currentCampusId: null,
+    currentCampusName: '',
+    currentCampusIcon: '🏫',
+    showCampusSelector: false,
+    favoritesCrossCampus: true
   },
 
   onLoad() {
     this.loadUserInfo();
     this.loadThemeState();
     this.loadFontState();
+    this.loadCampusInfo();
   },
 
   onShow() {
@@ -29,6 +36,20 @@ Page({
     this.loadCounts();
     this.loadThemeState();
     this.loadFontState();
+    this.loadCampusInfo();
+  },
+
+  loadCampusInfo() {
+    const campus = app.getCurrentCampus();
+    const crossCampus = app.globalData.favoritesCrossCampus !== false;
+    if (campus) {
+      this.setData({
+        currentCampusId: campus.id,
+        currentCampusName: campus.name,
+        currentCampusIcon: campus.icon || '🏫',
+        favoritesCrossCampus: crossCampus
+      });
+    }
   },
 
   loadThemeState() {
@@ -195,5 +216,36 @@ Page({
       });
       util.showSuccess('已退出登录');
     }
+  },
+
+  onCampusTap() {
+    this.setData({ showCampusSelector: true });
+  },
+
+  onCampusConfirm(e) {
+    const { campusId } = e.detail;
+
+    app.switchCampus(campusId, {
+      showToast: true,
+      onSuccess: () => {
+        this.loadCampusInfo();
+        this.loadCounts();
+        this.setData({ showCampusSelector: false });
+      }
+    });
+  },
+
+  onCampusClose() {
+    this.setData({ showCampusSelector: false });
+  },
+
+  onToggleFavoritesCrossCampus(e) {
+    const value = e.detail.value;
+    app.globalData.favoritesCrossCampus = value;
+    const storage = require('../../utils/storage');
+    storage.set(storage.STORAGE_KEYS.FAVORITES_CROSS_CAMPUS, value);
+    this.setData({ favoritesCrossCampus: value });
+    this.loadCounts();
+    util.showToast(value ? '收藏已设为跨校区可见' : '收藏已按校区隔离');
   }
 });

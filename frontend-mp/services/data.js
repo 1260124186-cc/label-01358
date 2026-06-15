@@ -7,6 +7,7 @@ const { STORAGE_KEYS } = storage;
 const util = require('../utils/util');
 const constants = require('../config/constants');
 const mockData = require('../config/mock-data');
+const campusService = require('./campusService');
 
 let studyMaterialsInitialized = false;
 let studyRewardsInitialized = false;
@@ -174,6 +175,10 @@ function paginateList(list, page = 1, pageSize = 15) {
 function getLostFoundList(filters = {}) {
   let list = storage.getList(STORAGE_KEYS.LOST_FOUND_LIST);
 
+  if (campusService.isCampusDataScoped('lostFound')) {
+    list = campusService.filterListByCampus(list, filters.campusId);
+  }
+
   if (filters.type) {
     list = list.filter(item => item.type === filters.type);
   }
@@ -231,7 +236,8 @@ function publishLostFound(data) {
     userAvatar: userInfo.avatarUrl || '',
     createTime: Date.now(),
     updateTime: Date.now(),
-    status: 'active'
+    status: 'active',
+    campusId: data.campusId || campusService.getCurrentCampusId()
   };
 
   const success = storage.addToList(STORAGE_KEYS.LOST_FOUND_LIST, item);
@@ -279,6 +285,10 @@ function deleteLostFound(id) {
  */
 function getMarketList(filters = {}) {
   let list = storage.getList(STORAGE_KEYS.MARKET_LIST);
+
+  if (campusService.isCampusDataScoped('market')) {
+    list = campusService.filterListByCampus(list, filters.campusId);
+  }
 
   if (filters.category) {
     list = list.filter(item => item.category === filters.category);
@@ -369,7 +379,8 @@ function publishMarketItem(data) {
     createTime: Date.now(),
     updateTime: Date.now(),
     status: 'selling',
-    views: 0
+    views: 0,
+    campusId: data.campusId || campusService.getCurrentCampusId()
   };
 
   const success = storage.addToList(STORAGE_KEYS.MARKET_LIST, item);
@@ -1718,6 +1729,10 @@ function getCampusShopList(filters = {}) {
   initCampusShops();
   let list = storage.getList(STORAGE_KEYS.CAMPUS_SHOP_LIST);
 
+  if (campusService.isCampusDataScoped('campusShop')) {
+    list = campusService.filterListByCampus(list, filters.campusId);
+  }
+
   if (filters.category && filters.category !== 'all') {
     list = list.filter(item => item.category === filters.category);
   }
@@ -2571,6 +2586,10 @@ function getRentalList(filters = {}) {
   initRentalData();
   let list = storage.getList(STORAGE_KEYS.RENTAL_LIST);
 
+  if (campusService.isCampusDataScoped('rental')) {
+    list = campusService.filterListByCampus(list, filters.campusId);
+  }
+
   if (filters.locationType) {
     list = list.filter(item => item.locationType === filters.locationType);
   }
@@ -2649,7 +2668,8 @@ function publishRentalHouse(data) {
     status: 'available',
     views: 0,
     createTime: Date.now(),
-    updateTime: Date.now()
+    updateTime: Date.now(),
+    campusId: data.campusId || campusService.getCurrentCampusId()
   };
 
   const success = storage.addToList(STORAGE_KEYS.RENTAL_LIST, item);
@@ -3359,6 +3379,10 @@ function getCanteenList(filters = {}) {
   initCanteenData();
   let list = storage.getList(STORAGE_KEYS.CANTEEN_LIST);
 
+  if (campusService.isCampusDataScoped('canteen')) {
+    list = campusService.filterListByCampus(list, filters.campusId);
+  }
+
   const favoriteCanteenIds = storage.getList(STORAGE_KEYS.FAVORITE_CANTEENS);
 
   list = list.map(item => {
@@ -3631,6 +3655,10 @@ function getForumPostList(filters = {}) {
   initForumData();
   let list = storage.getList(STORAGE_KEYS.FORUM_POST_LIST);
 
+  if (campusService.isCampusDataScoped('forum')) {
+    list = campusService.filterListByCampus(list, filters.campusId);
+  }
+
   if (filters.type) {
     list = list.filter(item => item.type === filters.type);
   }
@@ -3692,7 +3720,8 @@ function publishForumPost(data) {
     hotScore: 0,
     comments: [],
     createTime: Date.now(),
-    updateTime: Date.now()
+    updateTime: Date.now(),
+    campusId: data.campusId || campusService.getCurrentCampusId()
   };
 
   storage.addToList(STORAGE_KEYS.FORUM_POST_LIST, item);
@@ -4028,6 +4057,10 @@ function getActivityStatus(activity) {
 function getClubList(filters = {}) {
   initClubData();
   let list = storage.getList(STORAGE_KEYS.CLUB_LIST);
+
+  if (campusService.isCampusDataScoped('club')) {
+    list = campusService.filterListByCampus(list, filters.campusId);
+  }
 
   if (filters.type) {
     list = list.filter(item => item.type === filters.type);
@@ -4838,6 +4871,10 @@ function initMapData() {
 function getPOIList(filters = {}) {
   initMapData();
   let list = storage.getList(STORAGE_KEYS.POI_LIST);
+
+  if (campusService.isCampusDataScoped('poi')) {
+    list = campusService.filterListByCampus(list, filters.campusId);
+  }
 
   if (filters.category && filters.category !== 'all') {
     list = list.filter(item => item.category === filters.category);

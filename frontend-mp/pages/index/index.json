@@ -3,6 +3,7 @@
   "enablePullDownRefresh": true,
   "usingComponents": {
     "card": "/components/card/index",
-    "sos-button": "/components/sos-button/index"
+    "sos-button": "/components/sos-button/index",
+    "campus-selector": "/components/campus-selector/index"
   }
 }

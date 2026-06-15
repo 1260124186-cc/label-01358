@@ -1,9 +1,15 @@
+const app = getApp();
 const mockData = require('../../config/mock-data');
 const util = require('../../utils/util');
 const dataService = require('../../services/data');
+const campusService = require('../../services/campusService');
 
 Page({
   data: {
+    currentCampusId: null,
+    currentCampusName: '',
+    currentCampusIcon: '🏫',
+    showCampusSelector: false,
     announcements: [],
     navItems: [
       {
@@ -241,14 +247,36 @@ Page({
 
   onLoad() {
     this.checkOnboarding();
+    this.checkCampusSelection();
     this.loadData();
     this.loadThemeState();
     this.loadFontState();
   },
 
   onShow() {
+    this.loadCampusInfo();
     this.loadThemeState();
     this.loadFontState();
+  },
+
+  checkCampusSelection() {
+    const hasSelected = campusService.hasSelectedCampus();
+    if (!hasSelected) {
+      this.setData({ showCampusSelector: true });
+    } else {
+      this.loadCampusInfo();
+    }
+  },
+
+  loadCampusInfo() {
+    const campus = app.getCurrentCampus();
+    if (campus) {
+      this.setData({
+        currentCampusId: campus.id,
+        currentCampusName: campus.name,
+        currentCampusIcon: campus.icon || '🏫'
+      });
+    }
   },
 
   checkOnboarding() {
@@ -376,5 +404,35 @@ Page({
     if (record) {
       util.showToast('求助信号已发送！');
     }
+  },
+
+  onCampusTap() {
+    this.setData({ showCampusSelector: true });
+  },
+
+  onCampusConfirm(e) {
+    const { campusId } = e.detail;
+    const oldCampusId = this.data.currentCampusId;
+
+    app.switchCampus(campusId, {
+      showToast: true,
+      onSuccess: () => {
+        this.loadCampusInfo();
+        this.setData({ showCampusSelector: false });
+
+        if (oldCampusId && oldCampusId !== campusId) {
+          this.loadData();
+        }
+      }
+    });
+  },
+
+  onCampusClose() {
+    const hasSelected = campusService.hasSelectedCampus();
+    if (!hasSelected) {
+      util.showToast('请先选择校区', 'none');
+      return;
+    }
+    this.setData({ showCampusSelector: false });
   }
 });

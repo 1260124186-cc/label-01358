@@ -1,0 +1,44 @@
+<view class="campus-selector-mask" wx:if="{{visible}}" bindtap="onMask" catchtouchmove="preventTouchMove">
+  <view class="campus-selector-container" catchtap="preventTouchMove">
+    <view class="campus-selector-header">
+      <view class="campus-selector-title">{{title}}</view>
+      <view class="campus-selector-close" wx:if="{{showClose && !required}}" bindtap="onClose">×</view>
+    </view>
+
+    <view class="campus-selector-tip" wx:if="{{required}}">
+      <text class="tip-icon">📍</text>
+      <text>请选择您所在的校区，以获取精准的校园服务</text>
+    </view>
+
+    <scroll-view class="campus-selector-list" scroll-y="true">
+      <view
+        class="campus-item {{selectedCampusId === item.id ? 'active' : ''}} {{currentCampusId === item.id ? 'current' : ''}}"
+        wx:for="{{campusList}}"
+        wx:key="id"
+        data-campus-id="{{item.id}}"
+        bindtap="onSelectCampus"
+      >
+        <view class="campus-item-left">
+          <view class="campus-item-icon">{{item.icon || '🏫'}}</view>
+          <view class="campus-item-info">
+            <view class="campus-item-name">
+              {{item.name}}
+              <text class="campus-item-tag" wx:if="{{item.isDefault}}">默认</text>
+              <text class="campus-item-tag current-tag" wx:if="{{currentCampusId === item.id}}">当前</text>
+            </view>
+            <view class="campus-item-address">{{item.address}}</view>
+          </view>
+        </view>
+        <view class="campus-item-right">
+          <view class="campus-check" wx:if="{{selectedCampusId === item.id}}">✓</view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="campus-selector-footer">
+      <button class="campus-selector-btn" bindtap="onConfirm">
+        {{required ? '确认选择' : '切换校区'}}
+      </button>
+    </view>
+  </view>
+</view>

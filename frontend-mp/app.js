@@ -6,6 +6,7 @@ const dataService = require('./services/data');
 const userService = require('./services/userService');
 const security = require('./utils/security');
 const sosService = require('./services/sosService');
+const campusService = require('./services/campusService');
 
 App({
   globalData: {
@@ -17,11 +18,15 @@ App({
     isDark: false,
     colorScheme: 'coral',
     seedDataEnabled: config.ENABLE_SEED_DATA,
-    seedDataConfig: config.SEED_DATA_CONFIG
+    seedDataConfig: config.SEED_DATA_CONFIG,
+    currentCampusId: null,
+    currentCampus: null,
+    favoritesCrossCampus: true
   },
 
   onLaunch() {
     this.initSystemInfo();
+    campusService.initCampusData();
     this.loadUserInfo();
     this.initTestAccount();
     this.initTheme();
@@ -383,5 +388,36 @@ App({
     } catch (e) {
       console.error('清除用户信息失败:', e);
     }
+  },
+
+  getCurrentCampus() {
+    return this.globalData.currentCampus || campusService.getCurrentCampus();
+  },
+
+  getCurrentCampusId() {
+    return this.globalData.currentCampusId || campusService.getCurrentCampusId();
+  },
+
+  getCurrentCampusName() {
+    const campus = this.getCurrentCampus();
+    return campus ? campus.name : '';
+  },
+
+  getCampusList() {
+    return campusService.getCampusList();
+  },
+
+  switchCampus(campusId, options = {}) {
+    const result = campusService.switchCampus(campusId, {
+      ...options,
+      onSuccess: (res) => {
+        this.globalData.currentCampusId = res.campus.id;
+        this.globalData.currentCampus = res.campus;
+        if (typeof options.onSuccess === 'function') {
+          options.onSuccess(res);
+        }
+      }
+    });
+    return result;
   }
 });

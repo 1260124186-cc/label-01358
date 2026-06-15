@@ -1,6 +1,7 @@
 {
   "navigationBarTitleText": "登录",
   "usingComponents": {
-    "btn": "/components/btn/index"
+    "btn": "/components/btn/index",
+    "campus-selector": "/components/campus-selector/index"
   }
 }

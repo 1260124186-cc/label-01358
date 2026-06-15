@@ -1,6 +1,7 @@
 const app = getApp();
 const util = require('../../utils/util');
 const userService = require('../../services/userService');
+const campusService = require('../../services/campusService');
 const security = require('../../utils/security');
 const { mixPage } = require('../../utils/withTheme');
 
@@ -14,6 +15,8 @@ mixPage({
     passwordStrength: 0,
     passwordStrengthText: '',
     passwordStrengthColor: '',
+    showCampusSelector: false,
+    pendingNavigation: false,
     formData: {
       account: '',
       password: '',
@@ -129,7 +132,7 @@ mixPage({
         if (result.success) {
           app.updateUserInfo(result.user);
           await util.showSuccess(result.message);
-          util.navigateBack();
+          this.handleAfterAuth();
         } else {
           util.showError(result.message);
         }
@@ -143,7 +146,7 @@ mixPage({
         if (result.success) {
           app.updateUserInfo(result.user);
           await util.showSuccess(result.message);
-          util.navigateBack();
+          this.handleAfterAuth();
         } else {
           util.showError(result.message);
         }
@@ -153,6 +156,45 @@ mixPage({
       util.showError('操作失败');
     } finally {
       this.setData({ submitting: false });
+    }
+  },
+
+  handleAfterAuth() {
+    const hasSelected = campusService.hasSelectedCampus();
+    if (!hasSelected) {
+      this.setData({
+        showCampusSelector: true,
+        pendingNavigation: true
+      });
+    } else {
+      util.navigateBack();
+    }
+  },
+
+  onCampusConfirm(e) {
+    const { campusId } = e.detail;
+    const { pendingNavigation } = this.data;
+
+    app.switchCampus(campusId, {
+      showToast: false,
+      onSuccess: () => {
+        wx.showToast({
+          title: '校区设置成功',
+          icon: 'success'
+        });
+        setTimeout(() => {
+          if (pendingNavigation) {
+            util.navigateBack();
+          }
+        }, 1000);
+      }
+    });
+  },
+
+  onCampusClose() {
+    this.setData({ showCampusSelector: false });
+    if (this.data.pendingNavigation && campusService.hasSelectedCampus()) {
+      util.navigateBack();
     }
   }
 });

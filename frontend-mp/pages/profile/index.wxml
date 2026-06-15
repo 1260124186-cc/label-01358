@@ -81,6 +81,35 @@
     </view>
   </view>
 
+  <view class="menu-section" aria-label="校区设置">
+    <view class="section-title">校区设置</view>
+    <view class="menu-card">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onCampusTap" aria-role="button" aria-label="切换校区">
+        <view class="menu-icon-wrap" style="background-color: #E0F2FE;">
+          <text class="menu-icon">{{currentCampusIcon || '🏫'}}</text>
+        </view>
+        <view class="menu-info">
+          <text class="menu-text">当前校区</text>
+          <text class="menu-desc">{{currentCampusName || '请选择校区'}}</text>
+        </view>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <view class="theme-switch no-border" aria-role="switch" aria-checked="{{favoritesCrossCampus}}" aria-label="收藏跨校区可见">
+        <view class="theme-switch-label">
+          <view class="theme-switch-icon" style="background-color: #FEF3C7;">
+            <text class="menu-icon">⭐</text>
+          </view>
+          <view>
+            <text class="theme-switch-text">收藏跨校区可见</text>
+            <text class="theme-switch-desc">{{favoritesCrossCampus ? '开启：切换校区收藏保留' : '关闭：按校区分别存储收藏'}}</text>
+          </view>
+        </view>
+        <switch checked="{{favoritesCrossCampus}}" color="#1890ff" bindchange="onToggleFavoritesCrossCampus" />
+      </view>
+    </view>
+  </view>
+
   <view class="menu-section" aria-label="外观设置">
     <view class="section-title">外观设置</view>
     <view class="menu-card">
@@ -201,4 +230,14 @@
   <view class="version-section" aria-label="版本信息">
     <text class="version-text">校园生活服务 v2.0.0</text>
   </view>
+
+  <!-- 校区选择器 -->
+  <campus-selector
+    visible="{{showCampusSelector}}"
+    required="{{false}}"
+    showClose="{{true}}"
+    title="切换校区"
+    bind:confirm="onCampusConfirm"
+    bind:close="onCampusClose"
+  />
 </view>
