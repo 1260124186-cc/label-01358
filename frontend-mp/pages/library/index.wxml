@@ -1,0 +1,132 @@
+<view class="page {{darkMode ? 'dark' : ''}} {{fontSizeClass}}">
+  <view class="banner-section">
+    <view class="banner-bg"></view>
+    <view class="banner-content">
+      <view class="banner-title">
+        <text class="banner-icon">📚</text>
+        <text class="banner-name">{{libraryInfo.name}}</text>
+      </view>
+      <view class="banner-meta">
+        <view class="meta-item">
+          <text class="meta-icon">🕐</text>
+          <text class="meta-label">开放时间</text>
+          <text class="meta-value">{{libraryInfo.openTime}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-icon">👥</text>
+          <text class="meta-label">今日入馆</text>
+          <text class="meta-value highlight">{{libraryInfo.todayVisitors}}人次</text>
+        </view>
+      </view>
+      <view class="banner-stats">
+        <view class="stat-item">
+          <text class="stat-value">{{libraryInfo.totalSeats}}</text>
+          <text class="stat-label">总座位</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value success">{{libraryInfo.availableSeats}}</text>
+          <text class="stat-label">可用座位</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="menu-section">
+    <view class="menu-grid">
+      <view
+        class="menu-card"
+        wx:for="{{menus}}"
+        wx:key="value"
+        data-path="{{item.path}}"
+        bindtap="onMenuTap"
+        hover-class="menu-card-hover"
+      >
+        <view class="menu-icon-wrap" style="background: {{item.color}}20;">
+          <text class="menu-icon">{{item.icon}}</text>
+        </view>
+        <text class="menu-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">我的借阅</text>
+      <text
+        class="section-more"
+        data-path="/pages/library/my-borrow"
+        bindtap="onMenuTap"
+      >查看全部 ›</text>
+    </view>
+    <view class="borrow-summary">
+      <view class="summary-card current">
+        <view class="summary-icon-wrap">
+          <text class="summary-icon">📖</text>
+        </view>
+        <view class="summary-info">
+          <text class="summary-value">{{borrowSummary.currentCount}}</text>
+          <text class="summary-label">当前借阅</text>
+        </view>
+      </view>
+      <view class="summary-card overdue">
+        <view class="summary-icon-wrap">
+          <text class="summary-icon">⚠️</text>
+        </view>
+        <view class="summary-info">
+          <text class="summary-value">{{borrowSummary.overdueCount}}</text>
+          <text class="summary-label">逾期提醒</text>
+        </view>
+      </view>
+      <view class="summary-card soon">
+        <view class="summary-icon-wrap">
+          <text class="summary-icon">⏰</text>
+        </view>
+        <view class="summary-info">
+          <text class="summary-value">{{borrowSummary.canRenewCount}}</text>
+          <text class="summary-label">即将到期</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">到期提醒</text>
+      <text class="reminder-count" wx:if="{{reminders.length > 0}}">{{reminders.length}}条</text>
+    </view>
+    <view class="reminder-list" wx:if="{{reminders.length > 0}}">
+      <view
+        class="reminder-item {{item.urgent ? 'urgent' : ''}}"
+        wx:for="{{reminders}}"
+        wx:key="relatedId"
+        data-type="{{item.type}}"
+        data-relatedid="{{item.relatedId}}"
+        bindtap="onReminderTap"
+        hover-class="reminder-item-hover"
+      >
+        <view class="reminder-icon-wrap" style="background: {{item.typeInfo?.color || '#6B7280'}}20;">
+          <text class="reminder-icon">{{item.typeInfo?.icon || '📌'}}</text>
+        </view>
+        <view class="reminder-content">
+          <view class="reminder-title-row">
+            <text class="reminder-title">{{item.title}}</text>
+            <view class="reminder-tag" wx:if="{{item.urgent}}">紧急</view>
+          </view>
+          <text class="reminder-text">{{item.content}}</text>
+        </view>
+        <text class="reminder-arrow">›</text>
+      </view>
+    </view>
+    <view class="empty-wrap" wx:else>
+      <empty text="暂无提醒" icon="📭"></empty>
+    </view>
+  </view>
+
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

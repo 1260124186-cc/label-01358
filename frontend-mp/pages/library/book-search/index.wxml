@@ -1,0 +1,96 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="top-bar">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索书名、作者、ISBN..."
+        placeholder-class="search-placeholder"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        bindconfirm="onSearchConfirm"
+        confirm-type="search"
+      />
+      <text class="search-clear" wx:if="{{searchKeyword}}" bindtap="onSearchClear">✕</text>
+    </view>
+  </view>
+
+  <scroll-view class="category-tabs" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="category-tabs-inner">
+      <view
+        class="category-tab-item {{currentCategory === item.value ? 'active' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="value"
+        bindtap="onCategoryTap"
+        data-value="{{item.value}}"
+      >
+        <text class="tab-icon">{{item.icon}}</text>
+        <text class="tab-label">{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <scroll-view class="book-list" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="book-list-inner" wx:if="{{filteredBooks.length > 0}}">
+      <view
+        class="book-card"
+        wx:for="{{filteredBooks}}"
+        wx:key="id"
+        bindtap="onBookTap"
+        data-id="{{item.id}}"
+      >
+        <view class="book-cover-wrap">
+          <image class="book-cover" src="{{item.cover}}" mode="aspectFill" />
+          <view class="status-badge" style="background: {{item.statusColor}};">
+            <text class="status-text">{{item.statusLabel}}</text>
+          </view>
+        </view>
+
+        <view class="book-info">
+          <view class="book-title-row">
+            <text class="book-title">{{item.title}}</text>
+          </view>
+
+          <view class="book-author">
+            <text class="info-label">作者：</text>
+            <text class="info-value">{{item.author}}</text>
+          </view>
+
+          <view class="book-publisher">
+            <text class="info-label">出版社：</text>
+            <text class="info-value">{{item.publisher}}</text>
+          </view>
+
+          <view class="book-meta">
+            <view class="meta-item">
+              <text class="meta-icon">📍</text>
+              <text class="meta-text">{{item.location}}</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">📚</text>
+              <text class="meta-text">可借 {{item.availableCopies}}/{{item.totalCopies}} 册</text>
+            </view>
+          </view>
+
+          <view class="book-footer">
+            <view class="call-number">
+              <text class="call-label">索书号：</text>
+              <text class="call-value">{{item.callNumber}}</text>
+            </view>
+            <text class="detail-btn">详情 ›</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty wx:else text="暂无图书" icon="📚" />
+  </scroll-view>
+
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

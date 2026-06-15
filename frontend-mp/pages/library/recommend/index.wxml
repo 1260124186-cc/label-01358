@@ -1,0 +1,239 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="page-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <!-- 表单区域 -->
+    <view class="form-section">
+      <view class="section-header">
+        <text class="section-title">📝 图书荐购</text>
+        <text class="section-desc">推荐您想看的图书，我们会尽快采购</text>
+      </view>
+
+      <view class="form-card">
+        <!-- 书名 -->
+        <view class="form-item">
+          <view class="form-label">
+            <text class="label-text">书名</text>
+            <text class="required">*</text>
+          </view>
+          <view class="form-input-wrap">
+            <input
+              class="form-input"
+              placeholder="请输入书名"
+              placeholder-class="form-placeholder"
+              value="{{formData.bookTitle}}"
+              bindinput="onInputChange"
+              data-field="bookTitle"
+              maxlength="100"
+            />
+          </view>
+        </view>
+
+        <!-- 作者 -->
+        <view class="form-item">
+          <view class="form-label">
+            <text class="label-text">作者</text>
+            <text class="required">*</text>
+          </view>
+          <view class="form-input-wrap">
+            <input
+              class="form-input"
+              placeholder="请输入作者"
+              placeholder-class="form-placeholder"
+              value="{{formData.bookAuthor}}"
+              bindinput="onInputChange"
+              data-field="bookAuthor"
+              maxlength="50"
+            />
+          </view>
+        </view>
+
+        <!-- ISBN -->
+        <view class="form-item">
+          <view class="form-label">
+            <text class="label-text">ISBN</text>
+            <text class="optional">选填</text>
+          </view>
+          <view class="form-input-wrap">
+            <input
+              class="form-input"
+              placeholder="请输入ISBN（便于精准查找）"
+              placeholder-class="form-placeholder"
+              value="{{formData.isbn}}"
+              bindinput="onInputChange"
+              data-field="isbn"
+              type="number"
+              maxlength="20"
+            />
+          </view>
+        </view>
+
+        <!-- 出版社 -->
+        <view class="form-item">
+          <view class="form-label">
+            <text class="label-text">出版社</text>
+            <text class="optional">选填</text>
+          </view>
+          <view class="form-input-wrap">
+            <input
+              class="form-input"
+              placeholder="请输入出版社"
+              placeholder-class="form-placeholder"
+              value="{{formData.publisher}}"
+              bindinput="onInputChange"
+              data-field="publisher"
+              maxlength="50"
+            />
+          </view>
+        </view>
+
+        <!-- 分类 -->
+        <view class="form-item">
+          <view class="form-label">
+            <text class="label-text">分类</text>
+          </view>
+          <picker
+            mode="selector"
+            range="{{categoryLabels}}"
+            value="{{categoryIndex}}"
+            bindchange="onCategoryChange"
+          >
+            <view class="form-picker-wrap">
+              <text class="form-picker-text">{{categoryLabels[categoryIndex]}}</text>
+              <text class="picker-arrow">›</text>
+            </view>
+          </picker>
+        </view>
+
+        <!-- 荐购理由 -->
+        <view class="form-item">
+          <view class="form-label">
+            <text class="label-text">荐购理由</text>
+            <text class="required">*</text>
+          </view>
+          <view class="form-textarea-wrap">
+            <textarea
+              class="form-textarea"
+              placeholder="请详细描述您的荐购理由，如学习需求、专业参考、兴趣爱好等（不少于10字）"
+              placeholder-class="form-placeholder"
+              value="{{formData.reason}}"
+              bindinput="onInputChange"
+              data-field="reason"
+              maxlength="{{reasonMaxLength}}"
+              auto-height="{{true}}"
+            />
+          </view>
+          <view class="word-count">{{reasonCount}}/{{reasonMaxLength}}</view>
+        </view>
+
+        <!-- 联系方式 -->
+        <view class="form-item">
+          <view class="form-label">
+            <text class="label-text">联系方式</text>
+            <text class="optional">选填</text>
+          </view>
+          <view class="form-input-wrap">
+            <input
+              class="form-input"
+              placeholder="手机号或邮箱，便于采购后通知您"
+              placeholder-class="form-placeholder"
+              value="{{formData.contact}}"
+              bindinput="onInputChange"
+              data-field="contact"
+              maxlength="50"
+            />
+          </view>
+        </view>
+      </view>
+
+      <!-- 提交按钮 -->
+      <view class="submit-wrap">
+        <view
+          class="submit-btn {{submitting ? 'disabled' : ''}}"
+          bindtap="onSubmit"
+        >
+          <text class="submit-text">{{submitting ? '提交中...' : '提交荐购'}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 历史记录 -->
+    <view class="history-section">
+      <view class="section-header">
+        <text class="section-title">📋 荐购历史</text>
+        <text class="section-desc">共 {{recommendList.length}} 条记录</text>
+      </view>
+
+      <view wx:if="{{loading && recommendList.length === 0}}" class="loading-wrap">
+        <view class="loading-spinner"></view>
+        <text class="loading-text">加载中...</text>
+      </view>
+
+      <block wx:elif="{{recommendList.length > 0}}">
+        <view
+          class="history-card"
+          wx:for="{{recommendList}}"
+          wx:key="id"
+        >
+          <view class="history-header">
+            <view class="history-title-wrap">
+              <text class="history-book-title">{{item.bookTitle}}</text>
+              <view
+                class="status-badge"
+                style="background: {{item.statusInfo.color}}20; color: {{item.statusInfo.color}};"
+              >
+                <text class="status-text">{{item.statusInfo.label}}</text>
+              </view>
+            </view>
+            <text class="history-time">{{item.createTimeText}}</text>
+          </view>
+
+          <view class="history-meta">
+            <view class="meta-row">
+              <text class="meta-label">作者</text>
+              <text class="meta-value">{{item.bookAuthor}}</text>
+            </view>
+            <view class="meta-row" wx:if="{{item.categoryInfo.label}}">
+              <text class="meta-label">分类</text>
+              <view class="meta-value category-tag">
+                <text class="category-icon">{{item.categoryInfo.icon}}</text>
+                <text class="category-text">{{item.categoryInfo.label}}</text>
+              </view>
+            </view>
+            <view class="meta-row" wx:if="{{item.publisher}}">
+              <text class="meta-label">出版社</text>
+              <text class="meta-value">{{item.publisher}}</text>
+            </view>
+            <view class="meta-row" wx:if="{{item.isbn}}">
+              <text class="meta-label">ISBN</text>
+              <text class="meta-value">{{item.isbn}}</text>
+            </view>
+          </view>
+
+          <view class="history-reason">
+            <text class="reason-label">荐购理由</text>
+            <view class="reason-content">
+              <text class="reason-text">{{item.reason}}</text>
+            </view>
+          </view>
+
+          <view class="reply-section" wx:if="{{item.adminReply}}">
+            <view class="reply-header">
+              <text class="reply-icon">💬</text>
+              <text class="reply-title">管理员回复</text>
+            </view>
+            <view class="reply-content">
+              <text class="reply-text">{{item.adminReply}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <view wx:else class="empty-wrap">
+        <text class="empty-icon">📭</text>
+        <text class="empty-text">暂无荐购记录</text>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>

@@ -2884,6 +2884,122 @@ const BUS_TABS = [
   { value: 'favorite', label: '我的收藏' }
 ];
 
+const LIBRARY_HOME_MENUS = [
+  { value: 'search', label: '馆藏检索', icon: '🔍', color: '#4ECDC4', path: '/pages/library/book-search' },
+  { value: 'borrow', label: '我的借阅', icon: '📖', color: '#FF6B6B', path: '/pages/library/my-borrow' },
+  { value: 'seat', label: '座位预约', icon: '💺', color: '#45B7D1', path: '/pages/library/seat-reservation' },
+  { value: 'recommend', label: '荐购反馈', icon: '📝', color: '#F59E0B', path: '/pages/library/recommend' }
+];
+
+const LIBRARY_BOOK_CATEGORIES = [
+  { value: 'all', label: '全部', icon: '📚' },
+  { value: 'literature', label: '文学小说', icon: '📖' },
+  { value: 'technology', label: '计算机技术', icon: '💻' },
+  { value: 'science', label: '自然科学', icon: '🔬' },
+  { value: 'social', label: '社会科学', icon: '📊' },
+  { value: 'education', label: '教育学习', icon: '🎓' },
+  { value: 'art', label: '艺术设计', icon: '🎨' },
+  { value: 'history', label: '历史地理', icon: '🏛️' },
+  { value: 'medical', label: '医学健康', icon: '💊' },
+  { value: 'other', label: '其他', icon: '📌' }
+];
+
+const LIBRARY_BOOK_STATUS = [
+  { value: 'available', label: '在馆可借', color: '#10B981' },
+  { value: 'borrowed', label: '已借出', color: '#F59E0B' },
+  { value: 'reserved', label: '已预约', color: '#8B5CF6' },
+  { value: 'repairing', label: '维修中', color: '#6B7280' }
+];
+const LIBRARY_BOOK_STATUS_MAP = LIBRARY_BOOK_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const LIBRARY_BORROW_STATUS = [
+  { value: 'borrowing', label: '借阅中', color: '#3B82F6' },
+  { value: 'overdue', label: '已逾期', color: '#EF4444' },
+  { value: 'returned', label: '已归还', color: '#10B981' },
+  { value: 'renewed', label: '已续借', color: '#8B5CF6' }
+];
+const LIBRARY_BORROW_STATUS_MAP = LIBRARY_BORROW_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const LIBRARY_BORROW_TABS = [
+  { value: 'current', label: '当前借阅' },
+  { value: 'history', label: '历史记录' }
+];
+
+const LIBRARY_READING_ROOM_TYPES = [
+  { value: 'all', label: '全部阅览室', icon: '📚' },
+  { value: 'comprehensive', label: '综合阅览室', icon: '🏛️', floor: '1F', openTime: '07:00-22:00', totalSeats: 120 },
+  { value: 'literature', label: '文学阅览室', icon: '📖', floor: '2F', openTime: '07:00-22:00', totalSeats: 80 },
+  { value: 'science', label: '科技阅览室', icon: '🔬', floor: '3F', openTime: '07:00-22:30', totalSeats: 100 },
+  { value: 'periodical', label: '期刊阅览室', icon: '📰', floor: '4F', openTime: '08:00-21:00', totalSeats: 60 },
+  { value: 'electronic', label: '电子阅览室', icon: '💻', floor: '4F', openTime: '08:00-22:00', totalSeats: 50 },
+  { value: 'quiet', label: '静音自习区', icon: '🤫', floor: '5F', openTime: '06:30-23:00', totalSeats: 150 },
+  { value: 'discussion', label: '研讨空间', icon: '💬', floor: '5F', openTime: '08:00-21:00', totalSeats: 40 }
+];
+
+const LIBRARY_SEAT_STATUS = [
+  { value: 'available', label: '空闲', color: '#10B981' },
+  { value: 'occupied', label: '使用中', color: '#EF4444' },
+  { value: 'reserved', label: '已预约', color: '#F59E0B' },
+  { value: 'suspended', label: '停用', color: '#6B7280' }
+];
+const LIBRARY_SEAT_STATUS_MAP = LIBRARY_SEAT_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const LIBRARY_SEAT_RESERVATION_STATUS = [
+  { value: 'pending', label: '待使用', color: '#F59E0B', icon: '⏳' },
+  { value: 'checked_in', label: '已签到', color: '#10B981', icon: '✅' },
+  { value: 'using', label: '使用中', color: '#3B82F6', icon: '💺' },
+  { value: 'completed', label: '已结束', color: '#6B7280', icon: '✅' },
+  { value: 'timeout', label: '超时释放', color: '#EF4444', icon: '⏰' },
+  { value: 'cancelled', label: '已取消', color: '#9CA3AF', icon: '❌' }
+];
+const LIBRARY_SEAT_RESERVATION_STATUS_MAP = LIBRARY_SEAT_RESERVATION_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const LIBRARY_SEAT_RESERVATION_TABS = [
+  { value: 'upcoming', label: '即将开始' },
+  { value: 'ongoing', label: '进行中' },
+  { value: 'history', label: '历史记录' }
+];
+
+const LIBRARY_SEAT_TIME_SLOTS = [
+  { value: 'morning', label: '上午 07:00-12:00', start: '07:00', end: '12:00' },
+  { value: 'afternoon', label: '下午 13:00-18:00', start: '13:00', end: '18:00' },
+  { value: 'evening', label: '晚间 18:30-22:30', start: '18:30', end: '22:30' },
+  { value: 'full_day', label: '全天 07:00-22:30', start: '07:00', end: '22:30' }
+];
+
+const LIBRARY_RECOMMEND_STATUS = [
+  { value: 'submitted', label: '已提交', color: '#3B82F6' },
+  { value: 'reviewing', label: '审核中', color: '#F59E0B' },
+  { value: 'approved', label: '已采纳', color: '#10B981' },
+  { value: 'rejected', label: '未采纳', color: '#EF4444' },
+  { value: 'purchased', label: '已采购', color: '#8B5CF6' }
+];
+const LIBRARY_RECOMMEND_STATUS_MAP = LIBRARY_RECOMMEND_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const LIBRARY_REMINDER_TYPES = [
+  { value: 'borrow_due', label: '借书到期提醒', color: '#FF6B6B', icon: '📚', advanceDays: 3 },
+  { value: 'seat_start', label: '预约开始提醒', color: '#45B7D1', icon: '💺', advanceMinutes: 15 }
+];
+const LIBRARY_REMINDER_TYPE_MAP = LIBRARY_REMINDER_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, color: t.color, icon: t.icon, advanceDays: t.advanceDays, advanceMinutes: t.advanceMinutes };
+  return acc;
+}, {});
+
 module.exports = {
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
@@ -3212,5 +3328,24 @@ module.exports = {
   BUS_VEHICLE_STATUS,
   BUS_VEHICLE_STATUS_MAP,
   BUS_REMINDER_OPTIONS,
-  BUS_TABS
+  BUS_TABS,
+
+  LIBRARY_BOOK_CATEGORIES,
+  LIBRARY_BOOK_STATUS,
+  LIBRARY_BOOK_STATUS_MAP,
+  LIBRARY_BORROW_STATUS,
+  LIBRARY_BORROW_STATUS_MAP,
+  LIBRARY_BORROW_TABS,
+  LIBRARY_READING_ROOM_TYPES,
+  LIBRARY_SEAT_STATUS,
+  LIBRARY_SEAT_STATUS_MAP,
+  LIBRARY_SEAT_RESERVATION_STATUS,
+  LIBRARY_SEAT_RESERVATION_STATUS_MAP,
+  LIBRARY_SEAT_RESERVATION_TABS,
+  LIBRARY_SEAT_TIME_SLOTS,
+  LIBRARY_RECOMMEND_STATUS,
+  LIBRARY_RECOMMEND_STATUS_MAP,
+  LIBRARY_REMINDER_TYPES,
+  LIBRARY_REMINDER_TYPE_MAP,
+  LIBRARY_HOME_MENUS
 };

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "座位预约",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {}
+}

@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "馆藏检索",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "empty": "/components/empty/index"
+  }
+}

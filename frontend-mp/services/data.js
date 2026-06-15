@@ -31,6 +31,12 @@ let workStudyInitialized = false;
 let jobRecruitmentInitialized = false;
 let psychologicalInitialized = false;
 let busDataInitialized = false;
+let libraryBooksInitialized = false;
+let libraryBorrowInitialized = false;
+let libraryRoomsInitialized = false;
+let librarySeatsInitialized = false;
+let librarySeatReservationsInitialized = false;
+let libraryRecommendationsInitialized = false;
 
 function initVolunteerData() {
   if (volunteerInitialized) return;
@@ -11212,4 +11218,651 @@ Object.assign(module.exports, {
   setArrivalReminder,
   getArrivalReminder,
   checkAndTriggerReminders
+});
+
+// ==================== 图书馆服务模块 ====================
+
+function initLibraryBooks() {
+  if (libraryBooksInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.LIBRARY_BOOK_LIST);
+  if (!existing || existing.length === 0) {
+    const books = mockData.MOCK_LIBRARY_BOOKS.map(item => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.LIBRARY_BOOK_LIST, books);
+  }
+  libraryBooksInitialized = true;
+}
+
+function initLibraryBorrowRecords() {
+  if (libraryBorrowInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.LIBRARY_BORROW_LIST);
+  if (!existing || existing.length === 0) {
+    const records = mockData.MOCK_LIBRARY_BORROW_RECORDS.map(item => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.LIBRARY_BORROW_LIST, records);
+  }
+  libraryBorrowInitialized = true;
+}
+
+function initLibraryReadingRooms() {
+  if (libraryRoomsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.LIBRARY_READING_ROOM_LIST);
+  if (!existing || existing.length === 0) {
+    const rooms = mockData.MOCK_LIBRARY_READING_ROOMS.map(item => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.LIBRARY_READING_ROOM_LIST, rooms);
+  }
+  libraryRoomsInitialized = true;
+}
+
+function initLibrarySeats() {
+  if (librarySeatsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.LIBRARY_SEAT_LIST);
+  if (!existing || existing.length === 0) {
+    const seats = mockData.MOCK_LIBRARY_SEATS.map(item => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.LIBRARY_SEAT_LIST, seats);
+  }
+  librarySeatsInitialized = true;
+}
+
+function initLibrarySeatReservations() {
+  if (librarySeatReservationsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST);
+  if (!existing || existing.length === 0) {
+    const reservations = mockData.MOCK_LIBRARY_SEAT_RESERVATIONS.map(item => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST, reservations);
+  }
+  librarySeatReservationsInitialized = true;
+}
+
+function initLibraryRecommendations() {
+  if (libraryRecommendationsInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.LIBRARY_RECOMMEND_LIST);
+  if (!existing || existing.length === 0) {
+    const recommendations = mockData.MOCK_LIBRARY_RECOMMENDATIONS.map(item => ({
+      id: item.id,
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.LIBRARY_RECOMMEND_LIST, recommendations);
+  }
+  libraryRecommendationsInitialized = true;
+}
+
+function initAllLibraryData() {
+  initLibraryBooks();
+  initLibraryBorrowRecords();
+  initLibraryReadingRooms();
+  initLibrarySeats();
+  initLibrarySeatReservations();
+  initLibraryRecommendations();
+}
+
+// ---------- 馆藏检索 ----------
+
+function getLibraryBookList(filters = {}) {
+  initLibraryBooks();
+  let list = storage.getList(STORAGE_KEYS.LIBRARY_BOOK_LIST);
+
+  if (filters.category && filters.category !== 'all') {
+    list = list.filter(item => item.category === filters.category);
+  }
+
+  if (filters.keyword) {
+    const keyword = filters.keyword.trim().toLowerCase();
+    list = list.filter(item =>
+      item.title.toLowerCase().includes(keyword) ||
+      (item.author && item.author.toLowerCase().includes(keyword)) ||
+      (item.isbn && item.isbn.includes(keyword)) ||
+      (item.subtitle && item.subtitle.toLowerCase().includes(keyword)) ||
+      (item.publisher && item.publisher.toLowerCase().includes(keyword))
+    );
+  }
+
+  if (filters.sort === 'views') {
+    list = list.sort((a, b) => (b.views || 0) - (a.views || 0));
+  } else if (filters.sort === 'available') {
+    list = list.sort((a, b) => (b.availableCopies || 0) - (a.availableCopies || 0));
+  }
+
+  return list;
+}
+
+function getLibraryBookDetail(id) {
+  initLibraryBooks();
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_BOOK_LIST);
+  const book = list.find(item => item.id === id) || null;
+  if (book) {
+    book.statusInfo = book.availableCopies > 0
+      ? constants.LIBRARY_BOOK_STATUS_MAP['available']
+      : constants.LIBRARY_BOOK_STATUS_MAP['borrowed'];
+  }
+  return book;
+}
+
+function increaseLibraryBookViews(id) {
+  initLibraryBooks();
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_BOOK_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    list[index].views = (list[index].views || 0) + 1;
+    storage.set(STORAGE_KEYS.LIBRARY_BOOK_LIST, list);
+  }
+}
+
+function getLibraryBookCategories() {
+  return constants.LIBRARY_BOOK_CATEGORIES;
+}
+
+// ---------- 我的借阅 ----------
+
+function getMyBorrowList(userId, filters = {}) {
+  initLibraryBorrowRecords();
+  let list = storage.getList(STORAGE_KEYS.LIBRARY_BORROW_LIST);
+  list = list.filter(item => item.userId === userId);
+
+  const now = Date.now();
+  list = list.map(item => {
+    const status = item.status;
+    let finalStatus = status;
+    if (!item.returnDate && now > (item.dueDate || 0) && status !== 'returned' && status !== 'overdue') {
+      finalStatus = 'overdue';
+    }
+    const statusInfo = constants.LIBRARY_BORROW_STATUS_MAP[finalStatus] || {};
+    const daysLeft = item.dueDate ? Math.ceil((item.dueDate - now) / 86400000) : 0;
+    return {
+      ...item,
+      displayStatus: finalStatus,
+      statusInfo,
+      daysLeft,
+      isOverdue: finalStatus === 'overdue'
+    };
+  });
+
+  if (filters.tab === 'current') {
+    list = list.filter(item => !item.returnDate || item.status === 'overdue');
+  } else if (filters.tab === 'history') {
+    list = list.filter(item => item.returnDate && item.status === 'returned');
+  }
+
+  list = list.sort((a, b) => (b.createTime || 0) - (a.createTime || 0));
+  return list;
+}
+
+function getBorrowRecordDetail(id) {
+  initLibraryBorrowRecords();
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_BORROW_LIST);
+  const record = list.find(item => item.id === id) || null;
+  if (record) {
+    record.statusInfo = constants.LIBRARY_BORROW_STATUS_MAP[record.status] || {};
+  }
+  return record;
+}
+
+function renewBorrowRecord(id) {
+  initLibraryBorrowRecords();
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_BORROW_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    const record = list[index];
+    if (record.renewCount >= record.maxRenewCount) {
+      return { success: false, message: '已达到最大续借次数' };
+    }
+    if (record.status === 'overdue') {
+      return { success: false, message: '逾期图书不可续借' };
+    }
+    const newDueDate = (record.dueDate || Date.now()) + 30 * 86400000;
+    list[index] = {
+      ...record,
+      dueDate: newDueDate,
+      renewCount: (record.renewCount || 0) + 1,
+      status: 'renewed',
+      updateTime: Date.now()
+    };
+    storage.set(STORAGE_KEYS.LIBRARY_BORROW_LIST, list);
+    return { success: true, record: list[index], newDueDate };
+  }
+  return { success: false, message: '借阅记录不存在' };
+}
+
+function getBorrowSummary(userId) {
+  const allRecords = getMyBorrowList(userId);
+  const current = allRecords.filter(item => !item.returnDate && item.displayStatus !== 'overdue');
+  const overdue = allRecords.filter(item => item.displayStatus === 'overdue');
+  const history = allRecords.filter(item => item.returnDate);
+  const canRenew = current.filter(item =>
+    (item.renewCount || 0) < (item.maxRenewCount || 2) && item.daysLeft <= 7
+  );
+
+  return {
+    totalBorrowed: allRecords.length,
+    currentCount: current.length,
+    overdueCount: overdue.length,
+    historyCount: history.length,
+    canRenewCount: canRenew.length,
+    overdueFeeTotal: overdue.reduce((sum, item) => sum + (item.overdueFee || 0), 0)
+  };
+}
+
+// ---------- 座位预约 ----------
+
+function getLibraryReadingRoomList(filters = {}) {
+  initLibraryReadingRooms();
+  initLibrarySeats();
+  let list = storage.getList(STORAGE_KEYS.LIBRARY_READING_ROOM_LIST);
+
+  if (filters.type && filters.type !== 'all') {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  const allSeats = storage.getList(STORAGE_KEYS.LIBRARY_SEAT_LIST);
+  list = list.map(room => {
+    const roomSeats = allSeats.filter(s => s.roomId === room.id);
+    const availableCount = roomSeats.filter(s => s.status === 'available').length;
+    return {
+      ...room,
+      availableCount,
+      totalCount: roomSeats.length,
+      occupancyRate: roomSeats.length > 0
+        ? Math.round(((roomSeats.length - availableCount) / roomSeats.length) * 100)
+        : 0
+    };
+  });
+
+  return list;
+}
+
+function getLibraryReadingRoomDetail(id) {
+  initLibraryReadingRooms();
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_READING_ROOM_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function getLibrarySeatList(roomId, filters = {}) {
+  initLibrarySeats();
+  let list = storage.getList(STORAGE_KEYS.LIBRARY_SEAT_LIST);
+
+  if (roomId) {
+    list = list.filter(item => item.roomId === roomId);
+  }
+
+  if (filters.onlyAvailable) {
+    list = list.filter(item => item.status === 'available');
+  }
+
+  if (filters.hasWindow) {
+    list = list.filter(item => item.hasWindow);
+  }
+
+  if (filters.hasOutlet) {
+    list = list.filter(item => item.hasOutlet);
+  }
+
+  return list;
+}
+
+function getLibrarySeatDetail(id) {
+  initLibrarySeats();
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_SEAT_LIST);
+  const seat = list.find(item => item.id === id) || null;
+  if (seat) {
+    seat.statusInfo = constants.LIBRARY_SEAT_STATUS_MAP[seat.status] || {};
+  }
+  return seat;
+}
+
+function getSeatRowsAndCols(roomId) {
+  const seats = getLibrarySeatList(roomId);
+  const rows = {};
+  seats.forEach(seat => {
+    if (!rows[seat.row]) rows[seat.row] = [];
+    rows[seat.row].push(seat);
+  });
+  Object.keys(rows).forEach(row => {
+    rows[row].sort((a, b) => a.col - b.col);
+  });
+  return rows;
+}
+
+function createSeatReservation(params) {
+  initLibrarySeatReservations();
+  const { userId, roomId, roomName, seatId, seatNumber, date, timeSlot, timeSlotLabel, startTime, endTime } = params;
+
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST);
+
+  const conflict = list.find(item =>
+    item.userId === userId &&
+    item.status !== 'cancelled' &&
+    item.status !== 'completed' &&
+    item.status !== 'timeout' &&
+    item.date === date &&
+    (
+      (timeSlot === 'full_day') ||
+      (item.timeSlot === 'full_day') ||
+      (item.timeSlot === timeSlot)
+    )
+  );
+
+  if (conflict) {
+    return { success: false, message: '该时段已有预约，不能重复预约' };
+  }
+
+  const reservation = {
+    id: 'lib_res_' + util.generateId(),
+    userId,
+    roomId,
+    roomName,
+    seatId,
+    seatNumber,
+    date,
+    timeSlot,
+    timeSlotLabel,
+    startTime,
+    endTime,
+    checkInTime: null,
+    checkOutTime: null,
+    status: 'pending',
+    createTime: Date.now()
+  };
+
+  list.unshift(reservation);
+  storage.set(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST, list);
+
+  return { success: true, reservation };
+}
+
+function getMySeatReservations(userId, filters = {}) {
+  initLibrarySeatReservations();
+  let list = storage.getList(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST);
+  list = list.filter(item => item.userId === userId);
+
+  const now = Date.now();
+
+  list = list.map(item => {
+    let status = item.status;
+    if (status === 'pending' && now > (item.startTime || 0) + 15 * 60000 && !item.checkInTime) {
+      status = 'timeout';
+    }
+    if ((status === 'checked_in' || status === 'using') && now > (item.endTime || 0)) {
+      status = 'completed';
+    }
+    const statusInfo = constants.LIBRARY_SEAT_RESERVATION_STATUS_MAP[status] || {};
+    return {
+      ...item,
+      displayStatus: status,
+      statusInfo,
+      canCheckIn: status === 'pending',
+      canCheckOut: status === 'checked_in' || status === 'using',
+      canCancel: status === 'pending' || (status === 'checked_in' && now < (item.endTime || 0))
+    };
+  });
+
+  if (filters.tab === 'upcoming') {
+    list = list.filter(item => item.displayStatus === 'pending');
+  } else if (filters.tab === 'ongoing') {
+    list = list.filter(item =>
+      item.displayStatus === 'checked_in' || item.displayStatus === 'using'
+    );
+  } else if (filters.tab === 'history') {
+    list = list.filter(item =>
+      item.displayStatus === 'completed' || item.displayStatus === 'timeout' || item.displayStatus === 'cancelled'
+    );
+  }
+
+  list = list.sort((a, b) => (b.createTime || 0) - (a.createTime || 0));
+  return list;
+}
+
+function getSeatReservationDetail(id) {
+  initLibrarySeatReservations();
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST);
+  const reservation = list.find(item => item.id === id) || null;
+  if (reservation) {
+    reservation.statusInfo = constants.LIBRARY_SEAT_RESERVATION_STATUS_MAP[reservation.status] || {};
+  }
+  return reservation;
+}
+
+function checkInSeatReservation(id) {
+  initLibrarySeatReservations();
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    const item = list[index];
+    if (item.status !== 'pending') {
+      return { success: false, message: '当前状态不可签到' };
+    }
+    const now = Date.now();
+    if (now < (item.startTime || 0) - 15 * 60000) {
+      return { success: false, message: '签到时间未到，请提前15分钟内签到' };
+    }
+    list[index] = {
+      ...item,
+      status: 'checked_in',
+      checkInTime: now,
+      updateTime: now
+    };
+    storage.set(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST, list);
+    return { success: true, reservation: list[index] };
+  }
+  return { success: false, message: '预约记录不存在' };
+}
+
+function checkOutSeatReservation(id) {
+  initLibrarySeatReservations();
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    const item = list[index];
+    if (item.status !== 'checked_in' && item.status !== 'using') {
+      return { success: false, message: '当前状态不可签退' };
+    }
+    const now = Date.now();
+    list[index] = {
+      ...item,
+      status: 'completed',
+      checkOutTime: now,
+      updateTime: now
+    };
+    storage.set(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST, list);
+    return { success: true, reservation: list[index] };
+  }
+  return { success: false, message: '预约记录不存在' };
+}
+
+function cancelSeatReservation(id) {
+  initLibrarySeatReservations();
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    const item = list[index];
+    if (item.status !== 'pending' && item.status !== 'checked_in') {
+      return { success: false, message: '当前状态不可取消' };
+    }
+    list[index] = {
+      ...item,
+      status: 'cancelled',
+      updateTime: Date.now()
+    };
+    storage.set(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST, list);
+    return { success: true, reservation: list[index] };
+  }
+  return { success: false, message: '预约记录不存在' };
+}
+
+function checkTimeoutSeatReservations(userId) {
+  initLibrarySeatReservations();
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST);
+  const now = Date.now();
+  let timeoutCount = 0;
+
+  list.forEach((item, index) => {
+    if (item.userId === userId && item.status === 'pending' && !item.checkInTime) {
+      if (now > (item.startTime || 0) + 15 * 60000) {
+        list[index] = { ...item, status: 'timeout', updateTime: now };
+        timeoutCount++;
+      }
+    }
+  });
+
+  if (timeoutCount > 0) {
+    storage.set(STORAGE_KEYS.LIBRARY_SEAT_RESERVATION_LIST, list);
+  }
+  return timeoutCount;
+}
+
+// ---------- 荐购反馈 ----------
+
+function submitLibraryRecommend(params) {
+  initLibraryRecommendations();
+  const { userId, bookTitle, bookAuthor, isbn, publisher, category, reason, contact } = params;
+
+  if (!bookTitle || !bookTitle.trim()) {
+    return { success: false, message: '请填写书名' };
+  }
+  if (!bookAuthor || !bookAuthor.trim()) {
+    return { success: false, message: '请填写作者' };
+  }
+  if (!reason || !reason.trim()) {
+    return { success: false, message: '请填写荐购理由' };
+  }
+
+  const list = storage.getList(STORAGE_KEYS.LIBRARY_RECOMMEND_LIST);
+  const recommend = {
+    id: 'lib_rec_' + util.generateId(),
+    userId,
+    bookTitle: bookTitle.trim(),
+    bookAuthor: bookAuthor.trim(),
+    isbn: (isbn || '').trim(),
+    publisher: (publisher || '').trim(),
+    category: category || 'other',
+    reason: reason.trim(),
+    contact: (contact || '').trim(),
+    status: 'submitted',
+    adminReply: '',
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  list.unshift(recommend);
+  storage.set(STORAGE_KEYS.LIBRARY_RECOMMEND_LIST, list);
+  return { success: true, recommend };
+}
+
+function getMyLibraryRecommends(userId) {
+  initLibraryRecommendations();
+  let list = storage.getList(STORAGE_KEYS.LIBRARY_RECOMMEND_LIST);
+  list = list.filter(item => item.userId === userId);
+
+  list = list.map(item => ({
+    ...item,
+    statusInfo: constants.LIBRARY_RECOMMEND_STATUS_MAP[item.status] || {}
+  }));
+
+  list = list.sort((a, b) => (b.createTime || 0) - (a.createTime || 0));
+  return list;
+}
+
+// ---------- 到期提醒 ----------
+
+function checkLibraryReminders(userId) {
+  const reminders = [];
+  const now = Date.now();
+  const threeDaysLater = now + 3 * 86400000;
+  const fifteenMinutesLater = now + 15 * 60000;
+
+  const borrowRecords = getMyBorrowList(userId, { tab: 'current' });
+  borrowRecords.forEach(record => {
+    if (record.dueDate && record.dueDate <= threeDaysLater && record.dueDate > now) {
+      const daysUntil = Math.ceil((record.dueDate - now) / 86400000);
+      reminders.push({
+        type: 'borrow_due',
+        typeInfo: constants.LIBRARY_REMINDER_TYPE_MAP['borrow_due'],
+        title: '借书即将到期',
+        content: `《${record.bookTitle}》将于${daysUntil}天后到期（${util.formatTime(record.dueDate, 'MM-DD')}）`,
+        relatedId: record.id,
+        triggerTime: record.dueDate - 3 * 86400000,
+        data: record
+      });
+    }
+    if (record.isOverdue) {
+      reminders.push({
+        type: 'borrow_due',
+        typeInfo: constants.LIBRARY_REMINDER_TYPE_MAP['borrow_due'],
+        title: '借书已逾期',
+        content: `《${record.bookTitle}》已逾期${record.daysLeft * -1}天，请尽快归还`,
+        relatedId: record.id,
+        triggerTime: record.dueDate,
+        urgent: true,
+        data: record
+      });
+    }
+  });
+
+  const seatReservations = getMySeatReservations(userId, { tab: 'upcoming' });
+  seatReservations.forEach(res => {
+    if (res.startTime && res.startTime <= fifteenMinutesLater && res.startTime > now) {
+      const minutesUntil = Math.ceil((res.startTime - now) / 60000);
+      reminders.push({
+        type: 'seat_start',
+        typeInfo: constants.LIBRARY_REMINDER_TYPE_MAP['seat_start'],
+        title: '座位预约即将开始',
+        content: `${res.roomName} ${res.seatNumber} ${res.timeSlotLabel} 将在${minutesUntil}分钟后开始，请及时签到`,
+        relatedId: res.id,
+        triggerTime: res.startTime - 15 * 60000,
+        data: res
+      });
+    }
+  });
+
+  return reminders;
+}
+
+Object.assign(module.exports, {
+  initAllLibraryData,
+  initLibraryBooks,
+  initLibraryBorrowRecords,
+  initLibraryReadingRooms,
+  initLibrarySeats,
+  initLibrarySeatReservations,
+  initLibraryRecommendations,
+
+  getLibraryBookList,
+  getLibraryBookDetail,
+  increaseLibraryBookViews,
+  getLibraryBookCategories,
+
+  getMyBorrowList,
+  getBorrowRecordDetail,
+  renewBorrowRecord,
+  getBorrowSummary,
+
+  getLibraryReadingRoomList,
+  getLibraryReadingRoomDetail,
+  getLibrarySeatList,
+  getLibrarySeatDetail,
+  getSeatRowsAndCols,
+  createSeatReservation,
+  getMySeatReservations,
+  getSeatReservationDetail,
+  checkInSeatReservation,
+  checkOutSeatReservation,
+  cancelSeatReservation,
+  checkTimeoutSeatReservations,
+
+  submitLibraryRecommend,
+  getMyLibraryRecommends,
+
+  checkLibraryReminders
 });

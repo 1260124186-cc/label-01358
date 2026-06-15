@@ -1,0 +1,137 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="page-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <!-- 统计卡片 -->
+    <view class="stats-card">
+      <view class="stats-bg-overlay"></view>
+      <view class="stats-grid">
+        <view class="stats-item" bindtap="onTabChange" data-value="current">
+          <text class="stats-count">{{summary.currentCount}}</text>
+          <text class="stats-label">当前借阅</text>
+        </view>
+        <view class="stats-item">
+          <text class="stats-count overdue">{{summary.overdueCount}}</text>
+          <text class="stats-label">逾期</text>
+        </view>
+        <view class="stats-item" bindtap="onTabChange" data-value="history">
+          <text class="stats-count">{{summary.historyCount}}</text>
+          <text class="stats-label">历史借阅</text>
+        </view>
+        <view class="stats-item">
+          <text class="stats-count renew">{{summary.canRenewCount}}</text>
+          <text class="stats-label">可续借</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- Tab切换 -->
+    <view class="tabs-wrap">
+      <view class="tabs-container">
+        <view
+          class="tab-item {{activeTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabChange"
+          data-value="{{item.value}}"
+        >
+          <text class="tab-text">{{item.label}}</text>
+          <view class="tab-indicator" wx:if="{{activeTab === item.value}}"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 借阅列表 -->
+    <view class="list-container">
+      <view wx:if="{{loading}}" class="loading-wrap">
+        <view class="loading-spinner"></view>
+        <text class="loading-text">加载中...</text>
+      </view>
+
+      <block wx:elif="{{borrowList.length > 0}}">
+        <view
+          class="borrow-card"
+          wx:for="{{borrowList}}"
+          wx:key="id"
+        >
+          <view class="card-main">
+            <image class="book-cover" src="{{item.bookCover || '/assets/images/default-news.png'}}" mode="aspectFill"/>
+            <view class="book-info">
+              <view class="book-header">
+                <text class="book-title">{{item.bookTitle}}</text>
+                <view
+                  class="status-badge"
+                  style="background: {{item.statusInfo.color}}20; color: {{item.statusInfo.color}};"
+                >
+                  <text class="status-text">{{item.statusInfo.label}}</text>
+                </view>
+              </view>
+              <text class="book-author">作者：{{item.bookAuthor}}</text>
+              <view class="book-meta">
+                <view class="meta-item">
+                  <text class="meta-icon">📍</text>
+                  <text class="meta-text">{{item.location || '图书馆'}}</text>
+                </view>
+                <view class="meta-item" wx:if="{{item.callNumber}}">
+                  <text class="meta-icon">🔖</text>
+                  <text class="meta-text">{{item.callNumber}}</text>
+                </view>
+              </view>
+              <view class="date-info">
+                <view class="date-row">
+                  <text class="date-label">借阅日期</text>
+                  <text class="date-value">{{item.borrowDateText}}</text>
+                </view>
+                <view class="date-row">
+                  <text class="date-label">应还日期</text>
+                  <view class="date-value-wrap">
+                    <text class="date-value {{item.displayStatus === 'overdue' ? 'overdue' : item.daysLeft <= 7 && item.displayStatus !== 'returned' ? 'warning' : ''}}">
+                      {{item.dueDateText}}
+                    </text>
+                    <text
+                      class="days-tag {{item.displayStatus === 'overdue' ? 'overdue' : item.daysLeft <= 7 && item.displayStatus !== 'returned' ? 'warning' : ''}}"
+                      wx:if="{{item.displayStatus !== 'returned'}}"
+                    >
+                      {{item.daysLeftText}}
+                    </text>
+                  </view>
+                </view>
+                <view class="date-row" wx:if="{{item.returnDateText}}">
+                  <text class="date-label">归还日期</text>
+                  <text class="date-value">{{item.returnDateText}}</text>
+                </view>
+              </view>
+
+              <view class="overdue-fee" wx:if="{{item.overdueFeeText && item.displayStatus === 'overdue'}}">
+                <text class="fee-icon">💰</text>
+                <text class="fee-label">逾期金额</text>
+                <text class="fee-value">¥{{item.overdueFeeText}}</text>
+              </view>
+
+              <view class="renew-info" wx:if="{{item.renewCount > 0 && item.displayStatus !== 'returned'}}">
+                <text class="renew-text">已续借 {{item.renewCount}} 次</text>
+              </view>
+            </view>
+          </view>
+
+          <view class="card-footer" wx:if="{{activeTab === 'current' && !item.returnDate}}">
+            <view
+              class="renew-btn {{!item.canRenew ? 'disabled' : ''}}"
+              bindtap="onRenewTap"
+              data-id="{{item.id}}"
+              data-booktitle="{{item.bookTitle}}"
+            >
+              <text class="btn-text">{{item.canRenew ? '续借' : ((item.renewCount || 0) >= (item.maxRenewCount || 2) ? '续借次数已用完' : '不可续借')}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+
+      <view wx:else class="empty-wrap">
+        <text class="empty-icon">📚</text>
+        <text class="empty-text">{{activeTab === 'current' ? '暂无借阅记录' : '暂无历史记录'}}</text>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>

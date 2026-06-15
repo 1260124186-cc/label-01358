@@ -184,7 +184,15 @@ const STORAGE_KEYS = {
   BUS_ROUTE_LIST: 'busRouteList',
   BUS_VEHICLE_LIST: 'busVehicleList',
   BUS_ARRIVAL_REMINDERS: 'busArrivalReminders',
-  FAVORITE_BUS_ROUTES: 'favoriteBusRoutes'
+  FAVORITE_BUS_ROUTES: 'favoriteBusRoutes',
+
+  LIBRARY_BOOK_LIST: 'libraryBookList',
+  LIBRARY_BORROW_LIST: 'libraryBorrowList',
+  LIBRARY_READING_ROOM_LIST: 'libraryReadingRoomList',
+  LIBRARY_SEAT_LIST: 'librarySeatList',
+  LIBRARY_SEAT_RESERVATION_LIST: 'librarySeatReservationList',
+  LIBRARY_RECOMMEND_LIST: 'libraryRecommendList',
+  LIBRARY_REMINDER_LIST: 'libraryReminderList'
 };
 
 /**

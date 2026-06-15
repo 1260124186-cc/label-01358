@@ -1,0 +1,218 @@
+<view class="page {{darkMode ? 'dark' : ''}} {{fontSizeClass}}">
+  <view class="header">
+    <scroll-view class="type-tabs" scroll-x="true" show-scrollbar="{{false}}">
+      <view class="type-tabs-inner">
+        <view
+          wx:for="{{roomTypes}}"
+          wx:key="value"
+          class="type-tab {{activeType === item.value ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="onTypeChange"
+        >
+          <text class="type-icon">{{item.icon}}</text>
+          <text class="type-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="header-right">
+      <view class="my-seats-btn" bindtap="goToMySeats">
+        <text class="my-seats-icon">📋</text>
+        <text class="my-seats-text">我的预约</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="content" wx:if="{{!loading}}">
+    <view class="room-list">
+      <view
+        wx:for="{{roomList}}"
+        wx:key="id"
+        class="room-card"
+        data-id="{{item.id}}"
+        bindtap="onRoomTap"
+      >
+        <view class="room-header">
+          <view class="room-title">
+            <text class="room-icon">{{item.icon || '📚'}}</text>
+            <text class="room-name">{{item.name}}</text>
+          </view>
+          <view class="room-floor">{{item.floor}}</view>
+        </view>
+
+        <view class="room-info">
+          <view class="info-item">
+            <text class="info-label">开放时间</text>
+            <text class="info-value">{{item.openTime}}</text>
+          </view>
+          <view class="info-item">
+            <text class="info-label">座位</text>
+            <text class="info-value">
+              <text class="available-num">{{item.availableCount || 0}}</text>
+              <text class="total-num"> / {{item.totalCount || 0}}</text>
+            </text>
+          </view>
+        </view>
+
+        <view class="progress-wrap">
+          <view class="progress-bar">
+            <view
+              class="progress-fill"
+              style="width: {{item.occupancyRate || 0}}%; background: {{item.occupancyRate >= 80 ? '#EF4444' : item.occupancyRate >= 50 ? '#F59E0B' : '#10B981'}};"
+            ></view>
+          </view>
+          <text class="progress-text">使用率 {{item.occupancyRate || 0}}%</text>
+        </view>
+
+        <view class="room-facilities" wx:if="{{item.facilities && item.facilities.length}}">
+          <view
+            wx:for="{{item.facilities}}"
+            wx:for-item="facility"
+            wx:key="*this"
+            class="facility-tag"
+          >
+            <text wx:if="{{facility === 'air_conditioner'}}">❄️ 空调</text>
+            <text wx:elif="{{facility === 'wifi'}}">📶 WiFi</text>
+            <text wx:elif="{{facility === 'outlet'}}">🔌 插座</text>
+            <text wx:elif="{{facility === 'window'}}">🪟 靠窗</text>
+            <text wx:elif="{{facility === 'quiet'}}">🤫 静音</text>
+            <text wx:else>{{facility}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{roomList.length === 0}}">
+      <view class="empty-icon">📭</view>
+      <view class="empty-text">暂无符合条件的阅览室</view>
+    </view>
+  </view>
+
+  <view class="loading-state" wx:if="{{loading}}">
+    <view class="loading-icon">⏳</view>
+    <view class="loading-text">加载中...</view>
+  </view>
+
+  <view class="seat-modal-mask" wx:if="{{showSeatModal}}" bindtap="onCloseSeatModal"></view>
+  <view class="seat-modal {{showSeatModal ? 'show' : ''}} {{darkMode ? 'dark' : ''}}" catchtap="">
+    <view class="modal-header">
+      <view class="modal-title">
+        <text class="modal-icon">{{selectedRoom.icon || '📚'}}</text>
+        <text class="modal-name">{{selectedRoom.name}}</text>
+      </view>
+      <view class="modal-close" bindtap="onCloseSeatModal">✕</view>
+    </view>
+
+    <scroll-view class="modal-body" scroll-y="true">
+      <view class="filter-section">
+        <view class="filter-title">选择日期</view>
+        <scroll-view class="date-tabs" scroll-x="true" show-scrollbar="{{false}}">
+          <view class="date-tabs-inner">
+            <view
+              wx:for="{{dateOptions}}"
+              wx:key="value"
+              class="date-tab {{selectedDate === item.value ? 'active' : ''}}"
+              data-value="{{item.value}}"
+              bindtap="onDateChange"
+            >
+              {{item.label}}
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <view class="filter-section">
+        <view class="filter-title">选择时段</view>
+        <view class="time-slot-list">
+          <view
+            wx:for="{{timeSlots}}"
+            wx:key="value"
+            class="time-slot {{activeTimeSlot === item.value ? 'active' : ''}}"
+            data-value="{{item.value}}"
+            bindtap="onTimeSlotChange"
+          >
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+
+      <view class="seat-section">
+        <view class="section-title">
+          <text class="title-text">座位图</text>
+        </view>
+
+        <view class="seat-legend">
+          <view class="legend-item">
+            <view class="legend-box seat-available"></view>
+            <text class="legend-text">空闲</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-box seat-occupied"></view>
+            <text class="legend-text">使用中</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-box seat-reserved"></view>
+            <text class="legend-text">已预约</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-box seat-suspended"></view>
+            <text class="legend-text">停用</text>
+          </view>
+        </view>
+
+        <view class="seat-tags-legend">
+          <view class="legend-tag">🪟 靠窗</view>
+          <view class="legend-tag">🔌 有插座</view>
+        </view>
+
+        <view class="seat-map">
+          <view class="seat-stage">讲台 / 入口</view>
+          <view
+            wx:for="{{seatRowKeys}}"
+            wx:for-item="rowKey"
+            wx:key="*this"
+            class="seat-row"
+          >
+            <view class="row-label">第{{rowKey}}排</view>
+            <view class="row-seats">
+              <view
+                wx:for="{{seatRows[rowKey]}}"
+                wx:for-item="seat"
+                wx:key="id"
+                class="seat-item {{seat.status}} {{selectedSeat.id === seat.id ? 'selected' : ''}}"
+                data-id="{{seat.id}}"
+                bindtap="onSeatTap"
+              >
+                <text class="seat-number">{{seat.seatNumber}}</text>
+                <view class="seat-markers">
+                  <text wx:if="{{seat.hasWindow}}" class="marker">🪟</text>
+                  <text wx:if="{{seat.hasOutlet}}" class="marker">🔌</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <view class="modal-footer">
+      <view class="selected-info" wx:if="{{selectedSeat}}">
+        <text class="info-label">已选：</text>
+        <text class="info-value">{{selectedSeat.seatNumber}}号</text>
+        <text wx:if="{{selectedSeat.hasWindow}}" class="info-tag">靠窗</text>
+        <text wx:if="{{selectedSeat.hasOutlet}}" class="info-tag">有插座</text>
+      </view>
+      <view class="selected-info" wx:else>
+        <text class="info-placeholder">请选择空闲座位</text>
+      </view>
+      <view class="footer-actions">
+        <view class="btn btn-cancel" bindtap="onCloseSeatModal">取消</view>
+        <view
+          class="btn btn-confirm {{!selectedSeat ? 'disabled' : ''}}"
+          bindtap="onConfirmReservation"
+        >
+          确认预约
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

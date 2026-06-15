@@ -8363,6 +8363,454 @@ const MOCK_COURSE_REVIEWS = [
   }
 ];
 
+const MOCK_LIBRARY_BOOKS = [
+  {
+    id: 'lib_book_001',
+    title: '活着',
+    subtitle: '',
+    author: '余华',
+    translator: '',
+    publisher: '作家出版社',
+    publishDate: '2012-08',
+    isbn: '9787506365437',
+    category: 'literature',
+    pages: 191,
+    price: 20.0,
+    cover: 'https://picsum.photos/seed/book1/400/600',
+    summary: '《活着》是作家余华的代表作之一，讲述了在大时代背景下，随着内战、三反五反、大跃进、文化大革命等社会变革，徐福贵的人生和家庭不断经受着苦难，到了最后所有亲人都先后离他而去，仅剩下年老的他和一头老牛相依为命。',
+    location: '文学阅览室 2F-A区',
+    callNumber: 'I247.57/128',
+    totalCopies: 15,
+    availableCopies: 8,
+    tags: ['经典', '当代文学', '必读'],
+    views: 3528,
+    createTime: Date.now() - 86400000 * 200
+  },
+  {
+    id: 'lib_book_002',
+    title: '深入理解计算机系统',
+    subtitle: '原书第3版',
+    author: 'Randal E. Bryant, David R. O\'Hallaron',
+    translator: '龚奕利 等',
+    publisher: '机械工业出版社',
+    publishDate: '2016-11',
+    isbn: '9787111544937',
+    category: 'technology',
+    pages: 737,
+    price: 139.0,
+    cover: 'https://picsum.photos/seed/book2/400/600',
+    summary: '本书从程序员的视角详细阐述计算机系统的本质概念，包括计算机底层的表示方法、汇编语言、处理器架构、存储器层次结构、链接、加载、虚拟存储器、进程和信号、系统级I/O、网络编程、并发编程等核心内容。',
+    location: '科技阅览室 3F-B区',
+    callNumber: 'TP303/223',
+    totalCopies: 20,
+    availableCopies: 5,
+    tags: ['计算机', '经典教材', 'CSAPP'],
+    views: 5821,
+    createTime: Date.now() - 86400000 * 180
+  },
+  {
+    id: 'lib_book_003',
+    title: '人类简史',
+    subtitle: '从动物到上帝',
+    author: '尤瓦尔·赫拉利',
+    translator: '林俊宏',
+    publisher: '中信出版社',
+    publishDate: '2017-02',
+    isbn: '9787508647357',
+    category: 'history',
+    pages: 440,
+    price: 68.0,
+    cover: 'https://picsum.photos/seed/book3/400/600',
+    summary: '从十万年前有生命迹象开始到21世纪资本、科技交织的人类发展史。十万年前，地球上至少有六个人种，为何今天却只剩下了我们自己？',
+    location: '综合阅览室 1F-C区',
+    callNumber: 'K02/155',
+    totalCopies: 18,
+    availableCopies: 3,
+    tags: ['历史', '畅销', '人类学'],
+    views: 8934,
+    createTime: Date.now() - 86400000 * 250
+  },
+  {
+    id: 'lib_book_004',
+    title: '算法导论',
+    subtitle: '原书第3版',
+    author: 'Thomas H. Cormen 等',
+    translator: '殷建平 等',
+    publisher: '机械工业出版社',
+    publishDate: '2013-01',
+    isbn: '9787111407010',
+    category: 'technology',
+    pages: 1312,
+    price: 128.0,
+    cover: 'https://picsum.photos/seed/book4/400/600',
+    summary: '《算法导论》一书深入浅出，全面地介绍了计算机算法。对每一个算法的分析既富于直觉，又严谨透彻。',
+    location: '科技阅览室 3F-A区',
+    callNumber: 'TP301.6/188',
+    totalCopies: 12,
+    availableCopies: 2,
+    tags: ['算法', '经典', 'CLRS'],
+    views: 6745,
+    createTime: Date.now() - 86400000 * 300
+  },
+  {
+    id: 'lib_book_005',
+    title: '百年孤独',
+    subtitle: '',
+    author: '加西亚·马尔克斯',
+    translator: '范晔',
+    publisher: '南海出版公司',
+    publishDate: '2011-06',
+    isbn: '9787544253994',
+    category: 'literature',
+    pages: 360,
+    price: 39.5,
+    cover: 'https://picsum.photos/seed/book5/400/600',
+    summary: '《百年孤独》是魔幻现实主义文学的代表作，描写了布恩迪亚家族七代人的传奇故事，以及加勒比海沿岸小镇马孔多的百年兴衰。',
+    location: '文学阅览室 2F-B区',
+    callNumber: 'I751.45/32',
+    totalCopies: 25,
+    availableCopies: 12,
+    tags: ['魔幻现实', '诺贝尔文学奖', '经典'],
+    views: 7823,
+    createTime: Date.now() - 86400000 * 400
+  },
+  {
+    id: 'lib_book_006',
+    title: '心理学与生活',
+    subtitle: '第19版',
+    author: '理查德·格里格, 菲利普·津巴多',
+    translator: '王垒 等',
+    publisher: '人民邮电出版社',
+    publishDate: '2016-01',
+    isbn: '9787115409386',
+    category: 'social',
+    pages: 622,
+    price: 88.0,
+    cover: 'https://picsum.photos/seed/book6/400/600',
+    summary: '《心理学与生活》是美国斯坦福大学多年来使用的教材，也是在美国许多大学里推广使用的经典教材。',
+    location: '综合阅览室 1F-A区',
+    callNumber: 'B84/256',
+    totalCopies: 10,
+    availableCopies: 6,
+    tags: ['心理学', '教材', '入门'],
+    views: 4521,
+    createTime: Date.now() - 86400000 * 220
+  },
+  {
+    id: 'lib_book_007',
+    title: '三体',
+    subtitle: '地球往事三部曲之一',
+    author: '刘慈欣',
+    translator: '',
+    publisher: '重庆出版社',
+    publishDate: '2008-01',
+    isbn: '9787536692930',
+    category: 'literature',
+    pages: 302,
+    price: 23.0,
+    cover: 'https://picsum.photos/seed/book7/400/600',
+    summary: '文化大革命如火如荼进行的同时，军方探寻外星文明的绝秘计划"红岸工程"取得了突破性进展。',
+    location: '文学阅览室 2F-C区',
+    callNumber: 'I247.55/56',
+    totalCopies: 30,
+    availableCopies: 0,
+    tags: ['科幻', '雨果奖', '中国科幻'],
+    views: 12358,
+    createTime: Date.now() - 86400000 * 500
+  },
+  {
+    id: 'lib_book_008',
+    title: '现代艺术的故事',
+    subtitle: '',
+    author: '贡布里希',
+    translator: '范景中 等',
+    publisher: '广西美术出版社',
+    publishDate: '2015-08',
+    isbn: '9787549413546',
+    category: 'art',
+    pages: 688,
+    price: 280.0,
+    cover: 'https://picsum.photos/seed/book8/400/600',
+    summary: '《艺术的故事》是关于艺术的书籍中最著名、最流行的著作之一。',
+    location: '期刊阅览室 4F-A区',
+    callNumber: 'J110.9/45',
+    totalCopies: 6,
+    availableCopies: 4,
+    tags: ['艺术', '经典', '美术史'],
+    views: 2189,
+    createTime: Date.now() - 86400000 * 150
+  }
+];
+
+const MOCK_LIBRARY_BORROW_RECORDS = [
+  {
+    id: 'lib_borrow_001',
+    userId: 'user_001',
+    bookId: 'lib_book_001',
+    bookTitle: '活着',
+    bookAuthor: '余华',
+    bookCover: 'https://picsum.photos/seed/book1/400/600',
+    callNumber: 'I247.57/128',
+    location: '文学阅览室 2F-A区',
+    borrowDate: Date.now() - 86400000 * 20,
+    dueDate: Date.now() + 86400000 * 10,
+    returnDate: null,
+    status: 'borrowing',
+    renewCount: 0,
+    maxRenewCount: 2,
+    createTime: Date.now() - 86400000 * 20
+  },
+  {
+    id: 'lib_borrow_002',
+    userId: 'user_001',
+    bookId: 'lib_book_002',
+    bookTitle: '深入理解计算机系统',
+    bookAuthor: 'Randal E. Bryant',
+    bookCover: 'https://picsum.photos/seed/book2/400/600',
+    callNumber: 'TP303/223',
+    location: '科技阅览室 3F-B区',
+    borrowDate: Date.now() - 86400000 * 25,
+    dueDate: Date.now() - 86400000 * 5,
+    returnDate: null,
+    status: 'overdue',
+    renewCount: 1,
+    maxRenewCount: 2,
+    overdueDays: 5,
+    overdueFee: 2.5,
+    createTime: Date.now() - 86400000 * 25
+  },
+  {
+    id: 'lib_borrow_003',
+    userId: 'user_001',
+    bookId: 'lib_book_003',
+    bookTitle: '人类简史',
+    bookAuthor: '尤瓦尔·赫拉利',
+    bookCover: 'https://picsum.photos/seed/book3/400/600',
+    callNumber: 'K02/155',
+    location: '综合阅览室 1F-C区',
+    borrowDate: Date.now() - 86400000 * 60,
+    dueDate: Date.now() - 86400000 * 30,
+    returnDate: Date.now() - 86400000 * 32,
+    status: 'returned',
+    renewCount: 0,
+    maxRenewCount: 2,
+    createTime: Date.now() - 86400000 * 60
+  },
+  {
+    id: 'lib_borrow_004',
+    userId: 'user_001',
+    bookId: 'lib_book_005',
+    bookTitle: '百年孤独',
+    bookAuthor: '加西亚·马尔克斯',
+    bookCover: 'https://picsum.photos/seed/book5/400/600',
+    callNumber: 'I751.45/32',
+    location: '文学阅览室 2F-B区',
+    borrowDate: Date.now() - 86400000 * 10,
+    dueDate: Date.now() + 86400000 * 20,
+    returnDate: null,
+    status: 'renewed',
+    renewCount: 1,
+    maxRenewCount: 2,
+    createTime: Date.now() - 86400000 * 10
+  },
+  {
+    id: 'lib_borrow_005',
+    userId: 'user_001',
+    bookId: 'lib_book_007',
+    bookTitle: '三体',
+    bookAuthor: '刘慈欣',
+    bookCover: 'https://picsum.photos/seed/book7/400/600',
+    callNumber: 'I247.55/56',
+    location: '文学阅览室 2F-C区',
+    borrowDate: Date.now() - 86400000 * 90,
+    dueDate: Date.now() - 86400000 * 60,
+    returnDate: Date.now() - 86400000 * 62,
+    status: 'returned',
+    renewCount: 2,
+    maxRenewCount: 2,
+    createTime: Date.now() - 86400000 * 90
+  }
+];
+
+const MOCK_LIBRARY_READING_ROOMS = [
+  {
+    id: 'lib_room_001',
+    name: '综合阅览室',
+    type: 'comprehensive',
+    floor: '1F',
+    openTime: '07:00-22:00',
+    totalSeats: 120,
+    description: '藏有综合类图书，适合一般阅读',
+    features: ['空调', 'WiFi', '插座', '饮水机']
+  },
+  {
+    id: 'lib_room_002',
+    name: '文学阅览室',
+    type: 'literature',
+    floor: '2F',
+    openTime: '07:00-22:00',
+    totalSeats: 80,
+    description: '文学类书籍专区，安静优雅的阅读环境',
+    features: ['空调', 'WiFi', '插座', '自然采光']
+  },
+  {
+    id: 'lib_room_003',
+    name: '科技阅览室',
+    type: 'science',
+    floor: '3F',
+    openTime: '07:00-22:30',
+    totalSeats: 100,
+    description: '计算机、理工类书籍，提供电脑查询终端',
+    features: ['空调', 'WiFi', '插座', '查询终端', '打印服务']
+  },
+  {
+    id: 'lib_room_004',
+    name: '期刊阅览室',
+    type: 'periodical',
+    floor: '4F',
+    openTime: '08:00-21:00',
+    totalSeats: 60,
+    description: '各类期刊、报纸、杂志阅览区',
+    features: ['空调', 'WiFi', '插座', '期刊架']
+  },
+  {
+    id: 'lib_room_005',
+    name: '电子阅览室',
+    type: 'electronic',
+    floor: '4F',
+    openTime: '08:00-22:00',
+    totalSeats: 50,
+    description: '配备电脑，可查阅电子资源、数据库',
+    features: ['空调', '电脑', 'WiFi', '数据库访问', '耳机']
+  },
+  {
+    id: 'lib_room_006',
+    name: '静音自习区',
+    type: 'quiet',
+    floor: '5F',
+    openTime: '06:30-23:00',
+    totalSeats: 150,
+    discussion: '严格静音，适合深度学习和备考',
+    features: ['空调', 'WiFi', '插座', '独立座位', '护眼灯']
+  },
+  {
+    id: 'lib_room_007',
+    name: '研讨空间',
+    type: 'discussion',
+    floor: '5F',
+    openTime: '08:00-21:00',
+    totalSeats: 40,
+    description: '小组讨论空间，需预约',
+    features: ['空调', 'WiFi', '白板', '投影仪', '讨论桌']
+  }
+];
+
+const MOCK_LIBRARY_SEATS = (() => {
+  const seats = [];
+  const rooms = MOCK_LIBRARY_READING_ROOMS;
+  let seatIdx = 1;
+  rooms.forEach(room => {
+    const rows = Math.ceil(room.totalSeats / 10);
+    for (let row = 1; row <= rows; row++) {
+      const colsInRow = Math.min(10, room.totalSeats - (row - 1) * 10);
+      for (let col = 1; col <= colsInRow; col++) {
+        const statuses = ['available', 'available', 'available', 'available', 'occupied', 'reserved', 'available', 'available'];
+        const randStatus = statuses[Math.floor(Math.random() * statuses.length)];
+        const hasWindow = col === 1 || col === colsInRow;
+        const hasOutlet = Math.random() > 0.2;
+        seats.push({
+          id: `lib_seat_${String(seatIdx).padStart(4, '0')}`,
+          roomId: room.id,
+          roomName: room.name,
+          seatNumber: `${row}排${col}号`,
+          row,
+          col,
+          status: seatIdx % 5 === 0 ? 'suspended' : randStatus,
+          hasWindow,
+          hasOutlet,
+          hasPower: hasOutlet,
+          tags: [
+            hasWindow ? '靠窗' : null,
+            hasOutlet ? '有插座' : null
+          ].filter(Boolean)
+        });
+        seatIdx++;
+      }
+    }
+  });
+  return seats;
+})();
+
+const MOCK_LIBRARY_SEAT_RESERVATIONS = [
+  {
+    id: 'lib_res_001',
+    userId: 'user_001',
+    roomId: 'lib_room_006',
+    roomName: '静音自习区',
+    seatId: 'lib_seat_0450',
+    seatNumber: '5排5号',
+    date: new Date().toISOString().split('T')[0],
+    timeSlot: 'afternoon',
+    timeSlotLabel: '下午 13:00-18:00',
+    startTime: Date.now() + 86400000,
+    endTime: Date.now() + 86400000 + 5 * 3600000,
+    checkInTime: null,
+    checkOutTime: null,
+    status: 'pending',
+    createTime: Date.now() - 3600000
+  },
+  {
+    id: 'lib_res_002',
+    userId: 'user_001',
+    roomId: 'lib_room_003',
+    roomName: '科技阅览室',
+    seatId: 'lib_seat_0210',
+    seatNumber: '2排2号',
+    date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+    timeSlot: 'full_day',
+    timeSlotLabel: '全天 07:00-22:30',
+    startTime: Date.now() - 86400000,
+    endTime: Date.now() - 86400000 + 15 * 3600000,
+    checkInTime: Date.now() - 86400000 + 10 * 60000,
+    checkOutTime: Date.now() - 86400000 + 14 * 3600000,
+    status: 'completed',
+    createTime: Date.now() - 2 * 86400000
+  }
+];
+
+const MOCK_LIBRARY_RECOMMENDATIONS = [
+  {
+    id: 'lib_rec_001',
+    userId: 'user_001',
+    bookTitle: 'JavaScript高级程序设计',
+    bookAuthor: 'Matt Frisbie',
+    isbn: '9787115545602',
+    publisher: '人民邮电出版社',
+    category: 'technology',
+    reason: '前端开发必备经典教材，希望馆内采购最新的第4版',
+    contact: '138****5678',
+    status: 'approved',
+    adminReply: '已列入采购计划，预计2周内到馆',
+    createTime: Date.now() - 86400000 * 15,
+    updateTime: Date.now() - 86400000 * 10
+  },
+  {
+    id: 'lib_rec_002',
+    userId: 'user_001',
+    bookTitle: '置身事内：中国政府与经济发展',
+    bookAuthor: '兰小欢',
+    isbn: '9787208170384',
+    publisher: '上海人民出版社',
+    category: 'social',
+    reason: '热门经济读物，了解中国经济的好书，周围很多同学想看',
+    contact: '138****5678',
+    status: 'purchased',
+    adminReply: '已采购到馆，可在综合阅览室借阅，索书号：F123/78',
+    createTime: Date.now() - 86400000 * 40,
+    updateTime: Date.now() - 86400000 * 20
+  }
+];
+
 module.exports = {
   ..._firstExports,
   MOCK_CLUBS,
@@ -8400,7 +8848,13 @@ module.exports = {
   MOCK_TAKEOUT_PROMOTIONS_BANNER,
   MOCK_TRAINING_PLANS,
   MOCK_TRAINING_PLAN_COURSES,
-  MOCK_COURSE_REVIEWS
+  MOCK_COURSE_REVIEWS,
+  MOCK_LIBRARY_BOOKS,
+  MOCK_LIBRARY_BORROW_RECORDS,
+  MOCK_LIBRARY_READING_ROOMS,
+  MOCK_LIBRARY_SEATS,
+  MOCK_LIBRARY_SEAT_RESERVATIONS,
+  MOCK_LIBRARY_RECOMMENDATIONS
 };
 
 const MOCK_SCHOLARSHIP_POLICIES = [

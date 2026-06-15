@@ -210,6 +210,13 @@ Page({
         url: '/pages/work-study/index'
       },
       {
+        id: 'library',
+        name: '图书馆',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%)',
+        url: '/pages/library/index'
+      },
+      {
         id: 'voting',
         name: '校园投票',
         icon: '/assets/icons/nav-broadcast.png',

@@ -222,7 +222,14 @@
     "pages/dorm-repair/create",
     "pages/dorm-repair/detail",
     "pages/dorm-repair/history",
-    "pages/admin/dorm-repair/index"
+    "pages/admin/dorm-repair/index",
+    "pages/library/index",
+    "pages/library/book-search/index",
+    "pages/library/book-detail/index",
+    "pages/library/my-borrow/index",
+    "pages/library/seat-reservation/index",
+    "pages/library/my-seats/index",
+    "pages/library/recommend/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",
