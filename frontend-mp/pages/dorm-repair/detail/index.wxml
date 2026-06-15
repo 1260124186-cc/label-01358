@@ -1,0 +1,236 @@
+<view class="detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{order}}">
+  <view class="status-banner" style="background: linear-gradient(135deg, {{order.statusColor}}20, {{order.statusColor}}05);">
+    <view class="status-main">
+      <text class="status-icon">{{order.statusIcon}}</text>
+      <view class="status-info">
+        <text class="status-text" style="color: {{order.statusColor}};">{{order.statusLabel}}</text>
+        <text class="status-desc" wx:if="{{order.status === 'pending'}}">等待维修工接单，请耐心等待</text>
+        <text class="status-desc" wx:elif="{{order.status === 'accepted'}}">维修工已接单，即将上门</text>
+        <text class="status-desc" wx:elif="{{order.status === 'in_progress'}}">维修进行中，即将完成</text>
+        <text class="status-desc" wx:elif="{{order.status === 'completed'}}">维修已完成，请确认并评价</text>
+        <text class="status-desc" wx:elif="{{order.status === 'rated'}}">工单已完成，感谢您的评价</text>
+        <text class="status-desc" wx:elif="{{order.status === 'cancelled'}}">工单已取消</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="info-section">
+    <view class="info-card">
+      <view class="info-card-title">
+        <text class="card-icon">📋</text>
+        <text class="card-text">工单信息</text>
+      </view>
+      <view class="info-rows">
+        <view class="info-row">
+          <text class="row-label">工单号</text>
+          <text class="row-value order-no">{{order.orderNo}}</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">报修类型</text>
+          <view class="type-badge" style="background: {{order.typeColor}}15; color: {{order.typeColor}};">
+            <text class="type-icon">{{order.typeIcon}}</text>
+            <text class="type-label">{{order.typeLabel}}</text>
+          </view>
+        </view>
+        <view class="info-row">
+          <text class="row-label">紧急标识</text>
+          <view class="urgent-wrap">
+            <view wx:if="{{order.isUrgent}}" class="urgent-badge">
+              <text class="urgent-icon">{{order.urgentIcon || '🚨'}}</text>
+              <text class="urgent-text">紧急 · {{order.urgentLabel || '优先处理'}}</text>
+            </view>
+            <text wx:else class="row-value">普通</text>
+          </view>
+        </view>
+        <view class="info-row">
+          <text class="row-label">提交时间</text>
+          <text class="row-value">{{order.createTimeText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-card">
+      <view class="info-card-title">
+        <text class="card-icon">🏠</text>
+        <text class="card-text">宿舍信息</text>
+      </view>
+      <view class="info-rows">
+        <view class="info-row">
+          <text class="row-label">宿舍号</text>
+          <text class="row-value highlight">{{order.dormitoryNo}}</text>
+        </view>
+        <view class="info-row" wx:if="{{order.userPhone}}">
+          <text class="row-label">联系电话</text>
+          <text class="row-value">{{order.userPhone}}</text>
+        </view>
+        <view class="info-row">
+          <text class="row-label">期望上门</text>
+          <text class="row-value">{{expectedTimeText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-card">
+      <view class="info-card-title">
+        <text class="card-icon">📝</text>
+        <text class="card-text">问题描述</text>
+      </view>
+      <view class="desc-content">
+        <text class="desc-text">{{order.description}}</text>
+      </view>
+      <view class="image-list" wx:if="{{previewImages.length > 0}}">
+        <view
+          wx:for="{{previewImages}}"
+          wx:key="*this"
+          class="image-item"
+          bindtap="onPreviewImage"
+          data-url="{{item}}"
+        >
+          <image src="{{item}}" mode="aspectFill" class="repair-image"></image>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-card" wx:if="{{timelineItems.length > 0}}">
+      <view class="info-card-title">
+        <text class="card-icon">⏱️</text>
+        <text class="card-text">维修进度</text>
+      </view>
+      <view class="timeline">
+        <view
+          wx:for="{{timelineItems}}"
+          wx:key="time"
+          class="timeline-item {{index === 0 ? 'first' : ''}}"
+        >
+          <view class="timeline-dot" style="background: {{item.color}};">
+            <text class="timeline-icon">{{item.icon}}</text>
+          </view>
+          <view wx:if="{{index < timelineItems.length - 1}}" class="timeline-line"></view>
+          <view class="timeline-content">
+            <text class="timeline-label" style="color: {{item.color}};">{{item.label}}</text>
+            <text class="timeline-time">{{item.timeText}}</text>
+            <text class="timeline-remark">{{item.remark}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-card" wx:if="{{order.workerInfo}}">
+      <view class="info-card-title">
+        <text class="card-icon">🔧</text>
+        <text class="card-text">维修工信息</text>
+      </view>
+      <view class="worker-card">
+        <image class="worker-avatar" src="{{order.workerInfo.avatar || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+        <view class="worker-detail">
+          <view class="worker-header">
+            <text class="worker-name">{{order.workerInfo.name}}</text>
+            <view class="worker-rating">
+              <text class="rating-star">★</text>
+              <text class="rating-score">{{order.workerInfo.rating || '5.0'}}</text>
+            </view>
+          </view>
+          <view class="worker-stats">
+            <text class="worker-orders">已完成 {{order.workerInfo.orderCount || 0}} 单</text>
+          </view>
+        </view>
+        <view class="call-btn" bindtap="onCallWorker">
+          <text class="call-icon">📞</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-card" wx:if="{{order.rating}}">
+      <view class="info-card-title">
+        <text class="card-icon">⭐</text>
+        <text class="card-text">我的评价</text>
+      </view>
+      <view class="rating-block">
+        <view class="rating-stars">
+          <text wx:for="{{5}}" wx:key="*this" class="star {{item < order.rating ? 'filled' : ''}}">★</text>
+        </view>
+        <view class="rating-tags" wx:if="{{order.ratingTags && order.ratingTags.length > 0}}">
+          <text wx:for="{{order.ratingTags}}" wx:for-item="tagVal" wx:key="*this" class="rating-tag">
+            {{ratingTagsList[0]}}
+            <block wx:for="{{ratingTagsList}}" wx:for-item="tagItem" wx:key="value">
+              <block wx:if="{{tagItem.value === tagVal}}">{{tagItem.icon}} {{tagItem.label}}</block>
+            </block>
+          </text>
+        </view>
+        <text class="rating-comment" wx:if="{{order.ratingComment}}">{{order.ratingComment}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-bar" wx:if="{{isUser && (order.status === 'pending' || order.status === 'accepted')}}">
+    <view class="cancel-btn" bindtap="onCancel">取消工单</view>
+  </view>
+
+  <view class="bottom-bar" wx:if="{{isUser && order.status === 'completed'}}">
+    <view class="primary-btn" bindtap="onRate">确认完工并评价</view>
+  </view>
+
+  <view class="bottom-bar" wx:if="{{(isWorker || isAdmin) && order.status === 'pending'}}">
+    <view class="primary-btn" bindtap="onAccept">接单</view>
+  </view>
+
+  <view class="bottom-bar" wx:if="{{(isWorker || isAdmin) && order.status === 'accepted'}}">
+    <view class="primary-btn" bindtap="onStart">开始维修</view>
+  </view>
+
+  <view class="bottom-bar" wx:if="{{(isWorker || isAdmin) && order.status === 'in_progress'}}">
+    <view class="primary-btn" bindtap="onComplete">完成维修</view>
+  </view>
+
+  <view class="modal-mask {{showRatingModal ? 'show' : ''}}" bindtap="onCloseRating" wx:if="{{showRatingModal}}">
+    <view class="modal-content" catchtap="preventBubble">
+      <view class="modal-header">
+        <text class="modal-title">评价维修服务</text>
+        <view class="modal-close" bindtap="onCloseRating">✕</view>
+      </view>
+      <view class="modal-body">
+        <view class="score-section">
+          <text class="score-label">服务评分</text>
+          <view class="score-stars">
+            <view
+              wx:for="{{5}}"
+              wx:key="*this"
+              class="score-star {{item < ratingScore ? 'active' : ''}}"
+              data-score="{{item + 1}}"
+              bindtap="onRatingScore"
+            >
+              <text>★</text>
+            </view>
+          </view>
+        </view>
+        <view class="tags-section">
+          <text class="tags-label">评价标签</text>
+          <view class="tags-list">
+            <view
+              wx:for="{{ratingTagsList}}"
+              wx:key="value"
+              class="tag-item {{selectedTags.indexOf(item.value) > -1 ? 'selected' : ''}}"
+              data-tag="{{item.value}}"
+              bindtap="onTagToggle"
+            >
+              <text>{{item.icon}} {{item.label}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="comment-section">
+          <text class="comment-label">评价内容</text>
+          <textarea
+            class="comment-input"
+            placeholder="对维修服务说点什么..."
+            value="{{ratingComment}}"
+            bindinput="onRatingInput"
+            maxlength="200"
+          ></textarea>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="submit-btn" bindtap="onSubmitRating">提交评价</view>
+      </view>
+    </view>
+  </view>
+</view>

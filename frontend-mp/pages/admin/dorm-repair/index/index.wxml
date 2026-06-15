@@ -1,0 +1,167 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="stats-section">
+    <view class="stats-grid">
+      <view class="stat-item {{currentTab === 'all' ? 'active' : ''}}" bindtap="onStatTap" data-type="total">
+        <text class="stat-count">{{stats.total}}</text>
+        <text class="stat-label">全部</text>
+      </view>
+      <view class="stat-item urgent-item" bindtap="onStatTap" data-type="urgent">
+        <view class="urgent-dot"></view>
+        <text class="stat-count urgent-count">{{stats.urgent}}</text>
+        <text class="stat-label">紧急</text>
+      </view>
+      <view class="stat-item {{currentTab === 'pending' ? 'active' : ''}}" bindtap="onStatTap" data-type="pending">
+        <text class="stat-count pending-count">{{stats.pending}}</text>
+        <text class="stat-label">待接单</text>
+      </view>
+      <view class="stat-item {{currentTab === 'accepted' ? 'active' : ''}}" bindtap="onStatTap" data-type="accepted">
+        <text class="stat-count accepted-count">{{stats.accepted}}</text>
+        <text class="stat-label">已接单</text>
+      </view>
+      <view class="stat-item {{currentTab === 'in_progress' ? 'active' : ''}}" bindtap="onStatTap" data-type="in_progress">
+        <text class="stat-count progress-count">{{stats.in_progress}}</text>
+        <text class="stat-label">维修中</text>
+      </view>
+      <view class="stat-item {{currentTab === 'completed' ? 'active' : ''}}" bindtap="onStatTap" data-type="completed">
+        <text class="stat-count completed-count">{{stats.completed}}</text>
+        <text class="stat-label">待确认</text>
+      </view>
+      <view class="stat-item {{currentTab === 'rated' ? 'active' : ''}}" bindtap="onStatTap" data-type="rated">
+        <text class="stat-count rated-count">{{stats.rated}}</text>
+        <text class="stat-label">已完成</text>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view class="top-tabs" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="tabs-inner">
+      <view
+        class="tab-item {{currentTab === item.value ? 'active' : ''}} {{item.value === 'urgent' ? 'urgent-tab' : ''}}"
+        wx:for="{{tabs}}"
+        wx:key="value"
+        bindtap="onTabTap"
+        data-value="{{item.value}}"
+      >
+        <text class="tab-urgent-icon" wx:if="{{item.value === 'urgent'}}">🔥</text>
+        <text class="tab-label">{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <scroll-view class="order-list" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="list-inner" wx:if="{{filteredOrders.length > 0}}">
+      <view
+        class="order-card {{item.isUrgent ? 'urgent' : ''}}"
+        wx:for="{{filteredOrders}}"
+        wx:key="id"
+        bindtap="onOrderTap"
+        data-id="{{item.id}}"
+      >
+        <view class="card-header">
+          <view class="user-info">
+            <image class="user-avatar" src="{{item.userAvatar || '/assets/images/default-avatar.png'}}" mode="aspectFill" />
+            <view class="user-detail">
+              <text class="user-name">{{item.userName || '匿名用户'}}</text>
+              <text class="apply-time">提交：{{item.createTimeText}}</text>
+            </view>
+          </view>
+          <view class="header-tags">
+            <view class="urgent-tag" wx:if="{{item.isUrgent}}">
+              <text class="urgent-tag-icon">⚠️</text>
+              <text class="urgent-tag-text">{{item.urgentTypeLabel || '紧急'}}</text>
+            </view>
+            <view class="status-tag" style="background: {{item.statusColor}}15; color: {{item.statusColor}};">
+              <text class="status-icon">{{item.statusIcon}}</text>
+              <text class="status-text">{{item.statusLabel}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="card-body">
+          <view class="type-row">
+            <view class="type-badge" style="background: {{item.typeGradient || '#6B7280'}};">
+              <text class="type-badge-icon">{{item.typeIcon}}</text>
+              <text class="type-badge-label">{{item.typeLabel}}</text>
+            </view>
+            <text class="dorm-no">🏠 {{item.dormitoryNo}}</text>
+          </view>
+
+          <view class="order-no-row">
+            <text class="order-no-label">工单号</text>
+            <text class="order-no">{{item.orderNo}}</text>
+          </view>
+
+          <view class="desc-row">
+            <text class="desc-text">{{item.description}}</text>
+          </view>
+
+          <view class="contact-row" wx:if="{{item.contactName || item.contactPhone}}">
+            <text class="contact-icon">📞</text>
+            <text class="contact-name">{{item.contactName || '联系人'}}</text>
+            <text class="contact-phone">{{item.contactPhone || ''}}</text>
+          </view>
+
+          <view class="time-row" wx:if="{{item.availableTime}}">
+            <text class="time-icon">⏰</text>
+            <text class="time-text">{{item.availableTime}}</text>
+          </view>
+        </view>
+
+        <view class="worker-row" wx:if="{{item.workerName}}">
+          <text class="worker-label">维修人员</text>
+          <view class="worker-detail">
+            <text class="worker-name">{{item.workerName}}</text>
+            <text class="worker-phone" wx:if="{{item.workerPhone}}">{{item.workerPhone}}</text>
+          </view>
+          <text class="accept-time" wx:if="{{item.acceptTimeText}}">接单：{{item.acceptTimeText}}</text>
+        </view>
+
+        <view class="card-footer" wx:if="{{item.canAccept || item.canStart || item.canComplete}}">
+          <view class="action-buttons">
+            <view
+              class="action-btn accept-btn"
+              wx:if="{{item.canAccept}}"
+              catchtap="onAccept"
+              data-id="{{item.id}}"
+            >
+              <text class="btn-icon">🤝</text>
+              <text class="btn-text">立即接单</text>
+            </view>
+            <view
+              class="action-btn start-btn"
+              wx:if="{{item.canStart}}"
+              catchtap="onStart"
+              data-id="{{item.id}}"
+            >
+              <text class="btn-icon">🔧</text>
+              <text class="btn-text">开始维修</text>
+            </view>
+            <view
+              class="action-btn complete-btn"
+              wx:if="{{item.canComplete}}"
+              catchtap="onComplete"
+              data-id="{{item.id}}"
+            >
+              <text class="btn-icon">✅</text>
+              <text class="btn-text">完成维修</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="card-footer info-footer" wx:else>
+          <text class="footer-hint">点击查看详情</text>
+        </view>
+      </view>
+    </view>
+
+    <empty wx:else text="暂无工单记录" icon="📋" />
+  </scroll-view>
+
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

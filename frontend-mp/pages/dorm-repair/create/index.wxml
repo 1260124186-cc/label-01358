@@ -1,0 +1,158 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}} color-scheme-{{colorScheme}} {{fontSizeClass}}">
+
+  <view class="form-section">
+    <view class="section-title">报修类型</view>
+    <view class="type-grid">
+      <view
+        wx:for="{{repairTypes}}"
+        wx:key="value"
+        class="type-card {{selectedType === item.value ? 'active' : ''}}"
+        style="background: {{selectedType === item.value ? item.gradient : ''}}"
+        bindtap="onTypeSelect"
+        data-value="{{item.value}}"
+        aria-label="选择{{item.label}}"
+      >
+        <text class="type-icon">{{item.icon}}</text>
+        <text class="type-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">宿舍号</view>
+    <view class="form-card">
+      <input
+        class="dorm-input"
+        placeholder="请输入宿舍号，如：1号楼302"
+        value="{{dormitoryNo}}"
+        bindinput="onDormitoryInput"
+        maxlength="20"
+        aria-label="宿舍号"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">问题描述</view>
+    <view class="form-card">
+      <textarea
+        class="description-textarea"
+        placeholder="请详细描述报修问题，方便维修人员准备工具…"
+        value="{{description}}"
+        bindinput="onDescriptionInput"
+        maxlength="{{maxDescription}}"
+        aria-label="问题描述"
+      />
+      <text class="textarea-count">{{description.length || 0}}/{{maxDescription}}</text>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">上传图片（选填）</view>
+    <view class="form-card">
+      <view class="image-grid">
+        <view
+          class="image-item"
+          wx:for="{{imageList}}"
+          wx:key="index"
+        >
+          <image
+            class="image-thumb"
+            src="{{item}}"
+            mode="aspectFill"
+            bindtap="onPreviewImage"
+            data-index="{{index}}"
+            aria-label="预览图片"
+          />
+          <view
+            class="image-delete"
+            catchtap="onDeleteImage"
+            data-index="{{index}}"
+            aria-label="删除图片"
+          >×</view>
+        </view>
+        <view
+          class="image-add"
+          wx:if="{{imageList.length < maxImages}}"
+          bindtap="onChooseImage"
+          aria-label="添加图片"
+        >
+          <text class="add-icon">+</text>
+        </view>
+      </view>
+      <text class="image-tip">最多上传{{maxImages}}张图片</text>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">期望上门时间段</view>
+    <view class="form-card">
+      <view class="slot-list">
+        <view
+          wx:for="{{timeSlots}}"
+          wx:key="value"
+          class="slot-item {{selectedTimeSlot === item.value ? 'active' : ''}}"
+          bindtap="onTimeSlotSelect"
+          data-value="{{item.value}}"
+          aria-label="选择{{item.label}}"
+        >
+          <text class="slot-text">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">紧急报修</view>
+    <view class="form-card">
+      <view class="urgent-switch-row" bindtap="onUrgentSwitch" aria-label="紧急报修开关">
+        <view class="urgent-switch-info">
+          <text class="urgent-switch-title">开启紧急报修</text>
+          <text class="urgent-switch-desc">漏水/漏电等紧急情况优先处理</text>
+        </view>
+        <view class="switch-track {{isUrgent ? 'active' : ''}}">
+          <view class="switch-thumb"></view>
+        </view>
+      </view>
+
+      <view wx:if="{{isUrgent}}" class="urgent-warning">
+        <view class="urgent-warning-icon">⚠️</view>
+        <view class="urgent-warning-content">
+          <text class="urgent-warning-title">紧急报修提示</text>
+          <text class="urgent-warning-text">紧急报修工单将优先安排维修师傅上门，请选择紧急类型：</text>
+        </view>
+      </view>
+
+      <view wx:if="{{isUrgent}}" class="urgent-type-list">
+        <view
+          wx:for="{{urgentTypes}}"
+          wx:key="value"
+          class="urgent-type-item {{selectedUrgentType === item.value ? 'active' : ''}}"
+          bindtap="onUrgentTypeSelect"
+          data-value="{{item.value}}"
+          aria-label="选择{{item.label}}"
+        >
+          <text class="urgent-type-icon">{{item.icon}}</text>
+          <view class="urgent-type-info">
+            <text class="urgent-type-label">{{item.label}}</text>
+            <text class="urgent-type-desc">{{item.desc}}</text>
+          </view>
+          <view wx:if="{{selectedUrgentType === item.value}}" class="urgent-type-check">✓</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <view
+      class="submit-btn {{submitting ? 'disabled' : ''}}"
+      bindtap="{{submitting ? '' : 'onSubmit'}}"
+      aria-label="提交报修"
+    >
+      <text wx:if="{{submitting}}" class="submit-loading">●</text>
+      <text>{{submitting ? '提交中…' : '提交报修'}}</text>
+    </view>
+  </view>
+
+</view>

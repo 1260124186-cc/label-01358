@@ -176,7 +176,10 @@ const STORAGE_KEYS = {
   PSYCHOLOGICAL_APPOINTMENT_LIST: 'psychologicalAppointmentList',
   PSYCHOLOGICAL_ARTICLE_LIST: 'psychologicalArticleList',
   PSYCHOLOGICAL_CRISIS_HOTLINES: 'psychologicalCrisisHotlines',
-  PSYCHOLOGICAL_REMINDER_SETTINGS: 'psychologicalReminderSettings'
+  PSYCHOLOGICAL_REMINDER_SETTINGS: 'psychologicalReminderSettings',
+
+  REPAIR_ORDER_LIST: 'repairOrderList',
+  REPAIR_WORKER_LIST: 'repairWorkerList'
 };
 
 /**

@@ -215,7 +215,12 @@
     "pages/psychological-counseling/articles",
     "pages/psychological-counseling/article-detail",
     "pages/psychological-counseling/my-appointments",
-    "pages/psychological-counseling/appointment-detail"
+    "pages/psychological-counseling/appointment-detail",
+    "pages/dorm-repair/index",
+    "pages/dorm-repair/create",
+    "pages/dorm-repair/detail",
+    "pages/dorm-repair/history",
+    "pages/admin/dorm-repair/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

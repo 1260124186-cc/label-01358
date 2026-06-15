@@ -2770,6 +2770,71 @@ const PSYCHOLOGICAL_REMINDER_OPTIONS = [
   { value: '1day', label: '提前1天', minutes: 1440 }
 ];
 
+const REPAIR_TYPES = [
+  { value: 'water_electric', label: '水电', icon: '💡', color: '#3B82F6', gradient: 'linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%)' },
+  { value: 'door_window', label: '门窗', icon: '🚪', color: '#8B5CF6', gradient: 'linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%)' },
+  { value: 'furniture', label: '家具', icon: '🛋️', color: '#F59E0B', gradient: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)' },
+  { value: 'network', label: '网络', icon: '📶', color: '#10B981', gradient: 'linear-gradient(135deg, #10B981 0%, #34D399 100%)' },
+  { value: 'air_conditioner', label: '空调', icon: '❄️', color: '#06B6D4', gradient: 'linear-gradient(135deg, #06B6D4 0%, #22D3EE 100%)' }
+];
+
+const REPAIR_TYPE_MAP = REPAIR_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, icon: t.icon, color: t.color, gradient: t.gradient };
+  return acc;
+}, {});
+
+const REPAIR_ORDER_STATUS = [
+  { value: 'pending', label: '待接单', color: '#F59E0B', icon: '⏳' },
+  { value: 'accepted', label: '已接单', color: '#3B82F6', icon: '🤝' },
+  { value: 'in_progress', label: '维修中', color: '#8B5CF6', icon: '🔧' },
+  { value: 'completed', label: '待评价', color: '#14B8A6', icon: '✅' },
+  { value: 'rated', label: '已完成', color: '#10B981', icon: '⭐' },
+  { value: 'cancelled', label: '已取消', color: '#6B7280', icon: '❌' }
+];
+
+const REPAIR_ORDER_STATUS_MAP = REPAIR_ORDER_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const REPAIR_URGENT_TYPES = [
+  { value: 'water_leak', label: '漏水', icon: '💧', desc: '水管爆裂、严重漏水等' },
+  { value: 'electric_leak', label: '漏电', icon: '⚡', desc: '电线裸露、插座漏电等' }
+];
+
+const REPAIR_USER_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '待接单' },
+  { value: 'processing', label: '维修中' },
+  { value: 'completed', label: '待评价' },
+  { value: 'rated', label: '已完成' }
+];
+
+const REPAIR_ADMIN_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '待接单' },
+  { value: 'accepted', label: '已接单' },
+  { value: 'in_progress', label: '维修中' },
+  { value: 'completed', label: '待确认' },
+  { value: 'rated', label: '已完成' },
+  { value: 'urgent', label: '紧急工单' }
+];
+
+const REPAIR_RATING_TAGS = [
+  { value: 'fast', label: '响应快', icon: '⚡' },
+  { value: 'professional', label: '专业', icon: '🔧' },
+  { value: 'friendly', label: '态度好', icon: '😊' },
+  { value: 'clean', label: '整洁', icon: '🧹' },
+  { value: 'satisfied', label: '满意', icon: '👍' }
+];
+
+const REPAIR_TIME_SLOTS = [
+  { value: 'morning', label: '上午 (09:00-12:00)' },
+  { value: 'afternoon', label: '下午 (14:00-17:00)' },
+  { value: 'evening', label: '晚间 (18:00-21:00)' },
+  { value: 'anytime', label: '全天可联系' }
+];
+
 module.exports = {
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
@@ -3079,5 +3144,15 @@ module.exports = {
   PSYCHOLOGICAL_ARTICLE_CATEGORIES,
   PSYCHOLOGICAL_CRISIS_LEVELS,
   PSYCHOLOGICAL_CANCELLATION_RULES,
-  PSYCHOLOGICAL_REMINDER_OPTIONS
+  PSYCHOLOGICAL_REMINDER_OPTIONS,
+
+  REPAIR_TYPES,
+  REPAIR_TYPE_MAP,
+  REPAIR_ORDER_STATUS,
+  REPAIR_ORDER_STATUS_MAP,
+  REPAIR_URGENT_TYPES,
+  REPAIR_USER_TABS,
+  REPAIR_ADMIN_TABS,
+  REPAIR_RATING_TAGS,
+  REPAIR_TIME_SLOTS
 };

@@ -1,0 +1,135 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header-section">
+    <view class="header-title-row">
+      <text class="header-title">我的报修</text>
+      <view class="submit-btn" hover-class="submit-btn-hover" bindtap="onSubmit">
+        <text class="submit-btn-icon">➕</text>
+        <text class="submit-btn-label">提交报修</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="stats-section">
+    <view class="stats-row">
+      <view class="stat-item" bindtap="onStatTap" data-status="pending">
+        <text class="stat-value stat-value-orange">{{orderStats.pending}}</text>
+        <text class="stat-label">待接单</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item" bindtap="onStatTap" data-status="processing">
+        <text class="stat-value stat-value-blue">{{orderStats.processing}}</text>
+        <text class="stat-label">维修中</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item" bindtap="onStatTap" data-status="completed">
+        <text class="stat-value stat-value-teal">{{orderStats.toRate}}</text>
+        <text class="stat-label">待评价</text>
+      </view>
+      <view class="stat-divider"></view>
+      <view class="stat-item" bindtap="onStatTap" data-status="rated">
+        <text class="stat-value stat-value-green">{{orderStats.completed}}</text>
+        <text class="stat-label">已完成</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tab-section">
+    <scroll-view class="tab-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="tab-row">
+        <view
+          class="tab-item {{currentStatus === item.value ? 'active' : ''}}"
+          wx:for="{{userTabs}}"
+          wx:key="value"
+          bindtap="onStatusChange"
+          data-value="{{item.value}}"
+        >
+          <text class="tab-text">{{item.label}}</text>
+          <view class="tab-indicator" wx:if="{{currentStatus === item.value}}"></view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="type-section">
+    <scroll-view class="type-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="type-tabs">
+        <view
+          class="type-tab {{currentType === item.value ? 'active' : ''}}"
+          wx:for="{{repairTypes}}"
+          wx:key="value"
+          bindtap="onTypeChange"
+          data-value="{{item.value}}"
+        >
+          <text class="type-tab-icon">{{item.icon}}</text>
+          <text class="type-tab-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{list.length > 0}}">
+      <view
+        class="order-card"
+        wx:for="{{list}}"
+        wx:key="id"
+        hover-class="order-card-hover"
+        bindtap="onItemTap"
+        data-item="{{item}}"
+      >
+        <view class="card-header">
+          <view class="urgent-tag" wx:if="{{item.isUrgent}}">
+            <text class="urgent-icon">{{item.urgentIcon || '🚨'}}</text>
+            <text class="urgent-text">{{item.urgentText || '紧急'}}</text>
+          </view>
+          <view class="type-badge" style="background: {{item.typeGradient}}; color: #fff;">
+            <text class="type-badge-icon">{{item.typeIcon}}</text>
+            <text class="type-badge-text">{{item.typeText}}</text>
+          </view>
+          <view class="status-tag" style="background-color: {{item.statusColor}}15; color: {{item.statusColor}}">
+            <text class="status-tag-icon">{{item.statusIcon}}</text>
+            <text>{{item.statusText}}</text>
+          </view>
+        </view>
+
+        <view class="card-dormitory" wx:if="{{item.dormitoryText}}">
+          <text class="dormitory-icon">🏠</text>
+          <text class="dormitory-text">{{item.dormitoryText}}</text>
+        </view>
+
+        <view class="card-desc" wx:if="{{item.description}}">
+          <text class="desc-text">{{item.description}}</text>
+        </view>
+
+        <view class="card-footer">
+          <view class="footer-left">
+            <text class="order-no" wx:if="{{item.orderNo}}">工单号：{{item.orderNo}}</text>
+          </view>
+          <view class="footer-right">
+            <text class="time-icon">⏰</text>
+            <text class="time-text">{{item.timeText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{!loading && list.length === 0}}"
+      text="暂无报修工单"
+      showAction="{{true}}"
+      actionText="提交报修"
+      bindaction="onSubmit"
+    />
+  </scroll-view>
+
+  <view class="fab-btn" hover-class="fab-btn-hover" bindtap="onSubmit">
+    <text class="fab-icon">+</text>
+  </view>
+</view>

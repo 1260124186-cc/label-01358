@@ -10634,3 +10634,299 @@ function saveResume(resumeData) {
 function deleteResume(id) {
   return storage.removeFromList(STORAGE_KEYS.RESUME_LIST, id);
 }
+
+let repairInitialized = false;
+
+function initRepairData() {
+  if (repairInitialized) return;
+  const existingOrders = storage.get(STORAGE_KEYS.REPAIR_ORDER_LIST);
+  if (!existingOrders) {
+    storage.set(STORAGE_KEYS.REPAIR_ORDER_LIST, []);
+  }
+  const existingWorkers = storage.get(STORAGE_KEYS.REPAIR_WORKER_LIST);
+  if (!existingWorkers || existingWorkers.length === 0) {
+    const mockWorkers = [
+      { id: 'worker_1', name: '张师傅', phone: '13800138001', specialty: ['water_electric', 'air_conditioner'], avatar: '', rating: 4.8, orderCount: 126 },
+      { id: 'worker_2', name: '李师傅', phone: '13800138002', specialty: ['door_window', 'furniture'], avatar: '', rating: 4.6, orderCount: 98 },
+      { id: 'worker_3', name: '王师傅', phone: '13800138003', specialty: ['network', 'water_electric'], avatar: '', rating: 4.9, orderCount: 156 }
+    ];
+    storage.set(STORAGE_KEYS.REPAIR_WORKER_LIST, mockWorkers);
+  }
+  repairInitialized = true;
+}
+
+function createRepairOrder(orderData) {
+  initRepairData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const order = {
+    id: 'repair_' + Date.now(),
+    orderNo: 'BX' + Date.now().toString().slice(-8),
+    ...orderData,
+    userId: userInfo.id || 'anonymous',
+    userName: userInfo.nickName || '匿名用户',
+    userPhone: userInfo.phone || '',
+    userAvatar: userInfo.avatarUrl || '',
+    status: 'pending',
+    createTime: Date.now(),
+    updateTime: Date.now(),
+    timeline: [
+      { status: 'pending', time: Date.now(), remark: '工单已提交，等待维修工接单' }
+    ]
+  };
+
+  storage.addToList(STORAGE_KEYS.REPAIR_ORDER_LIST, order);
+  return order;
+}
+
+function getRepairOrderList(filters = {}) {
+  initRepairData();
+  let list = storage.getList(STORAGE_KEYS.REPAIR_ORDER_LIST);
+
+  if (filters.userId) {
+    list = list.filter(item => item.userId === filters.userId);
+  }
+
+  if (filters.workerId) {
+    list = list.filter(item => item.workerId === filters.workerId);
+  }
+
+  if (filters.status && filters.status !== 'all') {
+    if (filters.status === 'processing') {
+      list = list.filter(item => item.status === 'accepted' || item.status === 'in_progress');
+    } else if (filters.status === 'urgent') {
+      list = list.filter(item => item.isUrgent === true && (item.status === 'pending' || item.status === 'accepted'));
+    } else {
+      list = list.filter(item => item.status === filters.status);
+    }
+  }
+
+  if (filters.type && filters.type !== 'all') {
+    list = list.filter(item => item.type === filters.type);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['orderNo', 'dormitoryNo', 'description']);
+  }
+
+  list.sort((a, b) => {
+    if (a.isUrgent && !b.isUrgent) return -1;
+    if (!a.isUrgent && b.isUrgent) return 1;
+    return b.createTime - a.createTime;
+  });
+
+  return list.map(order => {
+    const typeInfo = constants.REPAIR_TYPE_MAP[order.type] || {};
+    const statusInfo = constants.REPAIR_ORDER_STATUS_MAP[order.status] || {};
+    return {
+      ...order,
+      typeLabel: typeInfo.label || order.type,
+      typeIcon: typeInfo.icon || '🔧',
+      typeColor: typeInfo.color || '#666',
+      typeGradient: typeInfo.gradient || '',
+      statusLabel: statusInfo.label || order.status,
+      statusColor: statusInfo.color || '#666',
+      statusIcon: statusInfo.icon || '📋'
+    };
+  });
+}
+
+function getRepairOrderDetail(id) {
+  initRepairData();
+  const list = storage.getList(STORAGE_KEYS.REPAIR_ORDER_LIST);
+  const order = list.find(item => item.id === id);
+  if (!order) return null;
+
+  const typeInfo = constants.REPAIR_TYPE_MAP[order.type] || {};
+  const statusInfo = constants.REPAIR_ORDER_STATUS_MAP[order.status] || {};
+  const urgentInfo = order.isUrgent ? (constants.REPAIR_URGENT_TYPES.find(u => u.value === order.urgentType) || {}) : {};
+
+  let workerInfo = null;
+  if (order.workerId) {
+    const workers = storage.getList(STORAGE_KEYS.REPAIR_WORKER_LIST);
+    workerInfo = workers.find(w => w.id === order.workerId) || null;
+  }
+
+  return {
+    ...order,
+    typeLabel: typeInfo.label || order.type,
+    typeIcon: typeInfo.icon || '🔧',
+    typeColor: typeInfo.color || '#666',
+    typeGradient: typeInfo.gradient || '',
+    statusLabel: statusInfo.label || order.status,
+    statusColor: statusInfo.color || '#666',
+    statusIcon: statusInfo.icon || '📋',
+    urgentLabel: urgentInfo.label || '',
+    urgentIcon: urgentInfo.icon || '',
+    workerInfo
+  };
+}
+
+function acceptRepairOrder(orderId, workerId) {
+  initRepairData();
+  const list = storage.getList(STORAGE_KEYS.REPAIR_ORDER_LIST);
+  const index = list.findIndex(item => item.id === orderId);
+  if (index === -1) return { success: false, error: '工单不存在' };
+  if (list[index].status !== 'pending') return { success: false, error: '工单已被接单' };
+
+  const workers = storage.getList(STORAGE_KEYS.REPAIR_WORKER_LIST);
+  const worker = workers.find(w => w.id === workerId);
+
+  list[index].status = 'accepted';
+  list[index].workerId = workerId;
+  list[index].workerName = worker ? worker.name : '维修工';
+  list[index].workerPhone = worker ? worker.phone : '';
+  list[index].acceptTime = Date.now();
+  list[index].updateTime = Date.now();
+  list[index].timeline = [
+    ...(list[index].timeline || []),
+    { status: 'accepted', time: Date.now(), remark: `${worker ? worker.name : '维修工'}已接单` }
+  ];
+
+  storage.set(STORAGE_KEYS.REPAIR_ORDER_LIST, list);
+  return { success: true, order: list[index] };
+}
+
+function startRepairOrder(orderId) {
+  initRepairData();
+  const list = storage.getList(STORAGE_KEYS.REPAIR_ORDER_LIST);
+  const index = list.findIndex(item => item.id === orderId);
+  if (index === -1) return { success: false, error: '工单不存在' };
+  if (list[index].status !== 'accepted') return { success: false, error: '当前状态不可开始维修' };
+
+  list[index].status = 'in_progress';
+  list[index].startTime = Date.now();
+  list[index].updateTime = Date.now();
+  list[index].timeline = [
+    ...(list[index].timeline || []),
+    { status: 'in_progress', time: Date.now(), remark: '已到达现场，开始维修' }
+  ];
+
+  storage.set(STORAGE_KEYS.REPAIR_ORDER_LIST, list);
+  return { success: true, order: list[index] };
+}
+
+function completeRepairOrder(orderId, remark = '') {
+  initRepairData();
+  const list = storage.getList(STORAGE_KEYS.REPAIR_ORDER_LIST);
+  const index = list.findIndex(item => item.id === orderId);
+  if (index === -1) return { success: false, error: '工单不存在' };
+  if (list[index].status !== 'in_progress') return { success: false, error: '当前状态不可完工' };
+
+  list[index].status = 'completed';
+  list[index].completeTime = Date.now();
+  list[index].completeRemark = remark;
+  list[index].updateTime = Date.now();
+  list[index].timeline = [
+    ...(list[index].timeline || []),
+    { status: 'completed', time: Date.now(), remark: remark ? `维修完成：${remark}` : '维修完成，请确认' }
+  ];
+
+  storage.set(STORAGE_KEYS.REPAIR_ORDER_LIST, list);
+  return { success: true, order: list[index] };
+}
+
+function rateRepairOrder(orderId, ratingData) {
+  initRepairData();
+  const list = storage.getList(STORAGE_KEYS.REPAIR_ORDER_LIST);
+  const index = list.findIndex(item => item.id === orderId);
+  if (index === -1) return { success: false, error: '工单不存在' };
+  if (list[index].status !== 'completed') return { success: false, error: '当前状态不可评价' };
+
+  list[index].status = 'rated';
+  list[index].rating = ratingData.rating;
+  list[index].ratingTags = ratingData.tags || [];
+  list[index].ratingComment = ratingData.comment || '';
+  list[index].ratingTime = Date.now();
+  list[index].updateTime = Date.now();
+  list[index].timeline = [
+    ...(list[index].timeline || []),
+    { status: 'rated', time: Date.now(), remark: '用户已确认并评价' }
+  ];
+
+  if (list[index].workerId) {
+    const workers = storage.getList(STORAGE_KEYS.REPAIR_WORKER_LIST);
+    const workerIndex = workers.findIndex(w => w.id === list[index].workerId);
+    if (workerIndex > -1) {
+      const oldRating = workers[workerIndex].rating || 5;
+      const oldCount = workers[workerIndex].orderCount || 0;
+      workers[workerIndex].rating = Number(((oldRating * oldCount + ratingData.rating) / (oldCount + 1)).toFixed(1));
+      workers[workerIndex].orderCount = oldCount + 1;
+      storage.set(STORAGE_KEYS.REPAIR_WORKER_LIST, workers);
+    }
+  }
+
+  storage.set(STORAGE_KEYS.REPAIR_ORDER_LIST, list);
+  return { success: true, order: list[index] };
+}
+
+function cancelRepairOrder(orderId, reason = '') {
+  initRepairData();
+  const list = storage.getList(STORAGE_KEYS.REPAIR_ORDER_LIST);
+  const index = list.findIndex(item => item.id === orderId);
+  if (index === -1) return { success: false, error: '工单不存在' };
+  if (list[index].status === 'completed' || list[index].status === 'rated' || list[index].status === 'in_progress') {
+    return { success: false, error: '当前状态不可取消' };
+  }
+
+  list[index].status = 'cancelled';
+  list[index].cancelReason = reason;
+  list[index].cancelTime = Date.now();
+  list[index].updateTime = Date.now();
+  list[index].timeline = [
+    ...(list[index].timeline || []),
+    { status: 'cancelled', time: Date.now(), remark: reason ? `工单已取消：${reason}` : '工单已取消' }
+  ];
+
+  storage.set(STORAGE_KEYS.REPAIR_ORDER_LIST, list);
+  return { success: true, order: list[index] };
+}
+
+function getRepairWorkerList(specialty = '') {
+  initRepairData();
+  let list = storage.getList(STORAGE_KEYS.REPAIR_WORKER_LIST);
+  if (specialty) {
+    list = list.filter(w => (w.specialty || []).includes(specialty));
+  }
+  return list;
+}
+
+function getRepairOrderStats(userId = '', workerId = '') {
+  const list = getRepairOrderList({});
+  let filtered = list;
+  if (userId) filtered = list.filter(o => o.userId === userId);
+  if (workerId) filtered = list.filter(o => o.workerId === workerId);
+
+  return {
+    total: filtered.length,
+    pending: filtered.filter(o => o.status === 'pending').length,
+    processing: filtered.filter(o => o.status === 'accepted' || o.status === 'in_progress').length,
+    completed: filtered.filter(o => o.status === 'rated' || o.status === 'completed').length,
+    urgent: filtered.filter(o => o.isUrgent && (o.status === 'pending' || o.status === 'accepted')).length
+  };
+}
+
+function getMyRepairOrders(userId, status = 'all') {
+  return getRepairOrderList({ userId, status });
+}
+
+function getAdminRepairOrders(status = 'all', type = 'all') {
+  return getRepairOrderList({ status, type });
+}
+
+Object.assign(module.exports, {
+  initRepairData,
+  createRepairOrder,
+  getRepairOrderList,
+  getRepairOrderDetail,
+  acceptRepairOrder,
+  startRepairOrder,
+  completeRepairOrder,
+  rateRepairOrder,
+  cancelRepairOrder,
+  getRepairWorkerList,
+  getRepairOrderStats,
+  getMyRepairOrders,
+  getAdminRepairOrders
+});
