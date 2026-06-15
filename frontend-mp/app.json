@@ -209,7 +209,13 @@
     "pages/tutor-appointment/create",
     "pages/tutor-appointment/detail",
     "pages/tutor-review/index",
-    "pages/tutor-credit/index"
+    "pages/tutor-credit/index",
+    "pages/psychological-counseling/index",
+    "pages/psychological-counseling/detail",
+    "pages/psychological-counseling/articles",
+    "pages/psychological-counseling/article-detail",
+    "pages/psychological-counseling/my-appointments",
+    "pages/psychological-counseling/appointment-detail"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

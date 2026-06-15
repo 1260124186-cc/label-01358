@@ -1,0 +1,177 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 隐私保护提示 -->
+  <view class="privacy-tip" wx:if="{{showPrivacyTip}}">
+    <view class="privacy-content">
+      <text class="privacy-icon">🔒</text>
+      <text class="privacy-text">您的匿名ID：{{anonymousId}}，所有咨询严格保密</text>
+    </view>
+    <text class="privacy-close" bindtap="onPrivacyClose">✕</text>
+  </view>
+
+  <!-- 顶部紧急入口区 -->
+  <view class="top-actions">
+    <view class="emergency-btn" bindtap="onCallHotlineTap">
+      <view class="emergency-icon-wrap">
+        <text class="emergency-icon">🆘</text>
+      </view>
+      <view class="emergency-info">
+        <text class="emergency-title">危机热线</text>
+        <text class="emergency-phone" wx:if="{{primaryHotline}}">{{primaryHotline.phone}}</text>
+        <text class="emergency-phone" wx:else>24小时在线</text>
+      </view>
+      <text class="emergency-arrow">›</text>
+    </view>
+    <view class="article-btn" bindtap="onArticlesTap">
+      <view class="article-icon-wrap">
+        <text class="article-icon">📖</text>
+      </view>
+      <view class="article-info">
+        <text class="article-title">心理科普</text>
+        <text class="article-desc">心理健康知识</text>
+      </view>
+      <text class="article-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 搜索和筛选区 -->
+  <view class="filter-section">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索咨询师姓名、简介..."
+        placeholder-class="search-placeholder"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+      />
+      <text class="search-clear" wx:if="{{searchKeyword}}" bindtap="onSearchClear">✕</text>
+    </view>
+
+    <!-- 擅长领域筛选 -->
+    <scroll-view class="specialty-tabs" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="specialty-tabs-inner">
+        <view
+          class="specialty-tab-item {{currentSpecialty === item.value ? 'active' : ''}}"
+          wx:for="{{specialties}}"
+          wx:key="value"
+          bindtap="onSpecialtyTap"
+          data-value="{{item.value}}"
+        >
+          <text class="tab-icon" wx:if="{{item.icon}}">{{item.icon}}</text>
+          <text class="tab-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 咨询方式和排序 -->
+    <view class="filter-row">
+      <view class="filter-group">
+        <text class="filter-label">咨询方式</text>
+        <view class="filter-options">
+          <view
+            class="filter-option {{currentMethod === item.value ? 'active' : ''}}"
+            wx:for="{{consultationMethods}}"
+            wx:key="value"
+            bindtap="onMethodTap"
+            data-value="{{item.value}}"
+          >
+            <text class="option-text">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="filter-group">
+        <text class="filter-label">排序</text>
+        <view class="filter-options">
+          <view
+            class="filter-option {{currentSort === item.value ? 'active' : ''}}"
+            wx:for="{{sortOptions}}"
+            wx:key="value"
+            bindtap="onSortTap"
+            data-value="{{item.value}}"
+          >
+            <text class="option-text">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 咨询师列表 -->
+  <scroll-view class="counselor-list" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="counselor-list-inner" wx:if="{{filteredCounselors.length > 0}}">
+      <view
+        class="counselor-card"
+        wx:for="{{filteredCounselors}}"
+        wx:key="id"
+        bindtap="onCounselorTap"
+        data-id="{{item.id}}"
+      >
+        <view class="counselor-avatar-wrap">
+          <image class="counselor-avatar" src="{{item.avatar || '/assets/images/default-avatar.png'}}" mode="aspectFill" />
+        </view>
+        <view class="counselor-info">
+          <view class="counselor-header">
+            <text class="counselor-name">{{item.name}}</text>
+            <text class="counselor-title">{{item.titleLabel}}</text>
+          </view>
+
+          <view class="counselor-meta">
+            <view class="meta-item">
+              <text class="meta-icon">⏱️</text>
+              <text class="meta-text">从业{{item.yearsOfExperience || 0}}年</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">⭐</text>
+              <text class="meta-text">{{item.rating || 0}}分</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">💬</text>
+              <text class="meta-text">{{item.sessionCount || 0}}次咨询</text>
+            </view>
+          </view>
+
+          <view class="specialty-tags">
+            <text
+              class="specialty-tag"
+              wx:for="{{item.specialtyInfos}}"
+              wx:for-item="specialty"
+              wx:key="value"
+              wx:if="{{index < 3}}"
+              style="background: {{specialty.color}}15; color: {{specialty.color}};"
+            >
+              {{specialty.icon}} {{specialty.label}}
+            </text>
+            <text class="specialty-more" wx:if="{{item.specialtyInfos.length > 3}}">+{{item.specialtyInfos.length - 3}}</text>
+          </view>
+
+          <view class="counselor-brief">
+            <text class="brief-text">{{item.introduction}}</text>
+          </view>
+        </view>
+        <text class="card-arrow">›</text>
+      </view>
+    </view>
+
+    <empty wx:else text="暂无咨询师" icon="👨‍⚕️" />
+
+    <view class="list-footer-space"></view>
+  </scroll-view>
+
+  <!-- 底部"我的预约"入口 -->
+  <view class="bottom-bar">
+    <view class="my-appointments-btn" bindtap="onMyAppointmentsTap">
+      <text class="btn-icon">📋</text>
+      <text class="btn-text">我的预约</text>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

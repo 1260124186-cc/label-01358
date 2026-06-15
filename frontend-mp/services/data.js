@@ -29,6 +29,7 @@ let takeoutInitialized = false;
 let scholarshipInitialized = false;
 let workStudyInitialized = false;
 let jobRecruitmentInitialized = false;
+let psychologicalInitialized = false;
 
 function initVolunteerData() {
   if (volunteerInitialized) return;
@@ -9969,8 +9970,410 @@ Object.assign(module.exports, {
   getSyncedCalendarEvents,
   getResumeList,
   saveResume,
-  deleteResume
+  deleteResume,
+
+  initPsychologicalData,
+  getPsychologicalCounselorList,
+  getPsychologicalCounselorDetail,
+  getPsychologicalAppointmentList,
+  getPsychologicalAppointmentDetail,
+  createPsychologicalAppointment,
+  cancelPsychologicalAppointment,
+  reschedulePsychologicalAppointment,
+  getPsychologicalArticleList,
+  getPsychologicalArticleDetail,
+  increasePsychologicalArticleViews,
+  getPsychologicalCrisisHotlines,
+  callCrisisHotline,
+  generateAnonymousUserId,
+  getMaskedUserName,
+  getCancellationRules,
+  getAvailableTimeSlots
 });
+
+function initPsychologicalData() {
+  if (psychologicalInitialized) return;
+  const existingCounselors = storage.get(STORAGE_KEYS.PSYCHOLOGICAL_COUNSELOR_LIST);
+  if (!existingCounselors || existingCounselors.length === 0) {
+    storage.set(STORAGE_KEYS.PSYCHOLOGICAL_COUNSELOR_LIST, mockData.MOCK_PSYCHOLOGICAL_COUNSELORS);
+  }
+  const existingArticles = storage.get(STORAGE_KEYS.PSYCHOLOGICAL_ARTICLE_LIST);
+  if (!existingArticles || existingArticles.length === 0) {
+    storage.set(STORAGE_KEYS.PSYCHOLOGICAL_ARTICLE_LIST, mockData.MOCK_PSYCHOLOGICAL_ARTICLES);
+  }
+  const existingHotlines = storage.get(STORAGE_KEYS.PSYCHOLOGICAL_CRISIS_HOTLINES);
+  if (!existingHotlines || existingHotlines.length === 0) {
+    storage.set(STORAGE_KEYS.PSYCHOLOGICAL_CRISIS_HOTLINES, mockData.MOCK_PSYCHOLOGICAL_CRISIS_HOTLINES);
+  }
+  const existingAppointments = storage.get(STORAGE_KEYS.PSYCHOLOGICAL_APPOINTMENT_LIST);
+  if (!existingAppointments) {
+    storage.set(STORAGE_KEYS.PSYCHOLOGICAL_APPOINTMENT_LIST, []);
+  }
+  psychologicalInitialized = true;
+}
+
+function generateAnonymousUserId() {
+  return 'ANON_' + Math.random().toString(36).substring(2, 8).toUpperCase();
+}
+
+function getMaskedUserName(realName) {
+  if (!realName) return '匿名用户';
+  if (realName.length <= 1) return realName + '*';
+  return realName.charAt(0) + '*'.repeat(realName.length - 1);
+}
+
+function getCancellationRules() {
+  return constants.PSYCHOLOGICAL_CANCELLATION_RULES;
+}
+
+function getPsychologicalCounselorList(filters = {}) {
+  initPsychologicalData();
+  let list = storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_COUNSELOR_LIST);
+
+  if (filters.specialty && filters.specialty !== 'all') {
+    list = list.filter(item => (item.specialties || []).includes(filters.specialty));
+  }
+
+  if (filters.title && filters.title !== 'all') {
+    list = list.filter(item => item.title === filters.title);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'introduction', 'education']);
+  }
+
+  if (filters.consultationMethod && filters.consultationMethod !== 'all') {
+    list = list.filter(item => (item.consultationMethod || []).includes(filters.consultationMethod));
+  }
+
+  if (filters.sort === 'rating') {
+    list.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  } else if (filters.sort === 'experience') {
+    list.sort((a, b) => (b.yearsOfExperience || 0) - (a.yearsOfExperience || 0));
+  } else if (filters.sort === 'sessions') {
+    list.sort((a, b) => (b.sessionCount || 0) - (a.sessionCount || 0));
+  }
+
+  return list.map(counselor => {
+    const titleInfo = constants.PSYCHOLOGICAL_COUNSELOR_TITLES.find(t => t.value === counselor.title) || {};
+    const specialtyInfos = (counselor.specialties || []).map(s => constants.PSYCHOLOGICAL_COUNSELOR_SPECIALTY_MAP[s]).filter(Boolean);
+    return {
+      ...counselor,
+      titleLabel: titleInfo.label || counselor.title,
+      specialtyInfos
+    };
+  });
+}
+
+function getPsychologicalCounselorDetail(id) {
+  initPsychologicalData();
+  const list = storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_COUNSELOR_LIST);
+  const counselor = list.find(item => item.id === id);
+  if (!counselor) return null;
+
+  const titleInfo = constants.PSYCHOLOGICAL_COUNSELOR_TITLES.find(t => t.value === counselor.title) || {};
+  const specialtyInfos = (counselor.specialties || []).map(s => constants.PSYCHOLOGICAL_COUNSELOR_SPECIALTY_MAP[s]).filter(Boolean);
+
+  return {
+    ...counselor,
+    titleLabel: titleInfo.label || counselor.title,
+    specialtyInfos
+  };
+}
+
+function getAvailableTimeSlots(counselorId, date) {
+  initPsychologicalData();
+  const counselor = getPsychologicalCounselorDetail(counselorId);
+  if (!counselor) return [];
+
+  const dateObj = new Date(date);
+  const dayOfWeek = String(dateObj.getDay() === 0 ? 7 : dateObj.getDay());
+
+  if (!counselor.availableDays.includes(dayOfWeek)) {
+    return [];
+  }
+
+  const allAppointments = storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_APPOINTMENT_LIST);
+  const bookedSlots = allAppointments.filter(apt =>
+    apt.counselorId === counselorId &&
+    apt.appointmentDate === date &&
+    apt.status !== 'cancelled'
+  ).map(apt => apt.timeSlot);
+
+  return (counselor.availableTimeSlots || []).map(slotValue => {
+    const slotInfo = constants.PSYCHOLOGICAL_TIME_SLOTS.find(s => s.value === slotValue);
+    const isBooked = bookedSlots.includes(slotValue);
+    return {
+      value: slotValue,
+      label: slotInfo ? slotInfo.label : slotValue,
+      available: !isBooked
+    };
+  });
+}
+
+function createPsychologicalAppointment(appointmentData) {
+  initPsychologicalData();
+  const rules = constants.PSYCHOLOGICAL_CANCELLATION_RULES;
+
+  const weekStart = new Date();
+  weekStart.setHours(0, 0, 0, 0);
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekEnd.getDate() + 7);
+
+  const existingAppointments = storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_APPOINTMENT_LIST);
+  const userWeeklyAppointments = existingAppointments.filter(apt => {
+    const aptDate = new Date(apt.appointmentDate);
+    return apt.userId === appointmentData.userId &&
+      aptDate >= weekStart && aptDate < weekEnd &&
+      apt.status !== 'cancelled';
+  });
+
+  if (userWeeklyAppointments.length >= rules.maxAppointmentsPerWeek) {
+    return { success: false, error: `每周最多预约${rules.maxAppointmentsPerWeek}次` };
+  }
+
+  const availableSlots = getAvailableTimeSlots(appointmentData.counselorId, appointmentData.appointmentDate);
+  const targetSlot = availableSlots.find(s => s.value === appointmentData.timeSlot);
+  if (!targetSlot || !targetSlot.available) {
+    return { success: false, error: '该时段已被预约' };
+  }
+
+  const anonymousId = appointmentData.anonymousId || generateAnonymousUserId();
+
+  const appointment = {
+    id: 'psy_apt_' + Date.now(),
+    ...appointmentData,
+    anonymousId,
+    status: 'pending',
+    rescheduleCount: 0,
+    reminderEnabled: appointmentData.reminderEnabled !== false,
+    reminderMinutes: appointmentData.reminderMinutes || 30,
+    createTime: Date.now(),
+    updateTime: Date.now(),
+    timeline: [
+      { status: 'pending', time: Date.now(), remark: '预约已提交，等待确认' }
+    ]
+  };
+
+  storage.addToList(STORAGE_KEYS.PSYCHOLOGICAL_APPOINTMENT_LIST, appointment);
+  return { success: true, appointment };
+}
+
+function getPsychologicalAppointmentList(filters = {}) {
+  initPsychologicalData();
+  let list = storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_APPOINTMENT_LIST);
+
+  if (filters.userId) {
+    list = list.filter(item => item.userId === filters.userId);
+  }
+
+  if (filters.counselorId) {
+    list = list.filter(item => item.counselorId === filters.counselorId);
+  }
+
+  if (filters.status && filters.status !== 'all') {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  list.sort((a, b) => {
+    const dateTimeA = new Date(a.appointmentDate + ' ' + (a.timeSlot ? a.timeSlot.split('-')[0] : '00:00')).getTime();
+    const dateTimeB = new Date(b.appointmentDate + ' ' + (b.timeSlot ? b.timeSlot.split('-')[0] : '00:00')).getTime();
+    return filters.asc ? dateTimeA - dateTimeB : dateTimeB - dateTimeA;
+  });
+
+  return list.map(apt => {
+    const counselor = getPsychologicalCounselorDetail(apt.counselorId);
+    const statusInfo = constants.PSYCHOLOGICAL_APPOINTMENT_STATUS_MAP[apt.status] || {};
+    return {
+      ...apt,
+      counselorName: counselor ? counselor.name : '未知咨询师',
+      counselorAvatar: counselor ? counselor.avatar : '',
+      counselorTitle: counselor ? counselor.titleLabel : '',
+      statusLabel: statusInfo.label || apt.status,
+      statusColor: statusInfo.color || '#6B7280',
+      statusIcon: statusInfo.icon || '📋',
+      displayName: getMaskedUserName(apt.userName || '用户')
+    };
+  });
+}
+
+function getPsychologicalAppointmentDetail(id) {
+  initPsychologicalData();
+  const list = storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_APPOINTMENT_LIST);
+  const appointment = list.find(item => item.id === id);
+  if (!appointment) return null;
+
+  const counselor = getPsychologicalCounselorDetail(appointment.counselorId);
+  const statusInfo = constants.PSYCHOLOGICAL_APPOINTMENT_STATUS_MAP[appointment.status] || {};
+  const timeSlotInfo = constants.PSYCHOLOGICAL_TIME_SLOTS.find(s => s.value === appointment.timeSlot);
+
+  return {
+    ...appointment,
+    counselor,
+    counselorName: counselor ? counselor.name : '未知咨询师',
+    counselorAvatar: counselor ? counselor.avatar : '',
+    counselorTitle: counselor ? counselor.titleLabel : '',
+    counselorLocation: counselor ? counselor.location : '',
+    statusLabel: statusInfo.label || appointment.status,
+    statusColor: statusInfo.color || '#6B7280',
+    statusIcon: statusInfo.icon || '📋',
+    timeSlotLabel: timeSlotInfo ? timeSlotInfo.label : appointment.timeSlot,
+    displayName: getMaskedUserName(appointment.userName || '用户')
+  };
+}
+
+function cancelPsychologicalAppointment(id, reason = '') {
+  initPsychologicalData();
+  const list = storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_APPOINTMENT_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index === -1) return { success: false, error: '预约不存在' };
+
+  const appointment = list[index];
+  if (appointment.status === 'completed' || appointment.status === 'cancelled') {
+    return { success: false, error: '该预约状态不可取消' };
+  }
+
+  const rules = constants.PSYCHOLOGICAL_CANCELLATION_RULES;
+  const appointmentDateTime = new Date(appointment.appointmentDate + ' ' + (appointment.timeSlot ? appointment.timeSlot.split('-')[0] : '00:00')).getTime();
+  const hoursUntilAppointment = (appointmentDateTime - Date.now()) / (1000 * 60 * 60);
+  let penaltyNote = '';
+
+  if (hoursUntilAppointment < rules.freeCancelHours) {
+    penaltyNote = rules.lateCancelPenalty;
+  }
+
+  list[index].status = 'cancelled';
+  list[index].cancelReason = reason;
+  list[index].cancelTime = Date.now();
+  list[index].penaltyNote = penaltyNote;
+  list[index].updateTime = Date.now();
+  list[index].timeline = [
+    ...(list[index].timeline || []),
+    { status: 'cancelled', time: Date.now(), remark: reason ? `已取消：${reason}` : '已取消预约' }
+  ];
+
+  storage.set(STORAGE_KEYS.PSYCHOLOGICAL_APPOINTMENT_LIST, list);
+  return { success: true, penaltyNote, appointment: list[index] };
+}
+
+function reschedulePsychologicalAppointment(id, newDate, newTimeSlot) {
+  initPsychologicalData();
+  const list = storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_APPOINTMENT_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index === -1) return { success: false, error: '预约不存在' };
+
+  const appointment = list[index];
+  const rules = constants.PSYCHOLOGICAL_CANCELLATION_RULES;
+
+  if (appointment.rescheduleCount >= rules.maxRescheduleTimes) {
+    return { success: false, error: `最多只能改期${rules.maxRescheduleTimes}次` };
+  }
+
+  if (appointment.status === 'completed' || appointment.status === 'cancelled') {
+    return { success: false, error: '该预约状态不可改期' };
+  }
+
+  const availableSlots = getAvailableTimeSlots(appointment.counselorId, newDate);
+  const targetSlot = availableSlots.find(s => s.value === newTimeSlot);
+  if (!targetSlot || !targetSlot.available) {
+    return { success: false, error: '该时段已被预约' };
+  }
+
+  const oldDate = appointment.appointmentDate;
+  const oldTimeSlot = appointment.timeSlot;
+
+  list[index].appointmentDate = newDate;
+  list[index].timeSlot = newTimeSlot;
+  list[index].rescheduleCount = (appointment.rescheduleCount || 0) + 1;
+  list[index].previousDate = oldDate;
+  list[index].previousTimeSlot = oldTimeSlot;
+  list[index].status = 'rescheduled';
+  list[index].updateTime = Date.now();
+  list[index].timeline = [
+    ...(list[index].timeline || []),
+    { status: 'rescheduled', time: Date.now(), remark: `改期：${oldDate} ${oldTimeSlot} → ${newDate} ${newTimeSlot}` }
+  ];
+
+  storage.set(STORAGE_KEYS.PSYCHOLOGICAL_APPOINTMENT_LIST, list);
+  return { success: true, appointment: list[index] };
+}
+
+function getPsychologicalArticleList(filters = {}) {
+  initPsychologicalData();
+  let list = storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_ARTICLE_LIST);
+
+  if (filters.category && filters.category !== 'all') {
+    list = list.filter(item => item.category === filters.category);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'summary', 'content']);
+  }
+
+  list.sort((a, b) => (b.createTime || 0) - (a.createTime || 0));
+
+  return list.map(article => {
+    const categoryInfo = constants.PSYCHOLOGICAL_ARTICLE_CATEGORIES.find(c => c.value === article.category) || {};
+    return {
+      ...article,
+      categoryLabel: categoryInfo.label || article.category,
+      categoryIcon: categoryInfo.icon || '📖',
+      categoryColor: categoryInfo.color || '#6B7280'
+    };
+  });
+}
+
+function getPsychologicalArticleDetail(id) {
+  initPsychologicalData();
+  const list = storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_ARTICLE_LIST);
+  const article = list.find(item => item.id === id);
+  if (!article) return null;
+
+  const categoryInfo = constants.PSYCHOLOGICAL_ARTICLE_CATEGORIES.find(c => c.value === article.category) || {};
+  return {
+    ...article,
+    categoryLabel: categoryInfo.label || article.category,
+    categoryIcon: categoryInfo.icon || '📖',
+    categoryColor: categoryInfo.color || '#6B7280'
+  };
+}
+
+function increasePsychologicalArticleViews(id) {
+  initPsychologicalData();
+  const list = storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_ARTICLE_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    list[index].views = (list[index].views || 0) + 1;
+    storage.set(STORAGE_KEYS.PSYCHOLOGICAL_ARTICLE_LIST, list);
+    return list[index].views;
+  }
+  return 0;
+}
+
+function getPsychologicalCrisisHotlines() {
+  initPsychologicalData();
+  return storage.getList(STORAGE_KEYS.PSYCHOLOGICAL_CRISIS_HOTLINES);
+}
+
+function callCrisisHotline(phone) {
+  if (!phone) return false;
+  try {
+    wx.makePhoneCall({
+      phoneNumber: phone,
+      success: () => {},
+      fail: (err) => {
+        if (err.errMsg && err.errMsg.indexOf('cancel') === -1) {
+          console.error('拨号失败:', err);
+        }
+      }
+    });
+    return true;
+  } catch (e) {
+    console.error('拨号异常:', e);
+    return false;
+  }
+}
 
 function initJobRecruitmentData() {
   if (jobRecruitmentInitialized) return;

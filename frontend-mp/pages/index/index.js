@@ -28,6 +28,13 @@ Page({
         url: '/pages/safety-education/index'
       },
       {
+        id: 'psychological-counseling',
+        name: '心理咨询',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #A8E6CF 0%, #667EEA 100%)',
+        url: '/pages/psychological-counseling/index'
+      },
+      {
         id: 'weather',
         name: '今日天气',
         icon: '/assets/icons/nav-broadcast.png',

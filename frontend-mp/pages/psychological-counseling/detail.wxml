@@ -1,0 +1,257 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}} {{fontSizeClass}}">
+  <scroll-view class="page-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="counselor-hero">
+      <view class="hero-bg"></view>
+      <view class="hero-content">
+        <image class="avatar" src="{{counselor.avatar || '/assets/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="counselor-info">
+          <view class="name-row">
+            <text class="name">{{counselor.name}}</text>
+            <view class="title-tag">{{counselor.titleLabel}}</view>
+          </view>
+          <view class="meta-row">
+            <text class="meta-item">从业 {{counselor.experienceYears}} 年</text>
+            <text class="meta-dot">·</text>
+            <text class="meta-item">{{counselor.education}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">基本信息</view>
+      <view class="info-grid">
+        <view class="info-item">
+          <text class="info-icon">🎓</text>
+          <view class="info-content">
+            <text class="info-label">学历</text>
+            <text class="info-value">{{counselor.education}}</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">📜</text>
+          <view class="info-content">
+            <text class="info-label">资质证书</text>
+            <text class="info-value">{{counselor.certificates || '国家二级心理咨询师'}}</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">💼</text>
+          <view class="info-content">
+            <text class="info-label">从业年限</text>
+            <text class="info-value">{{counselor.experienceYears}} 年</text>
+          </view>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">📍</text>
+          <view class="info-content">
+            <text class="info-label">咨询地点</text>
+            <text class="info-value">{{counselor.location || '心理咨询中心'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">咨询师简介</view>
+      <view class="desc-box">
+        <text class="desc-text">{{counselor.bio}}</text>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">擅长领域</view>
+      <view class="specialty-list">
+        <view
+          class="specialty-tag"
+          wx:for="{{counselor.specialtyInfos}}"
+          wx:key="value"
+          style="background: {{item.color}}20; color: {{item.color}};"
+        >
+          <text class="tag-icon">{{item.icon}}</text>
+          <text class="tag-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-section">
+      <view class="section-title">咨询方式</view>
+      <view class="consult-methods">
+        <view class="method-item {{counselor.consultMethods && counselor.consultMethods.online ? 'active' : 'disabled'}}">
+          <text class="method-icon">💻</text>
+          <text class="method-label">线上咨询</text>
+        </view>
+        <view class="method-item {{counselor.consultMethods && counselor.consultMethods.offline ? 'active' : 'disabled'}}">
+          <text class="method-icon">🏢</text>
+          <text class="method-label">线下咨询</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">预约信息</view>
+
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">预约日期</text>
+          <text class="required">*</text>
+        </view>
+        <picker
+          mode="selector"
+          range="{{dateOptions}}"
+          range-key="label"
+          value="{{dateIndex}}"
+          bindchange="onDateChange"
+        >
+          <view class="form-picker-wrap">
+            <text class="form-picker-text {{selectedDate ? '' : 'placeholder'}}">
+              {{selectedDate ? dateOptions[dateIndex].label : '请选择预约日期（未来7天）'}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">可约时段</text>
+          <text class="required">*</text>
+        </view>
+        <view class="time-slot-grid" wx:if="{{selectedDate}}">
+          <view
+            class="time-slot-item {{formData.timeSlot === item.value ? 'active' : ''}} {{!item.available ? 'disabled' : ''}}"
+            wx:for="{{availableSlots}}"
+            wx:key="value"
+            bindtap="onTimeSlotTap"
+            data-value="{{item.value}}"
+            data-available="{{item.available}}"
+          >
+            <text class="slot-text">{{item.label}}</text>
+            <text class="slot-status {{item.available ? 'available' : 'full'}}">
+              {{item.available ? '可预约' : '已约满'}}
+            </text>
+          </view>
+        </view>
+        <view class="empty-tip" wx:else>
+          <text class="empty-text">请先选择预约日期</text>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">咨询方式</text>
+        </view>
+        <picker
+          mode="selector"
+          range="{{consultMethodOptions}}"
+          range-key="label"
+          value="{{consultMethodIndex}}"
+          bindchange="onConsultMethodChange"
+        >
+          <view class="form-picker-wrap">
+            <text class="form-picker-text">
+              {{consultMethodOptions[consultMethodIndex].label}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">咨询问题简要描述</text>
+          <text class="optional">（选填）</text>
+        </view>
+        <view class="form-textarea-wrap">
+          <textarea
+            class="form-textarea"
+            placeholder="请简要描述您想咨询的问题，帮助咨询师提前了解..."
+            placeholder-class="form-placeholder"
+            value="{{formData.problemDescription}}"
+            bindinput="onProblemInput"
+            maxlength="500"
+            auto-height
+          />
+        </view>
+        <view class="word-count">{{formData.problemDescription.length}}/500</view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">
+          <text class="label-text">预约提醒</text>
+        </view>
+        <picker
+          mode="selector"
+          range="{{reminderOptions}}"
+          range-key="label"
+          value="{{reminderIndex}}"
+          bindchange="onReminderChange"
+        >
+          <view class="form-picker-wrap">
+            <text class="form-picker-text">
+              {{reminderOptions[reminderIndex].label}}
+            </text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="privacy-section">
+      <view class="privacy-icon">🔒</view>
+      <view class="privacy-content">
+        <text class="privacy-title">隐私保护</text>
+        <text class="privacy-text">您的咨询将使用匿名ID（{{anonymousId}}）进行，咨询师端不会看到您的真实姓名，所有咨询内容严格保密。</text>
+      </view>
+    </view>
+
+    <view class="rules-section">
+      <view class="section-title">取消/改期规则</view>
+      <view class="rules-list">
+        <view class="rule-item">
+          <text class="rule-dot">•</text>
+          <text class="rule-text">预约开始前 {{cancellationRules.freeCancelHours}} 小时可免费取消</text>
+        </view>
+        <view class="rule-item">
+          <text class="rule-dot">•</text>
+          <text class="rule-text">不足 {{cancellationRules.freeCancelHours}} 小时取消：{{cancellationRules.lateCancelPenalty}}</text>
+        </view>
+        <view class="rule-item">
+          <text class="rule-dot">•</text>
+          <text class="rule-text">未出席：{{cancellationRules.noShowPenalty}}</text>
+        </view>
+        <view class="rule-item">
+          <text class="rule-dot">•</text>
+          <text class="rule-text">最多可改期 {{cancellationRules.maxRescheduleTimes}} 次</text>
+        </view>
+        <view class="rule-item">
+          <text class="rule-dot">•</text>
+          <text class="rule-text">每周最多预约 {{cancellationRules.maxAppointmentsPerWeek}} 次</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="bottom-bar">
+    <btn
+      type="primary"
+      size="large"
+      bind:click="onSubmit"
+      loading="{{submitting}}"
+      disabled="{{submitting}}"
+      block
+    >
+      {{submitting ? '提交中...' : '提交预约'}}
+    </btn>
+  </view>
+
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

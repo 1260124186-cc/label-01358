@@ -1,0 +1,90 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="hotline-section" bindtap="onCallHotlineTap">
+    <view class="hotline-icon-wrap">
+      <text class="hotline-icon">🆘</text>
+    </view>
+    <view class="hotline-info">
+      <text class="hotline-title">心理危机援助热线</text>
+      <text class="hotline-phone" wx:if="{{primaryHotline}}">{{primaryHotline.phone}} · 24小时在线</text>
+      <text class="hotline-phone" wx:else>24小时在线守护</text>
+    </view>
+    <view class="hotline-btn">
+      <text class="hotline-btn-icon">📞</text>
+      <text class="hotline-btn-text">立即拨打</text>
+    </view>
+  </view>
+
+  <view class="search-section">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索文章标题、内容..."
+        placeholder-class="search-placeholder"
+        value="{{searchKeyword}}"
+        bindinput="onSearchInput"
+        confirm-type="search"
+      />
+      <text class="search-clear" wx:if="{{searchKeyword}}" bindtap="onSearchClear">✕</text>
+    </view>
+  </view>
+
+  <view class="category-tabs">
+    <scroll-view scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="tabs-container">
+        <view
+          class="tab-item {{currentCategory === item.value ? 'active' : ''}}"
+          wx:for="{{categories}}"
+          wx:key="value"
+          bindtap="onCategoryTap"
+          data-value="{{item.value}}"
+        >
+          <text class="tab-icon">{{item.icon}}</text>
+          <text class="tab-text">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="articles-list">
+    <block wx:if="{{articles.length > 0}}">
+      <view
+        class="article-card"
+        wx:for="{{articles}}"
+        wx:key="id"
+        bindtap="onArticleTap"
+        data-id="{{item.id}}"
+      >
+        <image class="article-cover" src="{{item.cover || '/assets/images/default-news.png'}}" mode="aspectFill" />
+        <view class="article-content">
+          <view class="article-category">
+            <text
+              class="category-tag"
+              style="background: {{item.categoryColor}}15; color: {{item.categoryColor}};"
+            >
+              {{item.categoryIcon}} {{item.categoryLabel}}
+            </text>
+          </view>
+          <text class="article-title">{{item.title}}</text>
+          <text class="article-summary">{{item.summary}}</text>
+          <view class="article-meta">
+            <text class="meta-item">👁️ {{item.views || 0}}</text>
+            <text class="meta-item">📅 {{item.timeText}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <empty wx:elif="{{!loading}}" text="暂无相关文章" icon="📖" />
+
+    <view class="list-footer-space"></view>
+  </view>
+
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

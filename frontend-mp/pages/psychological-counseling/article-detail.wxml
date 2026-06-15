@@ -1,0 +1,104 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}} {{fontSizeClass}}">
+  <scroll-view class="page-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="cover-wrap" wx:if="{{article.cover}}">
+      <image class="cover-image" src="{{article.cover}}" mode="aspectFill" />
+      <view class="cover-gradient"></view>
+    </view>
+
+    <view class="article-header">
+      <view class="category-tag" style="background: {{article.categoryColor}}20; color: {{article.categoryColor}};">
+        <text class="tag-icon">{{article.categoryIcon}}</text>
+        <text class="tag-label">{{article.categoryLabel}}</text>
+      </view>
+      <view class="article-title">{{article.title}}</view>
+      <view class="article-meta">
+        <view class="meta-item">
+          <text class="meta-icon">✍️</text>
+          <text class="meta-text">{{article.author || '心理中心'}}</text>
+        </view>
+        <view class="meta-dot">·</view>
+        <view class="meta-item">
+          <text class="meta-icon">📅</text>
+          <text class="meta-text">{{article.publishTimeText}}</text>
+        </view>
+        <view class="meta-dot">·</view>
+        <view class="meta-item">
+          <text class="meta-icon">👁️</text>
+          <text class="meta-text">{{article.views}} 浏览</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="article-content">
+      <block wx:for="{{contentParagraphs}}" wx:key="index">
+        <view class="content-h2" wx:if="{{item.type === 'h2'}}">
+          <text class="h2-text">{{item.text}}</text>
+        </view>
+        <view class="content-h3" wx:elif="{{item.type === 'h3'}}">
+          <text class="h3-text">{{item.text}}</text>
+        </view>
+        <view class="content-list" wx:elif="{{item.type === 'list'}}">
+          <view class="list-item" wx:for="{{item.items}}" wx:for-item="listItem" wx:key="*this">
+            <text class="list-bullet">•</text>
+            <text class="list-text">{{listItem}}</text>
+          </view>
+        </view>
+        <view class="content-text" wx:else>
+          <text class="paragraph-text">{{item.text}}</text>
+        </view>
+      </block>
+    </view>
+
+    <view class="related-section" wx:if="{{relatedArticles.length > 0}}">
+      <view class="section-title">相关推荐</view>
+      <view class="related-list">
+        <view
+          class="related-card"
+          wx:for="{{relatedArticles}}"
+          wx:key="id"
+          bindtap="onRelatedArticleTap"
+          data-id="{{item.id}}"
+        >
+          <image class="related-cover" src="{{item.cover || '/assets/images/default-article.png'}}" mode="aspectFill" />
+          <view class="related-info">
+            <view class="related-title">{{item.title}}</view>
+            <view class="related-meta">
+              <view class="related-tag" style="background: {{item.categoryColor}}15; color: {{item.categoryColor}};">
+                <text>{{item.categoryIcon}} {{item.categoryLabel}}</text>
+              </view>
+              <text class="related-views">👁️ {{item.views || 0}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <view class="floating-hotline" bindtap="onCallHotlineTap" wx:if="{{primaryHotline}}">
+    <view class="hotline-pulse"></view>
+    <view class="hotline-inner">
+      <text class="hotline-icon">🆘</text>
+    </view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="action-btn" bindtap="onBackToList">
+      <text class="action-icon">←</text>
+      <text class="action-text">返回</text>
+    </view>
+    <button class="action-btn share-btn" open-type="share">
+      <text class="action-icon">📤</text>
+      <text class="action-text">分享</text>
+    </button>
+  </view>
+
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

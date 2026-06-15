@@ -2683,6 +2683,93 @@ const TUTOR_SORT_OPTIONS = [
   { value: 'sessions', label: '课时最多', field: 'sessionCount', order: 'desc' }
 ];
 
+const PSYCHOLOGICAL_COUNSELOR_SPECIALTIES = [
+  { value: 'anxiety', label: '焦虑情绪', icon: '😰', color: '#F59E0B' },
+  { value: 'depression', label: '抑郁情绪', icon: '😔', color: '#6B7280' },
+  { value: 'stress', label: '学业压力', icon: '📚', color: '#3B82F6' },
+  { value: 'relationship', label: '人际关系', icon: '👥', color: '#10B981' },
+  { value: 'love', label: '恋爱情感', icon: '💕', color: '#EC4899' },
+  { value: 'family', label: '家庭关系', icon: '🏠', color: '#8B5CF6' },
+  { value: 'career', label: '职业规划', icon: '💼', color: '#14B8A6' },
+  { value: 'self', label: '自我成长', icon: '🌱', color: '#22C55E' },
+  { value: 'sleep', label: '睡眠困扰', icon: '😴', color: '#6366F1' },
+  { value: 'other', label: '其他问题', icon: '💬', color: '#78716C' }
+];
+
+const PSYCHOLOGICAL_COUNSELOR_SPECIALTY_MAP = PSYCHOLOGICAL_COUNSELOR_SPECIALTIES.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, icon: s.icon, color: s.color };
+  return acc;
+}, {});
+
+const PSYCHOLOGICAL_COUNSELOR_TITLES = [
+  { value: 'senior', label: '资深心理咨询师' },
+  { value: 'psychologist', label: '心理师' },
+  { value: 'counselor', label: '心理咨询师' },
+  { value: 'intern', label: '实习咨询师' }
+];
+
+const PSYCHOLOGICAL_TIME_SLOTS = [
+  { value: '09:00-10:00', label: '09:00 - 10:00', start: '09:00', end: '10:00' },
+  { value: '10:00-11:00', label: '10:00 - 11:00', start: '10:00', end: '11:00' },
+  { value: '11:00-12:00', label: '11:00 - 12:00', start: '11:00', end: '12:00' },
+  { value: '14:00-15:00', label: '14:00 - 15:00', start: '14:00', end: '15:00' },
+  { value: '15:00-16:00', label: '15:00 - 16:00', start: '15:00', end: '16:00' },
+  { value: '16:00-17:00', label: '16:00 - 17:00', start: '16:00', end: '17:00' },
+  { value: '19:00-20:00', label: '19:00 - 20:00', start: '19:00', end: '20:00' },
+  { value: '20:00-21:00', label: '20:00 - 21:00', start: '20:00', end: '21:00' }
+];
+
+const PSYCHOLOGICAL_APPOINTMENT_STATUS = [
+  { value: 'pending', label: '待确认', color: '#F59E0B', icon: '⏳' },
+  { value: 'confirmed', label: '已确认', color: '#3B82F6', icon: '✅' },
+  { value: 'completed', label: '已完成', color: '#10B981', icon: '🎉' },
+  { value: 'cancelled', label: '已取消', color: '#EF4444', icon: '❌' },
+  { value: 'rescheduled', label: '已改期', color: '#8B5CF6', icon: '🔄' }
+];
+
+const PSYCHOLOGICAL_APPOINTMENT_STATUS_MAP = PSYCHOLOGICAL_APPOINTMENT_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const PSYCHOLOGICAL_APPOINTMENT_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '待确认' },
+  { value: 'confirmed', label: '已确认' },
+  { value: 'completed', label: '已完成' }
+];
+
+const PSYCHOLOGICAL_ARTICLE_CATEGORIES = [
+  { value: 'all', label: '全部', icon: '📖' },
+  { value: 'emotion', label: '情绪管理', icon: '😊', color: '#F59E0B' },
+  { value: 'interpersonal', label: '人际交往', icon: '🤝', color: '#3B82F6' },
+  { value: 'study', label: '学习压力', icon: '📚', color: '#10B981' },
+  { value: 'sleep', label: '睡眠健康', icon: '😴', color: '#8B5CF6' },
+  { value: 'self', label: '自我成长', icon: '🌱', color: '#22C55E' }
+];
+
+const PSYCHOLOGICAL_CRISIS_LEVELS = [
+  { value: 'general', label: '一般心理困扰', color: '#3B82F6' },
+  { value: 'moderate', label: '中度心理困扰', color: '#F59E0B' },
+  { value: 'severe', label: '心理危机', color: '#EF4444' }
+];
+
+const PSYCHOLOGICAL_CANCELLATION_RULES = {
+  freeCancelHours: 24,
+  lateCancelPenalty: '扣除一次预约机会',
+  noShowPenalty: '扣除两次预约机会，并暂停预约7天',
+  maxRescheduleTimes: 2,
+  maxAppointmentsPerWeek: 2
+};
+
+const PSYCHOLOGICAL_REMINDER_OPTIONS = [
+  { value: 'none', label: '不提醒', minutes: 0 },
+  { value: '15min', label: '提前15分钟', minutes: 15 },
+  { value: '30min', label: '提前30分钟', minutes: 30 },
+  { value: '1hour', label: '提前1小时', minutes: 60 },
+  { value: '1day', label: '提前1天', minutes: 1440 }
+];
+
 module.exports = {
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
@@ -2980,5 +3067,17 @@ module.exports = {
   TUTOR_CREDIT_STATUS,
   TUTOR_CREDIT_STATUS_MAP,
   TUTOR_MAIN_TABS,
-  TUTOR_SORT_OPTIONS
+  TUTOR_SORT_OPTIONS,
+
+  PSYCHOLOGICAL_COUNSELOR_SPECIALTIES,
+  PSYCHOLOGICAL_COUNSELOR_SPECIALTY_MAP,
+  PSYCHOLOGICAL_COUNSELOR_TITLES,
+  PSYCHOLOGICAL_TIME_SLOTS,
+  PSYCHOLOGICAL_APPOINTMENT_STATUS,
+  PSYCHOLOGICAL_APPOINTMENT_STATUS_MAP,
+  PSYCHOLOGICAL_APPOINTMENT_TABS,
+  PSYCHOLOGICAL_ARTICLE_CATEGORIES,
+  PSYCHOLOGICAL_CRISIS_LEVELS,
+  PSYCHOLOGICAL_CANCELLATION_RULES,
+  PSYCHOLOGICAL_REMINDER_OPTIONS
 };

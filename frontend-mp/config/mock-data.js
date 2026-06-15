@@ -10672,4 +10672,437 @@ const _jobRecruitmentExports = {
   MOCK_RESUME_LIST
 };
 
-Object.assign(module.exports, _workStudyExports, _campusCardExports, _votingExports, _tutorExports, _jobRecruitmentExports);
+const MOCK_PSYCHOLOGICAL_COUNSELORS = [
+  {
+    id: 'psy_001',
+    name: '李心怡',
+    avatar: 'https://picsum.photos/seed/counselor1/200/200',
+    title: 'senior',
+    specialties: ['anxiety', 'depression', 'stress'],
+    yearsOfExperience: 10,
+    education: '北京师范大学心理学博士',
+    certifications: ['国家二级心理咨询师', '注册心理师'],
+    introduction: '从事心理咨询工作10年，擅长处理焦虑、抑郁等情绪问题，以及学业压力管理。秉持人本主义治疗理念，温暖而专业。',
+    rating: 4.9,
+    reviewCount: 128,
+    sessionCount: 520,
+    availableDays: ['1', '2', '3', '4', '5'],
+    availableTimeSlots: ['09:00-10:00', '10:00-11:00', '14:00-15:00', '15:00-16:00'],
+    consultationMethod: ['online', 'offline'],
+    location: '心理咨询中心301室'
+  },
+  {
+    id: 'psy_002',
+    name: '王明哲',
+    avatar: 'https://picsum.photos/seed/counselor2/200/200',
+    title: 'psychologist',
+    specialties: ['relationship', 'love', 'family'],
+    yearsOfExperience: 7,
+    education: '华东师范大学心理学硕士',
+    certifications: ['国家二级心理咨询师', '家庭治疗师'],
+    introduction: '专注于人际关系、恋爱情感和家庭关系咨询，帮助来访者建立健康的人际互动模式。',
+    rating: 4.8,
+    reviewCount: 89,
+    sessionCount: 350,
+    availableDays: ['1', '2', '4', '6'],
+    availableTimeSlots: ['10:00-11:00', '11:00-12:00', '15:00-16:00', '16:00-17:00', '19:00-20:00'],
+    consultationMethod: ['online', 'offline'],
+    location: '心理咨询中心302室'
+  },
+  {
+    id: 'psy_003',
+    name: '张晓雨',
+    avatar: 'https://picsum.photos/seed/counselor3/200/200',
+    title: 'counselor',
+    specialties: ['career', 'self', 'stress'],
+    yearsOfExperience: 5,
+    education: '北京大学应用心理学硕士',
+    certifications: ['国家三级心理咨询师', '职业规划师'],
+    introduction: '擅长职业规划和自我成长咨询，帮助大学生探索自我、明确职业方向，缓解学业与就业压力。',
+    rating: 4.7,
+    reviewCount: 56,
+    sessionCount: 210,
+    availableDays: ['2', '3', '5', '7'],
+    availableTimeSlots: ['09:00-10:00', '14:00-15:00', '19:00-20:00', '20:00-21:00'],
+    consultationMethod: ['online'],
+    location: '在线咨询'
+  },
+  {
+    id: 'psy_004',
+    name: '陈思远',
+    avatar: 'https://picsum.photos/seed/counselor4/200/200',
+    title: 'senior',
+    specialties: ['sleep', 'anxiety', 'depression'],
+    yearsOfExperience: 12,
+    education: '中国科学院心理研究所博士',
+    certifications: ['国家二级心理咨询师', '睡眠治疗师', 'CBT认证治疗师'],
+    introduction: '深耕睡眠障碍和情绪问题领域12年，运用认知行为疗法帮助来访者改善睡眠质量、调节情绪。',
+    rating: 4.9,
+    reviewCount: 156,
+    sessionCount: 680,
+    availableDays: ['1', '3', '4', '5', '6'],
+    availableTimeSlots: ['09:00-10:00', '10:00-11:00', '14:00-15:00', '15:00-16:00', '16:00-17:00'],
+    consultationMethod: ['online', 'offline'],
+    location: '心理咨询中心303室'
+  },
+  {
+    id: 'psy_005',
+    name: '刘雅婷',
+    avatar: 'https://picsum.photos/seed/counselor5/200/200',
+    title: 'counselor',
+    specialties: ['self', 'relationship', 'love'],
+    yearsOfExperience: 4,
+    education: '浙江大学心理学硕士',
+    certifications: ['国家三级心理咨询师'],
+    introduction: '温暖有耐心，擅长陪伴年轻人探索自我、处理人际关系和情感问题，创造安全的咨询空间。',
+    rating: 4.6,
+    reviewCount: 34,
+    sessionCount: 120,
+    availableDays: ['1', '2', '3', '5', '7'],
+    availableTimeSlots: ['14:00-15:00', '15:00-16:00', '19:00-20:00', '20:00-21:00'],
+    consultationMethod: ['online', 'offline'],
+    location: '心理咨询中心304室'
+  },
+  {
+    id: 'psy_006',
+    name: '赵文博',
+    avatar: 'https://picsum.photos/seed/counselor6/200/200',
+    title: 'intern',
+    specialties: ['stress', 'other'],
+    yearsOfExperience: 1,
+    education: '在读心理学研究生',
+    certifications: ['助理心理咨询师'],
+    introduction: '心理咨询专业在读研究生，在资深咨询师督导下提供公益咨询服务，擅长倾听和陪伴。',
+    rating: 4.5,
+    reviewCount: 12,
+    sessionCount: 35,
+    availableDays: ['6', '7'],
+    availableTimeSlots: ['09:00-10:00', '10:00-11:00', '14:00-15:00', '15:00-16:00'],
+    consultationMethod: ['online'],
+    location: '在线咨询（公益）'
+  }
+];
+
+const MOCK_PSYCHOLOGICAL_ARTICLES = [
+  {
+    id: 'art_001',
+    title: '如何识别和应对焦虑情绪',
+    summary: '了解焦虑的身体信号，学习实用的情绪调节技巧，让焦虑不再成为你的困扰。',
+    category: 'emotion',
+    cover: 'https://picsum.photos/seed/psyart1/800/400',
+    content: `在快节奏的大学生活中，焦虑是一种常见的情绪体验。了解焦虑并学会应对它，对我们的心理健康至关重要。
+
+## 什么是焦虑？
+焦虑是人体面对压力时的自然反应，表现为紧张、担忧、不安等情绪。适度的焦虑可以提高我们的警觉性，但过度焦虑则会影响日常生活。
+
+## 焦虑的身体信号
+- 心跳加速、呼吸急促
+- 手心出汗、手脚冰凉
+- 肌肉紧张、头痛
+- 失眠、食欲变化
+- 注意力难以集中
+
+## 实用应对技巧
+
+### 1. 深呼吸放松法
+找一个安静的地方，坐下或躺下。用鼻子慢慢吸气，数到4；屏住呼吸，数到4；用嘴慢慢呼气，数到6。重复5-10次。
+
+### 2. 5-4-3-2-1接地技术
+当感到焦虑来袭时，尝试说出：
+- 5个你能看到的东西
+- 4个你能摸到的东西
+- 3个你能听到的声音
+- 2个你能闻到的气味
+- 1个你能尝到的味道
+
+### 3. 认知重构
+问问自己：
+- 我担心的事情真的会发生吗？
+- 即使发生了，最坏的结果是什么？我能应对吗？
+- 有没有其他更合理的解释？
+
+### 4. 规律生活
+保持规律的作息、适度的运动、均衡的饮食，这些都有助于稳定情绪。
+
+## 什么时候需要寻求帮助？
+如果焦虑持续时间超过两周，严重影响学习、生活或人际关系，建议及时寻求专业心理咨询师的帮助。记住，寻求帮助是勇敢的表现。`,
+    views: 1256,
+    createTime: Date.now() - 3 * 86400000,
+    author: '心理咨询中心'
+  },
+  {
+    id: 'art_002',
+    title: '大学生人际交往指南：建立健康的社交关系',
+    summary: '从倾听与表达出发，学习如何建立边界、处理冲突，打造舒适的人际圈。',
+    category: 'interpersonal',
+    cover: 'https://picsum.photos/seed/psyart2/800/400',
+    content: `进入大学，我们面临全新的人际环境。如何与室友相处、如何结交新朋友、如何处理人际冲突？本文为你提供实用建议。
+
+## 一、建立良好的第一印象
+- 保持真诚的微笑和眼神接触
+- 记住对方的名字，并在对话中使用
+- 主动问候，展现积极开放的态度
+
+## 二、学会有效倾听
+- 专注于对方说话，不要急于回应
+- 通过点头、"嗯"等方式表示你在听
+- 适当复述对方的话，确认你理解正确
+- 不轻易给出建议，除非对方明确要求
+
+## 三、清晰表达自己
+使用"我"句式表达感受，而非指责：
+- ❌ "你总是不理我"
+- ✅ "当我们很久没聊天时，我会感到有点失落"
+
+## 四、设立健康的边界
+- 了解自己的底线和需求
+- 学会说"不"，不必感到愧疚
+- 尊重他人的边界，保持适当距离
+- 边界不是冷漠，而是对关系的保护
+
+## 五、建设性地处理冲突
+1. 选择合适的时间和地点
+2. 就事论事，不翻旧账
+3. 表达感受而非指责
+4. 尝试理解对方的角度
+5. 寻找双赢的解决方案
+
+## 六、接受孤独是正常的
+不必强迫自己"社交达人"。高质量的少数关系，胜过泛泛之交。独处也是一种重要的能力。`,
+    views: 890,
+    createTime: Date.now() - 7 * 86400000,
+    author: '心理咨询中心'
+  },
+  {
+    id: 'art_003',
+    title: '期末不焦虑：科学应对考试压力',
+    summary: '告别临时抱佛脚的恐慌，用科学方法规划复习，保持良好心态应对考试季。',
+    category: 'study',
+    cover: 'https://picsum.photos/seed/psyart3/800/400',
+    content: `期末考试临近，图书馆人满为患，咖啡消耗飙升。你是否也感到压力山大？让我们一起科学应对考试压力。
+
+## 识别考试焦虑
+- 一想到考试就心跳加速、手心出汗
+- 难以集中注意力复习，脑子一片空白
+- 失眠或做与考试有关的噩梦
+- 食欲变化，身体莫名不适
+- 过度担忧，甚至产生逃避念头
+
+## 复习策略
+### 1. 制定合理计划
+- 将大目标分解为每天的小任务
+- 使用番茄工作法：25分钟专注+5分钟休息
+- 优先攻克重点和难点
+- 留出弹性时间应对突发情况
+
+### 2. 高效学习技巧
+- 主动回忆：看完书后合上，尝试复述内容
+- 间隔重复：同一内容分多次复习，而非一次突击
+- 费曼学习法：用自己的话把知识点讲出来
+- 适当变换学习环境，有助于记忆
+
+## 身心调节
+### 1. 运动减压
+每天抽出20-30分钟运动，跑步、瑜伽、散步都可以。运动能释放内啡肽，改善情绪。
+
+### 2. 保证睡眠
+牺牲睡眠时间复习是得不偿失的。睡眠不足会严重影响记忆力和注意力。
+
+### 3. 正念冥想
+每天花5-10分钟，关注呼吸，让思绪自然来去。有助于清空大脑，恢复专注。
+
+### 4. 合理饮食
+- 多吃蛋白质、蔬菜水果
+- 避免过量咖啡因
+- 按时吃饭，保持血糖稳定
+
+## 调整认知
+- 考试不是人生的全部，它只是检验学习的一种方式
+- 一次考不好不代表你失败
+- 完美主义是焦虑的温床，尽力就好
+- 和自己比，不和别人比
+
+## 紧急求助
+如果你感到压力无法承受，请记住：
+- 心理咨询中心提供考前减压团体辅导
+- 和信任的朋友、家人聊聊
+- 严重时请寻求专业帮助`,
+    views: 2341,
+    createTime: Date.now() - 1 * 86400000,
+    author: '心理咨询中心'
+  },
+  {
+    id: 'art_004',
+    title: '好睡眠是最好的保养品：大学生睡眠指南',
+    summary: '失眠、熬夜、作息混乱？了解睡眠机制，建立健康睡眠习惯，活力满满每一天。',
+    category: 'sleep',
+    cover: 'https://picsum.photos/seed/psyart4/800/400',
+    content: `白天困得睁不开眼，晚上躺在床上却翻来覆去睡不着？作息日夜颠倒，周末补觉也无济于事？你不是一个人。据调查，超过70%的大学生存在不同程度的睡眠问题。
+
+## 睡眠有多重要？
+- 巩固记忆：睡眠时大脑会整理和强化白天学到的知识
+- 恢复精力：身体在睡眠中进行修复和充电
+- 调节情绪：睡眠不足更容易焦虑、烦躁、抑郁
+- 增强免疫：长期缺觉的人更容易生病
+
+## 改善睡眠的方法
+
+### 建立规律作息
+- 每天同一时间起床，包括周末（相差不超过1小时）
+- 即使前一晚没睡好，也不要白天补觉太久
+- 固定睡前仪式，告诉身体"该睡了"
+
+### 优化睡眠环境
+- 卧室保持凉爽（18-22°C）、黑暗、安静
+- 使用遮光窗帘、眼罩、耳塞（如需要）
+- 床只用来睡觉，不要在床上玩手机、学习
+- 选择舒适的床垫和枕头
+
+### 睡前准备
+- 睡前1小时避免使用电子设备（蓝光会抑制褪黑素）
+- 可以阅读纸质书、听轻音乐、做轻度拉伸
+- 避免剧烈运动、吃太饱、喝太多水
+- 睡前避免摄入咖啡因（包括下午3点后）
+
+### 如果睡不着怎么办
+不要焦虑！越担心睡不着越睡不着。
+- 如果躺了20分钟还没睡，起来做一些放松的活动
+- 感到困了再回到床上
+- 不要反复看时间
+- 尝试身体扫描：从脚趾开始，逐部分放松身体
+
+## 什么时候需要就医？
+- 失眠持续超过1个月
+- 白天严重嗜睡，影响正常学习生活
+- 出现打鼾严重、呼吸暂停等情况
+- 伴有严重的情绪问题
+
+好睡眠是送给自己最好的礼物。从今晚开始，尝试做出一点改变吧！`,
+    views: 1567,
+    createTime: Date.now() - 5 * 86400000,
+    author: '心理咨询中心'
+  },
+  {
+    id: 'art_005',
+    title: '你比想象中更强大：自我接纳的艺术',
+    summary: '停止自我批判，学会拥抱不完美的自己，在自我接纳中成长为更好的人。',
+    category: 'self',
+    cover: 'https://picsum.photos/seed/psyart5/800/400',
+    content: `"我不够好"、"我总是做不好"、"别人都比我强"——你是否也曾这样苛责自己？自我接纳并不意味着放弃努力，而是在承认现状的基础上，温柔而坚定地成长。
+
+## 什么是自我接纳？
+自我接纳是：
+- 承认自己的优点和缺点，不夸大也不否认
+- 允许自己有不完美、犯错的时刻
+- 不因一时的失败否定整个人的价值
+- 像对待好朋友一样对待自己
+
+自我接纳 ≠ 自甘堕落、找借口、不努力
+
+## 为什么我们难以接纳自己？
+- 社会文化强调"优秀"、"成功"
+- 成长过程中习惯了被比较和评判
+- 社交媒体放大了别人的"完美生活"
+- 把"自我批判"等同于"自我鞭策"
+
+## 练习自我接纳的方法
+
+### 1. 觉察自我批判的声音
+当你内心冒出否定自己的声音时，试着把它写下来，然后问自己：
+- 这是真的吗？有什么证据？
+- 如果是朋友遇到同样的事，我会这么说他吗？
+- 有没有其他更客观的解释？
+
+### 2. 用自我慈悲代替自我批判
+自我慈悲包含三个要素：
+- **自我善待**：对自己宽容理解，而非严厉评判
+- **共同人性**：认识到困难和不完美是人类共有的经历
+- **正念觉察**：清晰看到当下的经历，不压抑也不放大
+
+### 3. 记录"三件好事"
+每天睡前，写下当天三件让你满意的小事，可以是：
+- 今天认真听了一节课
+- 帮同学带了一杯水
+- 虽然情绪不好但还是完成了任务
+- 今天的夕阳很美
+
+### 4. 停止和别人比较
+每个人有自己的节奏和时区。记住：你看到的只是别人想让你看到的。
+
+### 5. 允许自己感受负面情绪
+难过、失望、愤怒都是正常的情绪。不要对自己说"我不应该生气"，而是"我现在感到愤怒，这是可以的"。
+
+## 写在最后
+自我接纳是一个持续的过程，不是一个终点。
+即使今天做得不好，明天还可以重新开始。
+请记住：你值得被爱，包括被你自己爱。`,
+    views: 3120,
+    createTime: Date.now() - 10 * 86400000,
+    author: '心理咨询中心'
+  }
+];
+
+const MOCK_PSYCHOLOGICAL_CRISIS_HOTLINES = [
+  {
+    id: 'hot_001',
+    name: '全国心理援助热线',
+    phone: '400-161-9995',
+    serviceHours: '24小时',
+    description: '国家卫健委推荐，面向全国公众提供免费心理援助服务',
+    color: '#EF4444',
+    icon: '🏥'
+  },
+  {
+    id: 'hot_002',
+    name: '北京心理危机研究与干预中心',
+    phone: '010-82951332',
+    serviceHours: '24小时',
+    description: '国内首家心理危机干预专业机构',
+    color: '#F59E0B',
+    icon: '🎗️'
+  },
+  {
+    id: 'hot_003',
+    name: '生命热线',
+    phone: '400-821-1215',
+    serviceHours: '24小时',
+    description: '专注自杀预防与心理危机干预',
+    color: '#3B82F6',
+    icon: '💚'
+  },
+  {
+    id: 'hot_004',
+    name: '青少年心理热线',
+    phone: '12355',
+    serviceHours: '每日8:00-22:00',
+    description: '共青团中央主办，为青少年提供心理咨询服务',
+    color: '#10B981',
+    icon: '🧑‍🎓'
+  },
+  {
+    id: 'hot_005',
+    name: '校心理咨询中心',
+    phone: '010-12345678',
+    serviceHours: '工作日 8:30-17:30',
+    description: '本校心理咨询中心紧急联络电话',
+    color: '#8B5CF6',
+    icon: '🏫'
+  },
+  {
+    id: 'hot_006',
+    name: '校医院急诊',
+    phone: '010-87654321',
+    serviceHours: '24小时',
+    description: '校内医疗急救服务',
+    color: '#EC4899',
+    icon: '🚑'
+  }
+];
+
+const _psychologicalExports = {
+  MOCK_PSYCHOLOGICAL_COUNSELORS,
+  MOCK_PSYCHOLOGICAL_ARTICLES,
+  MOCK_PSYCHOLOGICAL_CRISIS_HOTLINES
+};
+
+Object.assign(module.exports, _workStudyExports, _campusCardExports, _votingExports, _tutorExports, _jobRecruitmentExports, _psychologicalExports);

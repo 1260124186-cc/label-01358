@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "咨询师详情",
+  "enablePullDownRefresh": false,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "btn": "/components/btn/index"
+  }
+}

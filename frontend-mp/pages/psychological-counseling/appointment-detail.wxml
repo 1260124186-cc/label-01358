@@ -1,0 +1,217 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="page-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <!-- 状态卡片 -->
+    <view class="status-card" style="background: linear-gradient(135deg, {{appointment.statusColor}}15, {{appointment.statusColor}}08);">
+      <view class="status-icon" style="background: {{appointment.statusColor}}20;">
+        <text class="icon-text">{{appointment.statusIcon}}</text>
+      </view>
+      <view class="status-info">
+        <text class="status-text" style="color: {{appointment.statusColor}};">
+          {{appointment.statusLabel}}
+        </text>
+        <text class="status-hint" wx:if="{{appointment.status === 'pending'}}">等待咨询师确认，请耐心等候</text>
+        <text class="status-hint" wx:if="{{appointment.status === 'confirmed'}}">预约已确认，请按时参加</text>
+        <text class="status-hint" wx:if="{{appointment.status === 'completed'}}">咨询已完成，感谢您的信任</text>
+        <text class="status-hint" wx:if="{{appointment.status === 'cancelled'}}">预约已取消</text>
+        <text class="status-hint" wx:if="{{appointment.status === 'rescheduled'}}">预约已改期</text>
+      </view>
+    </view>
+
+    <!-- 预约ID -->
+    <view class="info-section id-section">
+      <view class="id-row">
+        <text class="id-label">预约ID（匿名）</text>
+        <text class="id-value">{{appointment.displayName}}</text>
+      </view>
+    </view>
+
+    <!-- 咨询师信息 -->
+    <view class="info-section">
+      <view class="section-title">咨询师信息</view>
+      <view class="counselor-card">
+        <image class="counselor-avatar" src="{{appointment.counselorAvatar || '/assets/images/default-avatar.png'}}" mode="aspectFill" />
+        <view class="counselor-info">
+          <text class="counselor-name">{{appointment.counselorName}}</text>
+          <text class="counselor-title">{{appointment.counselorTitle}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 预约详情 -->
+    <view class="info-section">
+      <view class="section-title">预约详情</view>
+      <view class="detail-list">
+        <view class="detail-item">
+          <text class="detail-label">咨询日期</text>
+          <text class="detail-value">{{appointment.appointmentDate}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">咨询时段</text>
+          <text class="detail-value">{{appointment.timeSlotLabel || appointment.timeSlot}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">咨询方式</text>
+          <text class="detail-value">{{consultationMethodText}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">咨询地点</text>
+          <text class="detail-value">{{appointment.consultationMethod === 'online' ? '线上视频咨询' : (appointment.counselorLocation || '心理咨询中心')}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-label">咨询问题</text>
+          <text class="detail-value masked">{{appointment.maskedProblem}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 预约提醒 -->
+    <view class="info-section">
+      <view class="section-title">提醒设置</view>
+      <view class="reminder-card">
+        <text class="reminder-icon">🔔</text>
+        <text class="reminder-text">{{reminderText}}</text>
+      </view>
+    </view>
+
+    <!-- 状态时间轴 -->
+    <view class="info-section">
+      <view class="section-title">状态流转</view>
+      <view class="timeline">
+        <view
+          class="timeline-item {{index === timeline.length - 1 ? 'last' : ''}}"
+          wx:for="{{timeline}}"
+          wx:key="status"
+        >
+          <view class="timeline-dot" style="background: {{item.color}}; opacity: {{item.done ? 1 : 0.3}};">
+            <text class="timeline-dot-icon">{{item.icon}}</text>
+          </view>
+          <view class="timeline-line" wx:if="{{index !== timeline.length - 1}}" style="background: {{item.done ? item.color + '40' : '#E5E7EB'}};"></view>
+          <view class="timeline-content">
+            <text class="timeline-label" style="color: {{item.done ? item.color : '#9CA3AF'}};">{{item.label}}</text>
+            <text class="timeline-time" wx:if="{{item.timeText}}">{{item.timeText}}</text>
+            <text class="timeline-remark" wx:if="{{item.remark}}">{{item.remark}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 取消改期规则 -->
+    <view class="info-section">
+      <view class="section-title">取消与改期规则</view>
+      <view class="rules-card">
+        <view class="rule-item">
+          <text class="rule-icon">⏰</text>
+          <view class="rule-content">
+            <text class="rule-title">免费取消</text>
+            <text class="rule-desc">预约前{{cancellationRules.freeCancelHours}}小时可免费取消</text>
+          </view>
+        </view>
+        <view class="rule-item">
+          <text class="rule-icon">⚠️</text>
+          <view class="rule-content">
+            <text class="rule-title">逾期取消</text>
+            <text class="rule-desc">{{cancellationRules.lateCancelPenalty}}</text>
+          </view>
+        </view>
+        <view class="rule-item">
+          <text class="rule-icon">🚫</text>
+          <view class="rule-content">
+            <text class="rule-title">未赴约</text>
+            <text class="rule-desc">{{cancellationRules.noShowPenalty}}</text>
+          </view>
+        </view>
+        <view class="rule-item">
+          <text class="rule-icon">🔄</text>
+          <view class="rule-content">
+            <text class="rule-title">改期限制</text>
+            <text class="rule-desc">最多可改期{{cancellationRules.maxRescheduleTimes}}次</text>
+          </view>
+        </view>
+        <view class="rule-item">
+          <text class="rule-icon">📊</text>
+          <view class="rule-content">
+            <text class="rule-title">预约频率</text>
+            <text class="rule-desc">每周最多预约{{cancellationRules.maxAppointmentsPerWeek}}次</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 隐私保护提示 -->
+    <view class="info-section privacy-section">
+      <view class="privacy-card">
+        <text class="privacy-icon">🔒</text>
+        <view class="privacy-content">
+          <text class="privacy-title">隐私保护</text>
+          <text class="privacy-desc">您的咨询信息已加密存储，咨询师端仅能看到您的匿名ID，个人信息全程保密。</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar" wx:if="{{appointment && (appointment.status === 'pending' || appointment.status === 'confirmed' || appointment.status === 'completed')}}">
+    <block wx:if="{{appointment.status === 'pending' || appointment.status === 'confirmed'}}">
+      <view class="bottom-btn secondary" bindtap="onCancel">
+        <text class="btn-text">取消预约</text>
+      </view>
+      <view class="bottom-btn primary" bindtap="onReschedule">
+        <text class="btn-text">改期</text>
+      </view>
+    </block>
+    <block wx:if="{{appointment.status === 'completed'}}">
+      <view class="bottom-btn primary full" bindtap="onReview">
+        <text class="btn-text">去评价</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- 取消弹窗 -->
+  <view class="modal-mask {{showCancelModal ? 'show' : ''}}" bindtap="onCancelModalClose">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">取消预约</text>
+        <text class="modal-close" bindtap="onCancelModalClose">✕</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">请选择取消原因</text>
+          <view class="reason-list">
+            <view
+              class="reason-item {{cancelReason === item ? 'active' : ''}}"
+              wx:for="{{cancelReasons}}"
+              wx:key="*this"
+              bindtap="onCancelReasonSelect"
+              data-reason="{{item}}"
+            >
+              <text class="reason-text">{{item}}</text>
+              <view class="reason-check" wx:if="{{cancelReason === item}}">✓</view>
+            </view>
+          </view>
+          <view class="form-tip" wx:if="{{cancellationRules}}">
+            <text class="tip-text">温馨提示：预约前{{cancellationRules.freeCancelHours}}小时内取消将{{cancellationRules.lateCancelPenalty}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel-btn" bindtap="onCancelModalClose">
+          <text class="btn-text">再想想</text>
+        </view>
+        <view class="modal-btn confirm-btn" bindtap="onConfirmCancel">
+          <text class="btn-text">确认取消</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-overlay" wx:if="{{loading}}">
+    <view class="loading-content">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+</view>

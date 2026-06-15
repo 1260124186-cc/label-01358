@@ -170,7 +170,13 @@ const STORAGE_KEYS = {
   REFERRAL_CODE_LIST: 'referralCodeList',
   CAREER_TALK_LIST: 'careerTalkList',
   CALENDAR_SYNC_LIST: 'calendarSyncList',
-  RESUME_LIST: 'resumeList'
+  RESUME_LIST: 'resumeList',
+
+  PSYCHOLOGICAL_COUNSELOR_LIST: 'psychologicalCounselorList',
+  PSYCHOLOGICAL_APPOINTMENT_LIST: 'psychologicalAppointmentList',
+  PSYCHOLOGICAL_ARTICLE_LIST: 'psychologicalArticleList',
+  PSYCHOLOGICAL_CRISIS_HOTLINES: 'psychologicalCrisisHotlines',
+  PSYCHOLOGICAL_REMINDER_SETTINGS: 'psychologicalReminderSettings'
 };
 
 /**
