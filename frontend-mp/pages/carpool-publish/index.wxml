@@ -77,6 +77,77 @@
       </view>
     </view>
 
+    <view class="form-section" wx:if="{{formData.type !== 'person_seeking'}}">
+      <view class="section-title">座位配置</view>
+      <view class="form-group">
+        <view class="form-item">
+          <view class="form-label">驾驶座可坐</view>
+          <view class="toggle-switch {{formData.driverSeatAvailable ? 'active' : ''}}" bindtap="onDriverSeatToggle">
+            <view class="toggle-dot"></view>
+          </view>
+          <text class="toggle-hint">{{formData.driverSeatAvailable ? '允许他人坐驾驶座' : '仅车主使用'}}</text>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">副驾驶可坐</view>
+          <view class="toggle-switch {{formData.passengerSeatAvailable ? 'active' : ''}}" bindtap="onPassengerSeatToggle">
+            <view class="toggle-dot"></view>
+          </view>
+          <text class="toggle-hint">{{formData.passengerSeatAvailable ? '开放副驾驶座位' : '不开放副驾驶'}}</text>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">行李空间</view>
+          <picker
+            mode="selector"
+            range="{{luggageOptions}}"
+            range-key="label"
+            value="{{luggageIndex}}"
+            bindchange="onLuggageChange"
+          >
+            <view class="form-picker">
+              <text>{{luggageOptions[luggageIndex].icon}} {{luggageOptions[luggageIndex].label}}</text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="seat-preview">
+        <view class="seat-preview-title">座位预览</view>
+        <view class="seat-preview-car">
+          <view class="seat-row front-row">
+            <view class="seat-box {{formData.driverSeatAvailable ? 'available' : 'unavailable'}}">
+              <text class="seat-icon">🚗</text>
+              <text class="seat-label">驾驶座</text>
+            </view>
+            <view class="seat-box {{formData.passengerSeatAvailable ? 'available' : 'unavailable'}}">
+              <text class="seat-icon">💺</text>
+              <text class="seat-label">副驾驶</text>
+            </view>
+          </view>
+          <view class="seat-row rear-row" wx:if="{{formData.totalSeats >= 4}}">
+            <view class="seat-box available">
+              <text class="seat-icon">💺</text>
+              <text class="seat-label">后排左</text>
+            </view>
+            <view class="seat-box available" wx:if="{{formData.totalSeats >= 5}}">
+              <text class="seat-icon">💺</text>
+              <text class="seat-label">后排中</text>
+            </view>
+            <view class="seat-box available">
+              <text class="seat-icon">💺</text>
+              <text class="seat-label">后排右</text>
+            </view>
+          </view>
+        </view>
+        <view class="luggage-info" wx:if="{{formData.luggageSpace !== 'none'}}">
+          <text class="luggage-icon">{{luggageOptions[luggageIndex].icon}}</text>
+          <text class="luggage-text">{{luggageOptions[luggageIndex].desc || luggageOptions[luggageIndex].label}}</text>
+        </view>
+      </view>
+    </view>
+
     <view class="form-section">
       <view class="section-title">费用信息</view>
       <view class="form-group">

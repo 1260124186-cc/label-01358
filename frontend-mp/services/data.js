@@ -2850,6 +2850,14 @@ function publishCarpool(data) {
   const app = getApp();
   const userInfo = app.globalData.userInfo || {};
 
+  const seatMap = buildSeatMap(data.totalSeats, data.driverSeatAvailable, data.passengerSeatAvailable, [{
+    userId: userInfo.id || 'anonymous',
+    userName: userInfo.nickName || '匿名用户',
+    confirmed: true,
+    seatType: 'driver',
+    phone: data.contactPhone || ''
+  }]);
+
   const item = {
     id: util.generateId(),
     ...data,
@@ -2860,10 +2868,12 @@ function publishCarpool(data) {
     publisherAvatar: userInfo.avatarUrl || '',
     status: 'recruiting',
     views: 0,
+    seatMap,
     members: [{
       userId: userInfo.id || 'anonymous',
       userName: userInfo.nickName || '匿名用户',
       confirmed: true,
+      seatType: 'driver',
       phone: data.contactPhone || ''
     }],
     createTime: Date.now(),
@@ -2871,6 +2881,9 @@ function publishCarpool(data) {
   };
 
   const success = storage.addToList(STORAGE_KEYS.CARPOOL_LIST, item);
+  if (success) {
+    scheduleDepartureReminder(item.id, data.departureTime);
+  }
   return success ? item : null;
 }
 
@@ -2919,15 +2932,23 @@ function joinCarpool(carpoolId) {
     return { success: false, message: '已无剩余座位' };
   }
 
+  const seatMap = carpool.seatMap || buildSeatMap(carpool.totalSeats, carpool.driverSeatAvailable, carpool.passengerSeatAvailable, members);
+  const availableSeat = seatMap.find(s => s.status === 'available');
+  const seatType = availableSeat ? availableSeat.type : '';
+
   const member = {
     userId,
     userName,
     confirmed: false,
+    seatType,
     phone: '',
     joinTime: Date.now()
   };
 
   members.push(member);
+
+  const updatedSeatMap = updateSeatMap(seatMap, members, carpool.driverSeatAvailable, carpool.passengerSeatAvailable);
+
   const currentMembers = members.length;
   const remainingSeats = carpool.totalSeats - currentMembers;
   const newStatus = remainingSeats <= 0 ? 'full' : 'recruiting';
@@ -2936,6 +2957,7 @@ function joinCarpool(carpoolId) {
     members,
     currentMembers,
     remainingSeats,
+    seatMap: updatedSeatMap,
     status: newStatus,
     updateTime: Date.now()
   });
@@ -2955,8 +2977,12 @@ function confirmCarpoolMember(carpoolId, memberId) {
     return m;
   });
 
+  const seatMap = carpool.seatMap || buildSeatMap(carpool.totalSeats, carpool.driverSeatAvailable, carpool.passengerSeatAvailable, members);
+  const updatedSeatMap = updateSeatMap(seatMap, members, carpool.driverSeatAvailable, carpool.passengerSeatAvailable);
+
   storage.updateInList(STORAGE_KEYS.CARPOOL_LIST, carpoolId, {
     members,
+    seatMap: updatedSeatMap,
     updateTime: Date.now()
   });
 
@@ -2977,6 +3003,9 @@ function leaveCarpool(carpoolId) {
   }
 
   const members = (carpool.members || []).filter(m => m.userId !== userId);
+  const seatMap = carpool.seatMap || buildSeatMap(carpool.totalSeats, carpool.driverSeatAvailable, carpool.passengerSeatAvailable, members);
+  const updatedSeatMap = updateSeatMap(seatMap, members, carpool.driverSeatAvailable, carpool.passengerSeatAvailable);
+
   const currentMembers = members.length;
   const remainingSeats = carpool.totalSeats - currentMembers;
 
@@ -2984,12 +3013,170 @@ function leaveCarpool(carpoolId) {
     members,
     currentMembers,
     remainingSeats,
+    seatMap: updatedSeatMap,
     status: remainingSeats > 0 ? 'recruiting' : carpool.status,
     updateTime: Date.now()
   });
 
   return { success: true };
-}function updateCarpoolStatus(carpoolId, status) {
+}
+
+function removeCarpoolMember(carpoolId, memberId) {
+  initCarpoolData();
+  const carpool = getCarpoolDetail(carpoolId);
+  if (!carpool) return { success: false, message: '拼车信息不存在' };
+
+  const memberToRemove = (carpool.members || []).find(m => m.userId === memberId);
+  if (!memberToRemove) return { success: false, message: '该成员不存在' };
+
+  if (memberToRemove.confirmed) {
+    return { success: false, message: '已确认成员不可移除，请联系其自行退出' };
+  }
+
+  const members = (carpool.members || []).filter(m => m.userId !== memberId);
+  const seatMap = carpool.seatMap || buildSeatMap(carpool.totalSeats, carpool.driverSeatAvailable, carpool.passengerSeatAvailable, members);
+  const updatedSeatMap = updateSeatMap(seatMap, members, carpool.driverSeatAvailable, carpool.passengerSeatAvailable);
+
+  const currentMembers = members.length;
+  const remainingSeats = carpool.totalSeats - currentMembers;
+
+  storage.updateInList(STORAGE_KEYS.CARPOOL_LIST, carpoolId, {
+    members,
+    currentMembers,
+    remainingSeats,
+    seatMap: updatedSeatMap,
+    status: remainingSeats > 0 ? 'recruiting' : carpool.status,
+    updateTime: Date.now()
+  });
+
+  return { success: true };
+}
+
+function buildSeatMap(totalSeats, driverSeatAvailable, passengerSeatAvailable, members) {
+  const seatTypes = constants.CARPOOL_SEAT_TYPES || [];
+  const allSeats = ['driver', 'passenger', 'rear_left', 'rear_mid', 'rear_right'];
+
+  const seats = [];
+  const usedSeats = [];
+
+  for (let i = 0; i < totalSeats; i++) {
+    const type = allSeats[i] || ('extra_' + (i - 4));
+    let status = 'available';
+    let occupiedBy = null;
+
+    if (type === 'driver' && driverSeatAvailable === false) {
+      status = 'unavailable';
+    } else if (type === 'passenger' && passengerSeatAvailable === false) {
+      status = 'unavailable';
+    }
+
+    const member = (members || []).find(m => m.seatType === type);
+    if (member) {
+      status = member.confirmed ? 'occupied' : 'pending';
+      occupiedBy = member.userId;
+      usedSeats.push(type);
+    }
+
+    const seatInfo = seatTypes.find(s => s.value === type);
+
+    seats.push({
+      index: i,
+      type,
+      label: seatInfo ? seatInfo.label : ('座位' + (i + 1)),
+      icon: seatInfo ? seatInfo.icon : '💺',
+      status,
+      occupiedBy
+    });
+  }
+
+  return seats;
+}
+
+function updateSeatMap(seatMap, members, driverSeatAvailable, passengerSeatAvailable) {
+  if (!seatMap || seatMap.length === 0) {
+    return buildSeatMap((members || []).length, driverSeatAvailable, passengerSeatAvailable, members);
+  }
+
+  return seatMap.map(seat => {
+    let status = 'available';
+    let occupiedBy = null;
+
+    if (seat.type === 'driver' && driverSeatAvailable === false) {
+      status = 'unavailable';
+    } else if (seat.type === 'passenger' && passengerSeatAvailable === false) {
+      status = 'unavailable';
+    }
+
+    const member = (members || []).find(m => m.seatType === seat.type);
+    if (member) {
+      status = member.confirmed ? 'occupied' : 'pending';
+      occupiedBy = member.userId;
+    }
+
+    return { ...seat, status, occupiedBy };
+  });
+}
+
+function scheduleDepartureReminder(carpoolId, departureTime) {
+  if (!departureTime) return;
+
+  const reminders = storage.getList(STORAGE_KEYS.CARPOOL_DEPARTURE_REMINDERS);
+  const reminderTime = departureTime - 2 * 60 * 60 * 1000;
+  const now = Date.now();
+
+  if (reminderTime <= now) return;
+
+  reminders.push({
+    id: util.generateId(),
+    carpoolId,
+    reminderTime,
+    departureTime,
+    triggered: false,
+    createTime: now
+  });
+
+  storage.set(STORAGE_KEYS.CARPOOL_DEPARTURE_REMINDERS, reminders);
+}
+
+function checkAndTriggerDepartureReminders() {
+  const reminders = storage.getList(STORAGE_KEYS.CARPOOL_DEPARTURE_REMINDERS);
+  const now = Date.now();
+  let changed = false;
+
+  reminders.forEach(reminder => {
+    if (!reminder.triggered && reminder.reminderTime <= now) {
+      reminder.triggered = true;
+      changed = true;
+
+      const carpool = getCarpoolDetail(reminder.carpoolId);
+      if (carpool && (carpool.status === 'recruiting' || carpool.status === 'full')) {
+        const confirmedMembers = (carpool.members || []).filter(m => m.confirmed);
+        const notifications = storage.getList(STORAGE_KEYS.NOTIFICATIONS);
+
+        confirmedMembers.forEach(member => {
+          notifications.unshift({
+            id: util.generateId(),
+            type: 'activity',
+            subType: 'reminder',
+            title: '出发提醒',
+            content: '您参与的拼车 "' + carpool.departure + ' → ' + (carpool.destinationText || carpool.destination) + '" 将在2小时后出发，请做好准备',
+            extra: { carpoolId: reminder.carpoolId },
+            read: false,
+            createTime: now
+          });
+        });
+
+        storage.set(STORAGE_KEYS.NOTIFICATIONS, notifications);
+      }
+    }
+  });
+
+  if (changed) {
+    storage.set(STORAGE_KEYS.CARPOOL_DEPARTURE_REMINDERS, reminders);
+  }
+}
+
+function updateCarpoolStatus(carpoolId, status) {
   return updateCarpool(carpoolId, { status });
 }
 
@@ -8778,7 +8965,12 @@ module.exports = {
   joinCarpool,
   confirmCarpoolMember,
   leaveCarpool,
+  removeCarpoolMember,
   updateCarpoolStatus,
+  buildSeatMap,
+  updateSeatMap,
+  scheduleDepartureReminder,
+  checkAndTriggerDepartureReminders,
 
   initCanteenData,
   getAllDishes,

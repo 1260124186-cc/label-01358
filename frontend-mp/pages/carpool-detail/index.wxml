@@ -58,6 +58,88 @@
           <text class="meta-label">座位</text>
         </view>
       </view>
+
+      <view class="countdown-bar" wx:if="{{departureCountdown && carpool.status !== 'completed'}}">
+        <text class="countdown-icon">⏰</text>
+        <text class="countdown-text">{{departureCountdown}}</text>
+      </view>
+    </view>
+
+    <view class="detail-section">
+      <view class="section-title">行程状态</view>
+      <view class="status-flow">
+        <view
+          class="status-step {{item.completed ? 'completed' : ''}} {{item.active ? 'active' : ''}}"
+          wx:for="{{statusFlow}}"
+          wx:key="value"
+        >
+          <view class="step-dot">
+            <text wx:if="{{item.completed}}">✓</text>
+            <text wx:elif="{{item.active}}">{{item.icon}}</text>
+            <text wx:else>{{item.icon}}</text>
+          </view>
+          <text class="step-label">{{item.label}}</text>
+          <view class="step-line" wx:if="{{index < statusFlow.length - 1}}"></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="detail-section" wx:if="{{seatMap.length > 0}}">
+      <view class="section-title">座位图</view>
+      <view class="seat-map">
+        <view class="seat-map-car">
+          <view class="seat-map-front">
+            <view
+              class="seat-map-seat {{item.status}}"
+              wx:for="{{seatMap}}"
+              wx:key="index"
+              wx:if="{{item.type === 'driver' || item.type === 'passenger'}}"
+            >
+              <text class="seat-map-icon">{{item.icon}}</text>
+              <text class="seat-map-label">{{item.label}}</text>
+              <text class="seat-map-status" wx:if="{{item.status === 'occupied'}}">已占</text>
+              <text class="seat-map-status pending" wx:elif="{{item.status === 'pending'}}">待确认</text>
+              <text class="seat-map-status available" wx:elif="{{item.status === 'available'}}">空闲</text>
+            </view>
+          </view>
+          <view class="seat-map-rear">
+            <view
+              class="seat-map-seat {{item.status}}"
+              wx:for="{{seatMap}}"
+              wx:key="index"
+              wx:if="{{item.type !== 'driver' && item.type !== 'passenger'}}"
+            >
+              <text class="seat-map-icon">{{item.icon}}</text>
+              <text class="seat-map-label">{{item.label}}</text>
+              <text class="seat-map-status" wx:if="{{item.status === 'occupied'}}">已占</text>
+              <text class="seat-map-status pending" wx:elif="{{item.status === 'pending'}}">待确认</text>
+              <text class="seat-map-status available" wx:elif="{{item.status === 'available'}}">空闲</text>
+            </view>
+          </view>
+        </view>
+        <view class="seat-legend">
+          <view class="legend-item">
+            <view class="legend-dot available"></view>
+            <text class="legend-text">空闲</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-dot occupied"></view>
+            <text class="legend-text">已占</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-dot pending"></view>
+            <text class="legend-text">待确认</text>
+          </view>
+          <view class="legend-item">
+            <view class="legend-dot unavailable"></view>
+            <text class="legend-text">不可用</text>
+          </view>
+        </view>
+        <view class="luggage-row" wx:if="{{luggageInfo && luggageInfo.value !== 'none'}}">
+          <text class="luggage-icon">{{luggageInfo.icon}}</text>
+          <text class="luggage-desc">行李空间：{{luggageInfo.desc || luggageInfo.label}}</text>
+        </view>
+      </view>
     </view>
 
     <view class="detail-section" wx:if="{{carpool.remark}}">
@@ -78,10 +160,12 @@
               <text class="member-badge publisher" wx:if="{{item.isPublisher}}">发布者</text>
               <text class="member-badge confirmed" wx:if="{{item.confirmed && !item.isPublisher}}">已确认</text>
               <text class="member-badge pending" wx:if="{{!item.confirmed && !item.isPublisher}}">待确认</text>
+              <text class="member-seat" wx:if="{{item.seatType}}">💺 {{item.seatType === 'driver' ? '驾驶座' : item.seatType === 'passenger' ? '副驾驶' : item.seatType === 'rear_left' ? '后排左' : item.seatType === 'rear_mid' ? '后排中' : item.seatType === 'rear_right' ? '后排右' : ''}}</text>
             </view>
           </view>
-          <view class="member-actions" wx:if="{{isPublisher && !item.isPublisher && !item.confirmed}}">
-            <view class="confirm-btn" bindtap="onConfirmMember" data-userid="{{item.userId}}">确认</view>
+          <view class="member-actions" wx:if="{{isPublisher && !item.isPublisher}}">
+            <view class="confirm-btn" wx:if="{{!item.confirmed}}" bindtap="onConfirmMember" data-userid="{{item.userId}}">确认</view>
+            <view class="remove-btn" wx:if="{{!item.confirmed}}" bindtap="onRemoveMember" data-userid="{{item.userId}}" data-username="{{item.userName}}">移除</view>
           </view>
         </view>
       </view>
@@ -123,6 +207,14 @@
       </view>
     </view>
 
+    <view class="detail-section share-section" bindtap="onShowShareCard">
+      <view class="share-banner">
+        <text class="share-icon">📤</text>
+        <text class="share-text">分享行程卡片给好友</text>
+        <text class="share-arrow">›</text>
+      </view>
+    </view>
+
     <view class="detail-section safety-section" bindtap="onShowSafetyModal">
       <view class="safety-banner">
         <text class="safety-icon">🛡️</text>
@@ -137,8 +229,8 @@
         <view class="manage-btn departed" wx:if="{{carpool.status === 'recruiting' || carpool.status === 'full'}}" bindtap="onUpdateStatus" data-status="departed">
           <text>🚗 标记已出发</text>
         </view>
-        <view class="manage-btn ended" wx:if="{{carpool.status === 'departed'}}" bindtap="onUpdateStatus" data-status="ended">
-          <text>✅ 标记已结束</text>
+        <view class="manage-btn completed" wx:if="{{carpool.status === 'departed'}}" bindtap="onUpdateStatus" data-status="completed">
+          <text>✅ 标记已完成</text>
         </view>
         <view class="manage-btn recruiting" wx:if="{{carpool.status === 'full'}}" bindtap="onUpdateStatus" data-status="recruiting">
           <text>📋 重新开放</text>
@@ -183,11 +275,81 @@
         class="bar-btn leave-btn"
         wx:if="{{!isPublisher && isJoined}}"
         bindtap="onLeaveCarpool"
-      >退出拼车</view>
+      >申请退出</view>
       <view
         class="bar-btn disabled-btn"
         wx:if="{{!isPublisher && !isJoined && (carpool.status !== 'recruiting' || carpool.remainingSeats <= 0)}}"
       >{{carpool.status === 'full' ? '已满员' : '已截止'}}</view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{showShareCard ? 'show' : ''}}" bindtap="onHideShareCard">
+    <view class="modal-content share-card-modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">📤 行程卡片</text>
+        <text class="modal-close" bindtap="onHideShareCard">×</text>
+      </view>
+      <view class="share-card-content">
+        <view class="share-card">
+          <view class="share-card-header">
+            <view class="share-card-type" style="background-color: {{carpool.typeColor}}15; color: {{carpool.typeColor}}">
+              <text>{{carpool.typeIcon}}</text>
+              <text>{{carpool.typeText}}</text>
+            </view>
+            <text class="share-card-status" style="color: {{carpool.statusColor}}">{{carpool.statusText}}</text>
+          </view>
+          <view class="share-card-route">
+            <text class="share-from">{{carpool.departure}}</text>
+            <text class="share-arrow-icon">→</text>
+            <text class="share-to">{{carpool.destinationText}}</text>
+          </view>
+          <view class="share-card-info">
+            <view class="share-info-item">
+              <text class="share-info-icon">🕐</text>
+              <text>{{carpool.departureFormatted}}</text>
+            </view>
+            <view class="share-info-item">
+              <text class="share-info-icon">💰</text>
+              <text>¥{{carpool.pricePerPerson}}/人</text>
+            </view>
+            <view class="share-info-item">
+              <text class="share-info-icon">💺</text>
+              <text>余{{carpool.remainingSeats}}座</text>
+            </view>
+            <view class="share-info-item" wx:if="{{luggageInfo && luggageInfo.value !== 'none'}}">
+              <text class="share-info-icon">{{luggageInfo.icon}}</text>
+              <text>{{luggageInfo.label}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn-row">
+          <button class="modal-btn share" open-type="share">转发给好友</button>
+          <view class="modal-btn copy" bindtap="onSaveShareCard">复制行程信息</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{showLeaveModal ? 'show' : ''}}" bindtap="onCancelLeave">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">申请退出拼车</text>
+        <text class="modal-close" bindtap="onCancelLeave">×</text>
+      </view>
+      <view class="modal-body">
+        <view class="leave-notice">
+          <text class="leave-notice-icon">⚠️</text>
+          <text class="leave-notice-text">退出后将释放您的座位，其他成员可以加入。确定要退出吗？</text>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn-row">
+          <view class="modal-btn cancel" bindtap="onCancelLeave">取消</view>
+          <view class="modal-btn danger" bindtap="onConfirmLeave">确认退出</view>
+        </view>
+      </view>
     </view>
   </view>
 

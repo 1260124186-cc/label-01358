@@ -15,6 +15,9 @@ mixPage({
       totalSeats: 4,
       pricePerPerson: '',
       costSharing: 'AA分摊',
+      driverSeatAvailable: false,
+      passengerSeatAvailable: true,
+      luggageSpace: 'medium',
       remark: '',
       contactName: '',
       contactPhone: '',
@@ -26,6 +29,8 @@ mixPage({
     costSharingOptions: ['AA分摊', '包车均摊', '车主承担', '面议'],
     costSharingIndex: 0,
     destinationIndex: -1,
+    luggageOptions: constants.CARPOOL_LUGGAGE_OPTIONS,
+    luggageIndex: 2,
     submitting: false
   },
 
@@ -52,10 +57,16 @@ mixPage({
     const updates = { 'formData.type': value };
     if (value === 'person_seeking') {
       updates['formData.totalSeats'] = 1;
+      updates['formData.driverSeatAvailable'] = false;
+      updates['formData.passengerSeatAvailable'] = false;
     } else if (value === 'car_seeking' && this.data.formData.totalSeats === 1) {
       updates['formData.totalSeats'] = 4;
+      updates['formData.driverSeatAvailable'] = false;
+      updates['formData.passengerSeatAvailable'] = true;
     } else if (value === 'charter' && this.data.formData.totalSeats < 4) {
       updates['formData.totalSeats'] = 6;
+      updates['formData.driverSeatAvailable'] = false;
+      updates['formData.passengerSeatAvailable'] = true;
     }
     this.setData(updates);
   },
@@ -90,6 +101,28 @@ mixPage({
         'formData.totalSeats': val
       });
     }
+  },
+
+  onDriverSeatToggle(e) {
+    this.setData({
+      'formData.driverSeatAvailable': !this.data.formData.driverSeatAvailable
+    });
+  },
+
+  onPassengerSeatToggle(e) {
+    this.setData({
+      'formData.passengerSeatAvailable': !this.data.formData.passengerSeatAvailable
+    });
+  },
+
+  onLuggageChange(e) {
+    const index = e.detail.value;
+    const item = this.data.luggageOptions[index];
+    this.setData({
+      luggageIndex: index,
+      'formData.luggageSpace': item.value,
+      'formData.luggageSpaceText': item.label
+    });
   },
 
   onCostSharingChange(e) {

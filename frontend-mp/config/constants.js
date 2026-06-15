@@ -568,7 +568,28 @@ const CARPOOL_STATUS = [
   { value: 'recruiting', label: '招募中', color: '#10B981' },
   { value: 'full', label: '已满', color: '#F59E0B' },
   { value: 'departed', label: '已出发', color: '#3B82F6' },
-  { value: 'ended', label: '已结束', color: '#6B7280' }
+  { value: 'completed', label: '已完成', color: '#6B7280' }
+];
+
+const CARPOOL_SEAT_STATUS = [
+  { value: 'available', label: '空闲', color: '#10B981' },
+  { value: 'occupied', label: '已占', color: '#3B82F6' },
+  { value: 'pending', label: '待确认', color: '#F59E0B' }
+];
+
+const CARPOOL_SEAT_TYPES = [
+  { value: 'driver', label: '驾驶座', icon: '🚗' },
+  { value: 'passenger', label: '副驾驶', icon: '💺' },
+  { value: 'rear_left', label: '后排左', icon: '💺' },
+  { value: 'rear_mid', label: '后排中', icon: '💺' },
+  { value: 'rear_right', label: '后排右', icon: '💺' }
+];
+
+const CARPOOL_LUGGAGE_OPTIONS = [
+  { value: 'none', label: '无行李空间', icon: '🚫' },
+  { value: 'small', label: '小件行李', icon: '🎒', desc: '可放背包、手提袋' },
+  { value: 'medium', label: '中等行李', icon: '🧳', desc: '可放20寸行李箱' },
+  { value: 'large', label: '大件行李', icon: '📦', desc: '可放24寸以上行李箱' }
 ];
 
 const CARPOOL_TABS = [

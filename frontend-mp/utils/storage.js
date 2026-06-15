@@ -32,6 +32,7 @@ const STORAGE_KEYS = {
   RENTAL_COMPARE_LIST: 'rentalCompareList',
   RENTAL_AGENT_REPORTS: 'rentalAgentReports',
   CARPOOL_LIST: 'carpoolList',
+  CARPOOL_DEPARTURE_REMINDERS: 'carpoolDepartureReminders',
   CANTEEN_LIST: 'canteenList',
   DISH_LIST: 'dishList',
   CANTEEN_REVIEWS: 'canteenReviews',

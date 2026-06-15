@@ -3677,6 +3677,10 @@ const MOCK_CARPOOLS = [
     currentMembers: 2,
     pricePerPerson: 25,
     costSharing: 'AA分摊',
+    driverSeatAvailable: false,
+    passengerSeatAvailable: true,
+    luggageSpace: 'large',
+    luggageSpaceText: '大件行李',
     remark: '后天上午出发，走高速，预计1.5小时到达。行李箱可以放后备箱，请提前10分钟到北门集合。',
     contactName: '王同学',
     contactPhone: '13800138020',
@@ -3687,8 +3691,8 @@ const MOCK_CARPOOLS = [
     publisherAvatar: '',
     status: 'recruiting',
     members: [
-      { userId: 'user_010', userName: '王同学', confirmed: true, phone: '13800138020' },
-      { userId: 'user_011', userName: '李同学', confirmed: true, phone: '13800138021' }
+      { userId: 'user_010', userName: '王同学', confirmed: true, seatType: 'driver', phone: '13800138020' },
+      { userId: 'user_011', userName: '李同学', confirmed: true, seatType: 'passenger', phone: '13800138021' }
     ]
   },
   {
@@ -3701,6 +3705,10 @@ const MOCK_CARPOOLS = [
     currentMembers: 1,
     pricePerPerson: 30,
     costSharing: 'AA分摊',
+    driverSeatAvailable: false,
+    passengerSeatAvailable: false,
+    luggageSpace: 'small',
+    luggageSpaceText: '小件行李',
     remark: '周末想去景区玩，求拼车同行。可以帮忙开车（有驾照3年），也可以分摊油费。',
     contactName: '张同学',
     contactPhone: '13800138022',
@@ -3711,7 +3719,7 @@ const MOCK_CARPOOLS = [
     publisherAvatar: '',
     status: 'recruiting',
     members: [
-      { userId: 'user_012', userName: '张同学', confirmed: true, phone: '13800138022' }
+      { userId: 'user_012', userName: '张同学', confirmed: true, seatType: 'passenger', phone: '13800138022' }
     ]
   },
   {
@@ -3724,6 +3732,10 @@ const MOCK_CARPOOLS = [
     currentMembers: 3,
     pricePerPerson: 50,
     costSharing: '包车均摊',
+    driverSeatAvailable: false,
+    passengerSeatAvailable: true,
+    luggageSpace: 'large',
+    luggageSpaceText: '大件行李',
     remark: '包了一辆7座商务车去机场，还有4个空位，费用6人均摊。可以放行李，准时出发不等人。',
     contactName: '陈同学',
     contactPhone: '13800138023',
@@ -3734,9 +3746,9 @@ const MOCK_CARPOOLS = [
     publisherAvatar: '',
     status: 'recruiting',
     members: [
-      { userId: 'user_013', userName: '陈同学', confirmed: true, phone: '13800138023' },
-      { userId: 'user_014', userName: '刘同学', confirmed: true, phone: '13800138024' },
-      { userId: 'user_015', userName: '赵同学', confirmed: true, phone: '13800138025' }
+      { userId: 'user_013', userName: '陈同学', confirmed: true, seatType: 'driver', phone: '13800138023' },
+      { userId: 'user_014', userName: '刘同学', confirmed: true, seatType: 'passenger', phone: '13800138024' },
+      { userId: 'user_015', userName: '赵同学', confirmed: false, seatType: 'rear_left', phone: '13800138025' }
     ]
   },
   {
@@ -3749,6 +3761,10 @@ const MOCK_CARPOOLS = [
     currentMembers: 4,
     pricePerPerson: 80,
     costSharing: 'AA分摊',
+    driverSeatAvailable: false,
+    passengerSeatAvailable: true,
+    luggageSpace: 'medium',
+    luggageSpaceText: '中等行李',
     remark: '端午节回家，自驾车还有1个空位。走高速约2.5小时，可在中途服务区休息。',
     contactName: '周同学',
     contactPhone: '13800138026',
@@ -3759,10 +3775,10 @@ const MOCK_CARPOOLS = [
     publisherAvatar: '',
     status: 'recruiting',
     members: [
-      { userId: 'user_016', userName: '周同学', confirmed: true, phone: '13800138026' },
-      { userId: 'user_017', userName: '吴同学', confirmed: true, phone: '13800138027' },
-      { userId: 'user_018', userName: '郑同学', confirmed: true, phone: '13800138028' },
-      { userId: 'user_019', userName: '孙同学', confirmed: true, phone: '13800138029' }
+      { userId: 'user_016', userName: '周同学', confirmed: true, seatType: 'driver', phone: '13800138026' },
+      { userId: 'user_017', userName: '吴同学', confirmed: true, seatType: 'passenger', phone: '13800138027' },
+      { userId: 'user_018', userName: '郑同学', confirmed: true, seatType: 'rear_left', phone: '13800138028' },
+      { userId: 'user_019', userName: '孙同学', confirmed: true, seatType: 'rear_right', phone: '13800138029' }
     ]
   },
   {
@@ -3775,6 +3791,10 @@ const MOCK_CARPOOLS = [
     currentMembers: 1,
     pricePerPerson: 15,
     costSharing: 'AA分摊',
+    driverSeatAvailable: false,
+    passengerSeatAvailable: false,
+    luggageSpace: 'none',
+    luggageSpaceText: '无行李空间',
     remark: '下午去市中心逛街，求拼车，可分摊油费和停车费。大概晚上8点左右回学校。',
     contactName: '林同学',
     contactPhone: '13800138030',
@@ -3785,7 +3805,7 @@ const MOCK_CARPOOLS = [
     publisherAvatar: '',
     status: 'recruiting',
     members: [
-      { userId: 'user_020', userName: '林同学', confirmed: true, phone: '13800138030' }
+      { userId: 'user_020', userName: '林同学', confirmed: true, seatType: 'passenger', phone: '13800138030' }
     ]
   },
   {
@@ -3798,6 +3818,10 @@ const MOCK_CARPOOLS = [
     currentMembers: 4,
     pricePerPerson: 35,
     costSharing: 'AA分摊',
+    driverSeatAvailable: false,
+    passengerSeatAvailable: false,
+    luggageSpace: 'medium',
+    luggageSpaceText: '中等行李',
     remark: '周末景区一日游，已满员。感谢各位同行！',
     contactName: '何同学',
     contactPhone: '13800138031',
@@ -3806,12 +3830,12 @@ const MOCK_CARPOOLS = [
     publisherId: 'user_021',
     publisherName: '何同学',
     publisherAvatar: '',
-    status: 'full',
+    status: 'departed',
     members: [
-      { userId: 'user_021', userName: '何同学', confirmed: true, phone: '13800138031' },
-      { userId: 'user_022', userName: '马同学', confirmed: true, phone: '13800138032' },
-      { userId: 'user_023', userName: '杨同学', confirmed: true, phone: '13800138033' },
-      { userId: 'user_024', userName: '黄同学', confirmed: true, phone: '13800138034' }
+      { userId: 'user_021', userName: '何同学', confirmed: true, seatType: 'driver', phone: '13800138031' },
+      { userId: 'user_022', userName: '马同学', confirmed: true, seatType: 'passenger', phone: '13800138032' },
+      { userId: 'user_023', userName: '杨同学', confirmed: true, seatType: 'rear_left', phone: '13800138033' },
+      { userId: 'user_024', userName: '黄同学', confirmed: true, seatType: 'rear_right', phone: '13800138034' }
     ]
   }
 ];

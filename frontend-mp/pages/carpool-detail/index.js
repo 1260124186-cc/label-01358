@@ -12,7 +12,13 @@ mixPage({
     isFavorite: false,
     isPublisher: false,
     isJoined: false,
-    showSafetyModal: false
+    showSafetyModal: false,
+    showShareCard: false,
+    showLeaveModal: false,
+    seatMap: [],
+    statusFlow: [],
+    luggageInfo: null,
+    departureCountdown: ''
   },
 
   onLoad(options) {
@@ -23,6 +29,27 @@ mixPage({
     } else {
       util.showError('拼车信息不存在');
       wx.navigateBack();
+    }
+
+    this._countdownTimer = null;
+  },
+
+  onShow() {
+    if (this.data.carpoolId) {
+      this.loadDetail();
+    }
+    dataService.checkAndTriggerDepartureReminders();
+  },
+
+  onHide() {
+    if (this._countdownTimer) {
+      clearInterval(this._countdownTimer);
+    }
+  },
+
+  onUnload() {
+    if (this._countdownTimer) {
+      clearInterval(this._countdownTimer);
     }
   },
 
@@ -58,6 +85,19 @@ mixPage({
 
       const isJoined = members.some(m => m.userId === userId);
 
+      const seatMap = carpool.seatMap || dataService.buildSeatMap(
+        carpool.totalSeats,
+        carpool.driverSeatAvailable,
+        carpool.passengerSeatAvailable,
+        members
+      );
+
+      const statusFlow = this.buildStatusFlow(carpool.status);
+
+      const luggageInfo = constants.CARPOOL_LUGGAGE_OPTIONS.find(
+        l => l.value === (carpool.luggageSpace || 'none')
+      );
+
       const formattedCarpool = {
         ...carpool,
         typeText: typeInfo ? typeInfo.label : '',
@@ -77,12 +117,69 @@ mixPage({
         isFavorite: dataService.isFavorite(this.data.carpoolId, 'carpool'),
         isPublisher,
         isJoined,
-        loading: false
+        loading: false,
+        seatMap,
+        statusFlow,
+        luggageInfo
       });
+
+      this.startCountdown(carpool.departureTime);
     } catch (e) {
       util.showError('加载失败');
       this.setData({ loading: false });
     }
+  },
+
+  buildStatusFlow(currentStatus) {
+    const flow = [
+      { value: 'recruiting', label: '招募中', icon: '📋' },
+      { value: 'full', label: '已满', icon: '👥' },
+      { value: 'departed', label: '已出发', icon: '🚗' },
+      { value: 'completed', label: '已完成', icon: '✅' }
+    ];
+
+    const statusOrder = ['recruiting', 'full', 'departed', 'completed'];
+    const currentIndex = statusOrder.indexOf(currentStatus);
+
+    return flow.map((item, index) => ({
+      ...item,
+      completed: index < currentIndex,
+      active: index === currentIndex
+    }));
+  },
+
+  startCountdown(departureTime) {
+    if (this._countdownTimer) {
+      clearInterval(this._countdownTimer);
+    }
+
+    const updateCountdown = () => {
+      const now = Date.now();
+      const diff = departureTime - now;
+
+      if (diff <= 0) {
+        this.setData({ departureCountdown: '已过出发时间' });
+        if (this._countdownTimer) {
+          clearInterval(this._countdownTimer);
+        }
+        return;
+      }
+
+      const hours = Math.floor(diff / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+
+      if (hours >= 24) {
+        const days = Math.floor(hours / 24);
+        this.setData({ departureCountdown: days + '天后出发' });
+      } else if (hours >= 1) {
+        this.setData({ departureCountdown: hours + '小时' + minutes + '分钟后出发' });
+      } else {
+        this.setData({ departureCountdown: minutes + '分钟后出发' });
+      }
+    };
+
+    updateCountdown();
+    this._countdownTimer = setInterval(updateCountdown, 60000);
   },
 
   onToggleFavorite() {
@@ -126,7 +223,32 @@ mixPage({
     }
   },
 
+  onRemoveMember(e) {
+    const { userid, username } = e.currentTarget.dataset;
+    wx.showModal({
+      title: '移除成员',
+      content: '确定要移除"' + username + '"吗？',
+      confirmColor: '#EF4444',
+      success: (res) => {
+        if (res.confirm) {
+          const result = dataService.removeCarpoolMember(this.data.carpoolId, userid);
+          if (result.success) {
+            util.showSuccess('已移除');
+            this.loadDetail();
+          } else {
+            util.showToast(result.message);
+          }
+        }
+      }
+    });
+  },
+
   onLeaveCarpool() {
+    this.setData({ showLeaveModal: true });
+  },
+
+  onConfirmLeave() {
+    this.setData({ showLeaveModal: false });
     const result = dataService.leaveCarpool(this.data.carpoolId);
     if (result.success) {
       util.showSuccess('已退出拼车');
@@ -134,6 +256,10 @@ mixPage({
     } else {
       util.showToast(result.message);
     }
+  },
+
+  onCancelLeave() {
+    this.setData({ showLeaveModal: false });
   },
 
   onUpdateStatus(e) {
@@ -183,12 +309,25 @@ mixPage({
     });
   },
 
+  onShowShareCard() {
+    this.setData({ showShareCard: true });
+  },
+
+  onHideShareCard() {
+    this.setData({ showShareCard: false });
+  },
+
   onShowSafetyModal() {
     this.setData({ showSafetyModal: true });
   },
 
   onHideSafetyModal() {
     this.setData({ showSafetyModal: false });
+  },
+
+  onSaveShareCard() {
+    this.setData({ showShareCard: false });
+    util.showSuccess('行程卡片已分享');
   },
 
   onShareAppMessage() {
