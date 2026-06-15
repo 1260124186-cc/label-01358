@@ -1,0 +1,61 @@
+<view class="container {{darkMode ? 'dark' : ''}}">
+  <view class="loading" wx:if="{{loading}}">加载中...</view>
+
+  <view class="form-card" wx:if="{{subscription && !loading}}">
+    <view class="form-group">
+      <view class="form-label">关键词</view>
+      <input 
+        class="form-input" 
+        placeholder="请输入关键词" 
+        value="{{keyword}}"
+        bindinput="onKeywordInput"
+        maxlength="20"
+      />
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        生效模块
+        <text class="select-all" bindtap="onSelectAllModules">全选</text>
+      </view>
+      <view class="module-options">
+        <view 
+          class="module-option {{moduleSelectedMap[item.value] ? 'selected' : ''}}"
+          wx:for="{{allModules}}"
+          wx:key="value"
+          bindtap="onToggleModule"
+          data-value="{{item.value}}"
+        >
+          <text class="module-icon">{{item.icon}}</text>
+          <text class="module-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">启用订阅</view>
+      <view class="form-desc">关闭后将不再检测该关键词的匹配内容</view>
+      <switch checked="{{enabled}}" bindchange="onToggleEnabled" color="#FF6B6B"/>
+    </view>
+
+    <view class="stats-group" wx:if="{{subscription}}">
+      <view class="stats-row">
+        <view class="stats-item">
+          <view class="stats-value">{{subscription.matchCount}}</view>
+          <view class="stats-text">累计匹配</view>
+        </view>
+        <view class="stats-item">
+          <view class="stats-value">{{subscription.createTime}}</view>
+          <view class="stats-text">订阅时间</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-actions" wx:if="{{!loading}}">
+    <view class="delete-btn" bindtap="onDelete">取消订阅</view>
+    <view class="save-btn {{submitting ? 'disabled' : ''}}" bindtap="onSave">
+      {{submitting ? '保存中...' : '保存修改'}}
+    </view>
+  </view>
+</view>

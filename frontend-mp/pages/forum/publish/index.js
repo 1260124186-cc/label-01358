@@ -2,6 +2,7 @@ const dataService = require('../../../services/data');
 const constants = require('../../../config/constants');
 const util = require('../../../utils/util');
 const fileUtil = require('../../../utils/file');
+const keywordService = require('../../../services/keywordSubscriptionService');
 const { mixPage } = require('../../../utils/withTheme');
 
 mixPage({
@@ -102,6 +103,16 @@ mixPage({
       const data = { ...this.data.formData, images: savedImages };
       const result = dataService.publishForumPost(data);
       if (result.success) {
+        const postId = result.data?.id || result.id;
+        if (postId) {
+          keywordService.processNewContent(
+            data.content,
+            data.title,
+            'forum',
+            postId
+          );
+        }
+
         await util.showSuccess('发布成功');
         wx.navigateBack({ delta: 1, fail: () => { wx.switchTab({ url: '/pages/index/index' }); } });
       } else {

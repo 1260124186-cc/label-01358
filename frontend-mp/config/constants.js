@@ -179,7 +179,8 @@ const NOTIFICATION_TYPES = [
   { value: 'interaction', label: '互动消息', icon: '💬', color: '#DBEAFE', iconColor: '#3B82F6' },
   { value: 'transaction', label: '交易提醒', icon: '🛒', color: '#D1FAE5', iconColor: '#10B981' },
   { value: 'activity', label: '活动提醒', icon: '🎉', color: '#FEE2E2', iconColor: '#EF4444' },
-  { value: 'survey', label: '问卷邀请', icon: '📋', color: '#E9D5FF', iconColor: '#8B5CF6' }
+  { value: 'survey', label: '问卷邀请', icon: '📋', color: '#E9D5FF', iconColor: '#8B5CF6' },
+  { value: 'keyword', label: '订阅提醒', icon: '🔔', color: '#FEF3C7', iconColor: '#F97316' }
 ];
 
 const NOTIFICATION_SUB_TYPES = {
@@ -206,7 +207,31 @@ const NOTIFICATION_SUB_TYPES = {
   survey: [
     { value: 'invite', label: '问卷邀请' },
     { value: 'reminder', label: '填写提醒' }
+  ],
+  keyword: [
+    { value: 'keyword_alert', label: '关键词提醒' },
+    { value: 'lost_found_match', label: '失物招领匹配' }
   ]
+};
+
+const KEYWORD_SUBSCRIPTION_MODULES = [
+  { value: 'lost_found', label: '失物招领', icon: '🔍' },
+  { value: 'market', label: '二手市场', icon: '🛒' },
+  { value: 'forum', label: '校园论坛', icon: '💬' }
+];
+
+const KEYWORD_SUBSCRIPTION_TEMPLATE_IDS = {
+  keyword_alert: 'YOUR_KEYWORD_ALERT_TEMPLATE_ID',
+  lost_found_match: 'YOUR_LOST_FOUND_MATCH_TEMPLATE_ID'
+};
+
+const DEFAULT_KEYWORD_SUBSCRIPTION_SETTINGS = {
+  enabled: true,
+  pushEnabled: true,
+  dndEnabled: false,
+  dndStartTime: '22:00',
+  dndEndTime: '08:00',
+  maxDailyNotifications: 20
 };
 
 const STUDY_MATERIAL_CATEGORIES = [
@@ -3443,5 +3468,9 @@ module.exports = {
   LIBRARY_RECOMMEND_STATUS_MAP,
   LIBRARY_REMINDER_TYPES,
   LIBRARY_REMINDER_TYPE_MAP,
-  LIBRARY_HOME_MENUS
+  LIBRARY_HOME_MENUS,
+
+  KEYWORD_SUBSCRIPTION_MODULES,
+  KEYWORD_SUBSCRIPTION_TEMPLATE_IDS,
+  DEFAULT_KEYWORD_SUBSCRIPTION_SETTINGS
 };

@@ -4,6 +4,7 @@ const util = require('../../utils/util');
 const themeUtil = require('../../utils/theme');
 const fontsizeUtil = require('../../utils/fontsize');
 const campusService = require('../../services/campusService');
+const keywordService = require('../../services/keywordSubscriptionService');
 
 Page({
   data: {
@@ -11,6 +12,7 @@ Page({
     favoritesCount: 0,
     historyCount: 0,
     unreadCount: 0,
+    keywordSubscriptionCount: 0,
     darkMode: false,
     themeMode: 'system',
     colorScheme: 'coral',
@@ -127,11 +129,13 @@ Page({
     const favorites = dataService.getFavorites();
     const history = dataService.getHistory();
     const unreadCount = dataService.getUnreadCount();
+    const keywordSubscriptions = dataService.getKeywordSubscriptions();
 
     this.setData({
       favoritesCount: favorites.length,
       historyCount: history.length,
-      unreadCount
+      unreadCount,
+      keywordSubscriptionCount: keywordSubscriptions.length
     });
   },
 
@@ -146,7 +150,7 @@ Page({
   onMenuTap(e) {
     const { type } = e.currentTarget.dataset;
 
-    if (['favorites', 'history', 'myLostFound', 'myMarket'].includes(type)) {
+    if (['favorites', 'history', 'myLostFound', 'myMarket', 'keywordSubscription'].includes(type)) {
       if (!util.checkLogin()) {
         return;
       }
@@ -176,6 +180,9 @@ Page({
         break;
       case 'admin':
         util.navigateTo('/pages/admin/index/index');
+        break;
+      case 'keywordSubscription':
+        util.navigateTo('/pages/keyword-subscription/index');
         break;
     }
   },

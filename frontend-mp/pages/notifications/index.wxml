@@ -57,6 +57,7 @@
           data-type="{{item.type}}"
           data-subtype="{{item.subType}}"
           data-extra="{{item.extra}}"
+          data-data="{{item.data}}"
           aria-role="article"
           aria-label="{{item.typeLabel}} {{item.title}} {{item.timeText}}"
         >
@@ -105,6 +106,7 @@
             data-type="{{item.type}}"
             data-subtype="{{item.subType}}"
             data-extra="{{item.extra}}"
+            data-data="{{item.data}}"
             aria-role="article"
             aria-label="{{item.typeLabel}} {{item.title}}"
           >

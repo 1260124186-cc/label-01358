@@ -1154,7 +1154,8 @@ const DEFAULT_NOTIFICATION_SETTINGS = {
   interaction: true,
   transaction: true,
   activity: true,
-  survey: true
+  survey: true,
+  keyword: true
 };
 
 function getNotificationSettings() {
@@ -8386,6 +8387,216 @@ function getCategoryOptions() {
   ];
 }
 
+// ==================== 关键词订阅 ====================
+
+function getKeywordSubscriptions() {
+  return storage.getList(STORAGE_KEYS.KEYWORD_SUBSCRIPTIONS);
+}
+
+function getKeywordSubscriptionById(id) {
+  const list = getKeywordSubscriptions();
+  return list.find(item => item.id === id) || null;
+}
+
+function addKeywordSubscription(keyword, modules = ['lost_found', 'market', 'forum']) {
+  if (!keyword || !keyword.trim()) {
+    return { success: false, message: '关键词不能为空' };
+  }
+
+  const trimmedKeyword = keyword.trim();
+  const list = getKeywordSubscriptions();
+
+  const existing = list.find(item =>
+    item.keyword.toLowerCase() === trimmedKeyword.toLowerCase()
+  );
+
+  if (existing) {
+    return { success: false, message: '该关键词已订阅' };
+  }
+
+  if (list.length >= 20) {
+    return { success: false, message: '最多订阅20个关键词' };
+  }
+
+  const subscription = {
+    id: util.generateId(),
+    keyword: trimmedKeyword,
+    modules: modules,
+    enabled: true,
+    createTime: Date.now(),
+    updateTime: Date.now(),
+    matchCount: 0,
+    lastMatchTime: null
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.KEYWORD_SUBSCRIPTIONS, subscription);
+  return success
+    ? { success: true, data: subscription }
+    : { success: false, message: '订阅失败' };
+}
+
+function updateKeywordSubscription(id, updates) {
+  const updateData = {
+    ...updates,
+    updateTime: Date.now()
+  };
+  const success = storage.updateInList(STORAGE_KEYS.KEYWORD_SUBSCRIPTIONS, id, updateData);
+  return success;
+}
+
+function deleteKeywordSubscription(id) {
+  return storage.removeFromList(STORAGE_KEYS.KEYWORD_SUBSCRIPTIONS, id);
+}
+
+function toggleKeywordSubscription(id) {
+  const subscription = getKeywordSubscriptionById(id);
+  if (!subscription) return false;
+  return updateKeywordSubscription(id, { enabled: !subscription.enabled });
+}
+
+function getKeywordSubscriptionSettings() {
+  const settings = storage.get(STORAGE_KEYS.KEYWORD_SUBSCRIPTION_SETTINGS);
+  return { ...constants.DEFAULT_KEYWORD_SUBSCRIPTION_SETTINGS, ...(settings || {}) };
+}
+
+function updateKeywordSubscriptionSettings(updates) {
+  const current = getKeywordSubscriptionSettings();
+  const newSettings = { ...current, ...updates };
+  return storage.set(STORAGE_KEYS.KEYWORD_SUBSCRIPTION_SETTINGS, newSettings);
+}
+
+function matchKeywordsInContent(content, moduleType) {
+  if (!content) return [];
+
+  const subscriptions = getKeywordSubscriptions().filter(s => s.enabled);
+  const matches = [];
+  const contentLower = content.toLowerCase();
+
+  subscriptions.forEach(subscription => {
+    if (!subscription.modules.includes(moduleType)) return;
+
+    const keywordLower = subscription.keyword.toLowerCase();
+    if (contentLower.includes(keywordLower)) {
+      matches.push({
+        subscriptionId: subscription.id,
+        keyword: subscription.keyword,
+        position: contentLower.indexOf(keywordLower)
+      });
+    }
+  });
+
+  return matches;
+}
+
+function recordKeywordNotification(subscriptionId, keyword, moduleType, contentId, title) {
+  const log = storage.getList(STORAGE_KEYS.KEYWORD_NOTIFICATION_LOG);
+  const today = new Date().toDateString();
+  const todayCount = log.filter(l =>
+    new Date(l.createTime).toDateString() === today
+  ).length;
+
+  const settings = getKeywordSubscriptionSettings();
+  if (todayCount >= settings.maxDailyNotifications) {
+    return null;
+  }
+
+  const existing = log.find(l =>
+    l.subscriptionId === subscriptionId &&
+    l.contentId === contentId &&
+    l.moduleType === moduleType
+  );
+
+  if (existing) {
+    return null;
+  }
+
+  const logEntry = {
+    id: util.generateId(),
+    subscriptionId,
+    keyword,
+    moduleType,
+    contentId,
+    title,
+    createTime: Date.now()
+  };
+
+  storage.addToList(STORAGE_KEYS.KEYWORD_NOTIFICATION_LOG, logEntry);
+
+  updateKeywordSubscription(subscriptionId, {
+    matchCount: (getKeywordSubscriptionById(subscriptionId)?.matchCount || 0) + 1,
+    lastMatchTime: Date.now()
+  });
+
+  return logEntry;
+}
+
+function isInDNDPeriod() {
+  const settings = getKeywordSubscriptionSettings();
+  if (!settings.dndEnabled) return false;
+
+  const now = new Date();
+  const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+  const [startHour, startMin] = settings.dndStartTime.split(':').map(Number);
+  const [endHour, endMin] = settings.dndEndTime.split(':').map(Number);
+
+  const startMinutes = startHour * 60 + startMin;
+  const endMinutes = endHour * 60 + endMin;
+
+  if (startMinutes <= endMinutes) {
+    return currentMinutes >= startMinutes && currentMinutes < endMinutes;
+  } else {
+    return currentMinutes >= startMinutes || currentMinutes < endMinutes;
+  }
+}
+
+function checkAndCreateKeywordNotification(content, title, moduleType, contentId) {
+  const settings = getKeywordSubscriptionSettings();
+  if (!settings.enabled) return [];
+
+  if (isInDNDPeriod()) return [];
+
+  const matches = matchKeywordsInContent(content + ' ' + title, moduleType);
+  const notifications = [];
+
+  matches.forEach(match => {
+    const logEntry = recordKeywordNotification(
+      match.subscriptionId,
+      match.keyword,
+      moduleType,
+      contentId,
+      title
+    );
+
+    if (logEntry) {
+      const moduleLabels = {
+        'lost_found': '失物招领',
+        'market': '二手市场',
+        'forum': '校园论坛'
+      };
+
+      const notification = createNotification({
+        type: 'keyword',
+        subType: 'keyword_alert',
+        title: `关键词「${match.keyword}」有新内容`,
+        content: `在${moduleLabels[moduleType]}中发现新的匹配内容：${title.substring(0, 50)}...`,
+        data: {
+          moduleType,
+          contentId,
+          keyword: match.keyword,
+          matchPosition: match.position
+        }
+      });
+
+      if (notification) {
+        notifications.push(notification);
+      }
+    }
+  });
+
+  return notifications;
+}
+
 module.exports = {
   calculateDistance,
   paginateList,
@@ -8879,7 +9090,20 @@ module.exports = {
   createWorkStudyHoursRecord,
   getTotalHoursByMonth,
   getWorkStudySalaryList,
-  getApprovedApplications
+  getApprovedApplications,
+
+  getKeywordSubscriptions,
+  getKeywordSubscriptionById,
+  addKeywordSubscription,
+  updateKeywordSubscription,
+  deleteKeywordSubscription,
+  toggleKeywordSubscription,
+  getKeywordSubscriptionSettings,
+  updateKeywordSubscriptionSettings,
+  matchKeywordsInContent,
+  recordKeywordNotification,
+  isInDNDPeriod,
+  checkAndCreateKeywordNotification
 };
 
 function initScholarshipData() {

@@ -199,7 +199,11 @@ const STORAGE_KEYS = {
   CAMPUS_SELECTED: 'campusSelected',
   FAVORITES_CROSS_CAMPUS: 'favoritesCrossCampus',
   VIEW_CACHE: 'viewCache',
-  ADMIN_MANAGED_CAMPUSES: 'adminManagedCampuses'
+  ADMIN_MANAGED_CAMPUSES: 'adminManagedCampuses',
+
+  KEYWORD_SUBSCRIPTIONS: 'keywordSubscriptions',
+  KEYWORD_SUBSCRIPTION_SETTINGS: 'keywordSubscriptionSettings',
+  KEYWORD_NOTIFICATION_LOG: 'keywordNotificationLog'
 };
 
 /**

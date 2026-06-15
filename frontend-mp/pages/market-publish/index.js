@@ -2,6 +2,7 @@ const dataService = require('../../services/data');
 const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
+const keywordService = require('../../services/keywordSubscriptionService');
 const { mixPage } = require('../../utils/withTheme');
 
 mixPage({
@@ -291,6 +292,18 @@ mixPage({
       }
 
       if (result) {
+        if (this.data.mode !== 'edit') {
+          const newItem = typeof result === 'object' ? result : data;
+          const fullItem = { ...newItem, id: result.id || result };
+
+          keywordService.processNewContent(
+            fullItem.description,
+            fullItem.title,
+            'market',
+            fullItem.id
+          );
+        }
+
         await util.showSuccess(successMessage);
         wx.navigateBack({
           delta: 1,

@@ -43,6 +43,15 @@
         <text class="menu-count" wx:if="{{historyCount > 0}}">{{historyCount}}</text>
         <text class="menu-arrow">›</text>
       </view>
+
+      <view class="menu-item no-border" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="keywordSubscription" aria-role="button" aria-label="关键词订阅">
+        <view class="menu-icon-wrap" style="background-color: #FEF3C7;">
+          <text class="menu-icon">🔔</text>
+        </view>
+        <text class="menu-text">关键词订阅</text>
+        <text class="menu-desc">{{keywordSubscriptionCount}}个订阅</text>
+        <text class="menu-arrow">›</text>
+      </view>
     </view>
   </view>
 

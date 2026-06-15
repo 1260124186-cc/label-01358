@@ -1,0 +1,248 @@
+<view class="container {{darkMode ? 'dark' : ''}}">
+  <view class="stats-card" wx:if="{{stats}}">
+    <view class="stats-header">
+      <view class="stats-title">订阅统计</view>
+      <view class="stats-actions">
+        <view class="icon-btn" bindtap="onShowSettings">⚙️</view>
+        <view class="icon-btn" bindtap="onGoToNotifications">🔔</view>
+      </view>
+    </view>
+    <view class="stats-grid">
+      <view class="stats-item">
+        <view class="stats-number">{{stats.enabledSubscriptions}}/{{stats.totalSubscriptions}}</view>
+        <view class="stats-label">已启用订阅</view>
+      </view>
+      <view class="stats-item">
+        <view class="stats-number">{{stats.totalMatches}}</view>
+        <view class="stats-label">累计匹配</view>
+      </view>
+      <view class="stats-item">
+        <view class="stats-number">{{stats.todayNotifications}}</view>
+        <view class="stats-label">今日通知</view>
+      </view>
+    </view>
+    <view class="module-stats" wx:if="{{stats.moduleStats}}">
+      <view class="module-stat">
+        <text class="module-icon">🔍</text>
+        <text class="module-count">{{stats.moduleStats.lost_found}}</text>
+      </view>
+      <view class="module-stat">
+        <text class="module-icon">🛒</text>
+        <text class="module-count">{{stats.moduleStats.market}}</text>
+      </view>
+      <view class="module-stat">
+        <text class="module-icon">💬</text>
+        <text class="module-count">{{stats.moduleStats.forum}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{settings.enabled}}">
+    <view class="section-header">
+      <view class="section-title">我的订阅</view>
+      <view class="add-btn" bindtap="onShowAddDialog">+ 添加关键词</view>
+    </view>
+
+    <view class="empty-state" wx:if="{{subscriptions.length === 0 && !loading}}">
+      <view class="empty-icon">🔔</view>
+      <view class="empty-text">还没有订阅任何关键词</view>
+      <view class="empty-desc">订阅后，新内容命中关键词时将第一时间通知您</view>
+    </view>
+
+    <view class="subscription-list" wx:if="{{subscriptions.length > 0}}">
+      <view class="subscription-item" wx:for="{{subscriptions}}" wx:key="id">
+        <view class="item-main" bindtap="onEditSubscription" data-id="{{item.id}}">
+          <view class="item-keyword">{{item.keyword}}</view>
+          <view class="item-info">
+            <text class="item-modules">{{item.moduleLabels}}</text>
+            <text class="item-divider">·</text>
+            <text class="item-match">匹配 {{item.matchCount}} 次</text>
+            <text class="item-divider">·</text>
+            <text class="item-time">{{item.lastMatchText}}</text>
+          </view>
+        </view>
+        <view class="item-actions">
+          <switch 
+            checked="{{item.enabled}}" 
+            bindchange="onToggleSubscription" 
+            data-id="{{item.id}}"
+            color="#FF6B6B"
+          />
+          <view class="delete-btn" bindtap="onDeleteSubscription" data-id="{{item.id}}" data-keyword="{{item.keyword}}">
+            🗑️
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{settings.enabled && hotKeywords.length > 0}}">
+    <view class="section-header">
+      <view class="section-title">🔥 热门关键词</view>
+    </view>
+    <view class="hot-keywords">
+      <view 
+        class="hot-keyword" 
+        wx:for="{{hotKeywords}}" 
+        wx:key="keyword"
+        bindtap="onQuickSubscribe"
+        data-keyword="{{item.keyword}}"
+      >
+        <text class="keyword-text">{{item.keyword}}</text>
+        <text class="keyword-count">{{item.count}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="disabled-banner" wx:if="{{!settings.enabled}}">
+    <view class="disabled-icon">🔕</view>
+    <view class="disabled-text">关键词订阅已关闭</view>
+    <view class="disabled-btn" bindtap="onShowSettings">去开启</view>
+  </view>
+
+  <view class="add-dialog" wx:if="{{showAddDialog}}" catchtouchmove="stopPropagation">
+    <view class="dialog-mask" bindtap="onHideAddDialog"></view>
+    <view class="dialog-content">
+      <view class="dialog-header">
+        <view class="dialog-title">添加关键词订阅</view>
+        <view class="dialog-close" bindtap="onHideAddDialog">×</view>
+      </view>
+      
+      <view class="form-group">
+        <view class="form-label">关键词</view>
+        <input 
+          class="form-input" 
+          placeholder="如：AirPods、高等数学、西区宿舍" 
+          value="{{newKeyword}}"
+          bindinput="onKeywordInput"
+          maxlength="20"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">
+          生效模块
+          <text class="select-all" bindtap="onSelectAllModules">全选</text>
+        </view>
+        <view class="module-options">
+          <view 
+            class="module-option {{moduleSelectedMap[item.value] ? 'selected' : ''}}"
+            wx:for="{{allModules}}"
+            wx:key="value"
+            bindtap="onToggleModule"
+            data-value="{{item.value}}"
+          >
+            <text class="module-icon">{{item.icon}}</text>
+            <text class="module-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="dialog-footer">
+        <view class="cancel-btn" bindtap="onHideAddDialog">取消</view>
+        <view class="confirm-btn" bindtap="onAddKeyword">订阅</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="settings-drawer" wx:if="{{showSettings}}" catchtouchmove="stopPropagation">
+    <view class="drawer-mask" bindtap="onHideSettings"></view>
+    <view class="drawer-content">
+      <view class="drawer-header">
+        <view class="drawer-title">订阅设置</view>
+        <view class="drawer-close" bindtap="onHideSettings">×</view>
+      </view>
+
+      <view class="setting-list">
+        <view class="setting-item">
+          <view class="setting-info">
+            <view class="setting-name">关键词订阅</view>
+            <view class="setting-desc">开启后将检测新内容并推送通知</view>
+          </view>
+          <switch checked="{{settings.enabled}}" bindchange="onToggleSetting" data-type="enabled" color="#FF6B6B"/>
+        </view>
+
+        <view class="setting-item">
+          <view class="setting-info">
+            <view class="setting-name">微信推送</view>
+            <view class="setting-desc">
+              {{pushAuthStatus.accepted ? '已授权' : '未授权'}}
+            </view>
+          </view>
+          <switch checked="{{settings.pushEnabled}}" bindchange="onToggleSetting" data-type="pushEnabled" color="#FF6B6B"/>
+        </view>
+
+        <view class="setting-item">
+          <view class="setting-info">
+            <view class="setting-name">免打扰模式</view>
+            <view class="setting-desc">
+              {{settings.dndEnabled ? (settings.dndStartTime + ' - ' + settings.dndEndTime) : '未开启'}}
+            </view>
+          </view>
+          <switch checked="{{settings.dndEnabled}}" bindchange="onToggleSetting" data-type="dndEnabled" color="#FF6B6B"/>
+        </view>
+
+        <view class="setting-item" wx:if="{{settings.dndEnabled}}">
+          <view class="setting-info">
+            <view class="setting-name">免打扰开始时间</view>
+            <view class="setting-desc">{{settings.dndStartTime}}</view>
+          </view>
+          <view class="setting-action" bindtap="onShowTimePicker" data-type="start">
+            修改
+          </view>
+        </view>
+
+        <view class="setting-item" wx:if="{{settings.dndEnabled}}">
+          <view class="setting-info">
+            <view class="setting-name">免打扰结束时间</view>
+            <view class="setting-desc">{{settings.dndEndTime}}</view>
+          </view>
+          <view class="setting-action" bindtap="onShowTimePicker" data-type="end">
+            修改
+          </view>
+        </view>
+
+        <view class="setting-item">
+          <view class="setting-info">
+            <view class="setting-name">每日最大通知数</view>
+            <view class="setting-desc">超过后将不再推送</view>
+          </view>
+          <picker 
+            range="{{[5, 10, 15, 20, 30, 50]}}" 
+            value="{{[5, 10, 15, 20, 30, 50].indexOf(settings.maxDailyNotifications)}}"
+            bindchange="onMaxNotificationsChange"
+          >
+            <view class="setting-value">{{settings.maxDailyNotifications}} 条</view>
+          </picker>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="time-picker" wx:if="{{showTimePicker}}" catchtouchmove="stopPropagation">
+    <view class="picker-mask" bindtap="onHideTimePicker"></view>
+    <view class="picker-content">
+      <view class="picker-header">
+        <view class="picker-title">选择{{timePickerType === 'start' ? '开始' : '结束'}}时间</view>
+      </view>
+      <picker-view 
+        class="picker-view" 
+        value="{{[parseInt((timePickerType === 'start' ? dndStartTime : dndEndTime).split(':')[0]), parseInt((timePickerType === 'start' ? dndStartTime : dndEndTime).split(':')[1])]}}"
+        bindchange="onTimeChange"
+        indicator-style="height: 50px;"
+      >
+        <picker-view-column>
+          <view wx:for="{{24}}" wx:key="*this">{{item < 10 ? '0' + item : item}}</view>
+        </picker-view-column>
+        <view class="time-separator">:</view>
+        <picker-view-column>
+          <view wx:for="{{60}}" wx:key="*this">{{item < 10 ? '0' + item : item}}</view>
+        </picker-view-column>
+      </picker-view>
+      <view class="picker-footer">
+        <view class="cancel-btn" bindtap="onHideTimePicker">取消</view>
+        <view class="confirm-btn" bindtap="onHideTimePicker">确定</view>
+      </view>
+    </view>
+  </view>
+</view>

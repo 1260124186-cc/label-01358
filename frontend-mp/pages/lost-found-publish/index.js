@@ -3,6 +3,7 @@ const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
 const aiService = require('../../services/aiImageRecognition');
+const keywordService = require('../../services/keywordSubscriptionService');
 const { mixPage } = require('../../utils/withTheme');
 
 mixPage({
@@ -480,6 +481,34 @@ mixPage({
       }
 
       if (result) {
+        if (this.data.mode !== 'edit') {
+          const newItem = typeof result === 'object' ? result : data;
+          const fullItem = { ...newItem, id: result.id || result };
+
+          keywordService.processNewContent(
+            fullItem.description,
+            fullItem.title,
+            'lost_found',
+            fullItem.id
+          );
+
+          const matchNotifications = keywordService.processLostFoundItemPublish(fullItem);
+          if (matchNotifications && matchNotifications.length > 0) {
+            setTimeout(() => {
+              wx.showModal({
+                title: '匹配成功',
+                content: `发现 ${matchNotifications.length} 条可能匹配的${this.data.formData.type === 'lost' ? '招领' : '寻物'}信息，是否查看？`,
+                confirmText: '查看',
+                success: (res) => {
+                  if (res.confirm) {
+                    util.navigateTo('/pages/lost-found-match/index');
+                  }
+                }
+              });
+            }, 500);
+          }
+        }
+
         await util.showSuccess(successMessage);
         wx.navigateBack({
           delta: 1,

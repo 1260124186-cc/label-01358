@@ -23,9 +23,13 @@ Page({
     unreadCountByType: {}
   },
 
-  onLoad() {
+  onLoad(options) {
     this.loadThemeState();
     this.loadFontState();
+    
+    if (options && options.type) {
+      this.setData({ activeTab: options.type });
+    }
   },
 
   onShow() {
@@ -105,7 +109,8 @@ Page({
       { key: 'interaction', label: '互动提醒', icon: '💬', items: [] },
       { key: 'transaction', label: '交易提醒', icon: '🛒', items: [] },
       { key: 'activity', label: '活动提醒', icon: '🎉', items: [] },
-      { key: 'survey', label: '问卷邀请', icon: '📋', items: [] }
+      { key: 'survey', label: '问卷邀请', icon: '📋', items: [] },
+      { key: 'keyword', label: '订阅提醒', icon: '🔔', items: [] }
     ];
 
     notifications.forEach(item => {
@@ -197,6 +202,32 @@ Page({
       util.navigateTo(`/pages/survey-fill/index?id=${extra.surveyId}`);
     } else if (type === 'activity' && extra && extra.url) {
       util.navigateTo(extra.url);
+    } else if (type === 'keyword') {
+      const notificationData = e.currentTarget.dataset.data;
+      if (notificationData && notificationData.moduleType && notificationData.contentId) {
+        const { moduleType, contentId } = notificationData;
+        if (moduleType === 'lost_found') {
+          const detail = dataService.getLostFoundDetail(contentId);
+          if (!detail) {
+            util.showToast('该内容已不存在');
+            return;
+          }
+          util.navigateTo(`/pages/lost-found-detail/index?id=${contentId}`);
+        } else if (moduleType === 'market') {
+          const detail = dataService.getMarketDetail(contentId);
+          if (!detail) {
+            util.showToast('该商品已不存在');
+            return;
+          }
+          util.navigateTo(`/pages/market-detail/index?id=${contentId}`);
+        } else if (moduleType === 'forum') {
+          util.navigateTo(`/pages/forum/detail/index?id=${contentId}`);
+        } else {
+          util.showToast('暂无详情');
+        }
+      } else {
+        util.navigateTo('/pages/keyword-subscription/index');
+      }
     } else {
       util.showToast('暂无详情');
     }
