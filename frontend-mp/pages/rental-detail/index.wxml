@@ -163,6 +163,17 @@
       </view>
     </view>
 
+    <view class="detail-section contract-section" bindtap="onGoToContractHelper">
+      <view class="contract-entry">
+        <view class="contract-icon">📋</view>
+        <view class="contract-info">
+          <view class="contract-title">租房合同助手</view>
+          <view class="contract-desc">押金、水电、违约责任要点checklist</view>
+        </view>
+        <text class="contract-arrow">›</text>
+      </view>
+    </view>
+
     <view class="bottom-space"></view>
   </scroll-view>
 
@@ -171,14 +182,20 @@
       <view class="contact-name">{{house.contactName}}</view>
       <view class="contact-type" style="color: {{house.publisherTypeColor}}">{{house.publisherTypeText}}</view>
     </view>
-    <view class="contact-actions">
-      <view class="contact-btn secondary" bindtap="onCopyWechat">
-        <text class="btn-icon">📋</text>
-        <text class="btn-text">复制号码</text>
+    <view class="contact-actions" wx:if="{{!isPublisher}}">
+      <view class="contact-btn secondary" bindtap="onShowAppointmentModal">
+        <text class="btn-icon">📅</text>
+        <text class="btn-text">{{hasPendingAppointment ? '已预约' : '预约看房'}}</text>
       </view>
       <view class="contact-btn primary" bindtap="onCallPhone">
         <text class="btn-icon">📞</text>
         <text class="btn-text">立即联系</text>
+      </view>
+    </view>
+    <view class="contact-actions" wx:else>
+      <view class="contact-btn primary" bindtap="onGoToManage">
+        <text class="btn-icon">📋</text>
+        <text class="btn-text">管理预约</text>
       </view>
     </view>
   </view>
@@ -224,6 +241,82 @@
       <view class="modal-footer">
         <view class="modal-btn cancel" bindtap="onHideReportModal">取消</view>
         <view class="modal-btn confirm" bindtap="onSubmitReport">提交举报</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{showAppointmentModal ? 'show' : ''}}" bindtap="onHideAppointmentModal">
+    <view class="modal-content appointment-modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">预约看房</text>
+        <text class="modal-close" bindtap="onHideAppointmentModal">×</text>
+      </view>
+      <scroll-view class="modal-body" scroll-y="{{true}}">
+        <view class="form-group">
+          <view class="form-label">选择日期</view>
+          <scroll-view class="date-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+            <view class="date-list">
+              <view
+                class="date-item {{dateIndex === index ? 'active' : ''}}"
+                wx:for="{{dateList}}"
+                wx:key="value"
+                data-index="{{index}}"
+                bindtap="onDateSelect"
+              >
+                <text class="date-label">{{item.label}}</text>
+                <text class="date-sub">{{item.subLabel}}</text>
+              </view>
+            </view>
+          </scroll-view>
+        </view>
+
+        <view class="form-group">
+          <view class="form-label">选择时间段</view>
+          <view class="time-slot-grid">
+            <view
+              class="time-slot-item {{timeSlotIndex === index ? 'active' : ''}}"
+              wx:for="{{timeSlots}}"
+              wx:key="value"
+              data-index="{{index}}"
+              bindtap="onTimeSlotSelect"
+            >
+              {{item.label}}
+            </view>
+          </view>
+        </view>
+
+        <view class="form-group">
+          <view class="form-label">联系电话 <text class="required">*</text></view>
+          <input
+            class="form-input"
+            type="number"
+            placeholder="请输入您的联系电话"
+            value="{{appointmentPhone}}"
+            bindinput="onAppointmentPhoneInput"
+            maxlength="11"
+          />
+        </view>
+
+        <view class="form-group">
+          <view class="form-label">留言（选填）</view>
+          <textarea
+            class="form-textarea"
+            placeholder="请输入您的留言，方便房东提前准备"
+            value="{{appointmentMessage}}"
+            bindinput="onAppointmentMessageInput"
+            maxlength="200"
+            auto-height
+          />
+        </view>
+
+        <view class="appointment-tips">
+          <text class="tip-icon">💡</text>
+          <text class="tip-text">提交预约后，房东将在24小时内确认</text>
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="onHideAppointmentModal">取消</view>
+        <view class="modal-btn confirm" bindtap="onSubmitAppointment">提交预约</view>
       </view>
     </view>
   </view>

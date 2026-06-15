@@ -1,0 +1,113 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="checkin-container" wx:if="{{appointment && !loading}}">
+    <view class="house-card">
+      <image class="house-cover" src="{{appointment.houseCover}}" mode="aspectFill"/>
+      <view class="house-info">
+        <view class="house-title">{{appointment.houseTitle}}</view>
+        <view class="house-address">{{appointment.houseAddress}}</view>
+        <view class="appointment-time">
+          <text class="time-icon">📅</text>
+          <text>{{appointment.date}} {{appointment.timeSlot}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="checkin-status" wx:if="{{checkedIn}}">
+      <view class="status-success">
+        <view class="status-icon">✓</view>
+        <view class="status-text">签到成功</view>
+        <view class="status-time">签到时间：{{checkInTime}}</view>
+      </view>
+    </view>
+
+    <view class="checkin-actions" wx:elif="{{appointment.status === 'confirmed'}}">
+      <view class="action-card scan-card" bindtap="onScanCode">
+        <view class="action-icon">📷</view>
+        <view class="action-title">扫码签到</view>
+        <view class="action-desc">扫描房东提供的二维码完成签到</view>
+      </view>
+
+      <view class="action-card code-card" bindtap="onShowCodeInput">
+        <view class="action-icon">🔢</view>
+        <view class="action-title">输入签到码</view>
+        <view class="action-desc">手动输入签到码完成签到</view>
+      </view>
+    </view>
+
+    <view class="status-pending" wx:else>
+      <view class="pending-icon">⏳</view>
+      <view class="pending-text">预约{{appointment.status === 'pending' ? '待确认' : '已取消/拒绝'}}</view>
+      <view class="pending-desc">请等待房东确认预约后再进行签到</view>
+    </view>
+
+    <view class="checkin-code-section" wx:if="{{appointment.status === 'confirmed'}}">
+      <view class="section-title">我的签到码</view>
+      <view class="code-card">
+        <view class="code-value">{{appointment.checkInCode}}</view>
+        <view class="code-actions">
+          <view class="code-btn" bindtap="onCopyCode">
+            <text class="code-btn-icon">📋</text>
+            <text class="code-btn-text">复制</text>
+          </view>
+          <view class="code-btn" bindtap="onGenerateCode">
+            <text class="code-btn-icon">🔄</text>
+            <text class="code-btn-text">查看</text>
+          </view>
+        </view>
+      </view>
+      <view class="code-tip">
+        <text class="tip-icon">💡</text>
+        <text class="tip-text">到达房源后，向房东出示此签到码或扫码完成签到</text>
+      </view>
+    </view>
+
+    <view class="tips-section">
+      <view class="tips-title">📌 签到说明</view>
+      <view class="tips-list">
+        <view class="tip-item">
+          <text class="tip-dot">•</text>
+          <text class="tip-text">签到将记录您的位置信息，用于验证真实看房</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-dot">•</text>
+          <text class="tip-text">签到成功后预约状态将更新为已完成</text>
+        </view>
+        <view class="tip-item">
+          <text class="tip-dot">•</text>
+          <text class="tip-text">如遇问题请联系房东或平台客服</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view class="modal-mask {{showCodeInput ? 'show' : ''}}" bindtap="onHideCodeInput">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">输入签到码</text>
+        <text class="modal-close" bindtap="onHideCodeInput">×</text>
+      </view>
+      <view class="modal-body">
+        <input
+          class="code-input"
+          type="text"
+          placeholder="请输入签到码"
+          value="{{inputCode}}"
+          bindinput="onCodeInput"
+          maxlength="10"
+          focus="{{showCodeInput}}"
+        />
+        <view class="input-tip">签到码由房东提供，一般为8位字符</view>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="onHideCodeInput">取消</view>
+        <view class="modal-btn confirm" bindtap="onVerifyCode">确认签到</view>
+      </view>
+    </view>
+  </view>
+</view>

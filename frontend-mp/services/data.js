@@ -2782,6 +2782,331 @@ function getFacilityLabel(value) {
   return facility ? facility.label : value;
 }
 
+// ==================== 租房看房预约 ====================
+
+function createViewingAppointment(data) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const house = getRentalDetail(data.houseId);
+
+  if (!house) {
+    return { success: false, message: '房源不存在' };
+  }
+
+  const appointment = {
+    id: util.generateId(),
+    houseId: data.houseId,
+    houseTitle: house.title,
+    houseCover: house.images && house.images[0] ? house.images[0] : '',
+    houseAddress: house.address || '',
+    rent: house.rent || 0,
+    publisherId: house.publisherId || '',
+    publisherName: house.publisherName || '',
+    publisherPhone: house.contactPhone || '',
+    userId: userInfo.id || 'anonymous',
+    userName: userInfo.nickName || '匿名用户',
+    userAvatar: userInfo.avatarUrl || '',
+    userPhone: data.userPhone || '',
+    date: data.date,
+    timeSlot: data.timeSlot,
+    message: data.message || '',
+    status: 'pending',
+    checkInCode: generateCheckInCode(),
+    checkInTime: null,
+    checkInLocation: null,
+    rejectReason: '',
+    rescheduleCount: 0,
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  const list = storage.getList(STORAGE_KEYS.RENTAL_VIEWING_APPOINTMENTS);
+  list.unshift(appointment);
+  storage.set(STORAGE_KEYS.RENTAL_VIEWING_APPOINTMENTS, list);
+
+  addNotification({
+    id: util.generateId(),
+    type: 'rental_viewing',
+    title: '新的看房预约',
+    content: `${appointment.userName} 预约了 ${appointment.houseTitle} 的看房`,
+    relatedId: appointment.id,
+    receiverId: house.publisherId,
+    read: false,
+    createTime: Date.now()
+  });
+
+  return { success: true, appointment };
+}
+
+function generateCheckInCode() {
+  return Math.random().toString(36).substring(2, 10).toUpperCase();
+}
+
+function getViewingAppointmentList(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.RENTAL_VIEWING_APPOINTMENTS);
+
+  if (filters.userId) {
+    list = list.filter(item => item.userId === filters.userId);
+  }
+
+  if (filters.publisherId) {
+    list = list.filter(item => item.publisherId === filters.publisherId);
+  }
+
+  if (filters.status && filters.status !== 'all') {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  if (filters.houseId) {
+    list = list.filter(item => item.houseId === filters.houseId);
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getViewingAppointmentDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.RENTAL_VIEWING_APPOINTMENTS);
+  return list.find(item => item.id === id) || null;
+}
+
+function updateViewingAppointment(id, updates) {
+  const list = storage.getList(STORAGE_KEYS.RENTAL_VIEWING_APPOINTMENTS);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    list[index] = { ...list[index], ...updates, updateTime: Date.now() };
+    storage.set(STORAGE_KEYS.RENTAL_VIEWING_APPOINTMENTS, list);
+    return list[index];
+  }
+  return null;
+}
+
+function confirmViewingAppointment(id) {
+  const appointment = updateViewingAppointment(id, { status: 'confirmed' });
+  if (appointment) {
+    addNotification({
+      id: util.generateId(),
+      type: 'rental_viewing',
+      title: '看房预约已确认',
+      content: `您预约的 ${appointment.houseTitle} 看房已被确认`,
+      relatedId: id,
+      receiverId: appointment.userId,
+      read: false,
+      createTime: Date.now()
+    });
+  }
+  return appointment;
+}
+
+function rejectViewingAppointment(id, reason) {
+  const appointment = updateViewingAppointment(id, { status: 'rejected', rejectReason: reason || '' });
+  if (appointment) {
+    addNotification({
+      id: util.generateId(),
+      type: 'rental_viewing',
+      title: '看房预约被拒绝',
+      content: `您预约的 ${appointment.houseTitle} 看房被拒绝：${reason || '暂无原因'}`,
+      relatedId: id,
+      receiverId: appointment.userId,
+      read: false,
+      createTime: Date.now()
+    });
+  }
+  return appointment;
+}
+
+function rescheduleViewingAppointment(id, newDate, newTimeSlot) {
+  const list = storage.getList(STORAGE_KEYS.RENTAL_VIEWING_APPOINTMENTS);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    const appointment = list[index];
+    list[index] = {
+      ...appointment,
+      date: newDate,
+      timeSlot: newTimeSlot,
+      status: 'pending',
+      rescheduleCount: (appointment.rescheduleCount || 0) + 1,
+      updateTime: Date.now()
+    };
+    storage.set(STORAGE_KEYS.RENTAL_VIEWING_APPOINTMENTS, list);
+
+    addNotification({
+      id: util.generateId(),
+      type: 'rental_viewing',
+      title: '看房预约改期',
+      content: `您的 ${appointment.houseTitle} 看房预约已改期`,
+      relatedId: id,
+      receiverId: appointment.userId,
+      read: false,
+      createTime: Date.now()
+    });
+
+    return list[index];
+  }
+  return null;
+}
+
+function cancelViewingAppointment(id, isPublisher = false) {
+  const appointment = updateViewingAppointment(id, { status: 'cancelled' });
+  if (appointment) {
+    const receiverId = isPublisher ? appointment.userId : appointment.publisherId;
+    addNotification({
+      id: util.generateId(),
+      type: 'rental_viewing',
+      title: '看房预约已取消',
+      content: `${appointment.houseTitle} 的看房预约已取消`,
+      relatedId: id,
+      receiverId: receiverId,
+      read: false,
+      createTime: Date.now()
+    });
+  }
+  return appointment;
+}
+
+function completeViewingAppointment(id) {
+  return updateViewingAppointment(id, { status: 'completed' });
+}
+
+function checkInViewing(appointmentId, location) {
+  const appointment = getViewingAppointmentDetail(appointmentId);
+  if (!appointment) {
+    return { success: false, message: '预约不存在' };
+  }
+  if (appointment.status !== 'confirmed') {
+    return { success: false, message: '预约未确认，无法签到' };
+  }
+
+  const updated = updateViewingAppointment(appointmentId, {
+    checkInTime: Date.now(),
+    checkInLocation: location || null,
+    status: 'completed'
+  });
+
+  if (updated) {
+    const checkInRecord = {
+      id: util.generateId(),
+      appointmentId: appointmentId,
+      houseId: appointment.houseId,
+      userId: appointment.userId,
+      publisherId: appointment.publisherId,
+      checkInTime: Date.now(),
+      checkInLocation: location || null,
+      verified: true
+    };
+
+    const checkinList = storage.getList(STORAGE_KEYS.RENTAL_VIEWING_CHECKINS);
+    checkinList.unshift(checkInRecord);
+    storage.set(STORAGE_KEYS.RENTAL_VIEWING_CHECKINS, checkinList);
+
+    return { success: true, checkIn: checkInRecord, appointment: updated };
+  }
+
+  return { success: false, message: '签到失败' };
+}
+
+function verifyCheckInCode(code) {
+  const list = storage.getList(STORAGE_KEYS.RENTAL_VIEWING_APPOINTMENTS);
+  const appointment = list.find(item => item.checkInCode === code && item.status === 'confirmed');
+  return appointment || null;
+}
+
+function getViewingCheckins(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.RENTAL_VIEWING_CHECKINS);
+  if (filters.userId) {
+    list = list.filter(item => item.userId === filters.userId);
+  }
+  if (filters.publisherId) {
+    list = list.filter(item => item.publisherId === filters.publisherId);
+  }
+  if (filters.houseId) {
+    list = list.filter(item => item.houseId === filters.houseId);
+  }
+  return list.sort((a, b) => b.checkInTime - a.checkInTime);
+}
+
+function hasPendingAppointment(houseId, userId) {
+  const list = storage.getList(STORAGE_KEYS.RENTAL_VIEWING_APPOINTMENTS);
+  return list.some(item =>
+    item.houseId === houseId &&
+    item.userId === userId &&
+    ['pending', 'confirmed'].includes(item.status)
+  );
+}
+
+// ==================== 租房合同助手 ====================
+
+function getContractChecklist(userId) {
+  const key = `${STORAGE_KEYS.RENTAL_CONTRACT_CHECKLIST}_${userId}`;
+  const saved = storage.get(key);
+  if (saved) return saved;
+
+  const defaultList = constants.RENTAL_CONTRACT_CHECKLIST.map(category => ({
+    ...category,
+    items: category.items.map(item => ({
+      ...item,
+      checked: false,
+      note: ''
+    }))
+  }));
+
+  return defaultList;
+}
+
+function saveContractChecklist(userId, checklist) {
+  const key = `${STORAGE_KEYS.RENTAL_CONTRACT_CHECKLIST}_${userId}`;
+  return storage.set(key, checklist);
+}
+
+function toggleContractCheckItem(userId, categoryIndex, itemIndex) {
+  const checklist = getContractChecklist(userId);
+  if (checklist[categoryIndex] && checklist[categoryIndex].items[itemIndex]) {
+    checklist[categoryIndex].items[itemIndex].checked = !checklist[categoryIndex].items[itemIndex].checked;
+    saveContractChecklist(userId, checklist);
+    return checklist;
+  }
+  return checklist;
+}
+
+function updateContractCheckNote(userId, categoryIndex, itemIndex, note) {
+  const checklist = getContractChecklist(userId);
+  if (checklist[categoryIndex] && checklist[categoryIndex].items[itemIndex]) {
+    checklist[categoryIndex].items[itemIndex].note = note;
+    saveContractChecklist(userId, checklist);
+    return checklist;
+  }
+  return checklist;
+}
+
+function resetContractChecklist(userId) {
+  const defaultList = constants.RENTAL_CONTRACT_CHECKLIST.map(category => ({
+    ...category,
+    items: category.items.map(item => ({
+      ...item,
+      checked: false,
+      note: ''
+    }))
+  }));
+  saveContractChecklist(userId, defaultList);
+  return defaultList;
+}
+
+function getContractCheckProgress(userId) {
+  const checklist = getContractChecklist(userId);
+  let total = 0;
+  let checked = 0;
+  checklist.forEach(category => {
+    category.items.forEach(item => {
+      total++;
+      if (item.checked) checked++;
+    });
+  });
+  return {
+    total,
+    checked,
+    percentage: total > 0 ? Math.round((checked / total) * 100) : 0
+  };
+}
+
 // ==================== 拼车模块 ====================
 
 let carpoolInitialized = false;
@@ -8955,6 +9280,27 @@ module.exports = {
   clearCompareList,
   isInCompareList,
   getFacilityLabel,
+
+  createViewingAppointment,
+  getViewingAppointmentList,
+  getViewingAppointmentDetail,
+  updateViewingAppointment,
+  confirmViewingAppointment,
+  rejectViewingAppointment,
+  rescheduleViewingAppointment,
+  cancelViewingAppointment,
+  completeViewingAppointment,
+  checkInViewing,
+  verifyCheckInCode,
+  getViewingCheckins,
+  hasPendingAppointment,
+
+  getContractChecklist,
+  saveContractChecklist,
+  toggleContractCheckItem,
+  updateContractCheckNote,
+  resetContractChecklist,
+  getContractCheckProgress,
 
   getCarpoolList,
   getCarpoolDetail,

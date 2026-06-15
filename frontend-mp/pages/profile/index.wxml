@@ -73,6 +73,45 @@
         <text class="menu-text">二手商品</text>
         <text class="menu-arrow">›</text>
       </view>
+
+      <view class="menu-item no-border" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="myRental" aria-role="button" aria-label="我的租房">
+        <view class="menu-icon-wrap" style="background-color: #DBEAFE;">
+          <text class="menu-icon">🏠</text>
+        </view>
+        <text class="menu-text">我的租房</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="menu-section" aria-label="租房服务">
+    <view class="section-title">租房服务</view>
+    <view class="menu-card">
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="viewingAppointments" aria-role="button" aria-label="我的看房预约">
+        <view class="menu-icon-wrap" style="background-color: #FEF3C7;">
+          <text class="menu-icon">📅</text>
+        </view>
+        <text class="menu-text">我的看房预约</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="appointmentManage" aria-role="button" aria-label="预约管理">
+        <view class="menu-icon-wrap" style="background-color: #D1FAE5;">
+          <text class="menu-icon">📋</text>
+        </view>
+        <text class="menu-text">预约管理</text>
+        <text class="menu-desc">房东视角</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
+      <view class="menu-item no-border" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="contractHelper" aria-role="button" aria-label="合同助手">
+        <view class="menu-icon-wrap" style="background-color: #E9D5FF;">
+          <text class="menu-icon">📝</text>
+        </view>
+        <text class="menu-text">租房合同助手</text>
+        <text class="menu-desc">押金/水电/违约 checklist</text>
+        <text class="menu-arrow">›</text>
+      </view>
     </view>
   </view>
 

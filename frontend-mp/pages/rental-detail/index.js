@@ -17,18 +17,53 @@ mixPage({
     reportReasonIndex: -1,
     isFavorite: false,
     isInCompare: false,
-    reportCount: 0
+    reportCount: 0,
+    showAppointmentModal: false,
+    appointmentDate: '',
+    appointmentTimeSlot: '',
+    appointmentMessage: '',
+    appointmentPhone: '',
+    timeSlots: constants.RENTAL_VIEWING_TIME_SLOTS,
+    timeSlotIndex: -1,
+    dateList: [],
+    dateIndex: 0,
+    hasPendingAppointment: false,
+    isPublisher: false
   },
 
   onLoad(options) {
     const { id } = options;
     if (id) {
       this.setData({ houseId: id });
+      this.initDateList();
       this.loadDetail();
     } else {
       util.showError('房源不存在');
       wx.navigateBack();
     }
+  },
+
+  initDateList() {
+    const dateList = [];
+    const today = new Date();
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      const month = date.getMonth() + 1;
+      const day = date.getDate();
+      const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'];
+      const weekDay = weekDays[date.getDay()];
+      const dateStr = `${date.getFullYear()}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      dateList.push({
+        value: dateStr,
+        label: i === 0 ? '今天' : (i === 1 ? '明天' : `${month}/${day}`),
+        subLabel: weekDay
+      });
+    }
+    this.setData({
+      dateList,
+      appointmentDate: dateList[0].value
+    });
   },
 
   loadDetail() {
@@ -41,6 +76,11 @@ mixPage({
         wx.navigateBack();
         return;
       }
+
+      const app = getApp();
+      const userInfo = app.globalData.userInfo || {};
+      const isPublisher = house.publisherId === userInfo.id;
+      const hasPendingAppointment = dataService.hasPendingAppointment(this.data.houseId, userInfo.id || 'anonymous');
 
       const publisherTypeInfo = constants.RENTAL_PUBLISHER_TYPES.find(t => t.value === house.publisherType);
       const facilityLabels = (house.facilities || []).map(f => {
@@ -72,6 +112,8 @@ mixPage({
         isFavorite: dataService.isFavorite(this.data.houseId, 'rental'),
         isInCompare: dataService.isInCompareList(this.data.houseId),
         reportCount,
+        isPublisher,
+        hasPendingAppointment,
         loading: false
       });
     } catch (e) {
@@ -235,6 +277,91 @@ mixPage({
       path: `/pages/rental-detail/index?id=${this.data.houseId}`,
       imageUrl: this.data.house.images[0] || ''
     };
+  },
+
+  onShowAppointmentModal() {
+    if (!util.checkLogin()) return;
+
+    if (this.data.hasPendingAppointment) {
+      util.showToast('您已有待处理的看房预约');
+      return;
+    }
+
+    this.setData({
+      showAppointmentModal: true,
+      appointmentMessage: '',
+      appointmentPhone: '',
+      timeSlotIndex: -1
+    });
+  },
+
+  onHideAppointmentModal() {
+    this.setData({ showAppointmentModal: false });
+  },
+
+  onDateSelect(e) {
+    const { index } = e.currentTarget.dataset;
+    this.setData({
+      dateIndex: index,
+      appointmentDate: this.data.dateList[index].value
+    });
+  },
+
+  onTimeSlotSelect(e) {
+    const { index } = e.currentTarget.dataset;
+    this.setData({
+      timeSlotIndex: index,
+      appointmentTimeSlot: this.data.timeSlots[index].value
+    });
+  },
+
+  onAppointmentPhoneInput(e) {
+    this.setData({ appointmentPhone: e.detail.value });
+  },
+
+  onAppointmentMessageInput(e) {
+    this.setData({ appointmentMessage: e.detail.value });
+  },
+
+  onSubmitAppointment() {
+    if (!this.data.appointmentDate) {
+      util.showToast('请选择看房日期');
+      return;
+    }
+    if (this.data.timeSlotIndex === -1) {
+      util.showToast('请选择看房时间');
+      return;
+    }
+    if (!this.data.appointmentPhone.trim()) {
+      util.showToast('请填写联系电话');
+      return;
+    }
+
+    const result = dataService.createViewingAppointment({
+      houseId: this.data.houseId,
+      date: this.data.appointmentDate,
+      timeSlot: this.data.appointmentTimeSlot,
+      message: this.data.appointmentMessage,
+      userPhone: this.data.appointmentPhone
+    });
+
+    if (result.success) {
+      util.showSuccess('预约提交成功');
+      this.setData({
+        showAppointmentModal: false,
+        hasPendingAppointment: true
+      });
+    } else {
+      util.showError(result.message || '预约失败');
+    }
+  },
+
+  onGoToContractHelper() {
+    util.navigateTo('/pages/rental-contract-helper/index');
+  },
+
+  onGoToManage() {
+    util.navigateTo('/pages/rental-appointment-manage/index');
   },
 
   stopPropagation() {}

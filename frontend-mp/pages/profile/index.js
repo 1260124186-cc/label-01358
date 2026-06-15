@@ -150,7 +150,7 @@ Page({
   onMenuTap(e) {
     const { type } = e.currentTarget.dataset;
 
-    if (['favorites', 'history', 'myLostFound', 'myMarket', 'keywordSubscription'].includes(type)) {
+    if (['favorites', 'history', 'myLostFound', 'myMarket', 'myRental', 'keywordSubscription', 'viewingAppointments', 'appointmentManage', 'contractHelper'].includes(type)) {
       if (!util.checkLogin()) {
         return;
       }
@@ -171,6 +171,18 @@ Page({
         break;
       case 'myMarket':
         util.navigateTo('/pages/my-market/index');
+        break;
+      case 'myRental':
+        util.navigateTo('/pages/rental-publish/index');
+        break;
+      case 'viewingAppointments':
+        util.navigateTo('/pages/rental-viewing-appointments/index');
+        break;
+      case 'appointmentManage':
+        util.navigateTo('/pages/rental-appointment-manage/index');
+        break;
+      case 'contractHelper':
+        util.navigateTo('/pages/rental-contract-helper/index');
         break;
       case 'feedback':
         util.navigateTo('/pages/feedback/index');

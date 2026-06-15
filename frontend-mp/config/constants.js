@@ -558,6 +558,94 @@ const RENTAL_TABS = [
   { value: 'shared', label: '合租' }
 ];
 
+const RENTAL_VIEWING_STATUS = [
+  { value: 'pending', label: '待确认', color: '#F59E0B' },
+  { value: 'confirmed', label: '已确认', color: '#10B981' },
+  { value: 'completed', label: '已完成', color: '#3B82F6' },
+  { value: 'cancelled', label: '已取消', color: '#6B7280' },
+  { value: 'rejected', label: '已拒绝', color: '#EF4444' }
+];
+
+const RENTAL_VIEWING_STATUS_MAP = {
+  pending: { label: '待确认', color: '#F59E0B' },
+  confirmed: { label: '已确认', color: '#10B981' },
+  completed: { label: '已完成', color: '#3B82F6' },
+  cancelled: { label: '已取消', color: '#6B7280' },
+  rejected: { label: '已拒绝', color: '#EF4444' }
+};
+
+const RENTAL_VIEWING_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '待确认' },
+  { value: 'confirmed', label: '已确认' },
+  { value: 'completed', label: '已完成' }
+];
+
+const RENTAL_VIEWING_TIME_SLOTS = [
+  { value: '09:00-10:00', label: '09:00 - 10:00' },
+  { value: '10:00-11:00', label: '10:00 - 11:00' },
+  { value: '11:00-12:00', label: '11:00 - 12:00' },
+  { value: '14:00-15:00', label: '14:00 - 15:00' },
+  { value: '15:00-16:00', label: '15:00 - 16:00' },
+  { value: '16:00-17:00', label: '16:00 - 17:00' },
+  { value: '17:00-18:00', label: '17:00 - 18:00' },
+  { value: '19:00-20:00', label: '19:00 - 20:00' },
+  { value: '20:00-21:00', label: '20:00 - 21:00' }
+];
+
+const RENTAL_CONTRACT_CHECKLIST = [
+  {
+    category: '押金相关',
+    icon: '💰',
+    items: [
+      { id: 'deposit_amount', label: '押金金额明确', desc: '押一付一/押一付三等' },
+      { id: 'deposit_return', label: '押金退还条件', desc: '退租时押金退还时间和条件' },
+      { id: 'deposit_deduction', label: '押金扣除条款', desc: '哪些情况会扣除押金' }
+    ]
+  },
+  {
+    category: '水电费用',
+    icon: '💡',
+    items: [
+      { id: 'water_electric_standard', label: '水电收费标准', desc: '民用/商用价格，单价多少' },
+      { id: 'water_electric_meter', label: '水电表读数', desc: '入住时记录水电表底数' },
+      { id: 'utility_bill', label: '物业费/网费', desc: '物业费、网费等由谁承担' },
+      { id: 'heating_fee', label: '供暖费', desc: '供暖费用由谁承担' }
+    ]
+  },
+  {
+    category: '违约责任',
+    icon: '📋',
+    items: [
+      { id: 'landlord_breach', label: '房东违约责任', desc: '房东提前收房的赔偿' },
+      { id: 'tenant_breach', label: '租客违约责任', desc: '租客提前退租的赔偿' },
+      { id: 'late_rent', label: '逾期交租条款', desc: '逾期交租的滞纳金计算' },
+      { id: 'repair_responsibility', label: '维修责任划分', desc: '房屋设施损坏由谁维修' }
+    ]
+  },
+  {
+    category: '房屋使用',
+    icon: '🏠',
+    items: [
+      { id: 'sublet_allowed', label: '是否允许转租', desc: '能否转租或合租' },
+      { id: 'pet_allowed', label: '是否允许养宠物', desc: '宠物饲养规定' },
+      { id: 'decoration_allowed', label: '是否允许装修', desc: '能否对房屋进行改造' },
+      { id: 'smoking_allowed', label: '是否允许吸烟', desc: '室内吸烟规定' }
+    ]
+  },
+  {
+    category: '其他重要事项',
+    icon: '📝',
+    items: [
+      { id: 'lease_term', label: '租赁期限明确', desc: '起止日期、续租约定' },
+      { id: 'payment_method', label: '付款方式', desc: '月付/季付/年付，转账方式' },
+      { id: 'key_delivery', label: '钥匙交接', desc: '钥匙数量、门禁卡等' },
+      { id: 'inventory', label: '物品清单', desc: '家具电器清单及状态' },
+      { id: 'insurance', label: '房屋保险', desc: '房屋及财产保险谁购买' }
+    ]
+  }
+];
+
 const CARPOOL_TYPES = [
   { value: 'car_seeking', label: '车找人', icon: '🚗', color: '#3B82F6' },
   { value: 'person_seeking', label: '人找车', icon: '🙋', color: '#10B981' },
@@ -3210,6 +3298,11 @@ module.exports = {
   RENTAL_STATUS,
   RENTAL_TABS,
   RENTAL_SORT_OPTIONS,
+  RENTAL_VIEWING_STATUS,
+  RENTAL_VIEWING_STATUS_MAP,
+  RENTAL_VIEWING_TABS,
+  RENTAL_VIEWING_TIME_SLOTS,
+  RENTAL_CONTRACT_CHECKLIST,
   CARPOOL_TYPES,
   CARPOOL_STATUS,
   CARPOOL_TABS,

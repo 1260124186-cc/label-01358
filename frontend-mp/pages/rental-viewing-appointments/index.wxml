@@ -1,0 +1,93 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="tabs">
+    <view
+      class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="value"
+      data-value="{{item.value}}"
+      bindtap="onTabChange"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <view class="list-container" wx:if="{{list.length > 0}}">
+    <view
+      class="appointment-card"
+      wx:for="{{list}}"
+      wx:key="id"
+      data-item="{{item}}"
+      bindtap="onItemTap"
+    >
+      <view class="card-header">
+        <view class="house-info">
+          <image class="house-cover" src="{{item.houseCover}}" mode="aspectFill"/>
+          <view class="house-detail">
+            <view class="house-title">{{item.houseTitle}}</view>
+            <view class="house-address">{{item.houseAddress}}</view>
+          </view>
+        </view>
+        <view class="status-badge" style="background-color: {{item.statusColor}}20; color: {{item.statusColor}}">
+          {{item.statusText}}
+        </view>
+      </view>
+
+      <view class="card-body">
+        <view class="info-row">
+          <text class="info-icon">📅</text>
+          <text class="info-label">看房时间</text>
+          <text class="info-value">{{item.timeText}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.message}}">
+          <text class="info-icon">💬</text>
+          <text class="info-label">留言</text>
+          <text class="info-value message">{{item.message}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-icon">📞</text>
+          <text class="info-label">联系电话</text>
+          <text class="info-value">{{item.userPhone}}</text>
+        </view>
+      </view>
+
+      <view class="card-footer">
+        <text class="create-time">预约时间：{{item.createTimeText}}</text>
+        <view class="card-actions">
+          <view
+            class="action-btn outline"
+            wx:if="{{item.status === 'pending' || item.status === 'confirmed'}}"
+            catchtap="onCancelAppointment"
+            data-item="{{item}}"
+          >
+            取消预约
+          </view>
+          <view
+            class="action-btn primary"
+            wx:if="{{item.status === 'confirmed'}}"
+            catchtap="onGoToCheckIn"
+            data-item="{{item}}"
+          >
+            扫码签到
+          </view>
+        </view>
+      </view>
+
+      <view class="reject-reason" wx:if="{{item.status === 'rejected' && item.rejectReason}}">
+        <text class="reject-label">拒绝原因：</text>
+        <text class="reject-text">{{item.rejectReason}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-container" wx:elif="{{!loading}}">
+    <view class="empty-icon">📅</view>
+    <view class="empty-text">暂无看房预约</view>
+    <view class="empty-desc">去房源详情页预约看房吧</view>
+  </view>
+
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>

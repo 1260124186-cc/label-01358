@@ -1,0 +1,168 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="tabs">
+    <view
+      class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="value"
+      data-value="{{item.value}}"
+      bindtap="onTabChange"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <view class="list-container" wx:if="{{list.length > 0}}">
+    <view
+      class="appointment-card"
+      wx:for="{{list}}"
+      wx:key="id"
+      data-item="{{item}}"
+      bindtap="onItemTap"
+    >
+      <view class="card-header">
+        <view class="user-info">
+          <view class="user-avatar">{{item.userName[0]}}</view>
+          <view class="user-detail">
+            <view class="user-name">{{item.userName}}</view>
+            <view class="house-title">{{item.houseTitle}}</view>
+          </view>
+        </view>
+        <view class="status-badge" style="background-color: {{item.statusColor}}20; color: {{item.statusColor}}">
+          {{item.statusText}}
+        </view>
+      </view>
+
+      <view class="card-body">
+        <view class="info-row">
+          <text class="info-icon">📅</text>
+          <text class="info-label">看房时间</text>
+          <text class="info-value">{{item.timeText}}</text>
+        </view>
+        <view class="info-row" wx:if="{{item.message}}">
+          <text class="info-icon">💬</text>
+          <text class="info-label">留言</text>
+          <text class="info-value message">{{item.message}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-icon">📞</text>
+          <text class="info-label">联系电话</text>
+          <text class="info-value link" catchtap="onCallUser" data-item="{{item}}">{{item.userPhone}}</text>
+        </view>
+      </view>
+
+      <view class="card-footer">
+        <text class="create-time">预约时间：{{item.createTimeText}}</text>
+        <view class="card-actions">
+          <view
+            class="action-btn outline"
+            wx:if="{{item.status === 'pending'}}"
+            catchtap="onShowRejectModal"
+            data-item="{{item}}"
+          >
+            拒绝
+          </view>
+          <view
+            class="action-btn outline"
+            wx:if="{{item.status === 'pending' || item.status === 'confirmed'}}"
+            catchtap="onShowRescheduleModal"
+            data-item="{{item}}"
+          >
+            改期
+          </view>
+          <view
+            class="action-btn primary"
+            wx:if="{{item.status === 'pending'}}"
+            catchtap="onConfirm"
+            data-item="{{item}}"
+          >
+            确认
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-container" wx:elif="{{!loading}}">
+    <view class="empty-icon">📋</view>
+    <view class="empty-text">暂无预约记录</view>
+  </view>
+
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <view class="modal-mask {{showRejectModal ? 'show' : ''}}" bindtap="onHideRejectModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">拒绝预约</text>
+        <text class="modal-close" bindtap="onHideRejectModal">×</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-group">
+          <view class="form-label">拒绝原因</view>
+          <textarea
+            class="form-textarea"
+            placeholder="请填写拒绝原因"
+            value="{{rejectReason}}"
+            bindinput="onRejectReasonInput"
+            maxlength="200"
+            auto-height
+          />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="onHideRejectModal">取消</view>
+        <view class="modal-btn confirm" bindtap="onSubmitReject">确认拒绝</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{showRescheduleModal ? 'show' : ''}}" bindtap="onHideRescheduleModal">
+    <view class="modal-content reschedule-modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">改期</text>
+        <text class="modal-close" bindtap="onHideRescheduleModal">×</text>
+      </view>
+      <scroll-view class="modal-body" scroll-y="{{true}}">
+        <view class="form-group">
+          <view class="form-label">选择日期</view>
+          <scroll-view class="date-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
+            <view class="date-list">
+              <view
+                class="date-item {{dateIndex === index ? 'active' : ''}}"
+                wx:for="{{dateList}}"
+                wx:key="value"
+                data-index="{{index}}"
+                bindtap="onRescheduleDateSelect"
+              >
+                <text class="date-label">{{item.label}}</text>
+                <text class="date-sub">{{item.subLabel}}</text>
+              </view>
+            </view>
+          </scroll-view>
+        </view>
+
+        <view class="form-group">
+          <view class="form-label">选择时间段</view>
+          <view class="time-slot-grid">
+            <view
+              class="time-slot-item {{timeSlotIndex === index ? 'active' : ''}}"
+              wx:for="{{timeSlots}}"
+              wx:key="value"
+              data-index="{{index}}"
+              bindtap="onRescheduleTimeSelect"
+            >
+              {{item.label}}
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="onHideRescheduleModal">取消</view>
+        <view class="modal-btn confirm" bindtap="onSubmitReschedule">确认改期</view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,120 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="progress-section">
+    <view class="progress-header">
+      <view class="progress-info">
+        <text class="progress-title">合同要点检查进度</text>
+        <text class="progress-desc">已完成 {{progress.checked}}/{{progress.total}} 项</text>
+      </view>
+      <view class="reset-btn" bindtap="onReset">
+        <text class="reset-icon">↺</text>
+        <text class="reset-text">重置</text>
+      </view>
+    </view>
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{progress.percentage}}%"></view>
+    </view>
+    <view class="progress-percent">{{progress.percentage}}%</view>
+  </view>
+
+  <view class="checklist-container">
+    <view
+      class="category-card"
+      wx:for="{{checklist}}"
+      wx:for-item="category"
+      wx:for-index="categoryIndex"
+      wx:key="category"
+    >
+      <view class="category-header" bindtap="onToggleCategory" data-index="{{categoryIndex}}">
+        <view class="category-title">
+          <text class="category-icon">{{category.icon}}</text>
+          <text class="category-name">{{category.category}}</text>
+        </view>
+        <view class="category-right">
+          <text class="category-count">
+            {{category.items.filter(i => i.checked).length}}/{{category.items.length}}
+          </text>
+          <text class="category-arrow {{expandedCategories[categoryIndex] ? 'expanded' : ''}}">›</text>
+        </view>
+      </view>
+
+      <view class="category-items" wx:if="{{expandedCategories[categoryIndex]}}">
+        <view
+          class="check-item {{item.checked ? 'checked' : ''}}"
+          wx:for="{{category.items}}"
+          wx:for-item="item"
+          wx:for-index="itemIndex"
+          wx:key="id"
+        >
+          <view
+            class="check-box"
+            catchtap="onToggleItem"
+            data-category-index="{{categoryIndex}}"
+            data-item-index="{{itemIndex}}"
+          >
+            <text class="check-icon" wx:if="{{item.checked}}">✓</text>
+          </view>
+          <view class="item-content">
+            <view class="item-label">{{item.label}}</view>
+            <view class="item-desc">{{item.desc}}</view>
+            <view class="item-note" wx:if="{{item.note}}" catchtap="onShowNoteModal" data-category-index="{{categoryIndex}}" data-item-index="{{itemIndex}}">
+              <text class="note-icon">📝</text>
+              <text class="note-text">{{item.note}}</text>
+            </view>
+          </view>
+          <view
+            class="note-btn"
+            catchtap="onShowNoteModal"
+            data-category-index="{{categoryIndex}}"
+            data-item-index="{{itemIndex}}"
+          >
+            <text class="note-btn-icon">{{item.note ? '📝' : '✏️'}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tips-section">
+    <view class="tips-title">💡 温馨提示</view>
+    <view class="tips-list">
+      <view class="tip-item">
+        <text class="tip-dot">•</text>
+        <text class="tip-text">签订合同前请仔细核对所有条款</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-dot">•</text>
+        <text class="tip-text">建议拍照留存房屋现状及水电表底数</text>
+      </view>
+      <view class="tip-item">
+        <text class="tip-dot">•</text>
+        <text class="tip-text">保留好押金收据、转账记录等凭证</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+
+  <view class="modal-mask {{showNoteModal ? 'show' : ''}}" bindtap="onHideNoteModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">添加备注</text>
+        <text class="modal-close" bindtap="onHideNoteModal">×</text>
+      </view>
+      <view class="modal-body">
+        <textarea
+          class="form-textarea"
+          placeholder="记录您的备注信息..."
+          value="{{currentNote}}"
+          bindinput="onNoteInput"
+          maxlength="200"
+          auto-height
+        />
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn cancel" bindtap="onHideNoteModal">取消</view>
+        <view class="modal-btn confirm" bindtap="onSaveNote">保存</view>
+      </view>
+    </view>
+  </view>
+</view>
