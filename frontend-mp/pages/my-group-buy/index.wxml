@@ -1,0 +1,93 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="tab-section">
+    <scroll-view class="tab-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="tabs">
+        <view
+          class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabChange"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="points-section" wx:if="{{currentTab === 'all'}}">
+    <view class="points-card">
+      <view class="points-info">
+        <text class="points-label">我的积分</text>
+        <view class="points-value-wrap">
+          <text class="points-value">{{userPoints}}</text>
+          <text class="points-unit">积分</text>
+        </view>
+      </view>
+      <view class="points-btn" bindtap="onViewTransactions">
+        <text>积分明细</text>
+        <text class="btn-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{list.length > 0}}">
+      <view
+        class="groupbuy-card"
+        wx:for="{{list}}"
+        wx:key="id"
+        hover-class="groupbuy-card-hover"
+        bindtap="onItemTap"
+        data-item="{{item}}"
+      >
+        <view class="card-header">
+          <view class="role-tag {{item.role === 'publisher' ? 'publisher' : 'member'}}">
+            {{item.role === 'publisher' ? '我发起的' : '我参与的'}}
+          </view>
+          <view class="status-badge" style="background-color: {{item.statusColor}}15; color: {{item.statusColor}}">
+            {{item.statusText}}
+          </view>
+        </view>
+
+        <view class="product-name">{{item.productName}}</view>
+
+        <view class="progress-section">
+          <view class="progress-info">
+            <text class="progress-count">{{item.joinedCount}}/{{item.minCount}}件</text>
+            <text class="progress-hint" wx:if="{{item.status === 'recruiting'}}">还差{{item.remainingCount}}件成团</text>
+          </view>
+          <view class="progress-bar-wrap">
+            <view class="progress-bar" style="width: {{item.progressPercent}}%;"></view>
+          </view>
+        </view>
+
+        <view class="my-order-info" wx:if="{{item.role === 'member'}}">
+          <text>我购买了 {{item.myQuantity}} 件</text>
+          <text class="order-amount">¥{{item.myAmount}}</text>
+        </view>
+
+        <view class="card-footer">
+          <view class="price-info">
+            <text class="price-currency">¥</text>
+            <text class="price-value">{{item.unitPrice}}</text>
+            <text class="price-unit">/件</text>
+          </view>
+          <view class="card-meta">
+            <text class="meta-text">{{item.timeText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{!loading && list.length === 0}}"
+      text="暂无团购记录"
+    />
+  </scroll-view>
+</view>

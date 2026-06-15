@@ -158,7 +158,11 @@ const STORAGE_KEYS = {
   TUTOR_APPOINTMENT_LIST: 'tutorAppointmentList',
   TUTOR_REVIEW_LIST: 'tutorReviewList',
   TUTOR_CREDIT_BIND_LIST: 'tutorCreditBindList',
-  TUTOR_MATCH_HISTORY: 'tutorMatchHistory'
+  TUTOR_MATCH_HISTORY: 'tutorMatchHistory',
+
+  GROUP_BUY_LIST: 'groupBuyList',
+  GROUP_BUY_ORDER_LIST: 'groupBuyOrderList',
+  GROUP_BUY_NOTIFICATIONS: 'groupBuyNotifications'
 };
 
 /**

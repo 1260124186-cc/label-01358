@@ -1,0 +1,202 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <scroll-view class="form-scroll" scroll-y="{{true}}">
+    <view class="form-container">
+      <view class="form-section">
+        <view class="section-title">商品信息</view>
+
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>商品名称
+          </view>
+          <input
+            class="form-input"
+            placeholder="请输入商品名称"
+            value="{{formData.productName}}"
+            bindinput="onInputChange"
+            data-field="productName"
+            maxlength="50"
+          />
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">商品分类</view>
+          <picker
+            mode="selector"
+            range="{{categories}}"
+            range-key="label"
+            value="{{categoryIndex}}"
+            bindchange="onCategoryChange"
+          >
+            <view class="form-picker">
+              <text class="picker-text {{!formData.category ? 'placeholder' : ''}}">
+                {{categories[categoryIndex].label || '请选择分类'}}
+              </text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>单价（积分）
+          </view>
+          <input
+            class="form-input"
+            type="digit"
+            placeholder="请输入单价"
+            value="{{formData.unitPrice}}"
+            bindinput="onInputChange"
+            data-field="unitPrice"
+          />
+          <view class="form-tip">参团用户将预付此积分</view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>商品描述
+          </view>
+          <textarea
+            class="form-textarea"
+            placeholder="请输入商品描述，让大家知道团购亮点"
+            value="{{formData.description}}"
+            bindinput="onInputChange"
+            data-field="description"
+            maxlength="200"
+            auto-height="{{true}}"
+          />
+        </view>
+      </view>
+
+      <view class="form-section">
+        <view class="section-title">拼团规则</view>
+
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>成团人数
+          </view>
+          <view class="stepper-wrap">
+            <view
+              class="stepper-btn"
+              bindtap="onMinCountMinus"
+            >－</view>
+            <input
+              class="stepper-input"
+              type="number"
+              value="{{formData.minCount}}"
+              bindinput="onMinCountInput"
+            />
+            <view
+              class="stepper-btn"
+              bindtap="onMinCountPlus"
+            >＋</view>
+            <text class="stepper-tip">人</text>
+          </view>
+          <view class="form-tip">达到此人数即可成团</view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>最大购买数
+          </view>
+          <view class="stepper-wrap">
+            <view
+              class="stepper-btn"
+              bindtap="onMaxCountMinus"
+            >－</view>
+            <input
+              class="stepper-input"
+              type="number"
+              value="{{formData.maxCount}}"
+              bindinput="onMaxCountInput"
+            />
+            <view
+              class="stepper-btn"
+              bindtap="onMaxCountPlus"
+            >＋</view>
+            <text class="stepper-tip">件</text>
+          </view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>截止时间
+          </view>
+          <picker
+            mode="multiSelector"
+            value="{{deadlineValue}}"
+            range="{{deadlineRange}}"
+            bindchange="onDeadlineChange"
+            bindcolumnchange="onDeadlineColumnChange"
+          >
+            <view class="form-picker">
+              <text class="picker-text {{!deadlineText ? 'placeholder' : ''}}">
+                {{deadlineText || '请选择截止时间'}}
+              </text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+      </view>
+
+      <view class="form-section">
+        <view class="section-title">取货信息</view>
+
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>取货地点
+          </view>
+          <picker
+            mode="selector"
+            range="{{pickupPoints}}"
+            range-key="label"
+            value="{{pickupPointIndex}}"
+            bindchange="onPickupPointChange"
+          >
+            <view class="form-picker">
+              <text class="picker-text {{!formData.pickupPoint ? 'placeholder' : ''}}">
+                {{pickupPoints[pickupPointIndex].label || '请选择取货地点'}}
+              </text>
+              <text class="picker-arrow">▼</text>
+            </view>
+          </picker>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">取货时间说明</view>
+          <input
+            class="form-input"
+            placeholder="如：明天下午14:00-17:00"
+            value="{{formData.pickupTime}}"
+            bindinput="onInputChange"
+            data-field="pickupTime"
+            maxlength="50"
+          />
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">备注说明</view>
+          <textarea
+            class="form-textarea"
+            placeholder="选填，如口味、数量限制等"
+            value="{{formData.remark}}"
+            bindinput="onInputChange"
+            data-field="remark"
+            maxlength="100"
+            auto-height="{{true}}"
+          />
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="submit-bar">
+    <button
+      class="submit-btn"
+      hover-class="submit-btn-hover"
+      bindtap="onSubmit"
+      loading="{{submitting}}"
+      disabled="{{submitting}}"
+    >立即发布</button>
+  </view>
+</view>

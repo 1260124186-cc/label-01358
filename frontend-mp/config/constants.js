@@ -578,6 +578,63 @@ const CARPOOL_SORT_OPTIONS = [
   { value: 'seats', label: '剩余座位多', field: 'remainingSeats', order: 'desc' }
 ];
 
+const GROUP_BUY_STATUS = [
+  { value: 'recruiting', label: '拼团中', color: '#10B981' },
+  { value: 'success', label: '已成团', color: '#3B82F6' },
+  { value: 'failed', label: '拼团失败', color: '#6B7280' },
+  { value: 'ended', label: '已结束', color: '#F53F3F' }
+];
+
+const GROUP_BUY_STATUS_MAP = GROUP_BUY_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const GROUP_BUY_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'recruiting', label: '拼团中' },
+  { value: 'success', label: '已成团' },
+  { value: 'mine', label: '我的' }
+];
+
+const GROUP_BUY_CATEGORIES = [
+  { value: 'food', label: '美食零食', icon: '🍜' },
+  { value: 'drink', label: '奶茶饮品', icon: '🧋' },
+  { value: 'fruit', label: '水果生鲜', icon: '🍎' },
+  { value: 'daily', label: '生活用品', icon: '🧴' },
+  { value: 'stationery', label: '文具办公', icon: '📚' },
+  { value: 'other', label: '其他', icon: '🛒' }
+];
+
+const GROUP_BUY_PICKUP_POINTS = [
+  { value: 'dorm_east', label: '东宿舍区门口' },
+  { value: 'dorm_west', label: '西宿舍区门口' },
+  { value: 'dorm_south', label: '南宿舍区门口' },
+  { value: 'dorm_north', label: '北宿舍区门口' },
+  { value: 'library', label: '图书馆门口' },
+  { value: 'canteen_1', label: '一食堂门口' },
+  { value: 'canteen_2', label: '二食堂门口' },
+  { value: 'main_gate', label: '学校正门' },
+  { value: 'south_gate', label: '学校南门' },
+  { value: 'teaching_building', label: '教学楼大厅' }
+];
+
+const GROUP_BUY_SORT_OPTIONS = [
+  { value: 'latest', label: '最新发布', field: 'createTime', order: 'desc' },
+  { value: 'deadline_asc', label: '即将截止', field: 'deadline', order: 'asc' },
+  { value: 'price_asc', label: '价格低到高', field: 'unitPrice', order: 'asc' },
+  { value: 'price_desc', label: '价格高到低', field: 'unitPrice', order: 'desc' },
+  { value: 'popular', label: '最热门', field: 'joinedCount', order: 'desc' }
+];
+
+const GROUP_BUY_PRICE_RANGES = [
+  { value: '0-10', label: '10元以下', min: 0, max: 10 },
+  { value: '10-30', label: '10-30元', min: 10, max: 30 },
+  { value: '30-50', label: '30-50元', min: 30, max: 50 },
+  { value: '50-100', label: '50-100元', min: 50, max: 100 },
+  { value: '100+', label: '100元以上', min: 100, max: Infinity }
+];
+
 const CANTEEN_CROWD_LEVELS = [
   { value: 'idle', label: '空闲', color: '#52C41A', desc: '用餐人数较少，无需排队' },
   { value: 'moderate', label: '适中', color: '#FAAD14', desc: '用餐人数适中，稍等片刻' },
@@ -2530,6 +2587,13 @@ module.exports = {
   CARPOOL_DESTINATIONS,
   CARPOOL_PRICE_RANGES,
   CARPOOL_SORT_OPTIONS,
+  GROUP_BUY_STATUS,
+  GROUP_BUY_STATUS_MAP,
+  GROUP_BUY_TABS,
+  GROUP_BUY_CATEGORIES,
+  GROUP_BUY_PICKUP_POINTS,
+  GROUP_BUY_SORT_OPTIONS,
+  GROUP_BUY_PRICE_RANGES,
   CANTEEN_CROWD_LEVELS,
   CANTEEN_TIME_SEGMENTS,
   DISH_TAGS,

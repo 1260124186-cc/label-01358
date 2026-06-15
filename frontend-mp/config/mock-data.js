@@ -3511,6 +3511,161 @@ const MOCK_RENTAL_HOUSES = [
   }
 ];
 
+const MOCK_GROUP_BUYS = [
+  {
+    productName: '网红珍珠奶茶',
+    description: '校门口新开的奶茶店团购，招牌珍珠奶茶，香浓丝滑，Q弹珍珠。5杯成团立减10元！',
+    category: 'drink',
+    unitPrice: 12,
+    minCount: 5,
+    maxCount: 20,
+    joinedCount: 3,
+    deadline: Date.now() + 86400000 * 2,
+    pickupPoint: 'main_gate',
+    pickupTime: '今天下午16:00-18:00',
+    remark: '下单后请备注甜度和冰度',
+    publisherId: 'user_001',
+    publisherName: '李同学',
+    publisherAvatar: '',
+    status: 'recruiting',
+    views: 128,
+    members: [
+      { userId: 'user_001', userName: '李同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 5, paid: true },
+      { userId: 'user_002', userName: '王同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 3, paid: true },
+      { userId: 'user_003', userName: '张同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000, paid: true }
+    ]
+  },
+  {
+    productName: '新鲜草莓礼盒装',
+    description: '丹东99草莓，新鲜直采，3斤礼盒装，酸甜可口，送女友必备！10盒成团享8折优惠。',
+    category: 'fruit',
+    unitPrice: 68,
+    minCount: 10,
+    maxCount: 30,
+    joinedCount: 7,
+    deadline: Date.now() + 86400000,
+    pickupPoint: 'dorm_east',
+    pickupTime: '明天下午14:00-17:00',
+    remark: '数量有限，先到先得',
+    publisherId: 'user_004',
+    publisherName: '陈同学',
+    publisherAvatar: '',
+    status: 'recruiting',
+    views: 256,
+    members: [
+      { userId: 'user_004', userName: '陈同学', avatar: '', quantity: 2, joinTime: Date.now() - 3600000 * 10, paid: true },
+      { userId: 'user_005', userName: '刘同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 8, paid: true },
+      { userId: 'user_006', userName: '赵同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 6, paid: true },
+      { userId: 'user_007', userName: '孙同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 4, paid: true },
+      { userId: 'user_008', userName: '周同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 2, paid: true },
+      { userId: 'user_009', userName: '吴同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000, paid: true },
+      { userId: 'user_010', userName: '郑同学', avatar: '', quantity: 1, joinTime: Date.now() - 1800000, paid: true }
+    ]
+  },
+  {
+    productName: '宿舍必备零食大礼包',
+    description: '精选10款热销零食组合，薯片、辣条、饼干、坚果应有尽有，寝室追剧必备！',
+    category: 'food',
+    unitPrice: 39,
+    minCount: 8,
+    maxCount: 50,
+    joinedCount: 12,
+    deadline: Date.now() - 3600000 * 2,
+    pickupPoint: 'canteen_1',
+    pickupTime: '今天晚上19:00-21:00',
+    remark: '已成团！到货后通知取货',
+    publisherId: 'user_011',
+    publisherName: '钱同学',
+    publisherAvatar: '',
+    status: 'success',
+    views: 342,
+    members: [
+      { userId: 'user_011', userName: '钱同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 24, paid: true },
+      { userId: 'user_001', userName: '李同学', avatar: '', quantity: 2, joinTime: Date.now() - 3600000 * 20, paid: true },
+      { userId: 'user_002', userName: '王同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 18, paid: true },
+      { userId: 'user_003', userName: '张同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 15, paid: true },
+      { userId: 'user_012', userName: '冯同学', avatar: '', quantity: 3, joinTime: Date.now() - 3600000 * 12, paid: true },
+      { userId: 'user_013', userName: '褚同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 10, paid: true },
+      { userId: 'user_014', userName: '卫同学', avatar: '', quantity: 2, joinTime: Date.now() - 3600000 * 8, paid: true },
+      { userId: 'user_015', userName: '蒋同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 5, paid: true }
+    ]
+  },
+  {
+    productName: 'A4打印纸500张/包',
+    description: '优质A4复印纸，70g加厚，打印清晰不卡纸。宿舍合买更划算，10包成团！',
+    category: 'stationery',
+    unitPrice: 18,
+    minCount: 10,
+    maxCount: 30,
+    joinedCount: 4,
+    deadline: Date.now() - 86400000,
+    pickupPoint: 'teaching_building',
+    pickupTime: '昨天已结束',
+    remark: '',
+    publisherId: 'user_016',
+    publisherName: '沈同学',
+    publisherAvatar: '',
+    status: 'failed',
+    views: 89,
+    members: [
+      { userId: 'user_016', userName: '沈同学', avatar: '', quantity: 2, joinTime: Date.now() - 3600000 * 48, paid: false },
+      { userId: 'user_017', userName: '韩同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 40, paid: false },
+      { userId: 'user_018', userName: '杨同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 30, paid: false }
+    ]
+  },
+  {
+    productName: '网红洗衣液5kg装',
+    description: '深层清洁，持久留香，5kg家庭装够用3个月！宿舍拼单享团购价。',
+    category: 'daily',
+    unitPrice: 45,
+    minCount: 6,
+    maxCount: 20,
+    joinedCount: 5,
+    deadline: Date.now() + 86400000 * 3,
+    pickupPoint: 'dorm_west',
+    pickupTime: '后天中午12:00-14:00',
+    remark: '薰衣草香/樱花香可选，下单请备注',
+    publisherId: 'user_019',
+    publisherName: '朱同学',
+    publisherAvatar: '',
+    status: 'recruiting',
+    views: 156,
+    members: [
+      { userId: 'user_019', userName: '朱同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 6, paid: true },
+      { userId: 'user_020', userName: '秦同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 5, paid: true },
+      { userId: 'user_021', userName: '尤同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 4, paid: true },
+      { userId: 'user_022', userName: '许同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 2, paid: true },
+      { userId: 'user_023', userName: '何同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000, paid: true }
+    ]
+  },
+  {
+    productName: '手抓饼家庭装20片',
+    description: '正宗台湾手抓饼，早餐快手必备，5分钟搞定！20片超值装，宿舍合买更划算。',
+    category: 'food',
+    unitPrice: 25,
+    minCount: 5,
+    maxCount: 30,
+    joinedCount: 8,
+    deadline: Date.now() + 86400000 * 1.5,
+    pickupPoint: 'dorm_south',
+    pickupTime: '明天上午10:00-12:00',
+    remark: '冷冻保存，请及时取货',
+    publisherId: 'user_024',
+    publisherName: '吕同学',
+    publisherAvatar: '',
+    status: 'recruiting',
+    views: 198,
+    members: [
+      { userId: 'user_024', userName: '吕同学', avatar: '', quantity: 2, joinTime: Date.now() - 3600000 * 8, paid: true },
+      { userId: 'user_025', userName: '施同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 7, paid: true },
+      { userId: 'user_026', userName: '张同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 6, paid: true },
+      { userId: 'user_027', userName: '孔同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 4, paid: true },
+      { userId: 'user_028', userName: '曹同学', avatar: '', quantity: 2, joinTime: Date.now() - 3600000 * 3, paid: true },
+      { userId: 'user_029', userName: '严同学', avatar: '', quantity: 1, joinTime: Date.now() - 3600000 * 2, paid: true }
+    ]
+  }
+];
+
 const MOCK_CARPOOLS = [
   {
     type: 'car_seeking',
@@ -4633,6 +4788,7 @@ const _firstExports = {
   MOCK_ERRAND_ADDRESSES,
   MOCK_RENTAL_HOUSES,
   MOCK_CARPOOLS,
+  MOCK_GROUP_BUYS,
   WEATHER_DATA,
   EMERGENCY_PHONES,
   PHONEBOOK_CATEGORIES,

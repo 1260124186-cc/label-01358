@@ -1,0 +1,188 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{!loading && groupBuy}}">
+  <scroll-view class="content-scroll" scroll-y="{{true}}">
+    <view class="product-card">
+      <view class="product-header">
+        <view class="category-badge">
+          <text class="category-icon">{{groupBuy.categoryIcon}}</text>
+          <text class="category-text">{{groupBuy.categoryText}}</text>
+        </view>
+        <view class="status-badge" style="background-color: {{groupBuy.statusColor}}15; color: {{groupBuy.statusColor}}">
+          {{groupBuy.statusText}}
+        </view>
+      </view>
+
+      <view class="product-name">{{groupBuy.productName}}</view>
+      <view class="product-desc">{{groupBuy.description}}</view>
+
+      <view class="product-price-row">
+        <view class="price-info">
+          <text class="price-currency">¥</text>
+          <text class="price-value">{{groupBuy.unitPrice}}</text>
+          <text class="price-unit">/件</text>
+        </view>
+        <view class="views-info">
+          <text>👀 {{groupBuy.views}} 浏览</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="progress-card">
+      <view class="progress-title">
+        <text class="progress-title-text">拼团进度</text>
+        <text class="progress-remaining" wx:if="{{groupBuy.status === 'recruiting'}}">还差{{groupBuy.remainingCount}}件成团</text>
+        <text class="progress-success" wx:if="{{groupBuy.status === 'success'}}">✅ 已成功成团</text>
+        <text class="progress-failed" wx:if="{{groupBuy.status === 'failed'}}">❌ 未成团，积分已退回</text>
+      </view>
+
+      <view class="progress-bar-wrap">
+        <view class="progress-bar" style="width: {{groupBuy.progressPercent}}%;"></view>
+      </view>
+
+      <view class="progress-info-row">
+        <view class="progress-item">
+          <text class="progress-num">{{groupBuy.joinedCount}}</text>
+          <text class="progress-label">已参团</text>
+        </view>
+        <view class="progress-divider"></view>
+        <view class="progress-item">
+          <text class="progress-num">{{groupBuy.minCount}}</text>
+          <text class="progress-label">成团件数</text>
+        </view>
+        <view class="progress-divider"></view>
+        <view class="progress-item">
+          <text class="progress-num">{{groupBuy.maxCount}}</text>
+          <text class="progress-label">限购件数</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-card">
+      <view class="info-row">
+        <view class="info-icon">⏰</view>
+        <view class="info-content">
+          <view class="info-label">截止时间</view>
+          <view class="info-value">{{groupBuy.deadlineFormatted}}</view>
+          <view class="info-sub" wx:if="{{groupBuy.status === 'recruiting'}}">{{groupBuy.countdownText}}</view>
+        </view>
+      </view>
+
+      <view class="info-row">
+        <view class="info-icon">📍</view>
+        <view class="info-content">
+          <view class="info-label">取货地点</view>
+          <view class="info-value">{{groupBuy.pickupPointText}}</view>
+        </view>
+      </view>
+
+      <view class="info-row" wx:if="{{groupBuy.pickupTime}}">
+        <view class="info-icon">🕒</view>
+        <view class="info-content">
+          <view class="info-label">取货时间</view>
+          <view class="info-value">{{groupBuy.pickupTime}}</view>
+        </view>
+      </view>
+
+      <view class="info-row" wx:if="{{groupBuy.remark}}">
+        <view class="info-icon">📝</view>
+        <view class="info-content">
+          <view class="info-label">备注</view>
+          <view class="info-value">{{groupBuy.remark}}</view>
+        </view>
+      </view>
+    </view>
+
+    <view class="members-card">
+      <view class="members-header">
+        <text class="members-title">参团成员 ({{groupBuy.members.length}}人)</text>
+      </view>
+
+      <view class="members-list">
+        <view class="member-item" wx:for="{{groupBuy.members}}" wx:key="userId">
+          <view class="member-avatar">
+            <text class="avatar-icon">👤</text>
+          </view>
+          <view class="member-info">
+            <view class="member-name">
+              {{item.userName}}
+              <text class="publisher-tag" wx:if="{{item.isPublisher}}">发起人</text>
+            </view>
+            <view class="member-quantity">购买 {{item.quantity}} 件</view>
+          </view>
+          <view class="member-status">
+            <text wx:if="{{item.paid}}" class="paid-tag">已预付</text>
+            <text wx:else class="unpaid-tag">未付款</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="publisher-card">
+      <view class="publisher-title">发起人</view>
+      <view class="publisher-row">
+        <view class="publisher-avatar">
+          <text class="avatar-icon">👤</text>
+        </view>
+        <view class="publisher-info">
+          <view class="publisher-name">{{groupBuy.publisherName}}</view>
+          <view class="publisher-time">发布于 {{groupBuy.timeText}}</view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="action-bar">
+    <block wx:if="{{isJoined}}">
+      <button
+        class="action-btn secondary"
+        hover-class="action-btn-hover"
+        bindtap="onLeaveGroup"
+        disabled="{{submitting || groupBuy.status === 'ended'}}"
+      >退出团购</button>
+    </block>
+    <block wx:elif="{{groupBuy.status === 'recruiting' && !isPublisher}}">
+      <view class="quantity-selector">
+        <view class="qty-btn" bindtap="onMinusQty">－</view>
+        <input
+          class="qty-input"
+          type="number"
+          value="{{quantity}}"
+          bindinput="onQtyInput"
+        />
+        <view class="qty-btn" bindtap="onPlusQty">＋</view>
+      </view>
+      <button
+        class="action-btn primary"
+        hover-class="action-btn-hover"
+        bindtap="onJoinGroup"
+        loading="{{submitting}}"
+        disabled="{{submitting}}"
+      >
+        参团预付 ¥{{totalCost}}
+      </button>
+    </block>
+    <block wx:elif="{{groupBuy.status === 'success' && !isJoined}}">
+      <button
+        class="action-btn disabled"
+        disabled="{{true}}"
+      >已结束</button>
+    </block>
+    <block wx:elif="{{groupBuy.status === 'failed' && !isJoined}}">
+      <button
+        class="action-btn disabled"
+        disabled="{{true}}"
+      >拼团失败</button>
+    </block>
+    <block wx:if="{{isPublisher}}">
+      <button
+        class="action-btn danger"
+        hover-class="action-btn-hover"
+        bindtap="onDeleteGroup"
+      >删除团购</button>
+    </block>
+  </view>
+</view>
+
+<view class="loading-wrap" wx:if="{{loading}}">
+  <view class="loading-text">加载中...</view>
+</view>

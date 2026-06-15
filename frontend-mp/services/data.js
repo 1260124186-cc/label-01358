@@ -1484,6 +1484,38 @@ function updateUserPoints(amount) {
   return newPoints;
 }
 
+function addPoints(amount, reason = '') {
+  const newPoints = updateUserPoints(amount);
+  const transactions = storage.get(STORAGE_KEYS.POINT_TRANSACTIONS) || [];
+  transactions.unshift({
+    id: 'txn_' + Date.now() + Math.random().toString(36).substr(2, 5),
+    type: 'earn',
+    amount,
+    reason,
+    balance: newPoints,
+    createTime: Date.now()
+  });
+  storage.set(STORAGE_KEYS.POINT_TRANSACTIONS, transactions.slice(0, 100));
+  return newPoints;
+}
+
+function deductPoints(amount, reason = '') {
+  const current = getUserPoints();
+  if (current < amount) return false;
+  const newPoints = updateUserPoints(-amount);
+  const transactions = storage.get(STORAGE_KEYS.POINT_TRANSACTIONS) || [];
+  transactions.unshift({
+    id: 'txn_' + Date.now() + Math.random().toString(36).substr(2, 5),
+    type: 'spend',
+    amount,
+    reason,
+    balance: newPoints,
+    createTime: Date.now()
+  });
+  storage.set(STORAGE_KEYS.POINT_TRANSACTIONS, transactions.slice(0, 100));
+  return true;
+}
+
 function grantRewardPoints(responderId, points) {
   const app = getApp();
   const currentUser = app.globalData.userInfo || {};
@@ -2879,6 +2911,328 @@ function leaveCarpool(carpoolId) {
   return { success: true };
 }function updateCarpoolStatus(carpoolId, status) {
   return updateCarpool(carpoolId, { status });
+}
+
+// ==================== 团购拼单模块 ====================
+
+let groupBuyInitialized = false;
+
+function initGroupBuyData() {
+  if (groupBuyInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.GROUP_BUY_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const groupBuys = mockData.MOCK_GROUP_BUYS.map((item, index) => ({
+      id: 'mock_gb_' + index + '_' + now,
+      ...item,
+      createTime: now - (index + 1) * 86400000,
+      updateTime: now - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.GROUP_BUY_LIST, groupBuys);
+  }
+  groupBuyInitialized = true;
+}
+
+function checkAndUpdateGroupBuyStatus(groupBuyId) {
+  const groupBuy = getGroupBuyDetail(groupBuyId);
+  if (!groupBuy) return;
+
+  const now = Date.now();
+  const deadline = new Date(groupBuy.deadline).getTime();
+
+  if (groupBuy.status === 'recruiting') {
+    if (now > deadline) {
+      if (groupBuy.joinedCount >= groupBuy.minCount) {
+        updateGroupBuy(groupBuyId, { status: 'success' });
+        addGroupBuyNotification(groupBuyId, {
+          type: 'success',
+          title: '团购成团啦！',
+          content: `「${groupBuy.productName}」已成功成团，请留意取货通知。`
+        });
+      } else {
+        updateGroupBuy(groupBuyId, { status: 'failed' });
+        addGroupBuyNotification(groupBuyId, {
+          type: 'failed',
+          title: '团购流团了',
+          content: `「${groupBuy.productName}」未达到成团人数，积分将自动退回。`
+        });
+      }
+    } else if (groupBuy.joinedCount >= groupBuy.minCount) {
+      updateGroupBuy(groupBuyId, { status: 'success' });
+      addGroupBuyNotification(groupBuyId, {
+        type: 'success',
+        title: '团购成团啦！',
+        content: `「${groupBuy.productName}」已成功成团，请留意取货通知。`
+      });
+    }
+  }
+}
+
+function getGroupBuyList(filters = {}) {
+  initGroupBuyData();
+  let list = storage.getList(STORAGE_KEYS.GROUP_BUY_LIST);
+
+  list.forEach(item => checkAndUpdateGroupBuyStatus(item.id));
+  list = storage.getList(STORAGE_KEYS.GROUP_BUY_LIST);
+
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+
+  if (filters.type === 'mine') {
+    list = list.filter(item =>
+      item.publisherId === userId ||
+      (item.members || []).some(m => m.userId === userId)
+    );
+  } else if (filters.status && filters.status !== 'all') {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  if (filters.category && filters.category !== 'all') {
+    list = list.filter(item => item.category === filters.category);
+  }
+
+  if (filters.keyword) {
+    const keyword = filters.keyword.toLowerCase();
+    list = list.filter(item =>
+      item.productName.toLowerCase().includes(keyword) ||
+      (item.description || '').toLowerCase().includes(keyword)
+    );
+  }
+
+  if (filters.minPrice !== undefined) {
+    list = list.filter(item => item.unitPrice >= filters.minPrice);
+  }
+  if (filters.maxPrice !== undefined) {
+    list = list.filter(item => item.unitPrice <= filters.maxPrice);
+  }
+
+  if (filters.sort) {
+    const sortInfo = constants.GROUP_BUY_SORT_OPTIONS.find(s => s.value === filters.sort);
+    if (sortInfo) {
+      list.sort((a, b) => {
+        let va = a[sortInfo.field];
+        let vb = b[sortInfo.field];
+        if (typeof va === 'string') va = va.toLowerCase();
+        if (typeof vb === 'string') vb = vb.toLowerCase();
+        if (sortInfo.order === 'asc') {
+          return va > vb ? 1 : -1;
+        } else {
+          return va < vb ? 1 : -1;
+        }
+      });
+    }
+  }
+
+  return list;
+}
+
+function getGroupBuyDetail(id) {
+  initGroupBuyData();
+  checkAndUpdateGroupBuyStatus(id);
+  const list = storage.getList(STORAGE_KEYS.GROUP_BUY_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function publishGroupBuy(data) {
+  initGroupBuyData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+  const userName = userInfo.nickName || '匿名用户';
+
+  const newItem = {
+    id: 'gb_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+    ...data,
+    publisherId: userId,
+    publisherName: userName,
+    publisherAvatar: userInfo.avatarUrl || '',
+    status: 'recruiting',
+    joinedCount: 1,
+    views: 0,
+    members: [
+      {
+        userId,
+        userName,
+        avatar: userInfo.avatarUrl || '',
+        quantity: 1,
+        joinTime: Date.now(),
+        paid: true
+      }
+    ],
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  storage.addToList(STORAGE_KEYS.GROUP_BUY_LIST, newItem);
+  return newItem;
+}
+
+function updateGroupBuy(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.GROUP_BUY_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+}
+
+function deleteGroupBuy(id) {
+  return storage.removeFromList(STORAGE_KEYS.GROUP_BUY_LIST, id);
+}
+
+function increaseGroupBuyViews(id) {
+  const item = getGroupBuyDetail(id);
+  if (item) {
+    return storage.updateInList(STORAGE_KEYS.GROUP_BUY_LIST, id, {
+      views: item.views + 1
+    });
+  }
+  return false;
+}
+
+function joinGroupBuy(groupBuyId, quantity = 1) {
+  initGroupBuyData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+  const userName = userInfo.nickName || '匿名用户';
+
+  const groupBuy = getGroupBuyDetail(groupBuyId);
+  if (!groupBuy) return { success: false, message: '团购不存在' };
+
+  if (groupBuy.status !== 'recruiting') {
+    return { success: false, message: '该团购已不在拼团中' };
+  }
+
+  const now = Date.now();
+  const deadline = new Date(groupBuy.deadline).getTime();
+  if (now > deadline) {
+    return { success: false, message: '团购已截止' };
+  }
+
+  const members = groupBuy.members || [];
+  const existingMember = members.find(m => m.userId === userId);
+  if (existingMember) {
+    return { success: false, message: '您已参加该团购' };
+  }
+
+  const currentTotal = members.reduce((sum, m) => sum + m.quantity, 0);
+  if (currentTotal + quantity > groupBuy.maxCount) {
+    return { success: false, message: '超出最大购买数量' };
+  }
+
+  const cost = groupBuy.unitPrice * quantity;
+  const currentPoints = getUserPoints();
+  if (currentPoints < cost) {
+    return { success: false, message: `积分不足，当前积分：${currentPoints}` };
+  }
+
+  deductPoints(cost, `团购预付：${groupBuy.productName}`);
+
+  const member = {
+    userId,
+    userName,
+    avatar: userInfo.avatarUrl || '',
+    quantity,
+    joinTime: Date.now(),
+    paid: true
+  };
+
+  members.push(member);
+  const joinedCount = members.reduce((sum, m) => sum + m.quantity, 0);
+
+  let newStatus = groupBuy.status;
+  if (joinedCount >= groupBuy.minCount) {
+    newStatus = 'success';
+    addGroupBuyNotification(groupBuyId, {
+      type: 'success',
+      title: '团购成团啦！',
+      content: `「${groupBuy.productName}」已成功成团，请留意取货通知。`
+    });
+  }
+
+  storage.updateInList(STORAGE_KEYS.GROUP_BUY_LIST, groupBuyId, {
+    members,
+    joinedCount,
+    status: newStatus,
+    updateTime: Date.now()
+  });
+
+  return { success: true, message: '参团成功', cost };
+}
+
+function leaveGroupBuy(groupBuyId) {
+  initGroupBuyData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+
+  const groupBuy = getGroupBuyDetail(groupBuyId);
+  if (!groupBuy) return { success: false, message: '团购不存在' };
+
+  if (groupBuy.status === 'ended') {
+    return { success: false, message: '团购已结束，无法退出' };
+  }
+
+  const members = groupBuy.members || [];
+  const memberIndex = members.findIndex(m => m.userId === userId);
+  if (memberIndex === -1) {
+    return { success: false, message: '您未参加该团购' };
+  }
+
+  const leavingMember = members[memberIndex];
+  const refund = groupBuy.unitPrice * leavingMember.quantity;
+
+  if (groupBuy.status === 'success') {
+    addPoints(refund, `团购退款：${groupBuy.productName}`);
+  } else if (leavingMember.paid) {
+    addPoints(refund, `团购退款：${groupBuy.productName}`);
+  }
+
+  members.splice(memberIndex, 1);
+  const joinedCount = members.reduce((sum, m) => sum + m.quantity, 0);
+
+  let newStatus = groupBuy.status;
+  if (groupBuy.status === 'success' && joinedCount < groupBuy.minCount) {
+    newStatus = 'recruiting';
+  }
+
+  storage.updateInList(STORAGE_KEYS.GROUP_BUY_LIST, groupBuyId, {
+    members,
+    joinedCount,
+    status: newStatus,
+    updateTime: Date.now()
+  });
+
+  return { success: true, message: '已退出团购，积分已退回', refund };
+}
+
+function getMyGroupBuys() {
+  initGroupBuyData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'test_user';
+
+  const list = storage.getList(STORAGE_KEYS.GROUP_BUY_LIST);
+  return list.filter(item =>
+    item.publisherId === userId ||
+    (item.members || []).some(m => m.userId === userId)
+  );
+}
+
+function addGroupBuyNotification(groupBuyId, notification) {
+  const notifications = storage.getList(STORAGE_KEYS.GROUP_BUY_NOTIFICATIONS);
+  notifications.unshift({
+    id: 'gb_notif_' + Date.now().toString(36),
+    groupBuyId,
+    ...notification,
+    read: false,
+    createTime: Date.now()
+  });
+  storage.set(STORAGE_KEYS.GROUP_BUY_NOTIFICATIONS, notifications);
+}
+
+function getGroupBuyNotifications() {
+  return storage.getList(STORAGE_KEYS.GROUP_BUY_NOTIFICATIONS);
 }
 
 // ==================== 食堂菜谱模块 ====================
@@ -9580,5 +9934,18 @@ Object.assign(module.exports, {
   approveTutorCreditBind,
   rejectTutorCreditBind,
   recalculateUserCreditScore,
-  getUserCreditScore
+  getUserCreditScore,
+
+  getGroupBuyList,
+  getGroupBuyDetail,
+  publishGroupBuy,
+  joinGroupBuy,
+  leaveGroupBuy,
+  updateGroupBuy,
+  deleteGroupBuy,
+  increaseGroupBuyViews,
+  getMyGroupBuys,
+  checkAndUpdateGroupBuyStatus,
+  addGroupBuyNotification,
+  getGroupBuyNotifications
 });
