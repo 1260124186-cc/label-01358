@@ -49,9 +49,11 @@ Page({
 
     policyList: [],
     policyListFiltered: [],
+    policyCountText: '共 0 项',
 
     userProfile: null,
     matchedList: [],
+    matchCountText: '共 0 项匹配',
 
     applicationList: [],
     applicationStats: {
@@ -59,10 +61,13 @@ Page({
       approved: 0,
       reviewing: 0
     },
+    applicationCountText: '共 0 条记录',
 
     materialList: [],
+    materialCountText: '共 0 项',
 
     publicList: [],
+    publicCountText: '0 批次',
 
     selectedPolicyId: '',
     showMaterialModal: false,
@@ -151,7 +156,8 @@ Page({
 
     this.setData({
       policyListFiltered: filteredWithTags,
-      currentSortLabel: sortOption ? sortOption.label : '默认排序'
+      currentSortLabel: sortOption ? sortOption.label : '默认排序',
+      policyCountText: '共 ' + filteredWithTags.length + ' 项'
     });
   },
 
@@ -161,18 +167,24 @@ Page({
     const hasMoreEligibility = eligibilityList.length > 2;
     const eligibilityMoreCount = eligibilityList.length;
     const daysLeft = this.calculateDaysLeft(item.applyEndDate);
+    const categoryColor = this.getCategoryColor(item.category);
 
     return {
       ...item,
       daysLeft,
-      categoryColor: this.getCategoryColor(item.category),
+      categoryColor,
       previewEligibility,
       hasMoreEligibility,
       eligibilityMoreCount,
       badgeClass: 'days-badge' + (daysLeft.urgent ? ' urgent' : '') + (daysLeft.expired ? ' expired' : ''),
       applyBtnClass: 'action-btn action-primary' + (daysLeft.expired ? ' disabled' : ''),
       applyBtnText: daysLeft.expired ? '已截止' : '立即申请',
-      amountDisplayText: '💰 ' + (item.amountText || (item.amount + '元'))
+      amountDisplayText: '💰 ' + (item.amountText || (item.amount + '元')),
+      categoryTagStyle: 'background-color: ' + categoryColor.bg + '; color: ' + categoryColor.text + ';',
+      applyDateText: item.applyStartDate + ' ~ ' + item.applyEndDate,
+      eligibilityMoreText: '... 共' + eligibilityMoreCount + '项条件',
+      smallCategoryTagStyle: 'background-color: ' + categoryColor.bg + '; color: ' + categoryColor.text + ';',
+      smallBadgeClass: 'days-badge small ' + daysLeft.urgentClass
     };
   },
 
@@ -210,6 +222,15 @@ Page({
       userProfile.comprehensiveRankPercentText = '前 ' + userProfile.comprehensiveRankPercent + '%';
       userProfile.gpaRankPercentText = '前 ' + userProfile.gpaRankPercent + '%';
       userProfile.volunteerHoursText = userProfile.volunteerHours + '小时志愿';
+      userProfile.gpaProgressStyle = 'height: ' + userProfile.gpaPercent + '%;';
+      userProfile.gpaRankClass = 'stat-value rank-' + userProfile.rankPercentClass;
+      userProfile.comprehensiveRankClass = 'stat-value rank-' + userProfile.rankPercentClass;
+      userProfile.gpaRankDisplayText = userProfile.gpaRank + '/' + userProfile.majorTotal;
+      userProfile.comprehensiveRankDisplayText = userProfile.comprehensiveRank + '/' + userProfile.majorTotal;
+      userProfile.collegeText = userProfile.college + ' · ' + userProfile.major;
+      userProfile.awardsText = userProfile.awardsCount + '项获奖';
+      userProfile.clubText = userProfile.clubCount + '项学生干部';
+      userProfile.researchText = userProfile.researchCount + '项科研';
     }
     this.setData({ userProfile });
     this.updatePageStyle();
@@ -235,7 +256,10 @@ Page({
         matchScoreText: '匹配度 ' + item.matchScore + '%'
       };
     });
-    this.setData({ matchedList: matchedWithUI });
+    this.setData({
+      matchedList: matchedWithUI,
+      matchCountText: '共 ' + matchedWithUI.length + ' 项匹配'
+    });
   },
 
   loadApplicationList() {
@@ -272,7 +296,8 @@ Page({
         total: listWithUI.length,
         approved,
         reviewing
-      }
+      },
+      applicationCountText: '共 ' + listWithUI.length + ' 条记录'
     });
   },
 
@@ -301,14 +326,21 @@ Page({
   loadMaterialList() {
     const materialList = dataService.getScholarshipMaterialList();
     const materialWithUI = materialList.map(item => this.formatMaterialItem(item));
-    this.setData({ materialList: materialWithUI });
+    this.setData({
+      materialList: materialWithUI,
+      materialCountText: '共 ' + materialWithUI.length + ' 项'
+    });
   },
 
   formatMaterialItem(item) {
+    const requiredColor = item.required ? '#EF4444' : '#6B7280';
     return {
       ...item,
       requiredText: item.required ? '必填' : '选填',
-      requiredColor: item.required ? '#EF4444' : '#6B7280'
+      requiredColor,
+      requiredTagStyle: 'color: ' + requiredColor + ';',
+      formatText: '格式：' + item.format,
+      sizeText: '大小：' + item.maxSize
     };
   },
 
@@ -331,10 +363,15 @@ Page({
         studentCountText: studentCount + '人获奖',
         previewWinners: winnerList.slice(0, 4),
         moreWinnersCount: Math.max(0, studentCount - 4),
-        hasMoreWinners: studentCount > 4
+        hasMoreWinners: studentCount > 4,
+        moreWinnersText: '+' + Math.max(0, studentCount - 4) + '人',
+        publishTimeDisplayText: '📅 公示时间：' + util.formatDate(item.publishTime)
       };
     });
-    this.setData({ publicList: listWithUI });
+    this.setData({
+      publicList: listWithUI,
+      publicCountText: listWithUI.length + ' 批次'
+    });
   },
 
   onTabChange(e) {
