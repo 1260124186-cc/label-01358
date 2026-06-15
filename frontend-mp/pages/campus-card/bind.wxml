@@ -1,0 +1,134 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}} {{fontSizeClass}}">
+  <view class="content">
+    <view class="header-section">
+      <view class="header-icon">💳</view>
+      <text class="header-title">绑定校园一卡通</text>
+      <text class="header-desc">请填写以下信息完成校园卡绑定</text>
+    </view>
+
+    <view class="form-section">
+      <view class="form-card">
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>
+            <text class="label-text">校园卡号</text>
+          </view>
+          <view class="form-input-wrap">
+            <input
+              class="form-input"
+              type="number"
+              placeholder="请输入校园卡号"
+              placeholder-class="input-placeholder"
+              value="{{cardNo}}"
+              bindinput="onInputChange"
+              data-field="cardNo"
+              maxlength="20"
+            />
+            <view class="scan-btn" bindtap="onScanCard">
+              <text class="scan-icon">📷</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>
+            <text class="label-text">学号</text>
+          </view>
+          <input
+            class="form-input"
+            type="number"
+            placeholder="请输入学号"
+            placeholder-class="input-placeholder"
+            value="{{studentId}}"
+            bindinput="onInputChange"
+            data-field="studentId"
+            maxlength="20"
+          />
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>
+            <text class="label-text">姓名</text>
+          </view>
+          <input
+            class="form-input"
+            placeholder="请输入真实姓名"
+            placeholder-class="input-placeholder"
+            value="{{studentName}}"
+            bindinput="onInputChange"
+            data-field="studentName"
+            maxlength="20"
+          />
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>
+            <text class="label-text">身份证号</text>
+          </view>
+          <input
+            class="form-input"
+            placeholder="请输入身份证号"
+            placeholder-class="input-placeholder"
+            value="{{idCardNo}}"
+            bindinput="onInputChange"
+            data-field="idCardNo"
+            maxlength="18"
+          />
+        </view>
+
+        <view class="form-item">
+          <view class="form-label">
+            <text class="required">*</text>
+            <text class="label-text">手机号</text>
+          </view>
+          <input
+            class="form-input"
+            type="number"
+            placeholder="请输入手机号"
+            placeholder-class="input-placeholder"
+            value="{{phone}}"
+            bindinput="onInputChange"
+            data-field="phone"
+            maxlength="11"
+          />
+        </view>
+      </view>
+    </view>
+
+    <view class="terms-section">
+      <view class="terms-check" bindtap="onToggleTerms">
+        <view class="check-box {{agreeTerms ? 'checked' : ''}}">
+          <text wx:if="{{agreeTerms}}" class="check-icon">✓</text>
+        </view>
+        <text class="terms-text">
+          我已阅读并同意
+          <text class="terms-link" catchtap="onViewTerms">《校园一卡通服务协议》</text>
+        </text>
+      </view>
+    </view>
+
+    <view class="submit-section">
+      <button
+        class="submit-btn {{loading ? 'disabled' : ''}}"
+        bindtap="onSubmit"
+        disabled="{{loading}}"
+        loading="{{loading}}"
+      >
+        {{loading ? '绑定中...' : '确认绑定'}}
+      </button>
+    </view>
+
+    <view class="tips-section">
+      <view class="tips-card">
+        <text class="tips-title">🔒 信息安全说明</text>
+        <text class="tips-text">您的个人信息将加密存储，仅用于校园卡身份核验，不会用于其他用途。</text>
+      </view>
+    </view>
+
+    <view class="bottom-space"></view>
+  </view>
+</view>

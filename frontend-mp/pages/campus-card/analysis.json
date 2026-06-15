@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "消费分析",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F8F9FA",
+  "backgroundTextStyle": "dark",
+  "usingComponents": {}
+}

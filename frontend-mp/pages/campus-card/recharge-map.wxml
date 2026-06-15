@@ -1,0 +1,146 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}} {{fontSizeClass}}">
+  <view class="search-section">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        placeholder="搜索充值点名称、地址"
+        placeholder-class="search-placeholder"
+        value="{{keyword}}"
+        bindinput="onInputChange"
+        confirm-type="search"
+      />
+    </view>
+  </view>
+
+  <view class="filter-section">
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-list">
+        <view
+          class="filter-item {{filterType === item.value ? 'active' : ''}}"
+          wx:for="{{filterOptions}}"
+          wx:key="value"
+          bindtap="onFilterChange"
+          data-value="{{item.value}}"
+          hover-class="filter-item-hover"
+        >
+          <text class="filter-icon">{{item.icon}}</text>
+          <text class="filter-text">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="map-section">
+    <map
+      id="map"
+      class="map-view"
+      latitude="{{latitude}}"
+      longitude="{{longitude}}"
+      markers="{{markers}}"
+      scale="16"
+      show-location="{{true}}"
+      bindmarkertap="onMarkertap"
+    ></map>
+  </view>
+
+  <view class="list-section">
+    <view class="section-header">
+      <text class="section-title">充值点列表（{{filteredPoints.length}}）</text>
+    </view>
+
+    <view wx:if="{{filteredPoints.length > 0}}" class="point-list">
+      <view
+        class="point-card"
+        wx:for="{{filteredPoints}}"
+        wx:key="id"
+        bindtap="onPointTap"
+        data-point="{{item}}"
+        hover-class="point-card-hover"
+      >
+        <view class="point-icon type-{{item.type}}">
+          <text wx:if="{{item.type === 'service'}}">🏢</text>
+          <text wx:elif="{{item.type === 'cash'}}">💵</text>
+          <text wx:else>💳</text>
+        </view>
+        <view class="point-info">
+          <view class="point-header">
+            <text class="point-name">{{item.name}}</text>
+            <view class="point-type-tag">
+              <text class="tag-text">{{item.typeLabel}}</text>
+            </view>
+          </view>
+          <text class="point-address">📍 {{item.address}}</text>
+          <view class="point-meta">
+            <text class="point-time">⏰ {{item.workTime}}</text>
+          </view>
+          <view class="point-services">
+            <text class="service-tag" wx:for="{{item.services}}" wx:for-item="service" wx:key="*this">{{service}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty wx:if="{{filteredPoints.length === 0}}" text="没有找到相关充值点" />
+  </view>
+
+  <view wx:if="{{showDetail && selectedPoint}}" class="detail-modal" catchtap="onCloseDetail">
+    <view class="detail-content" catchtap="">
+      <view class="detail-header">
+        <view class="detail-title-row">
+          <view class="detail-icon type-{{selectedPoint.type}}">
+            <text wx:if="{{selectedPoint.type === 'service'}}">🏢</text>
+            <text wx:elif="{{selectedPoint.type === 'cash'}}">💵</text>
+            <text wx:else>💳</text>
+          </view>
+          <view class="detail-title-info">
+            <text class="detail-name">{{selectedPoint.name}}</text>
+            <text class="detail-type">{{selectedPoint.typeLabel}}</text>
+          </view>
+        </view>
+        <view class="detail-close" bindtap="onCloseDetail">
+          <text class="close-icon">✕</text>
+        </view>
+      </view>
+
+      <view class="detail-body">
+        <view class="detail-item">
+          <text class="detail-item-label">📍 地址</text>
+          <text class="detail-item-value">{{selectedPoint.address}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-item-label">⏰ 服务时间</text>
+          <text class="detail-item-value">{{selectedPoint.workTime}}</text>
+        </view>
+        <view class="detail-item" wx:if="{{selectedPoint.phone}}">
+          <text class="detail-item-label">📞 联系电话</text>
+          <text class="detail-item-value link" bindtap="onCallPhone" data-phone="{{selectedPoint.phone}}">{{selectedPoint.phone}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-item-label">💡 说明</text>
+          <text class="detail-item-value">{{selectedPoint.description}}</text>
+        </view>
+        <view class="detail-item">
+          <text class="detail-item-label">🎯 服务项目</text>
+          <view class="detail-services">
+            <text class="detail-service-tag" wx:for="{{selectedPoint.services}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="detail-actions">
+        <view class="detail-btn secondary" bindtap="onCallPhone" data-phone="{{selectedPoint.phone}}">
+          <text class="btn-icon">📞</text>
+          <text class="btn-text">拨打电话</text>
+        </view>
+        <view class="detail-btn primary" bindtap="onNavigate" data-point="{{selectedPoint}}">
+          <text class="btn-icon">🧭</text>
+          <text class="btn-text">导航前往</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+</view>

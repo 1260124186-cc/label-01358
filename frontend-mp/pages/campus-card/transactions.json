@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "消费流水",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F8F9FA",
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "empty": "/components/empty/index"
+  }
+}

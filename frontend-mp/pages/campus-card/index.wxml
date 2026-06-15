@@ -1,0 +1,114 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}} {{fontSizeClass}}">
+  <scroll-view scroll-y="{{true}}" refresher-enabled="{{true}}" refresher-triggered="{{refreshing}}" bindrefresherrefresh="onLoad">
+    <view class="content">
+      <view wx:if="{{!isBound}}" class="unbind-section">
+        <view class="unbind-card">
+          <view class="unbind-icon">💳</view>
+          <text class="unbind-title">还没有绑定校园卡</text>
+          <text class="unbind-desc">绑定后可查询余额、消费记录等功能</text>
+          <view class="bind-btn" bindtap="onBindCard">
+            <text class="bind-btn-text">立即绑定</text>
+          </view>
+        </view>
+      </view>
+
+      <view wx:if="{{isBound && cardInfo}}" class="card-section">
+        <view class="card-balance">
+          <view class="balance-header">
+            <text class="balance-label">卡内余额（元）</text>
+            <view class="card-status normal">
+              <text class="status-icon">✓</text>
+              <text class="status-text">正常</text>
+            </view>
+          </view>
+          <view class="balance-amount">
+            <text class="balance-currency">¥</text>
+            <text class="balance-number">{{cardInfo.balance.toFixed(2)}}</text>
+          </view>
+          <view class="balance-info">
+            <text class="info-item">卡号：{{cardInfo.cardNo}}</text>
+            <text class="info-item">姓名：{{cardInfo.studentName}}</text>
+          </view>
+          <view class="balance-actions">
+            <view class="action-btn primary" bindtap="onQuickAction" data-id="recharge">
+              <text class="action-btn-icon">💰</text>
+              <text class="action-btn-text">立即充值</text>
+            </view>
+            <view class="action-btn secondary" bindtap="onCallService">
+              <text class="action-btn-icon">📞</text>
+              <text class="action-btn-text">联系客服</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="quick-section">
+        <view class="section-header">
+          <text class="section-title">快捷功能</text>
+        </view>
+        <view class="quick-grid">
+          <view
+            class="quick-item"
+            wx:for="{{quickActions}}"
+            wx:key="id"
+            bindtap="onQuickAction"
+            data-id="{{item.id}}"
+            hover-class="quick-item-hover"
+          >
+            <view class="quick-icon" style="background: {{item.bgColor}};">
+              <text class="quick-icon-text">{{item.icon}}</text>
+            </view>
+            <text class="quick-name">{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="recent-section" wx:if="{{isBound}}">
+        <view class="section-header">
+          <text class="section-title">最近消费</text>
+          <view class="section-more" bindtap="onViewAllTransactions">
+            <text class="more-text">查看全部</text>
+            <text class="more-arrow">›</text>
+          </view>
+        </view>
+        <view class="recent-list">
+          <view
+            class="recent-item"
+            wx:for="{{recentTransactions}}"
+            wx:key="id"
+            hover-class="recent-item-hover"
+          >
+            <view class="recent-icon category-{{item.category}}">
+              <text wx:if="{{item.category === 'canteen'}}">🍜</text>
+              <text wx:elif="{{item.category === 'supermarket'}}">🛒</text>
+              <text wx:elif="{{item.category === 'bathroom'}}">🚿</text>
+              <text wx:else>💰</text>
+            </view>
+            <view class="recent-info">
+              <text class="recent-merchant">{{item.merchant}}</text>
+              <text class="recent-category">{{item.categoryName}} · {{item.timeText}}</text>
+            </view>
+            <view class="recent-amount">
+              <text class="amount-text consume">-{{item.amount.toFixed(2)}}</text>
+            </view>
+          </view>
+          <empty wx:if="{{recentTransactions.length === 0}}" text="暂无消费记录" />
+        </view>
+      </view>
+
+      <view class="tips-section">
+        <view class="tips-card">
+          <text class="tips-icon">💡</text>
+          <view class="tips-content">
+            <text class="tips-title">温馨提示</text>
+            <text class="tips-text">挂失后请拨打后勤电话 {{mockData ? '010-12345670' : '010-12345670'}} 办理补卡</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="bottom-space"></view>
+    </view>
+  </scroll-view>
+  <sos-button />
+</view>

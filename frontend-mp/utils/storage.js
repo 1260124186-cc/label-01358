@@ -139,7 +139,10 @@ const STORAGE_KEYS = {
   WORK_STUDY_JOB_LIST: 'workStudyJobList',
   WORK_STUDY_APPLICATION_LIST: 'workStudyApplicationList',
   WORK_STUDY_HOURS_RECORD_LIST: 'workStudyHoursRecordList',
-  WORK_STUDY_SALARY_LIST: 'workStudySalaryList'
+  WORK_STUDY_SALARY_LIST: 'workStudySalaryList',
+
+  CAMPUS_CARD_BIND_INFO: 'campusCardBindInfo',
+  CAMPUS_CARD_TRANSACTION_LIST: 'campusCardTransactionList'
 };
 
 /**

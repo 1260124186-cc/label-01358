@@ -42,6 +42,13 @@ Page({
         url: '/pages/campus-phonebook/index'
       },
       {
+        id: 'campus-card',
+        name: '校园卡',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%)',
+        url: '/pages/campus-card/index'
+      },
+      {
         id: 'lost-found',
         name: '失物招领',
         icon: '/assets/icons/nav-lost.png',

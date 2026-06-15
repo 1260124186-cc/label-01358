@@ -1,0 +1,14 @@
+{
+  "navigationBarTitleText": "充值点地图",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#F8F9FA",
+  "backgroundTextStyle": "dark",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "你的位置信息将用于充值点导航"
+    }
+  },
+  "usingComponents": {
+    "empty": "/components/empty/index"
+  }
+}

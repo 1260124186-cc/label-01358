@@ -1,0 +1,99 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}} {{fontSizeClass}}">
+  <view class="summary-section">
+    <view class="summary-card">
+      <view class="summary-item">
+        <text class="summary-label">本月消费</text>
+        <view class="summary-value-wrap">
+          <text class="summary-currency">¥</text>
+          <text class="summary-value consume">{{summary.totalConsume.toFixed(2)}}</text>
+        </view>
+      </view>
+      <view class="summary-divider"></view>
+      <view class="summary-item">
+        <text class="summary-label">本月充值</text>
+        <view class="summary-value-wrap">
+          <text class="summary-currency">¥</text>
+          <text class="summary-value recharge">{{summary.totalRecharge.toFixed(2)}}</text>
+        </view>
+      </view>
+      <view class="summary-divider"></view>
+      <view class="summary-item">
+        <text class="summary-label">交易笔数</text>
+        <text class="summary-value count">{{summary.count}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tabs-section">
+    <scroll-view class="tabs-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="tabs-list">
+        <view
+          class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabChange"
+          data-value="{{item.value}}"
+          hover-class="tab-item-hover"
+        >
+          <text wx:if="{{item.icon}}" class="tab-icon">{{item.icon}}</text>
+          <text class="tab-text">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onLoad"
+  >
+    <view class="list-section" wx:if="{{groupedList.length > 0}}">
+      <view class="date-group" wx:for="{{groupedList}}" wx:key="dateText" wx:for-item="group">
+        <view class="date-header">
+          <text class="date-text">{{group.dateDisplay}}</text>
+          <view class="date-stats">
+            <text wx:if="{{group.dayConsume > 0}}" class="date-stat consume">支出 ¥{{group.dayConsume.toFixed(2)}}</text>
+            <text wx:if="{{group.dayRecharge > 0}}" class="date-stat recharge">收入 ¥{{group.dayRecharge.toFixed(2)}}</text>
+          </view>
+        </view>
+        <view class="transaction-list">
+          <view
+            class="transaction-item"
+            wx:for="{{group.items}}"
+            wx:key="id"
+            wx:for-item="item"
+            bindtap="onTransactionTap"
+            data-item="{{item}}"
+            hover-class="transaction-item-hover"
+          >
+            <view class="transaction-icon category-{{item.category}}">
+              <text wx:if="{{item.category === 'canteen'}}">🍜</text>
+              <text wx:elif="{{item.category === 'supermarket'}}">🛒</text>
+              <text wx:elif="{{item.category === 'bathroom'}}">🚿</text>
+              <text wx:elif="{{item.category === 'recharge'}}">💰</text>
+              <text wx:else>💳</text>
+            </view>
+            <view class="transaction-info">
+              <text class="transaction-merchant">{{item.merchant}}</text>
+              <view class="transaction-meta">
+                <text class="transaction-category">{{item.categoryName}}</text>
+                <text class="transaction-dot">·</text>
+                <text class="transaction-time">{{item.timeText}}</text>
+              </view>
+            </view>
+            <view class="transaction-amount">
+              <text class="amount-text {{item.type}}">{{item.amountText}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty wx:if="{{groupedList.length === 0}}" text="暂无交易记录" />
+
+    <view class="bottom-space"></view>
+  </scroll-view>
+</view>

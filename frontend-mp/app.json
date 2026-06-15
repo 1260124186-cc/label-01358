@@ -171,7 +171,12 @@
     "pages/work-study/apply",
     "pages/work-study/my-applications",
     "pages/work-study/hours",
-    "pages/work-study/salary"
+    "pages/work-study/salary",
+    "pages/campus-card/index",
+    "pages/campus-card/bind",
+    "pages/campus-card/transactions",
+    "pages/campus-card/analysis",
+    "pages/campus-card/recharge-map"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

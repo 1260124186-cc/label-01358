@@ -9112,4 +9112,298 @@ const _workStudyExports = {
   MOCK_WORK_STUDY_SALARIES
 };
 
-Object.assign(module.exports, _workStudyExports);
+const CAMPUS_CARD_INFO = {
+  cardNo: '20260101001',
+  studentName: '张三',
+  studentId: '20260101',
+  department: '计算机科学与技术学院',
+  major: '软件工程',
+  balance: 328.50,
+  cardStatus: 'normal',
+  bindTime: Date.now() - 86400000 * 180,
+  lastRechargeTime: Date.now() - 86400000 * 2,
+  lastRechargeAmount: 100.00
+};
+
+const CAMPUS_CARD_TRANSACTIONS = [
+  {
+    id: 't001',
+    type: 'consume',
+    category: 'canteen',
+    categoryName: '食堂',
+    merchant: '第一食堂一楼 3号窗口',
+    amount: 12.50,
+    balanceAfter: 328.50,
+    createTime: Date.now() - 3600000 * 2
+  },
+  {
+    id: 't002',
+    type: 'consume',
+    category: 'supermarket',
+    categoryName: '超市',
+    merchant: '校园超市（中心店）',
+    amount: 23.80,
+    balanceAfter: 341.00,
+    createTime: Date.now() - 3600000 * 5
+  },
+  {
+    id: 't003',
+    type: 'consume',
+    category: 'bathroom',
+    categoryName: '浴室',
+    merchant: '3号学生浴室',
+    amount: 4.50,
+    balanceAfter: 364.80,
+    createTime: Date.now() - 86400000
+  },
+  {
+    id: 't004',
+    type: 'recharge',
+    category: 'recharge',
+    categoryName: '充值',
+    merchant: '微信充值',
+    amount: 100.00,
+    balanceAfter: 369.30,
+    createTime: Date.now() - 86400000 * 2
+  },
+  {
+    id: 't005',
+    type: 'consume',
+    category: 'canteen',
+    categoryName: '食堂',
+    merchant: '第二食堂二楼 特色窗口',
+    amount: 15.00,
+    balanceAfter: 269.30,
+    createTime: Date.now() - 86400000 * 2 - 3600000 * 3
+  },
+  {
+    id: 't006',
+    type: 'consume',
+    category: 'canteen',
+    categoryName: '食堂',
+    merchant: '第一食堂三楼 清真窗口',
+    amount: 10.00,
+    balanceAfter: 284.30,
+    createTime: Date.now() - 86400000 * 3
+  },
+  {
+    id: 't007',
+    type: 'consume',
+    category: 'supermarket',
+    categoryName: '超市',
+    merchant: '图书馆便利店',
+    amount: 8.50,
+    balanceAfter: 294.30,
+    createTime: Date.now() - 86400000 * 3 - 3600000 * 4
+  },
+  {
+    id: 't008',
+    type: 'consume',
+    category: 'bathroom',
+    categoryName: '浴室',
+    merchant: '3号学生浴室',
+    amount: 3.20,
+    balanceAfter: 302.80,
+    createTime: Date.now() - 86400000 * 4
+  },
+  {
+    id: 't009',
+    type: 'consume',
+    category: 'canteen',
+    categoryName: '食堂',
+    merchant: '第一食堂一楼 早餐窗口',
+    amount: 6.00,
+    balanceAfter: 306.00,
+    createTime: Date.now() - 86400000 * 4 - 3600000 * 6
+  },
+  {
+    id: 't010',
+    type: 'consume',
+    category: 'canteen',
+    categoryName: '食堂',
+    merchant: '第三食堂一楼 2号窗口',
+    amount: 13.50,
+    balanceAfter: 312.00,
+    createTime: Date.now() - 86400000 * 5
+  },
+  {
+    id: 't011',
+    type: 'consume',
+    category: 'supermarket',
+    categoryName: '超市',
+    merchant: '校园超市（东区店）',
+    amount: 45.00,
+    balanceAfter: 325.50,
+    createTime: Date.now() - 86400000 * 6
+  },
+  {
+    id: 't012',
+    type: 'recharge',
+    category: 'recharge',
+    categoryName: '充值',
+    merchant: '支付宝充值',
+    amount: 200.00,
+    balanceAfter: 370.50,
+    createTime: Date.now() - 86400000 * 7
+  },
+  {
+    id: 't013',
+    type: 'consume',
+    category: 'canteen',
+    categoryName: '食堂',
+    merchant: '第二食堂一楼 5号窗口',
+    amount: 11.00,
+    balanceAfter: 170.50,
+    createTime: Date.now() - 86400000 * 8
+  },
+  {
+    id: 't014',
+    type: 'consume',
+    category: 'bathroom',
+    categoryName: '浴室',
+    merchant: '3号学生浴室',
+    amount: 5.00,
+    balanceAfter: 181.50,
+    createTime: Date.now() - 86400000 * 9
+  },
+  {
+    id: 't015',
+    type: 'consume',
+    category: 'canteen',
+    categoryName: '食堂',
+    merchant: '第一食堂二楼 川菜窗口',
+    amount: 14.00,
+    balanceAfter: 186.50,
+    createTime: Date.now() - 86400000 * 10
+  },
+  {
+    id: 't016',
+    type: 'consume',
+    category: 'supermarket',
+    categoryName: '超市',
+    merchant: '宿舍区便利店',
+    amount: 18.50,
+    balanceAfter: 200.50,
+    createTime: Date.now() - 86400000 * 11
+  },
+  {
+    id: 't017',
+    type: 'consume',
+    category: 'canteen',
+    categoryName: '食堂',
+    merchant: '第一食堂一楼 8号窗口',
+    amount: 9.50,
+    balanceAfter: 219.00,
+    createTime: Date.now() - 86400000 * 12
+  },
+  {
+    id: 't018',
+    type: 'consume',
+    category: 'canteen',
+    categoryName: '食堂',
+    merchant: '第三食堂二楼 面食窗口',
+    amount: 12.00,
+    balanceAfter: 228.50,
+    createTime: Date.now() - 86400000 * 13
+  },
+  {
+    id: 't019',
+    type: 'consume',
+    category: 'bathroom',
+    categoryName: '浴室',
+    merchant: '3号学生浴室',
+    amount: 3.80,
+    balanceAfter: 240.50,
+    createTime: Date.now() - 86400000 * 14
+  },
+  {
+    id: 't020',
+    type: 'recharge',
+    category: 'recharge',
+    categoryName: '充值',
+    merchant: '充值点充值',
+    amount: 300.00,
+    balanceAfter: 244.30,
+    createTime: Date.now() - 86400000 * 15
+  }
+];
+
+const CAMPUS_CARD_RECHARGE_POINTS = [
+  {
+    id: 'rp001',
+    name: '行政楼一卡通服务中心',
+    address: '行政楼102室',
+    workTime: '工作日 08:00-17:30',
+    phone: '010-12345678',
+    latitude: 39.9042,
+    longitude: 116.4070,
+    description: '可办理办卡、补卡、充值、挂失等业务',
+    services: ['办卡', '补卡', '充值', '挂失', '解冻']
+  },
+  {
+    id: 'rp002',
+    name: '第一食堂充值点',
+    address: '第一食堂入口处',
+    workTime: '每日 06:30-20:00',
+    phone: '010-12345679',
+    latitude: 39.9065,
+    longitude: 116.4075,
+    description: '提供现金充值服务',
+    services: ['现金充值']
+  },
+  {
+    id: 'rp003',
+    name: '第二食堂充值点',
+    address: '第二食堂入口处',
+    workTime: '每日 06:30-20:00',
+    phone: '010-12345680',
+    latitude: 39.9055,
+    longitude: 116.4080,
+    description: '提供现金充值服务',
+    services: ['现金充值']
+  },
+  {
+    id: 'rp004',
+    name: '图书馆自助充值机',
+    address: '图书馆一层大厅',
+    workTime: '每日 07:00-22:00',
+    phone: '010-12345681',
+    latitude: 39.9042,
+    longitude: 116.4074,
+    description: '支持微信、支付宝自助充值',
+    services: ['微信充值', '支付宝充值']
+  },
+  {
+    id: 'rp005',
+    name: '东区宿舍自助充值机',
+    address: '东区5号楼一层大厅',
+    workTime: '24小时',
+    phone: '010-12345682',
+    latitude: 39.9070,
+    longitude: 116.4050,
+    description: '支持微信、支付宝自助充值',
+    services: ['微信充值', '支付宝充值']
+  },
+  {
+    id: 'rp006',
+    name: '西区宿舍自助充值机',
+    address: '西区3号楼一层大厅',
+    workTime: '24小时',
+    phone: '010-12345683',
+    latitude: 39.9030,
+    longitude: 116.4060,
+    description: '支持微信、支付宝自助充值',
+    services: ['微信充值', '支付宝充值']
+  }
+];
+
+const LOGISTICS_DEPARTMENT_PHONE = '010-12345670';
+
+const _campusCardExports = {
+  CAMPUS_CARD_INFO,
+  CAMPUS_CARD_TRANSACTIONS,
+  CAMPUS_CARD_RECHARGE_POINTS,
+  LOGISTICS_DEPARTMENT_PHONE
+};
+
+Object.assign(module.exports, _workStudyExports, _campusCardExports);

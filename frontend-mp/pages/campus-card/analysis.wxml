@@ -1,0 +1,142 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}} {{fontSizeClass}}">
+  <scroll-view scroll-y="{{true}}" refresher-enabled="{{true}}" refresher-triggered="{{refreshing}}" bindrefresherrefresh="onLoad">
+    <view class="content">
+      <view class="header-section">
+        <text class="header-title">{{currentMonth}}消费概览</text>
+        <view class="header-amount-wrap">
+          <text class="amount-label">本月总支出</text>
+          <view class="amount-value-wrap">
+            <text class="amount-currency">¥</text>
+            <text class="amount-value">{{totalConsume.toFixed(2)}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="stats-section">
+        <view class="stats-card">
+          <view class="stats-item">
+            <view class="stats-icon canteen">🍜</view>
+            <view class="stats-info">
+              <text class="stats-label">餐饮支出</text>
+              <view class="stats-value-wrap">
+                <text class="stats-currency">¥</text>
+                <text class="stats-value">{{canteenTotal.toFixed(2)}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="stats-item">
+            <view class="stats-icon supermarket">🛒</view>
+            <view class="stats-info">
+              <text class="stats-label">超市购物</text>
+              <view class="stats-value-wrap">
+                <text class="stats-currency">¥</text>
+                <text class="stats-value">{{supermarketTotal.toFixed(2)}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="stats-item">
+            <view class="stats-icon bathroom">🚿</view>
+            <view class="stats-info">
+              <text class="stats-label">浴室消费</text>
+              <view class="stats-value-wrap">
+                <text class="stats-currency">¥</text>
+                <text class="stats-value">{{bathroomTotal.toFixed(2)}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="pie-section">
+        <view class="section-header">
+          <text class="section-title">消费分类占比</text>
+        </view>
+        <view class="pie-card">
+          <view class="pie-container" wx:if="{{categoryList.length > 0}}">
+            <view class="pie-chart">
+              <view class="pie-center">
+                <text class="pie-center-value">¥{{pieCenterText}}</text>
+                <text class="pie-center-label">总支出</text>
+              </view>
+              <view
+                class="pie-slice"
+                wx:for="{{pieData}}"
+                wx:key="key"
+                style="background: conic-gradient({{item.color}} {{item.startAngle}}deg {{item.endAngle}}deg, transparent {{item.endAngle}}deg 360deg);"
+              ></view>
+              <view class="pie-cover"></view>
+            </view>
+          </view>
+          <view class="pie-legend">
+            <view
+              class="legend-item"
+              wx:for="{{categoryList}}"
+              wx:key="key"
+              bindtap="onCategoryTap"
+              data-key="{{item.key}}"
+              hover-class="legend-item-hover"
+            >
+              <view class="legend-dot" style="background: {{item.color}};"></view>
+              <view class="legend-info">
+                <view class="legend-name-row">
+                  <text class="legend-icon">{{item.icon}}</text>
+                  <text class="legend-name">{{item.name}}</text>
+                </view>
+                <text class="legend-percent">{{item.percent}}%</text>
+              </view>
+              <text class="legend-amount">¥{{item.amount.toFixed(2)}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="trend-section" wx:if="{{dailyList.length > 0}}">
+        <view class="section-header">
+          <text class="section-title">近7天消费趋势</text>
+        </view>
+        <view class="trend-card">
+          <view class="trend-chart">
+            <view
+              class="trend-bar-wrap"
+              wx:for="{{dailyList}}"
+              wx:key="date"
+            >
+              <view class="trend-bar" style="height: {{(item.amount / maxDayAmount * 100) > 10 ? (item.amount / maxDayAmount * 100) : 10}}%;">
+                <text class="trend-bar-value">¥{{item.amount.toFixed(0)}}</text>
+              </view>
+              <text class="trend-date">{{item.date}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="week-section" wx:if="{{weekData.length > 0}}">
+        <view class="section-header">
+          <text class="section-title">周消费统计</text>
+        </view>
+        <view class="week-list">
+          <view class="week-card" wx:for="{{weekData}}" wx:key="week">
+            <view class="week-info">
+              <text class="week-label">第{{index + 1}}周（{{item.week}}起）</text>
+              <text class="week-count">共 {{item.count}} 笔消费</text>
+            </view>
+            <view class="week-amount">
+              <text class="week-amount-currency">¥</text>
+              <text class="week-amount-value">{{item.amount.toFixed(2)}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="tips-section">
+        <view class="tips-card">
+          <text class="tips-icon">💡</text>
+          <text class="tips-text">数据为模拟数据，仅供演示参考</text>
+        </view>
+      </view>
+
+      <view class="bottom-space"></view>
+    </view>
+  </scroll-view>
+</view>

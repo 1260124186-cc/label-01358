@@ -1,0 +1,285 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page, #F8F9FA);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ========== 统计卡片 ========== */
+.summary-section {
+  padding: 24rpx 24rpx 0;
+}
+
+.summary-card {
+  display: flex;
+  align-items: center;
+  padding: 32rpx 24rpx;
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(255, 107, 107, 0.25);
+}
+
+.summary-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.summary-label {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+  margin-bottom: 10rpx;
+}
+
+.summary-value-wrap {
+  display: flex;
+  align-items: baseline;
+}
+
+.summary-currency {
+  font-size: 24rpx;
+  color: #FFFFFF;
+  margin-right: 4rpx;
+}
+
+.summary-value {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.summary-value.consume,
+.summary-value.recharge {
+  color: #FFFFFF;
+}
+
+.summary-value.count {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.summary-divider {
+  width: 1rpx;
+  height: 60rpx;
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ========== 分类标签 ========== */
+.tabs-section {
+  padding: 24rpx 0;
+}
+
+.tabs-scroll {
+  white-space: nowrap;
+}
+
+.tabs-list {
+  display: inline-flex;
+  padding: 0 16rpx;
+}
+
+.tab-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 14rpx 28rpx;
+  margin: 0 8rpx;
+  background: var(--color-bg-card, #FFFFFF);
+  border-radius: 32rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.tab-item-hover {
+  opacity: 0.8;
+}
+
+.tab-item.active {
+  background: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 107, 0.25);
+}
+
+.tab-icon {
+  font-size: 24rpx;
+  margin-right: 6rpx;
+}
+
+.tab-text {
+  font-size: 26rpx;
+  color: var(--color-text-secondary, #4E5969);
+  font-weight: 500;
+}
+
+.tab-item.active .tab-text {
+  color: #FFFFFF;
+}
+
+/* ========== 列表区域 ========== */
+.list-scroll {
+  flex: 1;
+  padding: 0 24rpx;
+}
+
+.date-group {
+  margin-bottom: 24rpx;
+}
+
+.date-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 8rpx;
+}
+
+.date-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary, #2C3E50);
+}
+
+.date-stats {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.date-stat {
+  font-size: 22rpx;
+}
+
+.date-stat.consume {
+  color: var(--color-text-secondary, #4E5969);
+}
+
+.date-stat.recharge {
+  color: #48BB78;
+}
+
+/* ========== 交易列表 ========== */
+.transaction-list {
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFBFC 100%);
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+}
+
+.transaction-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  transition: all 0.2s ease;
+}
+
+.transaction-item:not(:last-child) {
+  border-bottom: 1rpx solid var(--color-border-light, #F2F3F5);
+}
+
+.transaction-item-hover {
+  background-color: var(--color-bg-page, #F8F9FA);
+}
+
+.transaction-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  font-size: 32rpx;
+}
+
+.transaction-icon.category-canteen {
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+}
+
+.transaction-icon.category-supermarket {
+  background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+}
+
+.transaction-icon.category-bathroom {
+  background: linear-gradient(135deg, #CFFAFE 0%, #A5F3FC 100%);
+}
+
+.transaction-icon.category-recharge {
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+}
+
+.transaction-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.transaction-merchant {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--color-text-primary, #2C3E50);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.transaction-meta {
+  display: flex;
+  align-items: center;
+}
+
+.transaction-category {
+  font-size: 22rpx;
+  color: var(--color-text-muted, #86909C);
+}
+
+.transaction-dot {
+  font-size: 22rpx;
+  color: var(--color-text-muted, #86909C);
+  margin: 0 8rpx;
+}
+
+.transaction-time {
+  font-size: 22rpx;
+  color: var(--color-text-muted, #86909C);
+}
+
+.transaction-amount {
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+
+.amount-text {
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.amount-text.consume {
+  color: var(--color-text-primary, #2C3E50);
+}
+
+.amount-text.recharge {
+  color: #48BB78;
+}
+
+.bottom-space {
+  height: 80rpx;
+}
+
+/* ========== 暗色模式 ========== */
+.dark .transaction-list {
+  background: linear-gradient(135deg, #1F2937 0%, #111827 100%);
+}
+
+.dark .transaction-item:not(:last-child) {
+  border-bottom-color: #374151;
+}
+
+.dark .transaction-item-hover {
+  background-color: #374151;
+}
+
+.dark .tab-item {
+  background: #1F2937;
+}
