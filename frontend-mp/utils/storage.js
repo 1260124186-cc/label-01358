@@ -134,7 +134,12 @@ const STORAGE_KEYS = {
   SCHOLARSHIP_APPLICATION_LIST: 'scholarshipApplicationList',
   SCHOLARSHIP_MATERIAL_LIST: 'scholarshipMaterialList',
   SCHOLARSHIP_PUBLIC_LIST: 'scholarshipPublicList',
-  SCHOLARSHIP_USER_PROFILE: 'scholarshipUserProfile'
+  SCHOLARSHIP_USER_PROFILE: 'scholarshipUserProfile',
+
+  WORK_STUDY_JOB_LIST: 'workStudyJobList',
+  WORK_STUDY_APPLICATION_LIST: 'workStudyApplicationList',
+  WORK_STUDY_HOURS_RECORD_LIST: 'workStudyHoursRecordList',
+  WORK_STUDY_SALARY_LIST: 'workStudySalaryList'
 };
 
 /**

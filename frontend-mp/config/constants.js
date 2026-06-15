@@ -1765,6 +1765,74 @@ const LAB_VIOLATION_TYPES = [
   { value: 'rule_violation', label: '违规操作', score: -8, icon: '⚠️' }
 ];
 
+const WORK_STUDY_JOB_STATUS = [
+  { value: 'recruiting', label: '招聘中', color: '#10B981', icon: '💼' },
+  { value: 'closed', label: '已结束', color: '#6B7280', icon: '📦' }
+];
+
+const WORK_STUDY_JOB_STATUS_MAP = WORK_STUDY_JOB_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const WORK_STUDY_APPLICATION_STATUS = [
+  { value: 'pending', label: '待审核', color: '#F59E0B', icon: '⏳' },
+  { value: 'approved', label: '已录用', color: '#10B981', icon: '✅' },
+  { value: 'rejected', label: '已拒绝', color: '#EF4444', icon: '❌' }
+];
+
+const WORK_STUDY_APPLICATION_STATUS_MAP = WORK_STUDY_APPLICATION_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const WORK_STUDY_DEPARTMENTS = [
+  { value: 'library', label: '图书馆', icon: '📚' },
+  { value: 'administration', label: '行政办公室', icon: '🏢' },
+  { value: 'canteen', label: '食堂后勤', icon: '🍜' },
+  { value: 'lab', label: '实验中心', icon: '🔬' },
+  { value: 'student_affairs', label: '学生处', icon: '👨‍🏫' },
+  { value: 'it_center', label: '信息中心', icon: '💻' },
+  { value: 'sports', label: '体育部', icon: '⚽' },
+  { value: 'dormitory', label: '宿管中心', icon: '🏠' },
+  { value: 'other', label: '其他部门', icon: '📌' }
+];
+
+const WORK_STUDY_JOB_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'recruiting', label: '招聘中' },
+  { value: 'closed', label: '已结束' }
+];
+
+const WORK_STUDY_MY_APPLICATION_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'pending', label: '待审核' },
+  { value: 'approved', label: '已录用' },
+  { value: 'rejected', label: '已拒绝' }
+];
+
+const WORK_STUDY_HOURS_STATUS = [
+  { value: 'pending', label: '待确认', color: '#F59E0B' },
+  { value: 'confirmed', label: '已确认', color: '#10B981' },
+  { value: 'rejected', label: '已驳回', color: '#EF4444' }
+];
+
+const WORK_STUDY_HOURS_STATUS_MAP = WORK_STUDY_HOURS_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const WORK_STUDY_SALARY_STATUS = [
+  { value: 'pending', label: '待结算', color: '#F59E0B' },
+  { value: 'settled', label: '已结算', color: '#10B981' },
+  { value: 'paid', label: '已发放', color: '#3B82F6' }
+];
+
+const WORK_STUDY_SALARY_STATUS_MAP = WORK_STUDY_SALARY_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
 const MOCK_LABS = [
   {
     id: 'lab_001',
@@ -2139,5 +2207,17 @@ module.exports = {
   LAB_MY_APPOINTMENT_TABS,
   LAB_ADMIN_TABS,
   LAB_VIOLATION_TYPES,
-  MOCK_LABS
+  MOCK_LABS,
+
+  WORK_STUDY_JOB_STATUS,
+  WORK_STUDY_JOB_STATUS_MAP,
+  WORK_STUDY_APPLICATION_STATUS,
+  WORK_STUDY_APPLICATION_STATUS_MAP,
+  WORK_STUDY_DEPARTMENTS,
+  WORK_STUDY_JOB_TABS,
+  WORK_STUDY_MY_APPLICATION_TABS,
+  WORK_STUDY_HOURS_STATUS,
+  WORK_STUDY_HOURS_STATUS_MAP,
+  WORK_STUDY_SALARY_STATUS,
+  WORK_STUDY_SALARY_STATUS_MAP
 };

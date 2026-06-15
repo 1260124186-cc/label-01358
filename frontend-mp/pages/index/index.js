@@ -187,6 +187,13 @@ Page({
         icon: '/assets/icons/nav-broadcast.png',
         bgColor: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)',
         url: '/pages/graduation/index'
+      },
+      {
+        id: 'work-study',
+        name: '勤工助学',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)',
+        url: '/pages/work-study/index'
       }
     ],
     weatherData: null,

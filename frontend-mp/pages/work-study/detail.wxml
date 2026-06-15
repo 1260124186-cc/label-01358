@@ -1,0 +1,101 @@
+<view class="container {{darkMode ? 'dark' : ''}}" wx:if="{{job}}">
+  <view class="hero-section">
+    <view class="hero-bg"></view>
+    <view class="hero-content">
+      <view class="job-title">{{job.title}}</view>
+      <view class="job-status" style="background: {{statusColor}}30; color: {{statusColor}};">
+        <text>{{statusIcon}}</text>
+        <text>{{statusLabel}}</text>
+      </view>
+    </view>
+    <view class="hero-wage">
+      <text class="wage-symbol">¥</text>
+      <text class="wage-amount">{{job.hourlyWage}}</text>
+      <text class="wage-unit">/小时</text>
+    </view>
+  </view>
+
+  <view class="info-card">
+    <view class="info-row">
+      <view class="info-label">
+        <text class="label-icon">{{deptIcon}}</text>
+        <text>所属部门</text>
+      </view>
+      <view class="info-value">{{deptLabel}}</view>
+    </view>
+    <view class="info-row">
+      <view class="info-label">
+        <text class="label-icon">📅</text>
+        <text>时间要求</text>
+      </view>
+      <view class="info-value">{{job.timeRequirement}}</view>
+    </view>
+    <view class="info-row">
+      <view class="info-label">
+        <text class="label-icon">👥</text>
+        <text>招聘人数</text>
+      </view>
+      <view class="info-value">
+        <text wx:if="{{isFull}}" class="full-text">已招满</text>
+        <text wx:else class="remaining-text">剩余{{remaining}}人</text>
+        <text class="count-text">/{{job.recruitCount}}人</text>
+      </view>
+    </view>
+    <view class="info-row">
+      <view class="info-label">
+        <text class="label-icon">👁️</text>
+        <text>浏览次数</text>
+      </view>
+      <view class="info-value">{{job.views || 0}}次</view>
+    </view>
+  </view>
+
+  <view class="progress-card">
+    <view class="progress-header">
+      <text class="progress-title">招聘进度</text>
+      <text class="progress-percent">{{recruitProgress}}%</text>
+    </view>
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{recruitProgress}}%;"></view>
+    </view>
+    <view class="progress-text">
+      已招 {{job.currentCount || 0}} 人，还需 {{remaining}} 人
+    </view>
+  </view>
+
+  <view class="section-card">
+    <view class="section-title">
+      <text class="title-icon">📋</text>
+      <text>工作内容</text>
+    </view>
+    <view class="section-content">{{job.workContent}}</view>
+  </view>
+
+  <view wx:if="{{requirementsList.length > 0}}" class="section-card">
+    <view class="section-title">
+      <text class="title-icon">📌</text>
+      <text>岗位要求</text>
+    </view>
+    <view class="requirements-list">
+      <view wx:for="{{requirementsList}}" wx:key="index" class="requirement-item">
+        <text class="req-dot">●</text>
+        <text class="req-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="btn-secondary" bindtap="onBack">
+      <text>返回</text>
+    </view>
+    <view
+      class="{{!canApply || hasApplied ? 'btn-disabled' : 'btn-primary'}} apply-btn"
+      bindtap="onApply"
+    >
+      <text wx:if="{{hasApplied}}">已申请</text>
+      <text wx:elif="{{isFull}}">已招满</text>
+      <text wx:elif="{{job.status !== 'recruiting'}}">已结束</text>
+      <text wx:else>立即申请</text>
+    </view>
+  </view>
+</view>

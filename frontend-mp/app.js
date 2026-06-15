@@ -259,6 +259,12 @@ App({
         console.error('初始化SOS数据失败:', e);
       }
 
+      try {
+        dataService.initWorkStudyData();
+      } catch (e) {
+        console.error('初始化勤工助学数据失败:', e);
+      }
+
       wx.setStorageSync('mock_data_version', MOCK_DATA_VERSION);
     } catch (e) {
       console.error('初始化mock数据失败:', e);

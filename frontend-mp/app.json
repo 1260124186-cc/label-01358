@@ -165,7 +165,13 @@
     "pages/lab-reservation/index",
     "pages/lab-reservation/detail",
     "pages/lab-reservation/my-appointments",
-    "pages/lab-reservation/appointment-detail"
+    "pages/lab-reservation/appointment-detail",
+    "pages/work-study/index",
+    "pages/work-study/detail",
+    "pages/work-study/apply",
+    "pages/work-study/my-applications",
+    "pages/work-study/hours",
+    "pages/work-study/salary"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

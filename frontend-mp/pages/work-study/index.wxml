@@ -1,0 +1,130 @@
+<view class="container {{darkMode ? 'dark' : ''}}">
+  <view class="quick-actions">
+    <view class="action-item" bindtap="onMyApplications">
+      <view class="action-icon">📝</view>
+      <view class="action-label">我的申请</view>
+    </view>
+    <view class="action-item" bindtap="onMyHours">
+      <view class="action-icon">⏱️</view>
+      <view class="action-label">工时记录</view>
+    </view>
+    <view class="action-item" bindtap="onSalary">
+      <view class="action-icon">💰</view>
+      <view class="action-label">薪资结算</view>
+    </view>
+  </view>
+
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="搜索岗位名称、工作内容..."
+      value="{{searchKeyword}}"
+      bindinput="onSearchInput"
+      bindconfirm="onSearchConfirm"
+      confirm-type="search"
+    />
+    <view wx:if="{{searchKeyword}}" class="clear-btn" bindtap="onClearSearch">✕</view>
+  </view>
+
+  <scroll-view class="tabs-scroll" scroll-x="true" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="tabs">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="value"
+        class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onTabTap"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <scroll-view class="dept-scroll" scroll-x="true" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="departments">
+      <view
+        wx:for="{{departments}}"
+        wx:key="value"
+        class="dept-item {{currentDepartment === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onDepartmentTap"
+      >
+        <text class="dept-icon">{{item.icon}}</text>
+        <text class="dept-label">{{item.label}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="sort-bar">
+    <view
+      wx:for="{{sortOptions}}"
+      wx:key="value"
+      class="sort-item {{currentSort === item.value ? 'active' : ''}}"
+      data-value="{{item.value}}"
+      bindtap="onSortChange"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <view wx:if="{{jobList.length === 0}}" class="empty-state">
+    <view class="empty-icon">📋</view>
+    <view class="empty-text">暂无相关岗位</view>
+    <view class="empty-tip">试试调整筛选条件</view>
+  </view>
+
+  <view wx:else class="job-list">
+    <view
+      wx:for="{{jobList}}"
+      wx:key="id"
+      class="job-card"
+      data-id="{{item.id}}"
+      bindtap="onNavToDetail"
+    >
+      <view class="job-header">
+        <view class="job-title">{{item.title}}</view>
+        <view class="job-status" style="background: {{item.statusColor}}15; color: {{item.statusColor}};">
+          <text>{{item.statusIcon}}</text>
+          <text>{{item.statusLabel}}</text>
+        </view>
+      </view>
+
+      <view class="job-dept">
+        <text class="dept-emoji">{{item.deptIcon}}</text>
+        <text>{{item.deptLabel}}</text>
+      </view>
+
+      <view class="job-info">
+        <view class="info-item">
+          <text class="info-icon">💼</text>
+          <text class="info-label">时薪</text>
+          <text class="info-value wage">¥{{item.hourlyWage}}/小时</text>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">⏰</text>
+          <text class="info-label">招聘</text>
+          <text class="info-value">
+            <text wx:if="{{item.isFull}}" class="full-tag">已满</text>
+            <text wx:else class="remaining">剩余{{item.remaining}}人</text>
+            / {{item.recruitCount}}人
+          </text>
+        </view>
+      </view>
+
+      <view class="job-content">
+        <text class="content-icon">📋</text>
+        <text class="content-text">{{item.workContent}}</text>
+      </view>
+
+      <view class="job-footer">
+        <view class="time-req">
+          <text class="req-icon">📅</text>
+          <text>{{item.timeRequirement}}</text>
+        </view>
+        <view class="publish-time">{{item.createTimeText}}</view>
+      </view>
+
+      <view wx:if="{{item.canApply}}" class="apply-btn">立即申请</view>
+    </view>
+  </view>
+</view>

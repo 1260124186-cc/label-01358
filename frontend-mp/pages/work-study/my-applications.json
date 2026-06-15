@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的申请",
+  "navigationBarBackgroundColor": "#FF6B6B",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true
+}

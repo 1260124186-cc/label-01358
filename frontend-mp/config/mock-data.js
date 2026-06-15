@@ -8835,3 +8835,281 @@ const _scholarshipExports = {
 };
 
 Object.assign(module.exports, _scholarshipExports);
+
+const MOCK_WORK_STUDY_JOBS = [
+  {
+    id: 'wsj_001',
+    title: '图书馆图书整理员',
+    department: 'library',
+    departmentName: '图书馆',
+    workContent: '负责图书馆图书分类、上架、整理，协助读者查找图书，维护阅览区秩序。',
+    hourlyWage: 20,
+    timeRequirement: '每周至少工作2天，每次3-4小时，可灵活安排',
+    recruitCount: 5,
+    currentCount: 3,
+    requirements: '工作认真负责，有耐心，熟悉图书分类优先',
+    contact: '李老师 010-12345678',
+    location: '图书馆二楼服务台',
+    status: 'recruiting',
+    views: 156
+  },
+  {
+    id: 'wsj_002',
+    title: '行政办公室助理',
+    department: 'administration',
+    departmentName: '行政办公室',
+    workContent: '负责文件整理、数据录入、会议准备等日常行政事务，协助老师完成相关工作。',
+    hourlyWage: 25,
+    timeRequirement: '工作日下午2:00-5:00，每周至少3天',
+    recruitCount: 2,
+    currentCount: 2,
+    requirements: '熟练使用Office办公软件，细心认真，沟通能力强',
+    contact: '王老师 010-87654321',
+    location: '行政楼301室',
+    status: 'closed',
+    views: 234
+  },
+  {
+    id: 'wsj_003',
+    title: '食堂餐台服务员',
+    department: 'canteen',
+    departmentName: '食堂后勤',
+    workContent: '负责食堂餐台清洁、餐具回收、维持就餐秩序，高峰期协助打餐。',
+    hourlyWage: 18,
+    timeRequirement: '早餐7:00-8:30，午餐11:30-13:00，晚餐17:30-19:00，任选时段',
+    recruitCount: 8,
+    currentCount: 4,
+    requirements: '吃苦耐劳，服务意识强，卫生习惯良好',
+    contact: '张主管 010-11112222',
+    location: '第一食堂办公室',
+    status: 'recruiting',
+    views: 189
+  },
+  {
+    id: 'wsj_004',
+    title: '实验室设备维护助理',
+    department: 'lab',
+    departmentName: '实验中心',
+    workContent: '协助实验员进行设备日常维护、仪器校准、实验室清洁卫生，准备实验耗材。',
+    hourlyWage: 28,
+    timeRequirement: '每周一、三、五下午14:00-17:00',
+    recruitCount: 3,
+    currentCount: 1,
+    requirements: '理工科专业，有实验室经验优先，动手能力强',
+    contact: '赵老师 010-33334444',
+    location: '实验楼B栋205',
+    status: 'recruiting',
+    views: 145
+  },
+  {
+    id: 'wsj_005',
+    title: '学生处活动助理',
+    department: 'student_affairs',
+    departmentName: '学生处',
+    workContent: '协助策划和组织校园活动，负责活动宣传、现场布置、摄影记录等工作。',
+    hourlyWage: 22,
+    timeRequirement: '根据活动安排，每周约10-15小时',
+    recruitCount: 4,
+    currentCount: 2,
+    requirements: '有活动组织经验，文案或摄影能力突出者优先',
+    contact: '刘老师 010-55556666',
+    location: '学生活动中心201',
+    status: 'recruiting',
+    views: 267
+  },
+  {
+    id: 'wsj_006',
+    title: '信息中心技术支持',
+    department: 'it_center',
+    departmentName: '信息中心',
+    workContent: '负责校园网络故障排查、多媒体设备维护、协助处理师生IT相关问题。',
+    hourlyWage: 30,
+    timeRequirement: '轮班制，每班2小时，每周至少3班',
+    recruitCount: 4,
+    currentCount: 3,
+    requirements: '计算机相关专业，熟悉网络和计算机硬件，有IT支持经验优先',
+    contact: '陈工 010-77778888',
+    location: '信息楼一楼服务大厅',
+    status: 'recruiting',
+    views: 312
+  },
+  {
+    id: 'wsj_007',
+    title: '体育部器材管理员',
+    department: 'sports',
+    departmentName: '体育部',
+    workContent: '负责体育器材的借出归还登记、器材维护保养、场地卫生清洁等。',
+    hourlyWage: 19,
+    timeRequirement: '每天下午16:00-19:00，周末上午9:00-12:00',
+    recruitCount: 3,
+    currentCount: 3,
+    requirements: '热爱体育运动，工作认真负责，有较强服务意识',
+    contact: '孙老师 010-99990000',
+    location: '体育馆器材室',
+    status: 'closed',
+    views: 98
+  },
+  {
+    id: 'wsj_008',
+    title: '宿舍楼层值班员',
+    department: 'dormitory',
+    departmentName: '宿管中心',
+    workContent: '协助宿管进行楼层值班、访客登记、晚归检查、公共区域巡查等。',
+    hourlyWage: 17,
+    timeRequirement: '每晚22:00-24:00，每周至少3晚',
+    recruitCount: 6,
+    currentCount: 2,
+    requirements: '责任心强，有较强的沟通能力和应变能力',
+    contact: '周阿姨 010-12121212',
+    location: '各宿舍楼值班室',
+    status: 'recruiting',
+    views: 178
+  }
+];
+
+const MOCK_WORK_STUDY_APPLICATIONS = [
+  {
+    id: 'wsa_001',
+    jobId: 'wsj_001',
+    jobTitle: '图书馆图书整理员',
+    department: 'library',
+    departmentName: '图书馆',
+    userId: 'test_user',
+    userName: '张三',
+    studentId: '2024001001',
+    phone: '13800138000',
+    resume: '本人性格认真细致，有良好的服务意识。曾在高中担任图书馆志愿者，熟悉图书分类方法。课余时间充裕，能够保证工作时间。',
+    availableTime: '周一至周五下午14:00-18:00，周末全天可安排',
+    status: 'approved',
+    applyTime: Date.now() - 86400000 * 7,
+    reviewTime: Date.now() - 86400000 * 5,
+    reviewRemark: '欢迎加入图书馆工作团队！请于下周一到图书馆二楼服务台找李老师报到。'
+  },
+  {
+    id: 'wsa_002',
+    jobId: 'wsj_006',
+    jobTitle: '信息中心技术支持',
+    department: 'it_center',
+    departmentName: '信息中心',
+    userId: 'test_user',
+    userName: '张三',
+    studentId: '2024001001',
+    phone: '13800138000',
+    resume: '计算机科学与技术专业大二学生，熟悉计算机硬件和网络维护。曾担任班级IT委员，帮助同学解决各类电脑问题。',
+    availableTime: '周二、周四下午16:00-20:00，周六全天',
+    status: 'pending',
+    applyTime: Date.now() - 86400000 * 2,
+    reviewTime: null,
+    reviewRemark: ''
+  },
+  {
+    id: 'wsa_003',
+    jobId: 'wsj_003',
+    jobTitle: '食堂餐台服务员',
+    department: 'canteen',
+    departmentName: '食堂后勤',
+    userId: 'test_user',
+    userName: '张三',
+    studentId: '2024001001',
+    phone: '13800138000',
+    resume: '能吃苦耐劳，有团队合作精神。之前有餐饮服务兼职经验，熟悉服务流程。',
+    availableTime: '午餐11:30-13:00，晚餐17:30-19:00，可长期稳定工作',
+    status: 'rejected',
+    applyTime: Date.now() - 86400000 * 10,
+    reviewTime: Date.now() - 86400000 * 8,
+    reviewRemark: '感谢您的申请！本岗位招聘已满，建议关注其他勤工助学岗位。'
+  }
+];
+
+const MOCK_WORK_STUDY_HOURS_RECORDS = [
+  {
+    id: 'wsh_001',
+    applicationId: 'wsa_001',
+    jobId: 'wsj_001',
+    jobTitle: '图书馆图书整理员',
+    userId: 'test_user',
+    userName: '张三',
+    date: '2026-06-10',
+    startTime: '14:00',
+    endTime: '17:00',
+    hours: 3,
+    workDescription: '图书分类上架，整理阅览区图书，协助读者检索',
+    status: 'confirmed',
+    submitTime: Date.now() - 86400000 * 5,
+    confirmTime: Date.now() - 86400000 * 4
+  },
+  {
+    id: 'wsh_002',
+    applicationId: 'wsa_001',
+    jobId: 'wsj_001',
+    jobTitle: '图书馆图书整理员',
+    userId: 'test_user',
+    userName: '张三',
+    date: '2026-06-12',
+    startTime: '14:30',
+    endTime: '17:30',
+    hours: 3,
+    workDescription: '整理新书区，协助办理借阅手续，维护秩序',
+    status: 'confirmed',
+    submitTime: Date.now() - 86400000 * 3,
+    confirmTime: Date.now() - 86400000 * 2
+  },
+  {
+    id: 'wsh_003',
+    applicationId: 'wsa_001',
+    jobId: 'wsj_001',
+    jobTitle: '图书馆图书整理员',
+    userId: 'test_user',
+    userName: '张三',
+    date: '2026-06-14',
+    startTime: '09:00',
+    endTime: '12:00',
+    hours: 3,
+    workDescription: '整理过期期刊，打扫图书区卫生',
+    status: 'pending',
+    submitTime: Date.now() - 86400000 * 1,
+    confirmTime: null
+  }
+];
+
+const MOCK_WORK_STUDY_SALARIES = [
+  {
+    id: 'wss_001',
+    userId: 'test_user',
+    userName: '张三',
+    month: '2026-05',
+    totalHours: 32,
+    hourlyWage: 20,
+    totalAmount: 640,
+    detail: [
+      { jobTitle: '图书馆图书整理员', hours: 32, amount: 640 }
+    ],
+    status: 'paid',
+    settleTime: Date.now() - 86400000 * 15,
+    payTime: Date.now() - 86400000 * 10
+  },
+  {
+    id: 'wss_002',
+    userId: 'test_user',
+    userName: '张三',
+    month: '2026-06',
+    totalHours: 6,
+    hourlyWage: 20,
+    totalAmount: 120,
+    detail: [
+      { jobTitle: '图书馆图书整理员', hours: 6, amount: 120 }
+    ],
+    status: 'settled',
+    settleTime: Date.now() - 86400000 * 2,
+    payTime: null
+  }
+];
+
+const _workStudyExports = {
+  MOCK_WORK_STUDY_JOBS,
+  MOCK_WORK_STUDY_APPLICATIONS,
+  MOCK_WORK_STUDY_HOURS_RECORDS,
+  MOCK_WORK_STUDY_SALARIES
+};
+
+Object.assign(module.exports, _workStudyExports);

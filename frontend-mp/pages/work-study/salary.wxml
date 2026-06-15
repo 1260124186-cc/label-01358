@@ -1,0 +1,124 @@
+<view class="container {{darkMode ? 'dark' : ''}}">
+  <view class="summary-card">
+    <view class="summary-title">💰 薪资汇总</view>
+    <view class="summary-grid">
+      <view class="summary-item">
+        <view class="summary-amount">¥{{totalSummary.totalAmount}}</view>
+        <view class="summary-label">累计总收入</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-amount paid">¥{{totalSummary.paidAmount}}</view>
+        <view class="summary-label">已发放</view>
+      </view>
+      <view class="summary-item">
+        <view class="summary-amount pending">¥{{totalSummary.pendingAmount}}</view>
+        <view class="summary-label">待发放</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="notice-bar">
+    <text class="notice-icon">ℹ️</text>
+    <text class="notice-text">薪资每月25日前结算上月工时，30日前发放至银行卡（演示版）</text>
+  </view>
+
+  <scroll-view class="tabs-scroll" scroll-x="true" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="tabs">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="value"
+        class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onTabTap"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{salaryList.length === 0}}" class="empty-state">
+    <view class="empty-icon">💰</view>
+    <view class="empty-text">暂无薪资记录</view>
+    <view class="empty-tip">工时确认后将在此处生成薪资单</view>
+  </view>
+
+  <view wx:else class="salary-list">
+    <view
+      wx:for="{{salaryList}}"
+      wx:key="id"
+      class="salary-card"
+      data-month="{{item.month}}"
+      bindtap="onViewDetail"
+    >
+      <view class="card-header">
+        <view class="month-info">
+          <view class="month-text">{{item.month}}月薪资</view>
+          <view class="period-text">工时周期：{{item.month}}.01 - {{item.month}}.30</view>
+        </view>
+        <view class="status-badge" style="background: {{item.statusColor}}15; color: {{item.statusColor}};">
+          <text>{{item.statusIcon}}</text>
+          <text>{{item.statusLabel}}</text>
+        </view>
+      </view>
+
+      <view class="amount-row">
+        <view class="amount-label">实发金额</view>
+        <view class="amount-value">¥{{item.amountText}}</view>
+      </view>
+
+      <view class="detail-rows">
+        <view class="detail-row">
+          <text class="detail-icon">⏱️</text>
+          <text class="detail-label">总工时</text>
+          <text class="detail-value">{{item.totalHours}}小时</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-icon">💼</text>
+          <text class="detail-label">岗位数</text>
+          <text class="detail-value">{{item.jobCount}}个</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-icon">📝</text>
+          <text class="detail-label">基础工资</text>
+          <text class="detail-value">¥{{item.amountText}}</text>
+        </view>
+        <view wx:if="{{item.deduction}}" class="detail-row">
+          <text class="detail-icon">📋</text>
+          <text class="detail-label">其他</text>
+          <text class="detail-value">¥0.00</text>
+        </view>
+      </view>
+
+      <view wx:if="{{item.status === 'settled' || item.status === 'paid'}}" class="time-info">
+        <view class="time-row">
+          <text class="time-label">结算时间：</text>
+          <text class="time-value">{{item.settleTimeText}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{item.status === 'paid'}}" class="time-info">
+        <view class="time-row">
+          <text class="time-label">发放时间：</text>
+          <text class="time-value paid-text">{{item.payTimeText}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{item.status === 'pending'}}" class="card-footer">
+        <view class="footer-tip">待月底统一结算</view>
+      </view>
+
+      <view wx:if="{{item.status === 'settled'}}" class="card-footer">
+        <view class="footer-btn primary" data-id="{{item.id}}" catchtap="onPay">
+          等待发放（演示）
+        </view>
+      </view>
+
+      <view wx:if="{{item.status === 'paid'}}" class="card-footer">
+        <view class="paid-success">
+          <text class="success-icon">✅</text>
+          <text>已发放至银行卡 **** **** **** 8888</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

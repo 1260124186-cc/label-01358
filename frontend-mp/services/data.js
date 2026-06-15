@@ -27,6 +27,7 @@ let alumniCardBenefitsInitialized = false;
 let alumniProfilesInitialized = false;
 let takeoutInitialized = false;
 let scholarshipInitialized = false;
+let workStudyInitialized = false;
 
 function initVolunteerData() {
   if (volunteerInitialized) return;
@@ -7497,7 +7498,21 @@ module.exports = {
   getScholarshipMaterialList,
   getScholarshipMaterialDetail,
   getScholarshipPublicList,
-  getScholarshipPublicDetail
+  getScholarshipPublicDetail,
+
+  initWorkStudyData,
+  getWorkStudyJobList,
+  getWorkStudyJobDetail,
+  increaseWorkStudyJobViews,
+  getWorkStudyApplicationList,
+  getWorkStudyApplicationDetail,
+  createWorkStudyApplication,
+  hasAppliedForJob,
+  getWorkStudyHoursRecords,
+  createWorkStudyHoursRecord,
+  getTotalHoursByMonth,
+  getWorkStudySalaryList,
+  getApprovedApplications
 };
 
 function initScholarshipData() {
@@ -7750,4 +7765,186 @@ function getScholarshipPublicList(filters = {}) {
 function getScholarshipPublicDetail(id) {
   const list = storage.getList(STORAGE_KEYS.SCHOLARSHIP_PUBLIC_LIST);
   return list.find(item => item.id === id) || null;
+}
+
+function initWorkStudyData() {
+  if (workStudyInitialized) return;
+  const existingJobs = storage.get(STORAGE_KEYS.WORK_STUDY_JOB_LIST);
+  if (!existingJobs || existingJobs.length === 0) {
+    const jobs = mockData.MOCK_WORK_STUDY_JOBS.map((item, index) => ({
+      id: item.id,
+      ...item,
+      createTime: Date.now() - (index + 1) * 86400000,
+      updateTime: Date.now() - (index + 1) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.WORK_STUDY_JOB_LIST, jobs);
+
+    const applications = mockData.MOCK_WORK_STUDY_APPLICATIONS.map(item => ({
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.WORK_STUDY_APPLICATION_LIST, applications);
+
+    const hoursRecords = mockData.MOCK_WORK_STUDY_HOURS_RECORDS.map(item => ({
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.WORK_STUDY_HOURS_RECORD_LIST, hoursRecords);
+
+    const salaries = mockData.MOCK_WORK_STUDY_SALARIES.map(item => ({
+      ...item
+    }));
+    storage.set(STORAGE_KEYS.WORK_STUDY_SALARY_LIST, salaries);
+  }
+  workStudyInitialized = true;
+}
+
+function getWorkStudyJobList(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.WORK_STUDY_JOB_LIST);
+
+  if (filters.status && filters.status !== 'all') {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  if (filters.department && filters.department !== 'all') {
+    list = list.filter(item => item.department === filters.department);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'workContent', 'requirements']);
+  }
+
+  if (filters.sort === 'wage_desc') {
+    list = list.sort((a, b) => b.hourlyWage - a.hourlyWage);
+  } else if (filters.sort === 'wage_asc') {
+    list = list.sort((a, b) => a.hourlyWage - b.hourlyWage);
+  } else {
+    list = list.sort((a, b) => b.createTime - a.createTime);
+  }
+
+  return list;
+}
+
+function getWorkStudyJobDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.WORK_STUDY_JOB_LIST);
+  const job = list.find(item => item.id === id) || null;
+  if (job) {
+    const currentApplications = storage.getList(STORAGE_KEYS.WORK_STUDY_APPLICATION_LIST)
+      .filter(app => app.jobId === id && app.status === 'approved').length;
+    job.currentCount = currentApplications || job.currentCount || 0;
+  }
+  return job;
+}
+
+function increaseWorkStudyJobViews(id) {
+  const list = storage.getList(STORAGE_KEYS.WORK_STUDY_JOB_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    list[index].views = (list[index].views || 0) + 1;
+    storage.set(STORAGE_KEYS.WORK_STUDY_JOB_LIST, list);
+  }
+}
+
+function getWorkStudyApplicationList(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.WORK_STUDY_APPLICATION_LIST);
+
+  if (filters.userId) {
+    list = list.filter(item => item.userId === filters.userId);
+  }
+
+  if (filters.status && filters.status !== 'all') {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  if (filters.jobId) {
+    list = list.filter(item => item.jobId === filters.jobId);
+  }
+
+  return list.sort((a, b) => b.applyTime - a.applyTime);
+}
+
+function getWorkStudyApplicationDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.WORK_STUDY_APPLICATION_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function createWorkStudyApplication(data) {
+  const app = {
+    id: util.generateId(),
+    status: 'pending',
+    applyTime: Date.now(),
+    reviewTime: null,
+    reviewRemark: '',
+    ...data
+  };
+  storage.addToList(STORAGE_KEYS.WORK_STUDY_APPLICATION_LIST, app);
+  return app;
+}
+
+function hasAppliedForJob(jobId, userId = 'test_user') {
+  const list = storage.getList(STORAGE_KEYS.WORK_STUDY_APPLICATION_LIST);
+  return list.some(item => item.jobId === jobId && item.userId === userId);
+}
+
+function getWorkStudyHoursRecords(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.WORK_STUDY_HOURS_RECORD_LIST);
+
+  if (filters.userId) {
+    list = list.filter(item => item.userId === filters.userId);
+  }
+
+  if (filters.applicationId) {
+    list = list.filter(item => item.applicationId === filters.applicationId);
+  }
+
+  if (filters.jobId) {
+    list = list.filter(item => item.jobId === filters.jobId);
+  }
+
+  if (filters.status && filters.status !== 'all') {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  if (filters.month) {
+    list = list.filter(item => item.date && item.date.startsWith(filters.month));
+  }
+
+  return list.sort((a, b) => {
+    const dateA = new Date(a.date + ' ' + a.startTime);
+    const dateB = new Date(b.date + ' ' + b.startTime);
+    return dateB - dateA;
+  });
+}
+
+function createWorkStudyHoursRecord(data) {
+  const record = {
+    id: util.generateId(),
+    status: 'pending',
+    submitTime: Date.now(),
+    confirmTime: null,
+    ...data
+  };
+  storage.addToList(STORAGE_KEYS.WORK_STUDY_HOURS_RECORD_LIST, record);
+  return record;
+}
+
+function getTotalHoursByMonth(userId, month) {
+  const records = getWorkStudyHoursRecords({ userId, month, status: 'confirmed' });
+  return records.reduce((sum, r) => sum + (r.hours || 0), 0);
+}
+
+function getWorkStudySalaryList(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.WORK_STUDY_SALARY_LIST);
+
+  if (filters.userId) {
+    list = list.filter(item => item.userId === filters.userId);
+  }
+
+  if (filters.status && filters.status !== 'all') {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  return list.sort((a, b) => b.month.localeCompare(a.month));
+}
+
+function getApprovedApplications(userId = 'test_user') {
+  return getWorkStudyApplicationList({ userId, status: 'approved' });
 }

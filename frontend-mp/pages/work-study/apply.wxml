@@ -1,0 +1,140 @@
+<view class="container {{darkMode ? 'dark' : ''}}" wx:if="{{job}}">
+  <view class="job-card">
+    <view class="job-icon">{{deptIcon}}</view>
+    <view class="job-info">
+      <view class="job-title">{{job.title}}</view>
+      <view class="job-meta">
+        <text>{{deptLabel}}</text>
+        <text class="dot">·</text>
+        <text class="wage">¥{{job.hourlyWage}}/小时</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">个人信息</view>
+
+    <view class="form-item">
+      <view class="form-label"><text class="required">*</text> 姓名</view>
+      <input
+        class="form-input"
+        placeholder="请输入您的姓名"
+        value="{{name}}"
+        bindinput="onNameInput"
+        maxlength="20"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label"><text class="required">*</text> 联系电话</view>
+      <input
+        class="form-input"
+        placeholder="请输入手机号码"
+        value="{{phone}}"
+        bindinput="onPhoneInput"
+        type="number"
+        maxlength="11"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label"><text class="required">*</text> 学号</view>
+      <input
+        class="form-input"
+        placeholder="请输入学号"
+        value="{{studentId}}"
+        bindinput="onStudentIdInput"
+        maxlength="20"
+      />
+    </view>
+
+    <view class="form-item">
+      <view class="form-label"><text class="required">*</text> 专业</view>
+      <input
+        class="form-input"
+        placeholder="请输入专业"
+        value="{{major}}"
+        bindinput="onMajorInput"
+        maxlength="50"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title"><text class="required">*</text> 个人简历</view>
+    <view class="resume-tip">请简述个人经历、技能特长、相关经验等</view>
+    <textarea
+      class="form-textarea"
+      placeholder="请填写个人简历，不少于10个字..."
+      value="{{resume}}"
+      bindinput="onResumeInput"
+      maxlength="500"
+      auto-height
+    />
+    <view class="char-count">{{resume.length}}/500</view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-row">
+      <view class="section-title"><text class="required">*</text> 可工作日期</view>
+      <view class="select-all" bindtap="onSelectAllDays">
+        {{availableDays.length === 7 ? '取消全选' : '全选'}}
+      </view>
+    </view>
+    <view class="weekday-list">
+      <view
+        wx:for="{{weekdays}}"
+        wx:key="value"
+        class="weekday-item {{availableDays.indexOf(item.value) > -1 ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onDayToggle"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">可工作时段</view>
+    <view class="time-list">
+      <view
+        wx:for="{{availableTimeOptions}}"
+        wx:key="value"
+        class="time-item {{availableTime === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onTimeChange"
+      >
+        <view class="time-check">{{availableTime === item.value ? '✓' : ''}}</view>
+        <view class="time-text">{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">每周可工作时长</view>
+    <picker
+      mode="selector"
+      range="{{weekHoursOptions}}"
+      value="{{weekHoursIndex}}"
+      bindchange="onWeekHoursChange"
+    >
+      <view class="picker-display">
+        <text class="picker-value">{{weekHoursOptions[weekHoursIndex]}}</text>
+        <text class="picker-arrow">›</text>
+      </view>
+    </picker>
+  </view>
+
+  <view class="submit-bar">
+    <view class="submit-tip">
+      提交后申请状态为"待审核"，请耐心等待审批结果
+    </view>
+    <view
+      class="{{submitting ? 'btn-loading' : 'btn-submit'}} submit-btn"
+      bindtap="onSubmit"
+    >
+      <text wx:if="{{submitting}}">提交中...</text>
+      <text wx:else>提交申请</text>
+    </view>
+  </view>
+</view>
