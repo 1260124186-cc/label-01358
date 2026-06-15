@@ -1,0 +1,78 @@
+.detail-bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  padding-bottom: calc(12rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -2rpx 16rpx rgba(0, 0, 0, 0.08);
+  z-index: 100;
+}
+
+.bottom-actions {
+  display: flex;
+  align-items: center;
+  margin-right: 24rpx;
+}
+
+.bottom-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 80rpx;
+  padding: 0 16rpx;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.bottom-action:active {
+  opacity: 0.6;
+}
+
+.bottom-action.disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.bottom-icon {
+  font-size: 40rpx;
+  line-height: 1;
+  margin-bottom: 4rpx;
+  color: #666666;
+  transition: color 0.2s;
+}
+
+.bottom-icon.active {
+  color: #FF6B6B;
+}
+
+.bottom-text {
+  font-size: 22rpx;
+  color: #666666;
+  line-height: 1.2;
+}
+
+.bottom-button-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .detail-bottom-bar {
+    background: #1A1D24;
+    box-shadow: 0 -2rpx 16rpx rgba(0, 0, 0, 0.3);
+  }
+
+  .bottom-icon,
+  .bottom-text {
+    color: #999999;
+  }
+
+  .bottom-icon.active {
+    color: #FF8585;
+  }
+}

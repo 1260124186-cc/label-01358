@@ -37,7 +37,7 @@
   </view>
 
   <!-- 学习资料入口 - 图书分类互补 -->
-  <view wx:if="{{currentCategory === 'book' || currentCategory === ''}}" class="study-entry-banner" bindtap="onStudyEntry">
+  <view wx:if="{{!showSkeleton && (currentCategory === 'book' || currentCategory === '')}}" class="study-entry-banner" bindtap="onStudyEntry">
     <view class="study-entry-content">
       <view class="study-entry-icon">📚</view>
       <view class="study-entry-info">
@@ -51,15 +51,26 @@
     </view>
   </view>
 
-  <!-- 商品列表 -->
+  <!-- 列表区域 -->
   <scroll-view
     class="list-scroll"
     scroll-y="{{true}}"
     refresher-enabled="{{true}}"
     refresher-triggered="{{refreshing}}"
-    bindrefresherrefresh="onRefresh"
+    bindrefresherrefresh="onListRefresh"
+    bindscrolltolower="onListLoadMore"
+    lower-threshold="50"
   >
-    <view class="list-container" wx:if="{{list.length > 0}}">
+    <!-- 骨架屏 -->
+    <skeleton
+      wx:if="{{showSkeleton}}"
+      type="{{skeletonConfig.type}}"
+      count="{{skeletonConfig.count}}"
+      loading="{{true}}"
+    />
+
+    <!-- 列表内容 -->
+    <view class="list-container" wx:if="{{!showSkeleton && list.length > 0}}">
       <view class="goods-grid">
         <view
           class="goods-card"
@@ -96,12 +107,28 @@
       </view>
     </view>
 
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{!showSkeleton && list.length > 0}}">
+      <view class="load-more-loading" wx:if="{{loadingMore}}">
+        <view class="loading-spinner"></view>
+        <text class="load-more-text">加载中...</text>
+      </view>
+      <view class="load-more-no-more" wx:elif="{{noMore}}">
+        <text class="load-more-text">没有更多了</text>
+      </view>
+      <view class="load-more-tip" wx:else>
+        <text class="load-more-text">上拉加载更多</text>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
     <empty
-      wx:if="{{!loading && list.length === 0}}"
-      text="暂无商品信息"
-      showAction="{{true}}"
-      actionText="发布商品"
-      bindaction="onPublish"
+      wx:if="{{!showSkeleton && !loading && list.length === 0}}"
+      image="{{emptyConfig.image}}"
+      text="{{emptyConfig.text}}"
+      showAction="{{emptyConfig.showAction}}"
+      actionText="{{emptyConfig.actionText}}"
+      bindaction="onEmptyAction"
     />
   </scroll-view>
 

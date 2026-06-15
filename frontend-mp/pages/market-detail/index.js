@@ -5,17 +5,15 @@ const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const fileUtil = require('../../utils/file');
 const { mixPage } = require('../../utils/withTheme');
+const { mixinDetail } = require('../../utils/detailMixin');
 
-mixPage({
+let pageOptions = {
   data: {
     darkMode: false,
     id: '',
     detail: null,
-    isFavorite: false,
-    isOwner: false,
     currentImageIndex: 0,
     showStatusAction: false,
-    showShareCard: false,
     statusOptions: [
       { value: 'selling', label: '在售', desc: '商品正在出售中' },
       { value: 'reserved', label: '已预订', desc: '商品已被预订，暂不出售' },
@@ -85,24 +83,16 @@ mixPage({
       }
       this.setData({ markers });
 
-      const userInfo = app.globalData.userInfo || {};
-      const isOwner = userInfo.id && detail.userId === userInfo.id;
+      this.checkOwner(detail.userId);
 
-      this.setData({ detail: formattedDetail, isOwner });
+      this.setData({ detail: formattedDetail });
 
-      // 增加浏览量
       dataService.increaseMarketViews(this.data.id);
 
-      // 添加到浏览历史
       dataService.addHistory(detail, 'market');
 
-      // 检查收藏状态
-      this.checkFavorite();
-
-      // 加载用户信息
       this.loadUserInfo();
 
-      // 加载评论
       this.loadComments();
     }
   },
@@ -192,7 +182,7 @@ mixPage({
             this.loadComments();
             util.showSuccess('已删除');
           } else {
-            util.showError('删除失败');
+            util.showError('删除失败，请重试');
           }
         }
       }
@@ -218,11 +208,6 @@ mixPage({
     return (views / 10000).toFixed(1) + 'w';
   },
 
-  checkFavorite() {
-    const isFavorite = dataService.isFavorite(this.data.id, 'market');
-    this.setData({ isFavorite });
-  },
-
   onSwiperChange(e) {
     this.setData({
       currentImageIndex: e.detail.current
@@ -233,40 +218,6 @@ mixPage({
     const { index } = e.currentTarget.dataset;
     const urls = this.data.detail.images;
     fileUtil.previewImage(urls, urls[index]);
-  },
-
-  onToggleFavorite() {
-    // 检查登录状态
-    if (!util.checkLogin()) {
-      return;
-    }
-
-    const { id, isFavorite, detail } = this.data;
-
-    if (isFavorite) {
-      dataService.removeFavorite(id, 'market');
-      this.setData({ isFavorite: false });
-      util.showSuccess('已取消收藏');
-    } else {
-      dataService.addFavorite(detail, 'market');
-      this.setData({ isFavorite: true });
-      util.showSuccess('收藏成功');
-    }
-  },
-
-  onCallPhone() {
-    // 检查登录状态
-    if (!util.checkLogin()) {
-      return;
-    }
-
-    const { phone } = this.data.detail;
-    wx.makePhoneCall({
-      phoneNumber: phone,
-      fail: () => {
-        // 用户取消或失败
-      }
-    });
   },
 
   onNavigateToLocation() {
@@ -319,15 +270,6 @@ mixPage({
 
   onMapTap() {
     this.onNavigateToLocation();
-  },
-
-  onReport() {
-    if (!util.checkLogin()) {
-      return;
-    }
-
-    const { id } = this.data;
-    util.navigateTo(`/pages/report/index?targetType=market&targetId=${id}`);
   },
 
   onEdit() {
@@ -391,104 +333,39 @@ mixPage({
     }
   },
 
-  onShare() {
-    if (wx.showShareMenu) {
-      wx.showShareMenu({
-        withShareTicket: true,
-        menus: ['shareAppMessage', 'shareTimeline']
-      });
-    }
-    this.setData({ showShareCard: true });
-  },
-
-  onCloseShareCard() {
-    this.setData({ showShareCard: false });
-  },
-
-  onSaveShareImage() {
-    const { detail } = this.data;
-    if (!detail || !detail.images || detail.images.length === 0) {
-      util.showError('保存失败');
-      return;
-    }
-
-    wx.showLoading({ title: '保存中...' });
-
-    const imageUrl = detail.images[0];
-
-    if (imageUrl.startsWith('http')) {
-      wx.downloadFile({
-        url: imageUrl,
-        success: (res) => {
-          if (res.statusCode === 200) {
-            this.saveImageToAlbum(res.tempFilePath);
-          } else {
-            wx.hideLoading();
-            util.showError('保存失败');
-          }
-        },
-        fail: () => {
-          wx.hideLoading();
-          util.showError('保存失败');
-        }
-      });
-    } else {
-      this.saveImageToAlbum(imageUrl);
-    }
-  },
-
-  saveImageToAlbum(filePath) {
-    wx.saveImageToPhotosAlbum({
-      filePath: filePath,
-      success: () => {
-        wx.hideLoading();
-        util.showSuccess('已保存到相册');
-      },
-      fail: (err) => {
-        wx.hideLoading();
-        if (err.errMsg && err.errMsg.includes('auth deny')) {
-          wx.showModal({
-            title: '提示',
-            content: '需要您授权保存图片到相册',
-            confirmText: '去授权',
-            success: (res) => {
-              if (res.confirm) {
-                wx.openSetting();
-              }
-            }
-          });
-        } else {
-          util.showError('保存失败');
-        }
-      }
-    });
-  },
-
-  onShareAppMessage() {
+  getShareTitle() {
     const { detail } = this.data;
     if (detail) {
-      return {
-        title: `【${detail.statusText}】${detail.title} - ¥${detail.priceText}`,
-        path: `/pages/market-detail/index?id=${detail.id}`,
-        imageUrl: detail.images && detail.images[0] ? detail.images[0] : ''
-      };
+      return `【${detail.statusText}】${detail.title} - ¥${detail.priceText}`;
     }
-    return {
-      title: '二手市场 - 校园闲置交易',
-      path: '/pages/market/index'
-    };
+    return '二手市场 - 校园闲置交易';
   },
 
-  onShareTimeline() {
+  getShareImage() {
+    const { detail } = this.data;
+    if (detail && detail.images && detail.images[0]) {
+      return detail.images[0];
+    }
+    return '';
+  },
+
+  getSharePath() {
     const { detail } = this.data;
     if (detail) {
-      return {
-        title: `${detail.title} - ¥${detail.priceText}`,
-        imageUrl: detail.images && detail.images[0] ? detail.images[0] : ''
-      };
+      return `/pages/market-detail/index?id=${detail.id}`;
     }
-    return {
-      title: '二手市场 - 校园闲置交易'
-    };
+    return '/pages/market/index';
   }
+};
+
+pageOptions = mixinDetail(pageOptions, {
+  type: 'market',
+  enableFavorite: true,
+  enableShare: true,
+  enableReport: true,
+  enableContact: true,
+  contactField: 'phone',
+  contactNameField: 'contact'
 });
+
+mixPage(pageOptions);

@@ -67,13 +67,13 @@
         >
           <text class="action-icon">{{isFavorite ? '★' : '☆'}}</text>
         </view>
-        <view
-          class="action-btn"
-          bindtap="onShare"
+        <button
+          class="action-btn share-btn"
           open-type="share"
+          bindtap="onShare"
         >
           <text class="action-icon">↗️</text>
-        </view>
+        </button>
         <view
           class="action-btn"
           wx:if="{{!isOwner}}"
@@ -181,7 +181,7 @@
       </view>
       <view class="contact-item">
         <text class="contact-label">联系电话</text>
-        <text class="contact-value phone" bindtap="onCallPhone">{{detail.phone}}</text>
+        <text class="contact-value phone" bindtap="onContact">{{detail.phone}}</text>
       </view>
     </view>
   </view>
@@ -249,25 +249,22 @@
     </view>
   </view>
 
-  <!-- 底部操作 -->
-  <view class="bottom-bar">
-    <view class="bottom-left">
-      <view class="bottom-action" bindtap="onToggleFavorite">
-        <text class="bottom-icon {{isFavorite ? 'active' : ''}}">{{isFavorite ? '★' : '☆'}}</text>
-        <text class="bottom-text">收藏</text>
-      </view>
-      <view class="bottom-action" open-type="share" bindtap="onShare">
-        <text class="bottom-icon">↗️</text>
-        <text class="bottom-text">分享</text>
-      </view>
-    </view>
-    <view class="bottom-right" wx:if="{{!isOwner}}">
-      <btn type="primary" size="large" block="{{true}}" bind:click="onCallPhone">立即联系卖家</btn>
-    </view>
-    <view class="bottom-right" wx:else>
-      <btn type="primary" size="large" block="{{true}}" bind:click="onEdit">编辑商品</btn>
-    </view>
-  </view>
+  <!-- 底部操作栏 -->
+  <detail-bottom-bar
+    isFavorite="{{isFavorite}}"
+    isOwner="{{isOwner}}"
+    enableFavorite="{{detailConfig.enableFavorite}}"
+    enableShare="{{detailConfig.enableShare}}"
+    enableReport="{{detailConfig.enableReport}}"
+    enableContact="{{detailConfig.enableContact}}"
+    contactText="立即联系卖家"
+    ownerText="编辑商品"
+    contactDisabled="{{detail.status === 'sold'}}"
+    bind:favorite="onToggleFavorite"
+    bind:share="onShare"
+    bind:report="onReport"
+    bind:contact="{{isOwner ? 'onEdit' : 'onContact'}}"
+  />
 
   <!-- 分享卡片 -->
   <share-card
@@ -281,7 +278,6 @@
     status="{{detail.status}}"
     bind:close="onCloseShareCard"
     bind:save="onSaveShareImage"
-    bind:share="onShareAppMessage"
   />
 </view>
 

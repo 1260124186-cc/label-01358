@@ -137,6 +137,18 @@ function sortByField(list, sortValue, sortOptions) {
   });
 }
 
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+
 function paginateList(list, page = 1, pageSize = 15) {
   const total = list.length;
   const start = (page - 1) * pageSize;
@@ -293,6 +305,44 @@ function getMarketList(filters = {}) {
   list = filterByKeyword(list, filters.keyword, ['title', 'description']);
 
   return list;
+}
+
+function getMarketListPaged(pagination = {}) {
+  const { page = 1, pageSize = 15, filters = {} } = pagination;
+  let list = getMarketList(filters);
+
+  if (filters.userLatitude && filters.userLongitude) {
+    list = list.map(item => {
+      if (item.latitude && item.longitude) {
+        const distance = calculateDistance(
+          filters.userLatitude,
+          filters.userLongitude,
+          item.latitude,
+          item.longitude
+        );
+        return { ...item, _distance: distance };
+      }
+      return { ...item, _distance: Infinity };
+    });
+
+    if (filters.minDistance !== undefined) {
+      list = list.filter(item => item._distance >= filters.minDistance);
+    }
+    if (filters.maxDistance !== undefined) {
+      list = list.filter(item => item._distance <= filters.maxDistance);
+    }
+
+    list.sort((a, b) => {
+      if (a._distance === Infinity && b._distance === Infinity) return b.createTime - a.createTime;
+      if (a._distance === Infinity) return 1;
+      if (b._distance === Infinity) return -1;
+      return a._distance - b._distance;
+    });
+  } else {
+    list = list.sort((a, b) => b.createTime - a.createTime);
+  }
+
+  return paginateList(list, page, pageSize);
 }
 
 /**
@@ -8300,6 +8350,7 @@ function getCategoryOptions() {
 }
 
 module.exports = {
+  calculateDistance,
   paginateList,
 
   getLostFoundList,
@@ -8311,6 +8362,7 @@ module.exports = {
   getMyLostFoundList,
 
   getMarketList,
+  getMarketListPaged,
   getMarketDetail,
   publishMarketItem,
   updateMarketItem,

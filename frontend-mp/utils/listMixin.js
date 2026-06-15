@@ -4,6 +4,23 @@ const LIST_CACHE_PREFIX = 'list_cache_';
 const DEFAULT_PAGE_SIZE = 15;
 const CACHE_EXPIRE_TIME = 5 * 60 * 1000;
 
+const DEFAULT_EMPTY_CONFIG = {
+  image: '',
+  text: '暂无数据',
+  showAction: false,
+  actionText: '刷新',
+  onAction: null
+};
+
+const DEFAULT_SKELETON_CONFIG = {
+  enable: true,
+  type: 'list',
+  count: 5,
+  avatar: true,
+  title: true,
+  paragraph: 2
+};
+
 function getCacheKey(listKey, filters) {
   const filterStr = filters ? JSON.stringify(filters) : 'default';
   return LIST_CACHE_PREFIX + listKey + '_' + filterStr;
@@ -58,8 +75,16 @@ function mixinList(pageOptions, options = {}) {
     cacheFirst = false,
     dataField = 'list',
     loadMethod = null,
-    formatItem = null
+    formatItem = null,
+    enablePullDownRefresh = true,
+    enableReachBottom = true,
+    skeleton = {},
+    empty = {},
+    autoLoad = true
   } = options;
+
+  const skeletonConfig = { ...DEFAULT_SKELETON_CONFIG, ...skeleton };
+  const emptyConfig = { ...DEFAULT_EMPTY_CONFIG, ...empty };
 
   const originalOnLoad = pageOptions.onLoad;
   const originalOnShow = pageOptions.onShow;
@@ -75,14 +100,22 @@ function mixinList(pageOptions, options = {}) {
   pageOptions.data.page = 1;
   pageOptions.data.pageSize = pageSize;
   pageOptions.data.total = 0;
-  pageOptions.data.showSkeleton = true;
+  pageOptions.data.showSkeleton = skeletonConfig.enable;
+  pageOptions.data.skeletonConfig = skeletonConfig;
+  pageOptions.data.emptyConfig = emptyConfig;
   pageOptions.data._listInitialized = false;
   pageOptions.data._cacheLoaded = false;
+
+  if (enablePullDownRefresh) {
+    pageOptions.enablePullDownRefresh = true;
+  }
 
   pageOptions.onLoad = function (query) {
     this._listQuery = query || {};
     this._listFilters = {};
     this._listKey = listKey;
+    this._skeletonConfig = skeletonConfig;
+    this._emptyConfig = emptyConfig;
 
     if (originalOnLoad) {
       originalOnLoad.call(this, query);
@@ -106,7 +139,7 @@ function mixinList(pageOptions, options = {}) {
       }
     }
 
-    if (!this._listInitialized) {
+    if (autoLoad && !this._listInitialized) {
       this.loadList(true);
     }
   };
@@ -121,26 +154,30 @@ function mixinList(pageOptions, options = {}) {
       return;
     }
 
-    if (!this._listInitialized) {
+    if (autoLoad && !this._listInitialized) {
       this.loadList(true);
     }
   };
 
-  pageOptions.onPullDownRefresh = function () {
-    if (originalOnPullDownRefresh) {
-      originalOnPullDownRefresh.call(this);
-    }
-    this.refreshList().then(() => {
-      wx.stopPullDownRefresh();
-    });
-  };
+  if (enablePullDownRefresh) {
+    pageOptions.onPullDownRefresh = function () {
+      if (originalOnPullDownRefresh) {
+        originalOnPullDownRefresh.call(this);
+      }
+      this.refreshList().then(() => {
+        wx.stopPullDownRefresh();
+      });
+    };
+  }
 
-  pageOptions.onReachBottom = function () {
-    if (originalOnReachBottom) {
-      originalOnReachBottom.call(this);
-    }
-    this.loadMore();
-  };
+  if (enableReachBottom) {
+    pageOptions.onReachBottom = function () {
+      if (originalOnReachBottom) {
+        originalOnReachBottom.call(this);
+      }
+      this.loadMore();
+    };
+  }
 
   pageOptions.loadList = function (isRefresh = false) {
     if (this.data.loading || this.data.loadingMore) {
@@ -153,7 +190,7 @@ function mixinList(pageOptions, options = {}) {
     this.setData({
       loading: isRefresh && !this._listInitialized,
       refreshing: isRefresh && this._listInitialized,
-      showSkeleton: isRefresh && !this._listInitialized && !this.data._cacheLoaded
+      showSkeleton: skeletonConfig.enable && isRefresh && !this._listInitialized && !this.data._cacheLoaded
     });
 
     const filters = { ...this._listFilters };
@@ -249,6 +286,29 @@ function mixinList(pageOptions, options = {}) {
     clearListCache(this._listKey);
   };
 
+  pageOptions.onEmptyAction = function () {
+    if (emptyConfig.onAction && typeof emptyConfig.onAction === 'function') {
+      emptyConfig.onAction.call(this);
+    } else {
+      this.refreshList();
+    }
+  };
+
+  pageOptions.onListRefresh = function () {
+    this.refreshList();
+  };
+
+  pageOptions.onListLoadMore = function () {
+    this.loadMore();
+  };
+
+  pageOptions.onListItemTap = function (e) {
+    const { item } = e.currentTarget.dataset;
+    if (item && item.id) {
+      this.goToDetail(`${this.data.detailPagePath || '/pages/detail/index'}?id=${item.id}`);
+    }
+  };
+
   return pageOptions;
 }
 
@@ -257,5 +317,7 @@ module.exports = {
   getListCache,
   setListCache,
   clearListCache,
-  DEFAULT_PAGE_SIZE
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_EMPTY_CONFIG,
+  DEFAULT_SKELETON_CONFIG
 };

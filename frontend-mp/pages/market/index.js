@@ -2,13 +2,11 @@ const dataService = require('../../services/data');
 const constants = require('../../config/constants');
 const util = require('../../utils/util');
 const { mixPage } = require('../../utils/withTheme');
+const { mixinList, DEFAULT_PAGE_SIZE } = require('../../utils/listMixin');
 
-mixPage({
+let pageOptions = {
   data: {
     darkMode: false,
-    list: [],
-    loading: false,
-    refreshing: false,
     categories: constants.MARKET_CATEGORIES,
     priceRanges: constants.PRICE_RANGES,
     distanceRanges: constants.MARKET_DISTANCE_RANGES,
@@ -26,16 +24,12 @@ mixPage({
     userLatitude: null,
     userLongitude: null,
     locationAuthorized: false,
-    locationTip: ''
+    locationTip: '',
+    detailPagePath: '/pages/market-detail/index'
   },
 
   onLoad() {
     this.checkLocationAuth();
-    this.loadList();
-  },
-
-  onShow() {
-    this.loadList();
   },
 
   checkLocationAuth() {
@@ -64,6 +58,7 @@ mixPage({
           locationAuthorized: true,
           locationTip: ''
         });
+        this._updateFilters();
       },
       fail: () => {
         this.setData({
@@ -96,69 +91,34 @@ mixPage({
     });
   },
 
-  onPullDownRefresh() {
-    this.loadList().then(() => {
-      wx.stopPullDownRefresh();
-    });
-  },
+  _updateFilters() {
+    const filters = {};
 
-  loadList() {
-    this.setData({ loading: true });
+    if (this.data.currentCategory) {
+      filters.category = this.data.currentCategory;
+    }
 
-    return new Promise((resolve) => {
-      const filters = {};
+    if (this.data.minPrice !== undefined) {
+      filters.minPrice = this.data.minPrice;
+    }
 
-      if (this.data.currentCategory) {
-        filters.category = this.data.currentCategory;
+    if (this.data.maxPrice !== undefined && this.data.maxPrice !== Infinity) {
+      filters.maxPrice = this.data.maxPrice;
+    }
+
+    if (this.data.userLatitude && this.data.userLongitude) {
+      filters.userLatitude = this.data.userLatitude;
+      filters.userLongitude = this.data.userLongitude;
+
+      if (this.data.minDistance !== undefined) {
+        filters.minDistance = this.data.minDistance;
       }
-
-      if (this.data.minPrice !== undefined) {
-        filters.minPrice = this.data.minPrice;
+      if (this.data.maxDistance !== undefined && this.data.maxDistance !== Infinity) {
+        filters.maxDistance = this.data.maxDistance;
       }
+    }
 
-      if (this.data.maxPrice !== undefined && this.data.maxPrice !== Infinity) {
-        filters.maxPrice = this.data.maxPrice;
-      }
-
-      if (this.data.userLatitude && this.data.userLongitude) {
-        filters.userLatitude = this.data.userLatitude;
-        filters.userLongitude = this.data.userLongitude;
-
-        if (this.data.minDistance !== undefined) {
-          filters.minDistance = this.data.minDistance;
-        }
-        if (this.data.maxDistance !== undefined && this.data.maxDistance !== Infinity) {
-          filters.maxDistance = this.data.maxDistance;
-        }
-      }
-
-      const list = dataService.getMarketList(filters);
-
-      const formattedList = list.map(item => {
-        const formatted = {
-          ...item,
-          priceText: util.formatPrice(item.price),
-          statusText: constants.getLabelByValue(constants.MARKET_STATUS, item.status)
-        };
-
-        if (item._distance !== undefined && item._distance !== Infinity) {
-          formatted.distanceText = this.formatDistance(item._distance);
-          formatted.hasDistance = true;
-        } else {
-          formatted.hasDistance = false;
-        }
-
-        return formatted;
-      });
-
-      this.setData({
-        list: formattedList,
-        loading: false,
-        refreshing: false
-      });
-
-      resolve();
-    });
+    this.setListFilters(filters);
   },
 
   formatDistance(meters) {
@@ -169,15 +129,10 @@ mixPage({
     }
   },
 
-  onRefresh() {
-    this.setData({ refreshing: true });
-    this.loadList();
-  },
-
   onCategoryChange(e) {
     const { category } = e.currentTarget.dataset;
     this.setData({ currentCategory: category });
-    this.loadList();
+    this._updateFilters();
   },
 
   onShowPricePicker() {
@@ -200,7 +155,7 @@ mixPage({
       showPricePicker: false
     });
 
-    this.loadList();
+    this._updateFilters();
   },
 
   onShowDistancePicker() {
@@ -230,16 +185,15 @@ mixPage({
       showDistancePicker: false
     });
 
-    this.loadList();
+    this._updateFilters();
   },
 
   onItemTap(e) {
     const { item } = e.currentTarget.dataset;
-    util.navigateTo(`/pages/market-detail/index?id=${item.id}`);
+    this.goToDetail(`/pages/market-detail/index?id=${item.id}`);
   },
 
   onPublish() {
-    // 检查登录状态
     if (!util.checkLogin()) {
       return;
     }
@@ -247,10 +201,63 @@ mixPage({
   },
 
   stopPropagation() {
-    // 阻止事件冒泡
   },
 
   onStudyEntry() {
     util.navigateTo('/pages/study-materials/index');
   }
+};
+
+pageOptions = mixinList(pageOptions, {
+  listKey: 'market',
+  pageSize: DEFAULT_PAGE_SIZE,
+  enableCache: true,
+  cacheFirst: true,
+  dataField: 'list',
+  enablePullDownRefresh: true,
+  enableReachBottom: true,
+  autoLoad: true,
+  skeleton: {
+    enable: true,
+    type: 'card',
+    count: 6
+  },
+  empty: {
+    text: '暂无商品信息',
+    showAction: true,
+    actionText: '发布商品',
+    onAction: function() {
+      this.onPublish();
+    }
+  },
+  loadMethod: function({ page, pageSize, filters }) {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const result = dataService.getMarketListPaged({
+          page,
+          pageSize,
+          filters
+        });
+        resolve(result);
+      }, 300);
+    });
+  },
+  formatItem: function(item) {
+    const formatted = {
+      ...item,
+      priceText: util.formatPrice(item.price),
+      statusText: constants.getLabelByValue(constants.MARKET_STATUS, item.status)
+    };
+
+    if (item._distance !== undefined && item._distance !== Infinity) {
+      formatted.distanceText = this.formatDistance(item._distance);
+      formatted.hasDistance = true;
+    } else {
+      formatted.hasDistance = false;
+    }
+
+    return formatted;
+  }
 });
+
+mixPage(pageOptions);

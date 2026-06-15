@@ -1,0 +1,43 @@
+<view class="detail-bottom-bar">
+  <view class="bottom-actions">
+    <view
+      class="bottom-action {{enableFavorite ? '' : 'disabled'}}"
+      wx:if="{{enableFavorite}}"
+      bindtap="onFavorite"
+    >
+      <text class="bottom-icon {{isFavorite ? 'active' : ''}}">{{isFavorite ? '★' : '☆'}}</text>
+      <text class="bottom-text">{{isFavorite ? '已收藏' : '收藏'}}</text>
+    </view>
+
+    <view
+      class="bottom-action {{enableShare ? '' : 'disabled'}}"
+      wx:if="{{enableShare}}"
+      open-type="share"
+      bindtap="onShare"
+    >
+      <text class="bottom-icon">↗️</text>
+      <text class="bottom-text">分享</text>
+    </view>
+
+    <view
+      class="bottom-action {{enableReport ? '' : 'disabled'}}"
+      wx:if="{{enableReport && !isOwner}}"
+      bindtap="onReport"
+    >
+      <text class="bottom-icon">🚫</text>
+      <text class="bottom-text">举报</text>
+    </view>
+  </view>
+
+  <view class="bottom-button-wrap">
+    <btn
+      type="primary"
+      size="large"
+      block="{{true}}"
+      disabled="{{contactDisabled}}"
+      bind:click="onContact"
+    >
+      {{isOwner ? ownerText : contactText}}
+    </btn>
+  </view>
+</view>
