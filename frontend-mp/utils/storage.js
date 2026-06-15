@@ -179,7 +179,12 @@ const STORAGE_KEYS = {
   PSYCHOLOGICAL_REMINDER_SETTINGS: 'psychologicalReminderSettings',
 
   REPAIR_ORDER_LIST: 'repairOrderList',
-  REPAIR_WORKER_LIST: 'repairWorkerList'
+  REPAIR_WORKER_LIST: 'repairWorkerList',
+
+  BUS_ROUTE_LIST: 'busRouteList',
+  BUS_VEHICLE_LIST: 'busVehicleList',
+  BUS_ARRIVAL_REMINDERS: 'busArrivalReminders',
+  FAVORITE_BUS_ROUTES: 'favoriteBusRoutes'
 };
 
 /**

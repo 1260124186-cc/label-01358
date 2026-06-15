@@ -1,0 +1,154 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{route}}">
+  <view class="route-header">
+    <view class="header-content">
+      <view class="route-title-row">
+        <view class="route-badge" style="background-color: {{route.typeColor}}15; color: {{route.typeColor}}">
+          <text class="route-icon">{{route.typeIcon}}</text>
+          <text class="route-type">{{route.typeText}}</text>
+        </view>
+        <view
+          class="favorite-btn {{isFavorite ? 'active' : ''}}"
+          bindtap="onToggleFavorite"
+        >
+          <text>{{isFavorite ? '❤️' : '🤍'}}</text>
+        </view>
+      </view>
+      <text class="route-name">{{route.name}}</text>
+      <view class="route-desc">{{route.description}}</view>
+      <view class="route-info-row">
+        <view class="info-item">
+          <text class="info-icon">🕐</text>
+          <text class="info-text">{{route.operatingHours}}</text>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">⏱️</text>
+          <text class="info-text">间隔 {{route.interval}}分钟</text>
+        </view>
+        <view class="info-item">
+          <text class="info-icon">🚏</text>
+          <text class="info-text">{{route.stations.length}}站</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="vehicles-section" wx:if="{{vehicles.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">运营车辆</text>
+      <text class="update-time">更新于 {{lastUpdateTime}}</text>
+    </view>
+    <scroll-view class="vehicles-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="vehicles-list">
+        <view
+          class="vehicle-card"
+          wx:for="{{vehicles}}"
+          wx:key="id"
+        >
+          <view class="vehicle-status {{item.status}}">
+            <text class="status-dot"></text>
+            <text>{{item.statusText}}</text>
+          </view>
+          <text class="vehicle-plate">{{item.plateNumber}}</text>
+          <view class="vehicle-info" wx:if="{{item.status === 'running'}}">
+            <text class="current-station">📍 {{route.stations[item.currentStationIndex].name}}</text>
+            <text class="passenger-count">👥 {{item.passengerCount}}人</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="schedule-tabs">
+    <scroll-view class="tab-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="tabs">
+        <view
+          class="tab-item {{currentScheduleType === item.value ? 'active' : ''}}"
+          wx:for="{{scheduleTypes}}"
+          wx:key="value"
+          bindtap="onScheduleTypeChange"
+          data-value="{{item.value}}"
+        >
+          <text class="tab-icon">{{item.icon}}</text>
+          <text>{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="stations-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="refreshData"
+  >
+    <view class="stations-container">
+      <view class="station-timeline">
+        <view
+          class="station-item {{item.isFirst ? 'first' : ''}} {{item.isLast ? 'last' : ''}}"
+          wx:for="{{stations}}"
+          wx:key="index"
+          wx:for-item="item"
+          wx:for-index="idx"
+        >
+          <view class="timeline-col">
+            <view class="timeline-line top" wx:if="{{!item.isFirst}}"></view>
+            <view class="timeline-dot {{item.arrivalMinutes && item.arrivalMinutes <= 3 ? 'arriving' : ''}}">
+              <text wx:if="{{item.arrivalMinutes && item.arrivalMinutes <= 3}}">🚌</text>
+            </view>
+            <view class="timeline-line bottom" wx:if="{{!item.isLast}}"></view>
+          </view>
+
+          <view class="station-content">
+            <view class="station-main">
+              <view class="station-info">
+                <text class="station-name">{{item.name}}</text>
+                <view class="station-meta">
+                  <text class="schedule-time" wx:if="{{item.scheduleTime}}">⏰ {{item.scheduleTime}}</text>
+                </view>
+              </view>
+              <view class="arrival-section">
+                <view class="arrival-info">
+                  <text class="arrival-text {{item.arrivalMinutes && item.arrivalMinutes <= 3 ? 'urgent' : ''}}">
+                    {{item.arrivalText}}
+                  </text>
+                  <text class="vehicle-plate" wx:if="{{item.vehiclePlate}}">{{item.vehiclePlate}}</text>
+                </view>
+                <view
+                  class="reminder-btn {{item.hasReminder ? 'active' : ''}}"
+                  bindtap="onSetReminder"
+                  data-index="{{idx}}"
+                >
+                  <text wx:if="{{item.hasReminder}}">🔔 {{item.reminderMinutes}}分</text>
+                  <text wx:else>🔕</text>
+                </view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <view class="picker-mask {{showReminderPicker ? 'show' : ''}}" bindtap="onHideReminderPicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">设置到站提醒</text>
+        <text class="picker-close" bindtap="onHideReminderPicker">×</text>
+      </view>
+      <view class="picker-subtitle" wx:if="{{selectedStationIndex >= 0}}">
+        {{stations[selectedStationIndex].name}}
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentReminderMinutes === item.value ? 'active' : ''}}"
+          wx:for="{{reminderOptions}}"
+          wx:key="value"
+          bindtap="onReminderSelect"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+</view>

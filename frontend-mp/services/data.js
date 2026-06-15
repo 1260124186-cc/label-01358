@@ -30,6 +30,7 @@ let scholarshipInitialized = false;
 let workStudyInitialized = false;
 let jobRecruitmentInitialized = false;
 let psychologicalInitialized = false;
+let busDataInitialized = false;
 
 function initVolunteerData() {
   if (volunteerInitialized) return;
@@ -10915,6 +10916,271 @@ function getAdminRepairOrders(status = 'all', type = 'all') {
   return getRepairOrderList({ status, type });
 }
 
+// ==================== 校园班车 ====================
+
+function initBusData() {
+  if (busDataInitialized) return;
+  const existingRoutes = storage.get(STORAGE_KEYS.BUS_ROUTE_LIST);
+  const existingVehicles = storage.get(STORAGE_KEYS.BUS_VEHICLE_LIST);
+
+  if (!existingRoutes || existingRoutes.length === 0) {
+    const now = Date.now();
+    const routes = mockData.MOCK_BUS_ROUTES.map((item, index) => ({
+      id: 'mock_bus_route_' + index + '_' + now,
+      ...item,
+      createTime: now,
+      updateTime: now
+    }));
+    storage.set(STORAGE_KEYS.BUS_ROUTE_LIST, routes);
+  }
+
+  if (!existingVehicles || existingVehicles.length === 0) {
+    const routes = storage.getList(STORAGE_KEYS.BUS_ROUTE_LIST);
+    const vehicles = mockData.MOCK_BUS_VEHICLES.map((item, index) => ({
+      id: 'mock_bus_vehicle_' + index + '_' + Date.now(),
+      ...item,
+      routeId: routes[index % routes.length] ? routes[index % routes.length].id : item.routeId,
+      lastUpdateTime: Date.now()
+    }));
+    storage.set(STORAGE_KEYS.BUS_VEHICLE_LIST, vehicles);
+  }
+
+  busDataInitialized = true;
+}
+
+function getBusRouteList(filters = {}) {
+  initBusData();
+  let list = storage.getList(STORAGE_KEYS.BUS_ROUTE_LIST);
+
+  if (filters.type && filters.type !== 'all') {
+    if (filters.type === 'favorite') {
+      const favoriteIds = getFavoriteBusRouteIds();
+      list = list.filter(item => favoriteIds.includes(item.id));
+    } else {
+      list = list.filter(item => item.type === filters.type);
+    }
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['name', 'description', 'stations.name']);
+  }
+
+  return list;
+}
+
+function getBusRouteDetail(id) {
+  initBusData();
+  const list = storage.getList(STORAGE_KEYS.BUS_ROUTE_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function getBusVehicles(routeId) {
+  initBusData();
+  let list = storage.getList(STORAGE_KEYS.BUS_VEHICLE_LIST);
+  if (routeId) {
+    list = list.filter(item => item.routeId === routeId);
+  }
+  return list;
+}
+
+function updateVehiclePosition() {
+  initBusData();
+  const vehicles = storage.getList(STORAGE_KEYS.BUS_VEHICLE_LIST);
+  const routes = storage.getList(STORAGE_KEYS.BUS_ROUTE_LIST);
+
+  const updatedVehicles = vehicles.map(vehicle => {
+    const route = routes.find(r => r.id === vehicle.routeId);
+    if (!route || !route.stations || vehicle.status !== 'running') {
+      return { ...vehicle, lastUpdateTime: Date.now() };
+    }
+
+    const stationCount = route.stations.length;
+    let nextStationIndex = vehicle.currentStationIndex + 1;
+
+    if (nextStationIndex >= stationCount) {
+      nextStationIndex = 0;
+    }
+
+    const moveChance = Math.random();
+    if (moveChance > 0.6) {
+      const currentStation = route.stations[vehicle.currentStationIndex];
+      const nextStation = route.stations[nextStationIndex];
+
+      const latDiff = (nextStation.latitude - currentStation.latitude) * 0.3;
+      const lngDiff = (nextStation.longitude - currentStation.longitude) * 0.3;
+
+      let newLat = vehicle.latitude + latDiff;
+      let newLng = vehicle.longitude + lngDiff;
+
+      const distToNext = Math.sqrt(
+        Math.pow(nextStation.latitude - newLat, 2) +
+        Math.pow(nextStation.longitude - newLng, 2)
+      );
+
+      let newStationIndex = vehicle.currentStationIndex;
+      if (distToNext < 0.0005) {
+        newStationIndex = nextStationIndex;
+        newLat = nextStation.latitude;
+        newLng = nextStation.longitude;
+      }
+
+      return {
+        ...vehicle,
+        currentStationIndex: newStationIndex,
+        latitude: newLat,
+        longitude: newLng,
+        lastUpdateTime: Date.now()
+      };
+    }
+
+    return { ...vehicle, lastUpdateTime: Date.now() };
+  });
+
+  storage.set(STORAGE_KEYS.BUS_VEHICLE_LIST, updatedVehicles);
+  return updatedVehicles;
+}
+
+function calculateArrivalTime(routeId, stationIndex) {
+  initBusData();
+  const vehicles = getBusVehicles(routeId);
+  const route = getBusRouteDetail(routeId);
+
+  if (!route || !route.stations) return [];
+
+  const stationCount = route.stations.length;
+  const interval = route.interval || 10;
+
+  return vehicles.map(vehicle => {
+    if (vehicle.status !== 'running') {
+      return {
+        vehicleId: vehicle.id,
+        plateNumber: vehicle.plateNumber,
+        status: vehicle.status,
+        arrivalMinutes: null
+      };
+    }
+
+    let stationsAway = stationIndex - vehicle.currentStationIndex;
+    if (stationsAway < 0) {
+      stationsAway += stationCount;
+    }
+
+    const arrivalMinutes = Math.max(1, stationsAway * interval);
+
+    return {
+      vehicleId: vehicle.id,
+      plateNumber: vehicle.plateNumber,
+      status: vehicle.status,
+      currentStation: route.stations[vehicle.currentStationIndex]?.name || '',
+      currentStationIndex: vehicle.currentStationIndex,
+      stationsAway,
+      arrivalMinutes,
+      arrivalText: arrivalMinutes <= 1 ? '即将到站' : arrivalMinutes + '分钟',
+      latitude: vehicle.latitude,
+      longitude: vehicle.longitude
+    };
+  }).sort((a, b) => (a.arrivalMinutes || 999) - (b.arrivalMinutes || 999));
+}
+
+function getFavoriteBusRouteIds() {
+  return storage.get(STORAGE_KEYS.FAVORITE_BUS_ROUTES) || [];
+}
+
+function getFavoriteBusRoutes() {
+  const ids = getFavoriteBusRouteIds();
+  if (ids.length === 0) return [];
+
+  const allRoutes = getBusRouteList();
+  return allRoutes.filter(route => ids.includes(route.id));
+}
+
+function isFavoriteBusRoute(routeId) {
+  const ids = getFavoriteBusRouteIds();
+  return ids.includes(routeId);
+}
+
+function toggleFavoriteBusRoute(routeId) {
+  const ids = getFavoriteBusRouteIds();
+  const index = ids.indexOf(routeId);
+
+  if (index > -1) {
+    ids.splice(index, 1);
+    storage.set(STORAGE_KEYS.FAVORITE_BUS_ROUTES, ids);
+    return { favorited: false };
+  } else {
+    ids.push(routeId);
+    storage.set(STORAGE_KEYS.FAVORITE_BUS_ROUTES, ids);
+    return { favorited: true };
+  }
+}
+
+function getArrivalReminders() {
+  return storage.get(STORAGE_KEYS.BUS_ARRIVAL_REMINDERS) || [];
+}
+
+function setArrivalReminder(routeId, stationIndex, remindBeforeMinutes) {
+  const reminders = getArrivalReminders();
+
+  const existingIndex = reminders.findIndex(
+    r => r.routeId === routeId && r.stationIndex === stationIndex
+  );
+
+  if (remindBeforeMinutes === 0) {
+    if (existingIndex > -1) {
+      reminders.splice(existingIndex, 1);
+    }
+    storage.set(STORAGE_KEYS.BUS_ARRIVAL_REMINDERS, reminders);
+    return { enabled: false };
+  }
+
+  const reminder = {
+    id: 'bus_reminder_' + Date.now(),
+    routeId,
+    stationIndex,
+    remindBeforeMinutes,
+    enabled: true,
+    createTime: Date.now()
+  };
+
+  if (existingIndex > -1) {
+    reminders[existingIndex] = { ...reminders[existingIndex], ...reminder };
+  } else {
+    reminders.push(reminder);
+  }
+
+  storage.set(STORAGE_KEYS.BUS_ARRIVAL_REMINDERS, reminders);
+  return { enabled: true, reminder };
+}
+
+function getArrivalReminder(routeId, stationIndex) {
+  const reminders = getArrivalReminders();
+  return reminders.find(r => r.routeId === routeId && r.stationIndex === stationIndex) || null;
+}
+
+function checkAndTriggerReminders() {
+  const reminders = getArrivalReminders().filter(r => r.enabled);
+  const triggered = [];
+
+  reminders.forEach(reminder => {
+    const arrivalInfo = calculateArrivalTime(reminder.routeId, reminder.stationIndex);
+    const nearest = arrivalInfo[0];
+
+    if (nearest && nearest.arrivalMinutes && nearest.arrivalMinutes <= reminder.remindBeforeMinutes) {
+      const route = getBusRouteDetail(reminder.routeId);
+      const station = route?.stations?.[reminder.stationIndex];
+
+      triggered.push({
+        reminder,
+        route,
+        station,
+        arrivalInfo: nearest
+      });
+    }
+  });
+
+  return triggered;
+}
+
 Object.assign(module.exports, {
   initRepairData,
   createRepairOrder,
@@ -10929,4 +11195,21 @@ Object.assign(module.exports, {
   getRepairOrderStats,
   getMyRepairOrders,
   getAdminRepairOrders
+});
+
+Object.assign(module.exports, {
+  initBusData,
+  getBusRouteList,
+  getBusRouteDetail,
+  getBusVehicles,
+  updateVehiclePosition,
+  calculateArrivalTime,
+  getFavoriteBusRouteIds,
+  getFavoriteBusRoutes,
+  isFavoriteBusRoute,
+  toggleFavoriteBusRoute,
+  getArrivalReminders,
+  setArrivalReminder,
+  getArrivalReminder,
+  checkAndTriggerReminders
 });

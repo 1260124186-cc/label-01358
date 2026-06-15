@@ -80,6 +80,8 @@
     "pages/carpool/index",
     "pages/carpool-publish/index",
     "pages/carpool-detail/index",
+    "pages/bus/index",
+    "pages/bus/detail",
     "pages/group-buy/index",
     "pages/group-buy-publish/index",
     "pages/group-buy-detail/index",

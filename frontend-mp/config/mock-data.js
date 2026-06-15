@@ -11105,4 +11105,245 @@ const _psychologicalExports = {
   MOCK_PSYCHOLOGICAL_CRISIS_HOTLINES
 };
 
-Object.assign(module.exports, _workStudyExports, _campusCardExports, _votingExports, _tutorExports, _jobRecruitmentExports, _psychologicalExports);
+const MOCK_BUS_ROUTES = [
+  {
+    id: 'bus_001',
+    name: '1号校区环线',
+    type: 'campus',
+    shortName: '1号线',
+    description: '环绕校园主要区域，途经教学楼、图书馆、宿舍区、食堂等核心地点',
+    operatingHours: '07:00 - 22:00',
+    interval: 15,
+    fare: '免费',
+    totalDistance: '8.5公里',
+    estimatedDuration: '45分钟',
+    stations: [
+      { id: 's1', name: '南门站', index: 0, latitude: 39.9030, longitude: 116.4060 },
+      { id: 's2', name: '行政楼', index: 1, latitude: 39.9035, longitude: 116.4065 },
+      { id: 's3', name: '图书馆', index: 2, latitude: 39.9042, longitude: 116.4074 },
+      { id: 's4', name: '教学楼A座', index: 3, latitude: 39.9045, longitude: 116.4085 },
+      { id: 's5', name: '教学楼B座', index: 4, latitude: 39.9050, longitude: 116.4090 },
+      { id: 's6', name: '实验楼', index: 5, latitude: 39.9055, longitude: 116.4080 },
+      { id: 's7', name: '体育馆', index: 6, latitude: 39.9060, longitude: 116.4090 },
+      { id: 's8', name: '东宿舍区', index: 7, latitude: 39.9070, longitude: 116.4085 },
+      { id: 's9', name: '一食堂', index: 8, latitude: 39.9065, longitude: 116.4075 },
+      { id: 's10', name: '西宿舍区', index: 9, latitude: 39.9070, longitude: 116.4050 },
+      { id: 's11', name: '北门站', index: 10, latitude: 39.9080, longitude: 116.4060 }
+    ],
+    schedule: {
+      weekday: ['07:00', '07:15', '07:30', '07:45', '08:00', '08:15', '08:30', '08:45', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:15', '17:30', '17:45', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00'],
+      weekend: ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'],
+      holiday: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']
+    }
+  },
+  {
+    id: 'bus_002',
+    name: '2号校区环线',
+    type: 'campus',
+    shortName: '2号线',
+    description: '逆时针环线，覆盖校园西侧和南侧区域，方便往返新老校区',
+    operatingHours: '07:00 - 21:30',
+    interval: 20,
+    fare: '免费',
+    totalDistance: '10.2公里',
+    estimatedDuration: '55分钟',
+    stations: [
+      { id: 's1', name: '北门站', index: 0, latitude: 39.9080, longitude: 116.4060 },
+      { id: 's2', name: '科技楼', index: 1, latitude: 39.9075, longitude: 116.4055 },
+      { id: 's3', name: '艺术学院', index: 2, latitude: 39.9070, longitude: 116.4045 },
+      { id: 's4', name: '南门站', index: 3, latitude: 39.9030, longitude: 116.4060 },
+      { id: 's5', name: '信息工程学院', index: 4, latitude: 39.9025, longitude: 116.4070 },
+      { id: 's6', name: '二食堂', index: 5, latitude: 39.9035, longitude: 116.4080 },
+      { id: 's7', name: '学生活动中心', index: 6, latitude: 39.9045, longitude: 116.4085 },
+      { id: 's8', name: '校医院', index: 7, latitude: 39.9055, longitude: 116.4075 },
+      { id: 's9', name: '北门站', index: 8, latitude: 39.9080, longitude: 116.4060 }
+    ],
+    schedule: {
+      weekday: ['07:00', '07:20', '07:40', '08:00', '08:20', '08:40', '09:00', '09:40', '10:20', '11:00', '11:40', '12:20', '13:00', '13:40', '14:20', '15:00', '15:40', '16:20', '17:00', '17:20', '17:40', '18:00', '18:40', '19:20', '20:00', '20:40', '21:30'],
+      weekend: ['08:00', '08:40', '09:20', '10:00', '10:40', '11:20', '12:00', '12:40', '13:20', '14:00', '14:40', '15:20', '16:00', '16:40', '17:20', '18:00', '18:40', '19:20', '20:00'],
+      holiday: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00']
+    }
+  },
+  {
+    id: 'bus_003',
+    name: '地铁1号线接驳车',
+    type: 'metro',
+    shortName: '地铁1线',
+    description: '往返学校南门与地铁站，解决师生通勤最后一公里',
+    operatingHours: '06:30 - 23:00',
+    interval: 10,
+    fare: '免费',
+    totalDistance: '3.5公里',
+    estimatedDuration: '15分钟',
+    stations: [
+      { id: 's1', name: '学校南门', index: 0, latitude: 39.9030, longitude: 116.4060 },
+      { id: 's2', name: '东门站', index: 1, latitude: 39.9035, longitude: 116.4095 },
+      { id: 's3', name: '人民广场', index: 2, latitude: 39.9040, longitude: 116.4120 },
+      { id: 's4', name: '地铁A站', index: 3, latitude: 39.9045, longitude: 116.4150 }
+    ],
+    schedule: {
+      weekday: ['06:30', '06:40', '06:50', '07:00', '07:10', '07:20', '07:30', '07:40', '07:50', '08:00', '08:10', '08:20', '08:30', '08:40', '08:50', '09:00', '09:20', '09:40', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:10', '17:20', '17:30', '17:40', '17:50', '18:00', '18:10', '18:20', '18:30', '18:40', '18:50', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30', '23:00'],
+      weekend: ['07:00', '07:15', '07:30', '07:45', '08:00', '08:20', '08:40', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00'],
+      holiday: ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00']
+    }
+  },
+  {
+    id: 'bus_004',
+    name: '地铁2号线接驳车',
+    type: 'metro',
+    shortName: '地铁2线',
+    description: '往返学校北门与地铁B站，直达城市副中心',
+    operatingHours: '06:45 - 22:30',
+    interval: 12,
+    fare: '免费',
+    totalDistance: '4.2公里',
+    estimatedDuration: '18分钟',
+    stations: [
+      { id: 's1', name: '学校北门', index: 0, latitude: 39.9080, longitude: 116.4060 },
+      { id: 's2', name: '北商业街', index: 1, latitude: 39.9095, longitude: 116.4065 },
+      { id: 's3', name: '科技园', index: 2, latitude: 39.9110, longitude: 116.4070 },
+      { id: 's4', name: '地铁B站', index: 3, latitude: 39.9125, longitude: 116.4080 }
+    ],
+    schedule: {
+      weekday: ['06:45', '06:57', '07:09', '07:21', '07:33', '07:45', '07:57', '08:09', '08:21', '08:33', '08:45', '09:00', '09:20', '09:40', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:12', '17:24', '17:36', '17:48', '18:00', '18:15', '18:30', '18:45', '19:00', '19:30', '20:00', '20:30', '21:00', '21:30', '22:00', '22:30'],
+      weekend: ['07:30', '07:45', '08:00', '08:20', '08:40', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00', '20:30', '21:00'],
+      holiday: ['08:00', '08:30', '09:00', '09:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30', '15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00', '18:30', '19:00', '19:30', '20:00']
+    }
+  },
+  {
+    id: 'bus_005',
+    name: '周末购物专线',
+    type: 'weekend',
+    shortName: '购物专线',
+    description: '周末及节假日开行，往返校园与大型购物中心',
+    operatingHours: '09:00 - 20:00',
+    interval: 45,
+    fare: '免费',
+    totalDistance: '12.8公里',
+    estimatedDuration: '40分钟',
+    stations: [
+      { id: 's1', name: '学校南门', index: 0, latitude: 39.9030, longitude: 116.4060 },
+      { id: 's2', name: '学校北门', index: 1, latitude: 39.9080, longitude: 116.4060 },
+      { id: 's3', name: '华联购物中心', index: 2, latitude: 39.9100, longitude: 116.4200 },
+      { id: 's4', name: '万达广场', index: 3, latitude: 39.9120, longitude: 116.4250 },
+      { id: 's5', name: '家乐福超市', index: 4, latitude: 39.9100, longitude: 116.4300 }
+    ],
+    schedule: {
+      weekday: [],
+      weekend: ['09:00', '09:45', '10:30', '11:15', '12:00', '12:45', '13:30', '14:15', '15:00', '15:45', '16:30', '17:15', '18:00', '18:45', '19:30', '20:00'],
+      holiday: ['09:00', '09:45', '10:30', '11:15', '12:00', '12:45', '13:30', '14:15', '15:00', '15:45', '16:30', '17:15', '18:00', '18:45', '19:30', '20:00']
+    }
+  },
+  {
+    id: 'bus_006',
+    name: '周末旅游专线',
+    type: 'weekend',
+    shortName: '旅游专线',
+    description: '周末及节假日开行，往返校园与知名景点',
+    operatingHours: '08:00 - 18:00',
+    interval: 60,
+    fare: '免费',
+    totalDistance: '25.6公里',
+    estimatedDuration: '70分钟',
+    stations: [
+      { id: 's1', name: '学校南门', index: 0, latitude: 39.9030, longitude: 116.4060 },
+      { id: 's2', name: '学校北门', index: 1, latitude: 39.9080, longitude: 116.4060 },
+      { id: 's3', name: '历史博物馆', index: 2, latitude: 39.9150, longitude: 116.4000 },
+      { id: 's4', name: '古城公园', index: 3, latitude: 39.9200, longitude: 116.3950 },
+      { id: 's5', name: '文化街', index: 4, latitude: 39.9250, longitude: 116.3900 }
+    ],
+    schedule: {
+      weekday: [],
+      weekend: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00'],
+      holiday: ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00']
+    }
+  }
+];
+
+const MOCK_BUS_VEHICLES = [
+  {
+    id: 'veh_001',
+    routeId: 'bus_001',
+    plateNumber: '京A·12345',
+    status: 'running',
+    currentStationIndex: 3,
+    nextStationIndex: 4,
+    latitude: 39.9047,
+    longitude: 116.4088,
+    passengerCount: 28,
+    capacity: 45,
+    lastUpdateTime: Date.now() - 30000
+  },
+  {
+    id: 'veh_002',
+    routeId: 'bus_001',
+    plateNumber: '京A·12346',
+    status: 'running',
+    currentStationIndex: 7,
+    nextStationIndex: 8,
+    latitude: 39.9068,
+    longitude: 116.4082,
+    passengerCount: 15,
+    capacity: 45,
+    lastUpdateTime: Date.now() - 25000
+  },
+  {
+    id: 'veh_003',
+    routeId: 'bus_002',
+    plateNumber: '京A·12347',
+    status: 'running',
+    currentStationIndex: 2,
+    nextStationIndex: 3,
+    latitude: 39.9055,
+    longitude: 116.4048,
+    passengerCount: 20,
+    capacity: 40,
+    lastUpdateTime: Date.now() - 20000
+  },
+  {
+    id: 'veh_004',
+    routeId: 'bus_003',
+    plateNumber: '京A·12348',
+    status: 'running',
+    currentStationIndex: 1,
+    nextStationIndex: 2,
+    latitude: 39.9038,
+    longitude: 116.4105,
+    passengerCount: 35,
+    capacity: 50,
+    lastUpdateTime: Date.now() - 15000
+  },
+  {
+    id: 'veh_005',
+    routeId: 'bus_003',
+    plateNumber: '京A·12349',
+    status: 'running',
+    currentStationIndex: 3,
+    nextStationIndex: 2,
+    latitude: 39.9042,
+    longitude: 116.4135,
+    passengerCount: 18,
+    capacity: 50,
+    lastUpdateTime: Date.now() - 10000
+  },
+  {
+    id: 'veh_006',
+    routeId: 'bus_004',
+    plateNumber: '京A·12350',
+    status: 'waiting',
+    currentStationIndex: 0,
+    nextStationIndex: 1,
+    latitude: 39.9080,
+    longitude: 116.4060,
+    passengerCount: 5,
+    capacity: 45,
+    lastUpdateTime: Date.now() - 5000
+  }
+];
+
+const _busExports = {
+  MOCK_BUS_ROUTES,
+  MOCK_BUS_VEHICLES
+};
+
+Object.assign(module.exports, _workStudyExports, _campusCardExports, _votingExports, _tutorExports, _jobRecruitmentExports, _psychologicalExports, _busExports);

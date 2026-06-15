@@ -2835,6 +2835,55 @@ const REPAIR_TIME_SLOTS = [
   { value: 'anytime', label: '全天可联系' }
 ];
 
+const BUS_ROUTE_TYPES = [
+  { value: 'campus', label: '校区环线', color: '#10B981', icon: '🔄', desc: '校内循环线路' },
+  { value: 'metro', label: '地铁接驳线', color: '#3B82F6', icon: '🚇', desc: '往返地铁站' },
+  { value: 'weekend', label: '周末专线', color: '#8B5CF6', icon: '🎉', desc: '周末节假日专线' }
+];
+
+const BUS_ROUTE_TYPE_MAP = BUS_ROUTE_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, color: t.color, icon: t.icon, desc: t.desc };
+  return acc;
+}, {});
+
+const BUS_SCHEDULE_TYPES = [
+  { value: 'weekday', label: '工作日', icon: '📅' },
+  { value: 'weekend', label: '周末', icon: '🌅' },
+  { value: 'holiday', label: '节假日', icon: '🎊' }
+];
+
+const BUS_SCHEDULE_TYPE_MAP = BUS_SCHEDULE_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, icon: t.icon };
+  return acc;
+}, {});
+
+const BUS_VEHICLE_STATUS = [
+  { value: 'running', label: '运行中', color: '#10B981' },
+  { value: 'waiting', label: '待发车', color: '#F59E0B' },
+  { value: 'stopped', label: '已停运', color: '#6B7280' }
+];
+
+const BUS_VEHICLE_STATUS_MAP = BUS_VEHICLE_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const BUS_REMINDER_OPTIONS = [
+  { value: 0, label: '不提醒' },
+  { value: 1, label: '到站前1分钟' },
+  { value: 3, label: '到站前3分钟' },
+  { value: 5, label: '到站前5分钟' },
+  { value: 10, label: '到站前10分钟' }
+];
+
+const BUS_TABS = [
+  { value: 'all', label: '全部线路' },
+  { value: 'campus', label: '校区环线' },
+  { value: 'metro', label: '地铁接驳' },
+  { value: 'weekend', label: '周末专线' },
+  { value: 'favorite', label: '我的收藏' }
+];
+
 module.exports = {
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
@@ -3154,5 +3203,14 @@ module.exports = {
   REPAIR_USER_TABS,
   REPAIR_ADMIN_TABS,
   REPAIR_RATING_TAGS,
-  REPAIR_TIME_SLOTS
+  REPAIR_TIME_SLOTS,
+
+  BUS_ROUTE_TYPES,
+  BUS_ROUTE_TYPE_MAP,
+  BUS_SCHEDULE_TYPES,
+  BUS_SCHEDULE_TYPE_MAP,
+  BUS_VEHICLE_STATUS,
+  BUS_VEHICLE_STATUS_MAP,
+  BUS_REMINDER_OPTIONS,
+  BUS_TABS
 };
