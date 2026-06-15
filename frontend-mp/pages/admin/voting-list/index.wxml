@@ -1,0 +1,119 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="stats-section">
+    <view class="stats-grid">
+      <view class="stat-card">
+        <text class="stat-value">{{stats.total}}</text>
+        <text class="stat-label">投票总数</text>
+      </view>
+      <view class="stat-card active">
+        <text class="stat-value">{{stats.active}}</text>
+        <text class="stat-label">进行中</text>
+      </view>
+      <view class="stat-card ended">
+        <text class="stat-value">{{stats.ended}}</text>
+        <text class="stat-label">已结束</text>
+      </view>
+      <view class="stat-card votes">
+        <text class="stat-value">{{stats.totalVotes}}</text>
+        <text class="stat-label">总票数</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="filter-section">
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-tabs">
+        <view
+          class="filter-tab {{currentTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabChange"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{list.length > 0}}">
+      <view
+        class="voting-card card"
+        wx:for="{{list}}"
+        wx:key="id"
+        hover-class="voting-card-hover"
+        bindtap="onItemTap"
+        data-id="{{item.id}}"
+      >
+        <view class="card-body">
+          <view class="card-header">
+            <text class="voting-title">{{item.title}}</text>
+            <view class="voting-status" style="color: {{item.statusInfo.color}}; background-color: {{item.statusInfo.color}}1A;">
+              <text>{{item.statusInfo.label}}</text>
+            </view>
+          </view>
+          <view class="card-meta">
+            <view class="meta-item">
+              <text class="meta-icon">👥</text>
+              <text class="meta-text">{{item.candidateCount}} 候选人</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">🗳️</text>
+              <text class="meta-text">{{item.voteCount || 0}} 票</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">{{item.visibility === 'anonymous' ? '🔒' : '📛'}}</text>
+              <text class="meta-text">{{item.visibility === 'anonymous' ? '匿名' : '实名'}}</text>
+            </view>
+          </view>
+          <view class="time-row">
+            <text class="time-label">创建：{{item.createTimeText}}</text>
+            <text class="time-label">截止：{{item.endTimeText}}</text>
+          </view>
+          <view class="card-actions">
+            <view class="action-btn result-btn" catchtap="onViewResult" data-id="{{item.id}}">
+              <text>结果</text>
+            </view>
+            <view
+              class="action-btn publish-btn"
+              catchtap="onPublish"
+              data-id="{{item.id}}"
+              wx:if="{{item.status === 'ended'}}"
+            >
+              <text>公示</text>
+            </view>
+            <view
+              class="action-btn end-btn"
+              catchtap="onEnd"
+              data-id="{{item.id}}"
+              wx:if="{{item.status === 'active'}}"
+            >
+              <text>结束</text>
+            </view>
+            <view class="action-btn delete-btn" catchtap="onDelete" data-id="{{item.id}}">
+              <text>删除</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{!loading && list.length === 0}}"
+      text="暂无投票数据"
+      showAction="{{true}}"
+      actionText="发起投票"
+      bindaction="onCreate"
+    />
+  </scroll-view>
+
+  <view class="create-btn" hover-class="create-btn-hover" bindtap="onCreate">
+    <text class="create-icon">+</text>
+  </view>
+</view>

@@ -766,6 +766,317 @@ function getSurveyStatistics(surveyId) {
   };
 }
 
+// ==================== 校园投票 ====================
+
+let votingInitialized = false;
+
+function initVotingData() {
+  if (votingInitialized) return;
+  const existing = storage.get(STORAGE_KEYS.VOTING_LIST);
+  if (!existing || existing.length === 0) {
+    const now = Date.now();
+    const mockVotings = mockData.MOCK_VOTINGS || [];
+    const votings = mockVotings.map((item, index) => ({
+      id: 'mock_vote_' + index + '_' + now,
+      ...item,
+      candidates: (item.candidates || []).map((c, cIdx) => ({
+        id: 'cand_' + index + '_' + cIdx + '_' + now,
+        voteCount: 0,
+        ...c
+      })),
+      voteCount: 0,
+      createTime: now - (index + 2) * 86400000,
+      updateTime: now - (index + 2) * 86400000
+    }));
+    storage.set(STORAGE_KEYS.VOTING_LIST, votings);
+
+    const mockRecords = mockData.MOCK_VOTING_RECORDS || [];
+    const records = mockRecords.map((item, index) => ({
+      id: 'mock_vr_' + index + '_' + now,
+      ...item,
+      createTime: now - Math.floor(Math.random() * 86400000)
+    }));
+    storage.set(STORAGE_KEYS.VOTING_RECORDS, records);
+  }
+  votingInitialized = true;
+}
+
+function updateVotingStatus(voting) {
+  const now = Date.now();
+  let status = voting.status;
+  if (voting.startTime && now < voting.startTime) {
+    status = 'pending';
+  } else if (voting.endTime && now > voting.endTime) {
+    if (voting.status !== 'published') {
+      status = 'ended';
+    }
+  } else {
+    if (voting.status !== 'published') {
+      status = 'active';
+    }
+  }
+  return status;
+}
+
+function getVotingList(filters = {}) {
+  initVotingData();
+  let list = storage.getList(STORAGE_KEYS.VOTING_LIST);
+
+  list = list.map(item => {
+    const newStatus = updateVotingStatus(item);
+    if (newStatus !== item.status) {
+      storage.updateInList(STORAGE_KEYS.VOTING_LIST, item.id, { status: newStatus, updateTime: Date.now() });
+      return { ...item, status: newStatus };
+    }
+    return item;
+  });
+
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'description']);
+  }
+
+  if (filters.creator) {
+    list = list.filter(item => item.creator === filters.creator);
+  }
+
+  list.sort((a, b) => b.createTime - a.createTime);
+  return list;
+}
+
+function getVotingDetail(id) {
+  initVotingData();
+  const list = storage.getList(STORAGE_KEYS.VOTING_LIST);
+  let voting = list.find(item => item.id === id) || null;
+  if (voting) {
+    const newStatus = updateVotingStatus(voting);
+    if (newStatus !== voting.status) {
+      storage.updateInList(STORAGE_KEYS.VOTING_LIST, id, { status: newStatus, updateTime: Date.now() });
+      voting = { ...voting, status: newStatus };
+    }
+  }
+  return voting;
+}
+
+function createVoting(data) {
+  const now = Date.now();
+  let initialStatus = 'pending';
+  if (data.startTime && now >= data.startTime) {
+    if (data.endTime && now > data.endTime) {
+      initialStatus = 'ended';
+    } else {
+      initialStatus = 'active';
+    }
+  }
+
+  const item = {
+    id: util.generateId(),
+    ...data,
+    candidates: (data.candidates || []).map((c, idx) => ({
+      id: 'cand_' + now + '_' + idx,
+      voteCount: 0,
+      ...c
+    })),
+    voteCount: 0,
+    createTime: now,
+    updateTime: now,
+    status: initialStatus
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.VOTING_LIST, item);
+  return success ? item : null;
+}
+
+function updateVoting(id, updates) {
+  return storage.updateInList(STORAGE_KEYS.VOTING_LIST, id, {
+    ...updates,
+    updateTime: Date.now()
+  });
+}
+
+function deleteVoting(id) {
+  storage.removeFromList(STORAGE_KEYS.VOTING_LIST, id);
+  const records = storage.getList(STORAGE_KEYS.VOTING_RECORDS);
+  const remaining = records.filter(r => r.votingId !== id);
+  storage.set(STORAGE_KEYS.VOTING_RECORDS, remaining);
+  return true;
+}
+
+function publishVotingResult(id) {
+  return storage.updateInList(STORAGE_KEYS.VOTING_LIST, id, {
+    status: 'published',
+    publishTime: Date.now(),
+    updateTime: Date.now()
+  });
+}
+
+function hasUserVoted(votingId, userId) {
+  const records = storage.getList(STORAGE_KEYS.VOTING_RECORDS);
+  return records.some(r => r.votingId === votingId && r.userId === userId);
+}
+
+function checkVotingEligibility(voting, userInfo) {
+  if (!voting || !userInfo) return { eligible: false, reason: '请先登录' };
+
+  const eligibility = voting.eligibility || { type: 'all' };
+
+  switch (eligibility.type) {
+    case 'all':
+      return { eligible: true };
+    case 'college':
+      if (!eligibility.colleges || eligibility.colleges.length === 0) {
+        return { eligible: true };
+      }
+      if (eligibility.colleges.includes(userInfo.college)) {
+        return { eligible: true };
+      }
+      return { eligible: false, reason: '仅指定学院学生可投票' };
+    case 'grade':
+      if (!eligibility.grades || eligibility.grades.length === 0) {
+        return { eligible: true };
+      }
+      if (eligibility.grades.includes(userInfo.grade)) {
+        return { eligible: true };
+      }
+      return { eligible: false, reason: '仅指定年级学生可投票' };
+    case 'major':
+      if (!eligibility.majors || eligibility.majors.length === 0) {
+        return { eligible: true };
+      }
+      if (eligibility.majors.includes(userInfo.major)) {
+        return { eligible: true };
+      }
+      return { eligible: false, reason: '仅指定专业学生可投票' };
+    case 'custom':
+      if (!eligibility.userIds || eligibility.userIds.length === 0) {
+        return { eligible: true };
+      }
+      if (eligibility.userIds.includes(userInfo.account)) {
+        return { eligible: true };
+      }
+      return { eligible: false, reason: '您不在投票名单内' };
+    default:
+      return { eligible: true };
+  }
+}
+
+function submitVote(votingId, userId, userName, candidateIds) {
+  if (hasUserVoted(votingId, userId)) {
+    return { success: false, message: '您已经投过票了' };
+  }
+
+  const voting = getVotingDetail(votingId);
+  if (!voting) {
+    return { success: false, message: '投票不存在' };
+  }
+
+  if (voting.status !== 'active') {
+    const statusText = constants.VOTING_STATUS_MAP[voting.status] ? constants.VOTING_STATUS_MAP[voting.status].label : voting.status;
+    return { success: false, message: `当前投票状态：${statusText}，无法投票` };
+  }
+
+  if (!candidateIds || candidateIds.length === 0) {
+    return { success: false, message: '请选择候选人' };
+  }
+
+  if (voting.type === 'single' && candidateIds.length > 1) {
+    return { success: false, message: '单选投票只能选择一位候选人' };
+  }
+
+  if (voting.maxChoices && candidateIds.length > voting.maxChoices) {
+    return { success: false, message: `最多只能选择 ${voting.maxChoices} 位候选人` };
+  }
+
+  const validCandidateIds = (voting.candidates || []).map(c => c.id);
+  for (const cid of candidateIds) {
+    if (!validCandidateIds.includes(cid)) {
+      return { success: false, message: '候选人无效' };
+    }
+  }
+
+  const record = {
+    id: util.generateId(),
+    votingId,
+    userId,
+    userName: voting.visibility === 'anonymous' ? '匿名用户' : (userName || userId),
+    candidateIds,
+    visibility: voting.visibility,
+    createTime: Date.now()
+  };
+
+  storage.addToList(STORAGE_KEYS.VOTING_RECORDS, record);
+
+  const candidates = voting.candidates || [];
+  const updatedCandidates = candidates.map(c => {
+    if (candidateIds.includes(c.id)) {
+      return { ...c, voteCount: (c.voteCount || 0) + 1 };
+    }
+    return c;
+  });
+
+  storage.updateInList(STORAGE_KEYS.VOTING_LIST, votingId, {
+    candidates: updatedCandidates,
+    voteCount: (voting.voteCount || 0) + 1,
+    updateTime: Date.now()
+  });
+
+  return { success: true, record };
+}
+
+function getVotingRecords(votingId) {
+  const records = storage.getList(STORAGE_KEYS.VOTING_RECORDS);
+  return records.filter(r => r.votingId === votingId);
+}
+
+function getUserVotingRecord(votingId, userId) {
+  const records = storage.getList(STORAGE_KEYS.VOTING_RECORDS);
+  return records.find(r => r.votingId === votingId && r.userId === userId) || null;
+}
+
+function getVotingStatistics(votingId) {
+  const voting = getVotingDetail(votingId);
+  if (!voting) return null;
+
+  const records = getVotingRecords(votingId);
+  const candidates = voting.candidates || [];
+  const totalVotes = voting.voteCount || 0;
+
+  const sortedCandidates = [...candidates].sort((a, b) => (b.voteCount || 0) - (a.voteCount || 0));
+  const maxVotes = sortedCandidates.length > 0 ? (sortedCandidates[0].voteCount || 0) : 0;
+  const winners = sortedCandidates.filter(c => (c.voteCount || 0) === maxVotes && maxVotes > 0);
+
+  const candidateStats = candidates.map(c => {
+    const count = c.voteCount || 0;
+    const percentage = totalVotes > 0 ? Math.round(count / totalVotes * 100) : 0;
+    const barWidth = maxVotes > 0 ? Math.round(count / maxVotes * 100) : 0;
+    return {
+      ...c,
+      count,
+      percentage,
+      barWidth,
+      rank: sortedCandidates.findIndex(s => s.id === c.id) + 1,
+      isWinner: winners.some(w => w.id === c.id)
+    };
+  }).sort((a, b) => b.count - a.count);
+
+  const visibilityIsRealname = voting.visibility === 'realname';
+  const voterList = visibilityIsRealname
+    ? records.map(r => ({ userId: r.userId, userName: r.userName, createTime: r.createTime }))
+    : [];
+
+  return {
+    voting,
+    totalVotes,
+    candidateStats,
+    winners: winners.map(w => w.name || w.title),
+    voterList,
+    canViewResult: voting.status === 'ended' || voting.status === 'published' || (voting.showRealTimeResult && voting.status === 'active')
+  };
+}
+
 // ==================== 消息通知 ====================
 
 const DEFAULT_NOTIFICATION_SETTINGS = {
@@ -7202,6 +7513,19 @@ module.exports = {
   submitSurveyResponse,
   getSurveyResponses,
   getSurveyStatistics,
+
+  getVotingList,
+  getVotingDetail,
+  createVoting,
+  updateVoting,
+  deleteVoting,
+  publishVotingResult,
+  hasUserVoted,
+  checkVotingEligibility,
+  submitVote,
+  getVotingRecords,
+  getUserVotingRecord,
+  getVotingStatistics,
 
   getNotificationSettings,
   updateNotificationSettings,

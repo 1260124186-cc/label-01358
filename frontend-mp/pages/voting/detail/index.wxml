@@ -1,0 +1,154 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{voting}}">
+  <view class="header-section">
+    <view class="header-bg"></view>
+    <view class="header-content">
+      <view class="status-row">
+        <view class="status-tag" style="background-color: {{statusInfo.color}}20; color: {{statusInfo.color}};">
+          <text class="status-dot" style="background-color: {{statusInfo.color}};"></text>
+          <text>{{statusInfo.label}}</text>
+        </view>
+        <text class="visibility-tag">{{voting.visibility === 'anonymous' ? '🔒 匿名投票' : '📛 实名投票'}}</text>
+      </view>
+      <text class="voting-title">{{voting.title}}</text>
+      <text class="voting-desc" wx:if="{{voting.description}}">{{voting.description}}</text>
+      <view class="header-info">
+        <view class="info-item">
+          <text class="info-icon">👥</text>
+          <text class="info-text">{{voting.voteCount || 0}} 人已投票</text>
+        </view>
+        <view class="info-item" wx:if="{{countDownText}}">
+          <text class="info-icon">⏰</text>
+          <text class="info-text highlight">{{countDownText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="time-section card">
+    <view class="card-body">
+      <view class="time-row">
+        <view class="time-item">
+          <text class="time-label">开始时间</text>
+          <text class="time-value">{{startTimeText}}</text>
+        </view>
+        <view class="time-arrow">→</view>
+        <view class="time-item">
+          <text class="time-label">结束时间</text>
+          <text class="time-value">{{endTimeText}}</text>
+        </view>
+      </view>
+      <view class="type-row" wx:if="{{voting.creatorName}}">
+        <text class="type-label">发起方</text>
+        <text class="type-value">{{voting.creatorName}}</text>
+      </view>
+      <view class="type-row">
+        <text class="type-label">投票方式</text>
+        <text class="type-value">
+          {{voting.type === 'single' ? '单选投票' : (voting.type === 'ranked' ? '排序投票' : '多选投票')}}
+          <block wx:if="{{voting.type === 'multiple'}}">（最多 {{voting.maxChoices}} 位）</block>
+        </text>
+      </view>
+    </view>
+  </view>
+
+  <view class="warning-section card" wx:if="{{!eligibilityInfo.eligible && !hasVoted && voting.status === 'active'}}">
+    <view class="card-body">
+      <view class="warning-content">
+        <text class="warning-icon">⚠️</text>
+        <text class="warning-text">{{eligibilityInfo.reason}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="voted-section card" wx:if="{{hasVoted && voting.status === 'active'}}">
+    <view class="card-body">
+      <view class="voted-content">
+        <text class="voted-icon">✅</text>
+        <text class="voted-text">您已完成投票，感谢您的参与！</text>
+      </view>
+      <view class="voted-time">投票时间：{{userRecord ? userRecord.createTimeText : ''}}</view>
+    </view>
+  </view>
+
+  <view class="candidates-section">
+    <view class="section-title-row">
+      <text class="section-title-text">候选人 / 选项</text>
+      <text class="section-sub" wx:if="{{voting.status === 'active' && !hasVoted && eligibilityInfo.eligible}}">
+        {{voting.type === 'single' ? '（单选，点击选择）' : '（多选，可选择' + voting.maxChoices + '位）'}}
+      </text>
+    </view>
+
+    <view class="candidate-list">
+      <view
+        class="candidate-card card {{selectedCandidates.indexOf(item.id) > -1 ? 'selected' : ''}} {{voting.status === 'active' && !hasVoted && eligibilityInfo.eligible ? 'selectable' : ''}}"
+        wx:for="{{voting.candidates}}"
+        wx:key="id"
+        bindtap="onCandidateTap"
+        data-id="{{item.id}}"
+      >
+        <view class="card-body">
+          <view class="candidate-header">
+            <view class="candidate-avatar">
+              <text class="avatar-text">{{item.name[0]}}</text>
+            </view>
+            <view class="candidate-info">
+              <view class="candidate-name-row">
+                <text class="candidate-name">{{item.name}}</text>
+                <view class="check-box {{selectedCandidates.indexOf(item.id) > -1 ? 'checked' : ''}}" wx:if="{{voting.status === 'active' && !hasVoted && eligibilityInfo.eligible}}">
+                  <text class="check-icon" wx:if="{{selectedCandidates.indexOf(item.id) > -1}}">✓</text>
+                </view>
+              </view>
+              <view class="candidate-tags" wx:if="{{item.college || item.grade}}">
+                <view class="c-tag" wx:if="{{item.college}}">{{item.college}}</view>
+                <view class="c-tag" wx:if="{{item.grade}}">{{item.grade}}级</view>
+              </view>
+            </view>
+            <view class="vote-count-badge" wx:if="{{voting.status !== 'active' || voting.showRealTimeResult || hasVoted}}">
+              <text class="count-num">{{item.voteCount || 0}}</text>
+              <text class="count-label">票</text>
+            </view>
+          </view>
+          <text class="candidate-desc" wx:if="{{item.description}}">{{item.description}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="action-space" wx:if="{{voting.status === 'active' && !hasVoted && eligibilityInfo.eligible}}"></view>
+
+  <view class="bottom-bar" wx:if="{{voting.status === 'active' && !hasVoted && eligibilityInfo.eligible}}">
+    <view class="selected-info">
+      <text class="selected-count">{{selectedCandidates.length}}</text>
+      <text class="selected-text">/{{voting.maxChoices || voting.candidates.length}} 已选</text>
+    </view>
+    <button
+      class="submit-btn {{submitting || selectedCandidates.length === 0 ? 'disabled' : ''}}"
+      bindtap="onSubmitVote"
+      disabled="{{submitting || selectedCandidates.length === 0}}"
+      loading="{{submitting}}"
+    >
+      {{submitting ? '提交中...' : '提交投票'}}
+    </button>
+  </view>
+
+  <view class="bottom-bar" wx:if="{{voting.status !== 'active' || hasVoted}}">
+    <button
+      class="submit-btn result-btn"
+      bindtap="onViewResult"
+    >查看投票结果</button>
+    <button
+      class="submit-btn publish-btn"
+      bindtap="onPublishResult"
+      wx:if="{{isOwner && (voting.status === 'ended')}}"
+    >公示结果</button>
+  </view>
+</view>
+
+<view class="loading-wrap" wx:if="{{loading && !voting}}">
+  <text class="loading-text">加载中...</text>
+</view>
+
+<view class="empty-wrap" wx:if="{{!loading && !voting}}">
+  <text>投票不存在或已删除</text>
+</view>

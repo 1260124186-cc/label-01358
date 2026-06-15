@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "校园投票",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "/components/empty/index"
+  }
+}

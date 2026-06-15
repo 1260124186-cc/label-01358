@@ -178,7 +178,12 @@
     "pages/campus-card/bind",
     "pages/campus-card/transactions",
     "pages/campus-card/analysis",
-    "pages/campus-card/recharge-map"
+    "pages/campus-card/recharge-map",
+    "pages/voting/list/index",
+    "pages/voting/create/index",
+    "pages/voting/detail/index",
+    "pages/voting/result/index",
+    "pages/admin/voting-list/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

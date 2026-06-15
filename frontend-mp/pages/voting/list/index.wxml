@@ -1,0 +1,104 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="filter-section">
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-tabs">
+        <view
+          class="filter-tab {{currentTab === item.value ? 'active' : ''}}"
+          wx:for="{{tabs}}"
+          wx:key="value"
+          bindtap="onTabChange"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view class="list-container" wx:if="{{list.length > 0}}">
+      <view
+        class="voting-card card"
+        wx:for="{{list}}"
+        wx:key="id"
+        hover-class="voting-card-hover"
+        bindtap="onItemTap"
+        data-item="{{item}}"
+      >
+        <view class="card-body">
+          <view class="voting-header">
+            <view class="voting-title-row">
+              <text class="voting-title">{{item.title}}</text>
+              <view class="voting-status" style="color: {{item.statusInfo.color}}; background-color: {{item.statusInfo.color}}1A;">
+                <text>{{item.statusInfo.label}}</text>
+              </view>
+            </view>
+            <text class="voting-desc" wx:if="{{item.description}}">{{item.description}}</text>
+          </view>
+
+          <view class="voting-meta">
+            <view class="meta-item">
+              <text class="meta-icon">🗳️</text>
+              <text class="meta-text">{{item.candidateCount}}位候选人</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">👥</text>
+              <text class="meta-text">{{item.voteCount || 0}}人已投</text>
+            </view>
+            <view class="meta-item">
+              <text class="meta-icon">{{item.visibility === 'anonymous' ? '🔒' : '📛'}}</text>
+              <text class="meta-text">{{item.visibility === 'anonymous' ? '匿名' : '实名'}}</text>
+            </view>
+          </view>
+
+          <view class="voting-time" wx:if="{{item.timeText}}">
+            <text class="time-icon">🕐</text>
+            <text class="time-text">{{item.timeText}}</text>
+          </view>
+
+          <view class="voting-actions">
+            <view class="action-left">
+              <view class="responded-tag voted-tag" wx:if="{{item.hasVoted}}">
+                <text>已投票</text>
+              </view>
+              <view class="responded-tag" wx:elif="{{item.status === 'active'}}">
+                <text>进行中</text>
+              </view>
+            </view>
+            <view class="action-right">
+              <view
+                class="action-btn result-btn"
+                catchtap="onViewResult"
+                data-id="{{item.id}}"
+                wx:if="{{item.status === 'ended' || item.status === 'published' || item.hasVoted || item.showRealTimeResult}}"
+              >查看结果</view>
+              <view
+                class="action-btn delete-btn"
+                catchtap="onDeleteVoting"
+                data-id="{{item.id}}"
+                wx:if="{{item.isOwner}}"
+              >删除</view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{!loading && list.length === 0}}"
+      text="暂无投票"
+      showAction="{{true}}"
+      actionText="发起投票"
+      bindaction="onCreate"
+    />
+  </scroll-view>
+
+  <view class="create-btn" hover-class="create-btn-hover" bindtap="onCreate">
+    <text class="create-icon">+</text>
+  </view>
+</view>

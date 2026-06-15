@@ -9406,4 +9406,93 @@ const _campusCardExports = {
   LOGISTICS_DEPARTMENT_PHONE
 };
 
-Object.assign(module.exports, _workStudyExports, _campusCardExports);
+const now = Date.now();
+
+const MOCK_VOTINGS = [
+  {
+    title: '2026年度学生会主席换届选举',
+    description: '选举新一届学生会主席，带领学生会为同学们服务。请各位同学认真行使选举权，投出您宝贵的一票。',
+    type: 'single',
+    visibility: 'anonymous',
+    eligibility: { type: 'all' },
+    maxChoices: 1,
+    showRealTimeResult: false,
+    startTime: now - 3600000,
+    endTime: now + 2 * 86400000,
+    creator: 'admin001',
+    creatorName: '学生会办公室',
+    candidates: [
+      { name: '张明远', avatar: '', description: '计算机学院大三，现任学生会副主席，负责学术活动组织工作2年。', college: 'computer', grade: '2023' },
+      { name: '李思琪', avatar: '', description: '经济管理学院大三，现任学生会外联部部长，组织多次校企合作活动。', college: 'economic', grade: '2023' },
+      { name: '王浩然', avatar: '', description: '机械工程学院大二，现任校团委组织委员，热心公益活动。', college: 'mechanical', grade: '2024' },
+      { name: '陈雨桐', avatar: '', description: '艺术设计学院大三，现任学生会文艺部部长，策划多场校园晚会。', college: 'art', grade: '2023' }
+    ]
+  },
+  {
+    title: '关于增设通宵自习室的公投',
+    description: '为满足同学们期末复习需求，学校计划增设24小时通宵自习室。现就开放区域、管理方式等事项进行投票表决。',
+    type: 'multiple',
+    visibility: 'realname',
+    eligibility: { type: 'all' },
+    maxChoices: 2,
+    showRealTimeResult: true,
+    startTime: now - 2 * 86400000,
+    endTime: now - 3600000,
+    creator: 'admin002',
+    creatorName: '教务处',
+    candidates: [
+      { name: '图书馆一层南区', description: '靠近入口，进出方便，桌椅充足。' },
+      { name: '第一教学楼B区', description: '环境安静，独立座位多，有空调。' },
+      { name: '第二教学楼C区', description: '空间宽敞，有讨论区，支持小组学习。' },
+      { name: '综合实验楼大厅', description: '24小时安保，照明充足，有饮水机。' }
+    ]
+  },
+  {
+    title: '校园十大歌手比赛人气投票',
+    description: '经过海选和复赛，12位选手脱颖而出进入决赛。现在由您投票选出最具人气歌手！',
+    type: 'multiple',
+    visibility: 'anonymous',
+    eligibility: { type: 'all' },
+    maxChoices: 3,
+    showRealTimeResult: true,
+    startTime: now - 5 * 86400000,
+    endTime: now + 5 * 86400000,
+    creator: 'admin003',
+    creatorName: '学生会文艺部',
+    candidates: [
+      { name: '林小夏', avatar: '', description: '外国语学院大一 | 参赛曲目：《晴天》' },
+      { name: '赵梓轩', avatar: '', description: '计算机学院大二 | 参赛曲目：《平凡之路》' },
+      { name: '孙悦涵', avatar: '', description: '经济管理学院大三 | 参赛曲目：《红豆》' },
+      { name: '周子墨', avatar: '', description: '艺术设计学院大二 | 参赛曲目：《起风了》' },
+      { name: '吴佳怡', avatar: '', description: '化学化工学院大一 | 参赛曲目：《后来》' },
+      { name: '郑天宇', avatar: '', description: '土木工程学院大二 | 参赛曲目：《夜空中最亮的星》' }
+    ]
+  },
+  {
+    title: '2026级新生辅导员人选民主测评',
+    description: '计算机学院对拟任2026级新生辅导员进行民主测评，请全院同学投出信任票。',
+    type: 'single',
+    visibility: 'realname',
+    eligibility: { type: 'college', colleges: ['computer'] },
+    maxChoices: 1,
+    showRealTimeResult: false,
+    startTime: now + 1 * 86400000,
+    endTime: now + 3 * 86400000,
+    creator: 'admin004',
+    creatorName: '计算机学院学工办',
+    candidates: [
+      { name: '刘老师', description: '博士研究生学历，从事学生工作5年，曾任2022级辅导员，所带班级多次获先进班集体。' },
+      { name: '周老师', description: '硕士研究生学历，从事学生工作8年，国家二级心理咨询师，擅长心理辅导。' },
+      { name: '弃权', description: '对以上人选均不支持' }
+    ]
+  }
+];
+
+const MOCK_VOTING_RECORDS = [];
+
+const _votingExports = {
+  MOCK_VOTINGS,
+  MOCK_VOTING_RECORDS
+};
+
+Object.assign(module.exports, _workStudyExports, _campusCardExports, _votingExports);

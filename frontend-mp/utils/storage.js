@@ -144,7 +144,10 @@ const STORAGE_KEYS = {
   EXPRESS_LOCKER_LIST: 'expressLockerList',
 
   CAMPUS_CARD_BIND_INFO: 'campusCardBindInfo',
-  CAMPUS_CARD_TRANSACTION_LIST: 'campusCardTransactionList'
+  CAMPUS_CARD_TRANSACTION_LIST: 'campusCardTransactionList',
+
+  VOTING_LIST: 'votingList',
+  VOTING_RECORDS: 'votingRecords'
 };
 
 /**

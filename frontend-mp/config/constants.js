@@ -125,6 +125,55 @@ const SURVEY_STATUS = [
   { value: 'closed', label: '已结束' }
 ];
 
+const VOTING_STATUS = [
+  { value: 'pending', label: '未开始', color: '#6B7280' },
+  { value: 'active', label: '投票中', color: '#10B981' },
+  { value: 'ended', label: '已结束', color: '#3B82F6' },
+  { value: 'published', label: '已公示', color: '#8B5CF6' }
+];
+
+const VOTING_STATUS_MAP = VOTING_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const VOTING_TYPES = [
+  { value: 'single', label: '单选投票' },
+  { value: 'multiple', label: '多选投票' },
+  { value: 'ranked', label: '排序投票' }
+];
+
+const VOTING_VISIBILITY = [
+  { value: 'anonymous', label: '匿名投票' },
+  { value: 'realname', label: '实名投票' }
+];
+
+const VOTING_ELIGIBILITY_TYPES = [
+  { value: 'all', label: '全校学生' },
+  { value: 'college', label: '指定学院' },
+  { value: 'grade', label: '指定年级' },
+  { value: 'major', label: '指定专业' },
+  { value: 'custom', label: '自定义名单' }
+];
+
+const COLLEGES = [
+  { value: 'computer', label: '计算机学院' },
+  { value: 'economic', label: '经济管理学院' },
+  { value: 'art', label: '艺术设计学院' },
+  { value: 'mechanical', label: '机械工程学院' },
+  { value: 'electronic', label: '电子信息学院' },
+  { value: 'civil', label: '土木工程学院' },
+  { value: 'chemical', label: '化学化工学院' },
+  { value: 'foreign', label: '外国语学院' }
+];
+
+const GRADES = [
+  { value: '2022', label: '2022级' },
+  { value: '2023', label: '2023级' },
+  { value: '2024', label: '2024级' },
+  { value: '2025', label: '2025级' }
+];
+
 const NOTIFICATION_TYPES = [
   { value: 'system', label: '系统公告', icon: '📢', color: '#FEF3C7', iconColor: '#F59E0B' },
   { value: 'interaction', label: '互动消息', icon: '💬', color: '#DBEAFE', iconColor: '#3B82F6' },
@@ -1033,7 +1082,8 @@ const ADMIN_MODULES = [
   { id: 'news', name: '校园动态', icon: '📰', color: '#4ECDC4', desc: '管理校园新闻动态' },
   { id: 'broadcast', name: '广播节目', icon: '🎙️', color: '#F59E0B', desc: '管理校园广播节目' },
   { id: 'scenery', name: '风光管理', icon: '🏞️', color: '#8B5CF6', desc: '管理校园风光图片' },
-  { id: 'graduation', name: '离校审核', icon: '🎓', color: '#10B981', desc: '审核学生离校申请' }
+  { id: 'graduation', name: '离校审核', icon: '🎓', color: '#10B981', desc: '审核学生离校申请' },
+  { id: 'voting', name: '投票管理', icon: '🗳️', color: '#667EEA', desc: '管理校园投票选举' }
 ];
 
 const TICKET_REFUND_RULES = [
@@ -2239,5 +2289,13 @@ module.exports = {
   WORK_STUDY_HOURS_STATUS,
   WORK_STUDY_HOURS_STATUS_MAP,
   WORK_STUDY_SALARY_STATUS,
-  WORK_STUDY_SALARY_STATUS_MAP
+  WORK_STUDY_SALARY_STATUS_MAP,
+
+  VOTING_STATUS,
+  VOTING_STATUS_MAP,
+  VOTING_TYPES,
+  VOTING_VISIBILITY,
+  VOTING_ELIGIBILITY_TYPES,
+  COLLEGES,
+  GRADES
 };

@@ -1,0 +1,180 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}" wx:if="{{voting}}">
+  <view class="header-section">
+    <view class="header-bg"></view>
+    <view class="header-content">
+      <view class="status-row">
+        <view class="status-tag" style="background-color: {{statusInfo.color}}20; color: {{statusInfo.color}};">
+          <text class="status-dot" style="background-color: {{statusInfo.color}};"></text>
+          <text>{{statusInfo.label}}</text>
+        </view>
+        <text class="visibility-tag">{{voting.visibility === 'anonymous' ? '🔒 匿名投票' : '📛 实名投票'}}</text>
+      </view>
+      <text class="voting-title">{{voting.title}}</text>
+      <view class="winner-section" wx:if="{{canViewResult && statistics.winners.length > 0}}">
+        <view class="winner-badge">
+          <text class="winner-icon">🏆</text>
+          <text class="winner-label">获胜</text>
+        </view>
+        <view class="winner-names">
+          <text wx:for="{{statistics.winners}}" wx:key="*this" wx:for-item="winner" class="winner-name">{{winner}}</text>
+        </view>
+      </view>
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-num">{{totalVotes}}</text>
+          <text class="stat-label">总票数</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-num">{{voting.candidates.length}}</text>
+          <text class="stat-label">候选人</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-num">{{statistics.winners.length}}</text>
+          <text class="stat-label">获胜数</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="info-section card">
+    <view class="card-body">
+      <view class="info-row">
+        <text class="info-label">发起方</text>
+        <text class="info-value">{{voting.creatorName || '-'}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">开始时间</text>
+        <text class="info-value">{{startTimeText}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">结束时间</text>
+        <text class="info-value">{{endTimeText}}</text>
+      </view>
+      <view class="info-row" wx:if="{{publishTimeText}}">
+        <text class="info-label">公示时间</text>
+        <text class="info-value">{{publishTimeText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <block wx:if="{{canViewResult}}">
+    <view class="filter-section" wx:if="{{showVoterTab}}">
+      <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+        <view class="filter-tabs">
+          <view
+            class="filter-tab {{currentTab === item.value ? 'active' : ''}}"
+            wx:for="{{tabs}}"
+            wx:key="value"
+            bindtap="onTabChange"
+            data-value="{{item.value}}"
+          >{{item.label}}</view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <view class="ranking-section" wx:if="{{currentTab === 'ranking'}}">
+      <view
+        class="rank-card card {{item.rank === 1 ? 'rank-gold' : (item.rank === 2 ? 'rank-silver' : (item.rank === 3 ? 'rank-bronze' : ''))}}"
+        wx:for="{{statistics.candidateStats}}"
+        wx:key="id"
+      >
+        <view class="card-body">
+          <view class="rank-header">
+            <view class="rank-no-wrap">
+              <view class="rank-no">
+                <text wx:if="{{item.rank <= 3}}" class="rank-trophy">{{item.rank === 1 ? '🥇' : (item.rank === 2 ? '🥈' : '🥉')}}</text>
+                <text wx:else class="rank-num">{{item.rank}}</text>
+              </view>
+              <view wx:if="{{item.isWinner && totalVotes > 0}}" class="winner-tag-mini">
+                <text>WIN</text>
+              </view>
+            </view>
+            <view class="rank-candidate">
+              <view class="candidate-avatar-sm">
+                <text class="avatar-text-sm">{{item.name[0]}}</text>
+              </view>
+              <view class="candidate-main">
+                <text class="candidate-name">{{item.name}}</text>
+                <text class="candidate-desc-sm" wx:if="{{item.description}}">{{item.description}}</text>
+              </view>
+            </view>
+            <view class="rank-votes">
+              <text class="votes-num">{{item.count}}</text>
+              <text class="votes-unit">票</text>
+              <text class="votes-percent">({{item.percentage}}%)</text>
+            </view>
+          </view>
+          <view class="progress-bar-wrap">
+            <view class="progress-bar-bg">
+              <view
+                class="progress-bar-fill {{item.rank === 1 ? 'fill-gold' : (item.rank === 2 ? 'fill-silver' : (item.rank === 3 ? 'fill-bronze' : ''))}}"
+                style="width: {{item.barWidth}}%;"
+              ></view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="voters-section" wx:if="{{currentTab === 'voters' && showVoterTab}}">
+      <view class="voters-card card">
+        <view class="card-body">
+          <view class="voter-item" wx:for="{{statistics.voterList}}" wx:key="userId">
+            <view class="voter-avatar">
+              <text class="voter-avatar-text">{{item.userName[0]}}</text>
+            </view>
+            <view class="voter-info">
+              <text class="voter-name">{{item.userName}}</text>
+              <text class="voter-id">{{item.userId}}</text>
+            </view>
+            <text class="voter-time">{{item.createTimeText}}</text>
+          </view>
+          <view class="empty-voters" wx:if="{{statistics.voterList.length === 0}}">
+            <text class="empty-text">暂无投票记录</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <view class="no-permission-section card" wx:if="{{!canViewResult}}">
+    <view class="card-body">
+      <view class="no-permission-content">
+        <text class="no-permission-icon">🔒</text>
+        <text class="no-permission-title">结果暂未公开</text>
+        <text class="no-permission-desc">
+          {{voting.showRealTimeResult ? '当前投票进行中，您可以先去投票，投票后即可查看实时结果。' : '该投票设置为结束后公开结果，请耐心等待投票结束。'}}
+        </text>
+      </view>
+      <button class="go-vote-btn" bindtap="onBackToVote">
+        {{voting.status === 'active' ? '去投票' : '返回详情'}}
+      </button>
+    </view>
+  </view>
+
+  <view class="action-bar">
+    <button class="action-btn share-btn" open-type="share">
+      <text class="btn-icon">📤</text>
+      <text class="btn-text">分享结果</text>
+    </button>
+    <button
+      class="action-btn publish-btn"
+      bindtap="onPublishResult"
+      wx:if="{{isOwner && voting.status === 'ended'}}"
+    >
+      <text class="btn-icon">📢</text>
+      <text class="btn-text">公示结果</text>
+    </button>
+  </view>
+</view>
+
+<view class="loading-wrap" wx:if="{{loading && !voting}}">
+  <text class="loading-text">加载中...</text>
+</view>
+
+<view class="empty-wrap" wx:if="{{!loading && !voting}}">
+  <text>投票不存在或已删除</text>
+</view>

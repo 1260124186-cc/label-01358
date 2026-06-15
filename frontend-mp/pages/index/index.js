@@ -201,6 +201,13 @@ Page({
         icon: '/assets/icons/nav-broadcast.png',
         bgColor: 'linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%)',
         url: '/pages/work-study/index'
+      },
+      {
+        id: 'voting',
+        name: '校园投票',
+        icon: '/assets/icons/nav-broadcast.png',
+        bgColor: 'linear-gradient(135deg, #667EEA 0%, #764BA2 100%)',
+        url: '/pages/voting/list/index'
       }
     ],
     weatherData: null,
