@@ -1,0 +1,220 @@
+<view class="container {{darkMode ? 'dark' : ''}}" wx:if="{{job}}">
+  <view class="job-banner">
+    <view class="banner-title">投递职位</view>
+    <view class="banner-job">{{job.title}} · {{job.company}}</view>
+  </view>
+
+  <view class="method-tabs">
+    <view
+      class="method-tab {{applyMethod === 'form' ? 'active' : ''}}"
+      data-value="form"
+      bindtap="onMethodChange"
+    >
+      <text class="method-icon">📝</text>
+      <text>填写表单</text>
+    </view>
+    <view
+      class="method-tab {{applyMethod === 'resume' ? 'active' : ''}}"
+      data-value="resume"
+      bindtap="onMethodChange"
+    >
+      <text class="method-icon">📄</text>
+      <text>上传简历</text>
+    </view>
+  </view>
+
+  <view wx:if="{{applyMethod === 'form'}}" class="form-section">
+    <view class="section-card">
+      <view class="form-group">
+        <view class="form-label required">姓名</view>
+        <input
+          class="form-input"
+          placeholder="请输入真实姓名"
+          value="{{formData.name}}"
+          data-field="name"
+          bindinput="onFormInput"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label required">手机号</view>
+        <input
+          class="form-input"
+          placeholder="请输入手机号"
+          type="number"
+          maxlength="11"
+          value="{{formData.phone}}"
+          data-field="phone"
+          bindinput="onFormInput"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label required">邮箱</view>
+        <input
+          class="form-input"
+          placeholder="请输入邮箱地址"
+          value="{{formData.email}}"
+          data-field="email"
+          bindinput="onFormInput"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label required">性别</view>
+        <view class="form-radio-group">
+          <view
+            wx:for="{{genders}}"
+            wx:key="value"
+            class="radio-item {{formData.gender === item.value ? 'active' : ''}}"
+            data-value="{{item.value}}"
+            bindtap="onGenderSelect"
+          >
+            <text class="radio-dot"></text>
+            <text>{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label required">年级</view>
+        <view class="form-tag-group">
+          <view
+            wx:for="{{grades}}"
+            wx:key="value"
+            class="tag-item {{formData.grade === item.value ? 'active' : ''}}"
+            data-value="{{item.value}}"
+            bindtap="onGradeSelect"
+          >
+            {{item.label}}
+          </view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <view class="form-label required">学校</view>
+        <input
+          class="form-input"
+          placeholder="请输入学校名称"
+          value="{{formData.school}}"
+          data-field="school"
+          bindinput="onFormInput"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label required">专业</view>
+        <input
+          class="form-input"
+          placeholder="请输入专业名称"
+          value="{{formData.major}}"
+          data-field="major"
+          bindinput="onFormInput"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">期望薪资</view>
+        <input
+          class="form-input"
+          placeholder="如：8000-12000/月"
+          value="{{formData.expectedSalary}}"
+          data-field="expectedSalary"
+          bindinput="onFormInput"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">可入职时间</view>
+        <input
+          class="form-input"
+          placeholder="如：随时入职 / 2024年7月"
+          value="{{formData.availableTime}}"
+          data-field="availableTime"
+          bindinput="onFormInput"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label required">自我介绍</view>
+        <textarea
+          class="form-textarea"
+          placeholder="简要介绍一下自己，包括技能、项目经验等"
+          maxlength="1000"
+          value="{{formData.selfIntroduction}}"
+          data-field="selfIntroduction"
+          bindinput="onFormInput"
+          auto-height
+        />
+        <view class="char-count">{{formData.selfIntroduction.length}}/1000</view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{applyMethod === 'resume'}}" class="resume-section">
+    <view class="section-card">
+      <view class="resume-header">
+        <view class="resume-title">选择简历</view>
+        <view class="upload-btn" bindtap="onUploadResume">
+          <text class="upload-icon">⬆️</text>
+          <text>上传简历</text>
+        </view>
+      </view>
+
+      <view wx:if="{{resumeList.length === 0}}" class="empty-resume">
+        <text class="empty-icon">📄</text>
+        <text class="empty-text">暂无简历</text>
+        <text class="empty-tip">点击上方按钮上传 PDF/Word 简历</text>
+      </view>
+
+      <view wx:else class="resume-list">
+        <view
+          wx:for="{{resumeList}}"
+          wx:key="id"
+          class="resume-item {{selectedResumeId === item.id ? 'selected' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onSelectResume"
+        >
+          <view class="resume-icon">
+            {{item.fileType === 'pdf' ? '📕' : '📘'}}
+          </view>
+          <view class="resume-info">
+            <view class="resume-name">{{item.fileName}}</view>
+            <view class="resume-meta">
+              <text>{{(item.fileSize / 1024 / 1024).toFixed(2)}} MB</text>
+              <text class="meta-dot">·</text>
+              <text>{{item.uploadTimeText}}</text>
+            </view>
+          </view>
+          <view class="resume-select">
+            <text class="select-dot"></text>
+          </view>
+          <view class="delete-btn" catchtap="onDeleteResume" data-id="{{item.id}}">
+            <text>🗑️</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="format-tip">
+        <text class="tip-icon">💡</text>
+        <text class="tip-text">支持 PDF、DOC、DOCX 格式，文件大小不超过 10MB</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="agreement-section">
+    <view class="agreement-checkbox" bindtap="onAgreementToggle">
+      <text class="checkbox {{agreementChecked ? 'checked' : ''}}">{{agreementChecked ? '✓' : ''}}</text>
+      <text class="agreement-text">我已阅读并同意<a href="#">《求职服务协议》</a>和<a href="#">《隐私政策》</a></text>
+    </view>
+  </view>
+
+  <view class="submit-bar">
+    <button class="submit-btn" bindtap="onSubmit" disabled="{{submitting}}">
+      <text wx:if="{{submitting}}" class="loading-icon">⏳</text>
+      <text>{{submitting ? '提交中...' : '确认投递'}}</text>
+    </button>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

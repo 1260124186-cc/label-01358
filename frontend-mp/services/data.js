@@ -28,6 +28,7 @@ let alumniProfilesInitialized = false;
 let takeoutInitialized = false;
 let scholarshipInitialized = false;
 let workStudyInitialized = false;
+let jobRecruitmentInitialized = false;
 
 function initVolunteerData() {
   if (volunteerInitialized) return;
@@ -9947,5 +9948,286 @@ Object.assign(module.exports, {
   getMyGroupBuys,
   checkAndUpdateGroupBuyStatus,
   addGroupBuyNotification,
-  getGroupBuyNotifications
+  getGroupBuyNotifications,
+
+  initJobRecruitmentData,
+  getJobList,
+  getJobDetail,
+  toggleJobFavorite,
+  isJobFavorited,
+  getFavoriteJobs,
+  submitJobApplication,
+  getMyJobApplications,
+  getJobApplicationDetail,
+  getReferralCodeList,
+  getReferralCodeDetail,
+  useReferralCode,
+  getCareerTalkList,
+  getCareerTalkDetail,
+  registerCareerTalk,
+  syncTalkToCalendar,
+  getSyncedCalendarEvents,
+  getResumeList,
+  saveResume,
+  deleteResume
 });
+
+function initJobRecruitmentData() {
+  if (jobRecruitmentInitialized) return;
+  const existingJobs = storage.get(STORAGE_KEYS.JOB_LIST);
+  if (!existingJobs || existingJobs.length === 0) {
+    storage.set(STORAGE_KEYS.JOB_LIST, mockData.MOCK_JOB_LIST);
+  }
+  const existingReferrals = storage.get(STORAGE_KEYS.REFERRAL_CODE_LIST);
+  if (!existingReferrals || existingReferrals.length === 0) {
+    storage.set(STORAGE_KEYS.REFERRAL_CODE_LIST, mockData.MOCK_REFERRAL_CODE_LIST);
+  }
+  const existingTalks = storage.get(STORAGE_KEYS.CAREER_TALK_LIST);
+  if (!existingTalks || existingTalks.length === 0) {
+    storage.set(STORAGE_KEYS.CAREER_TALK_LIST, mockData.MOCK_CAREER_TALK_LIST);
+  }
+  const existingApplications = storage.get(STORAGE_KEYS.JOB_APPLICATIONS);
+  if (!existingApplications || existingApplications.length === 0) {
+    storage.set(STORAGE_KEYS.JOB_APPLICATIONS, mockData.MOCK_JOB_APPLICATIONS);
+  }
+  const existingResumes = storage.get(STORAGE_KEYS.RESUME_LIST);
+  if (!existingResumes || existingResumes.length === 0) {
+    storage.set(STORAGE_KEYS.RESUME_LIST, mockData.MOCK_RESUME_LIST);
+  }
+  const existingFavorites = storage.get(STORAGE_KEYS.JOB_FAVORITES);
+  if (!existingFavorites) {
+    storage.set(STORAGE_KEYS.JOB_FAVORITES, []);
+  }
+  jobRecruitmentInitialized = true;
+}
+
+function getJobList(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.JOB_LIST);
+
+  if (filters.type && filters.type !== 'all') {
+    list = list.filter(item => item.type === filters.type);
+  }
+  if (filters.industry && filters.industry !== 'all') {
+    list = list.filter(item => item.industry === filters.industry);
+  }
+  if (filters.grade && filters.grade !== 'all') {
+    list = list.filter(item => item.gradeRequirement && item.gradeRequirement.includes(filters.grade));
+  }
+  if (filters.convertible && filters.convertible !== 'all') {
+    const isConvertible = filters.convertible === 'yes';
+    list = list.filter(item => item.convertible === isConvertible);
+  }
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'company', 'location', 'description']);
+  }
+  if (filters.sort) {
+    const sortOption = constants.JOB_SORT_OPTIONS.find(s => s.value === filters.sort);
+    if (sortOption) {
+      list = sortList(list, sortOption.field, sortOption.order);
+    }
+  }
+
+  return list;
+}
+
+function getJobDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.JOB_LIST);
+  const job = list.find(item => item.id === id);
+  if (job) {
+    job.views = (job.views || 0) + 1;
+    storage.updateInList(STORAGE_KEYS.JOB_LIST, id, { views: job.views });
+  }
+  return job || null;
+}
+
+function toggleJobFavorite(jobId) {
+  const favorites = storage.getList(STORAGE_KEYS.JOB_FAVORITES);
+  const index = favorites.findIndex(item => item.jobId === jobId);
+  let isFavorited = false;
+
+  if (index > -1) {
+    favorites.splice(index, 1);
+    isFavorited = false;
+  } else {
+    favorites.unshift({
+      jobId,
+      createTime: Date.now()
+    });
+    isFavorited = true;
+  }
+
+  storage.set(STORAGE_KEYS.JOB_FAVORITES, favorites);
+  return isFavorited;
+}
+
+function isJobFavorited(jobId) {
+  const favorites = storage.getList(STORAGE_KEYS.JOB_FAVORITES);
+  return favorites.some(item => item.jobId === jobId);
+}
+
+function getFavoriteJobs() {
+  const favorites = storage.getList(STORAGE_KEYS.JOB_FAVORITES);
+  const jobs = storage.getList(STORAGE_KEYS.JOB_LIST);
+  return favorites.map(fav => {
+    const job = jobs.find(j => j.id === fav.jobId);
+    return job ? { ...job, favoriteTime: fav.createTime } : null;
+  }).filter(Boolean);
+}
+
+function submitJobApplication(applicationData) {
+  const application = {
+    id: 'app_' + Date.now(),
+    ...applicationData,
+    status: 'pending',
+    applyTime: Date.now(),
+    updateTime: Date.now(),
+    timeline: [
+      { status: 'pending', time: Date.now(), remark: '简历已投递' }
+    ]
+  };
+
+  storage.addToList(STORAGE_KEYS.JOB_APPLICATIONS, application);
+
+  const jobList = storage.getList(STORAGE_KEYS.JOB_LIST);
+  const jobIndex = jobList.findIndex(j => j.id === applicationData.jobId);
+  if (jobIndex > -1) {
+    jobList[jobIndex].applyCount = (jobList[jobIndex].applyCount || 0) + 1;
+    storage.set(STORAGE_KEYS.JOB_LIST, jobList);
+  }
+
+  return application;
+}
+
+function getMyJobApplications(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.JOB_APPLICATIONS);
+
+  if (filters.status && filters.status !== 'all') {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  list.sort((a, b) => b.applyTime - a.applyTime);
+  return list;
+}
+
+function getJobApplicationDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.JOB_APPLICATIONS);
+  return list.find(item => item.id === id) || null;
+}
+
+function getReferralCodeList(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.REFERRAL_CODE_LIST);
+
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['company', 'position', 'code', 'description']);
+  }
+
+  list = list.filter(item => {
+    if (item.status === 'expired') return false;
+    if (item.expireTime && item.expireTime < Date.now()) {
+      storage.updateInList(STORAGE_KEYS.REFERRAL_CODE_LIST, item.id, { status: 'expired' });
+      return false;
+    }
+    return true;
+  });
+
+  return list;
+}
+
+function getReferralCodeDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.REFERRAL_CODE_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function useReferralCode(id) {
+  const list = storage.getList(STORAGE_KEYS.REFERRAL_CODE_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    list[index].usageCount = (list[index].usageCount || 0) + 1;
+    storage.set(STORAGE_KEYS.REFERRAL_CODE_LIST, list);
+    return true;
+  }
+  return false;
+}
+
+function getCareerTalkList(filters = {}) {
+  let list = storage.getList(STORAGE_KEYS.CAREER_TALK_LIST);
+
+  if (filters.type && filters.type !== 'all') {
+    list = list.filter(item => item.type === filters.type);
+  }
+  if (filters.keyword) {
+    list = filterByKeyword(list, filters.keyword, ['title', 'company', 'description', 'location']);
+  }
+
+  list.sort((a, b) => {
+    const dateA = new Date(a.date + ' ' + a.startTime).getTime();
+    const dateB = new Date(b.date + ' ' + b.startTime).getTime();
+    return dateA - dateB;
+  });
+
+  return list;
+}
+
+function getCareerTalkDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.CAREER_TALK_LIST);
+  return list.find(item => item.id === id) || null;
+}
+
+function registerCareerTalk(id) {
+  const list = storage.getList(STORAGE_KEYS.CAREER_TALK_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1 && (list[index].registerCount || 0) < (list[index].maxCount || Infinity)) {
+    list[index].registerCount = (list[index].registerCount || 0) + 1;
+    storage.set(STORAGE_KEYS.CAREER_TALK_LIST, list);
+    return true;
+  }
+  return false;
+}
+
+function syncTalkToCalendar(id) {
+  const list = storage.getList(STORAGE_KEYS.CAREER_TALK_LIST);
+  const index = list.findIndex(item => item.id === id);
+  if (index > -1) {
+    list[index].syncToCalendar = true;
+    storage.set(STORAGE_KEYS.CAREER_TALK_LIST, list);
+
+    const syncList = storage.getList(STORAGE_KEYS.CALENDAR_SYNC_LIST);
+    if (!syncList.some(item => item.eventId === id)) {
+      syncList.unshift({
+        eventId: id,
+        eventType: 'career_talk',
+        title: list[index].title,
+        startTime: new Date(list[index].date + ' ' + list[index].startTime).getTime(),
+        endTime: new Date(list[index].date + ' ' + list[index].endTime).getTime(),
+        location: list[index].location,
+        syncTime: Date.now(),
+        status: 'synced'
+      });
+      storage.set(STORAGE_KEYS.CALENDAR_SYNC_LIST, syncList);
+    }
+    return true;
+  }
+  return false;
+}
+
+function getSyncedCalendarEvents() {
+  return storage.getList(STORAGE_KEYS.CALENDAR_SYNC_LIST);
+}
+
+function getResumeList() {
+  return storage.getList(STORAGE_KEYS.RESUME_LIST);
+}
+
+function saveResume(resumeData) {
+  const resume = {
+    id: 'resume_' + Date.now(),
+    ...resumeData,
+    uploadTime: Date.now()
+  };
+  storage.addToList(STORAGE_KEYS.RESUME_LIST, resume);
+  return resume;
+}
+
+function deleteResume(id) {
+  return storage.removeFromList(STORAGE_KEYS.RESUME_LIST, id);
+}

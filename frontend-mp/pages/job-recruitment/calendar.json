@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "宣讲会日历",
+  "navigationBarBackgroundColor": "#4F46E5",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

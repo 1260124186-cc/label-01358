@@ -1,0 +1,245 @@
+<view class="container {{darkMode ? 'dark' : ''}}">
+  <view class="header">
+    <view class="header-title">企业宣讲会</view>
+    <view class="header-subtitle">不错过每一个求职机会</view>
+  </view>
+
+  <view class="view-tabs">
+    <view
+      class="view-tab {{currentView === 'list' ? 'active' : ''}}"
+      data-view="list"
+      bindtap="onViewChange"
+    >
+      📋 列表
+    </view>
+    <view
+      class="view-tab {{currentView === 'calendar' ? 'active' : ''}}"
+      data-view="calendar"
+      bindtap="onViewChange"
+    >
+      📅 日历
+    </view>
+  </view>
+
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="搜索宣讲会、公司..."
+      value="{{searchKeyword}}"
+      bindinput="onSearchInput"
+      bindconfirm="onSearchConfirm"
+      confirm-type="search"
+    />
+    <view wx:if="{{searchKeyword}}" class="clear-btn" bindtap="onClearSearch">✕</view>
+  </view>
+
+  <scroll-view class="type-scroll" scroll-x="true" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="type-tabs">
+      <view
+        wx:for="{{types}}"
+        wx:key="value"
+        class="type-tab {{selectedType === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onTypeChange"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{currentView === 'calendar'}}" class="calendar-section">
+    <view class="calendar-header">
+      <view class="nav-btn" bindtap="onPrevMonth">‹</view>
+      <view class="month-text">{{currentMonth}}</view>
+      <view class="nav-btn" bindtap="onNextMonth">›</view>
+    </view>
+
+    <view class="week-header">
+      <view wx:for="{{weekDays}}" wx:key="*this" class="week-day">{{item}}</view>
+    </view>
+
+    <view class="calendar-grid">
+      <view
+        wx:for="{{calendarDays}}"
+        wx:key="date"
+        class="calendar-day {{item.isCurrentMonth ? '' : 'other-month'}} {{item.isToday ? 'today' : ''}} {{item.isSelected ? 'selected' : ''}}"
+        data-date="{{item.date}}"
+        data-is-current-month="{{item.isCurrentMonth}}"
+        bindtap="onDateTap"
+      >
+        <text class="day-number">{{item.day}}</text>
+        <view wx:if="{{item.hasTalk && item.isCurrentMonth}}" class="talk-dot"></view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{selectedDate}}" class="selected-date-info">
+    <text>📅 {{selectedDate}} 的宣讲会</text>
+    <view class="clear-date" bindtap="onDateTap" data-date="{{selectedDate}}" data-is-current-month="true">清除筛选</view>
+  </view>
+
+  <view wx:if="{{filteredTalkList.length === 0}}" class="empty-state">
+    <view class="empty-icon">📅</view>
+    <view class="empty-text">{{selectedDate ? '当天暂无宣讲会' : '暂无相关宣讲会'}}</view>
+    <view class="empty-tip">试试调整筛选条件</view>
+  </view>
+
+  <view wx:else class="talk-list">
+    <view
+      wx:for="{{filteredTalkList}}"
+      wx:key="id"
+      class="talk-card {{item.isPast ? 'past' : ''}}"
+      data-id="{{item.id}}"
+      bindtap="onTalkTap"
+    >
+      <view class="talk-date-section">
+        <view class="date-badge" style="background: {{item.typeColor}};">
+          <text class="date-day">{{item.dateText.split('-')[2]}}</text>
+          <text class="date-month">{{item.dateText.split('-')[1]}}月</text>
+        </view>
+        <view wx:if="{{item.isToday}}" class="today-tag">今天</view>
+      </view>
+
+      <view class="talk-content">
+        <view class="talk-header">
+          <view class="talk-type" style="background: {{item.typeColor}}15; color: {{item.typeColor}};">
+            {{item.typeIcon}} {{item.typeLabel}}
+          </view>
+          <view wx:if="{{item.isRegistered}}" class="registered-tag">已预约</view>
+          <view wx:if="{{item.isSynced}}" class="synced-tag">📆 已同步</view>
+        </view>
+
+        <view class="talk-title">{{item.title}}</view>
+        <view class="talk-company">{{item.company}}</view>
+
+        <view class="talk-info-row">
+          <view class="info-item">
+            <text class="info-icon">⏰</text>
+            <text>{{item.timeText}}</text>
+          </view>
+        </view>
+
+        <view class="talk-info-row">
+          <view class="info-item">
+            <text class="info-icon">📍</text>
+            <text class="info-text">{{item.location}}</text>
+          </view>
+        </view>
+
+        <view class="talk-footer">
+          <view wx:if="{{item.maxCount}}" class="capacity-info">
+            <text class="{{item.isFull ? 'full' : ''}}">
+              {{item.isFull ? '已满' : '剩余' + item.remaining + '个名额'}}
+            </text>
+          </view>
+          <view class="action-btns">
+            <view
+              class="action-btn sync {{item.isSynced ? 'disabled' : ''}}"
+              catchtap="onSyncToCalendar"
+              data-id="{{item.id}}"
+            >
+              {{item.isSynced ? '已同步' : '同步日历'}}
+            </view>
+            <view
+              class="action-btn register {{item.isRegistered || item.isPast || item.isFull ? 'disabled' : ''}}"
+              catchtap="onRegister"
+              data-id="{{item.id}}"
+            >
+              {{item.isPast ? '已结束' : item.isFull ? '已满' : item.isRegistered ? '已预约' : '预约'}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showDetailModal && selectedTalk}}" class="modal-overlay" catchtap="onCloseDetail">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <view class="modal-title">宣讲会详情</view>
+        <view class="modal-close" bindtap="onCloseDetail">✕</view>
+      </view>
+
+      <view class="modal-body">
+        <view class="detail-header">
+          <view class="detail-type" style="background: {{selectedTalk.typeColor}}15; color: {{selectedTalk.typeColor}};">
+            {{selectedTalk.typeIcon}} {{selectedTalk.typeLabel}}
+          </view>
+          <view class="detail-title">{{selectedTalk.title}}</view>
+          <view class="detail-company">{{selectedTalk.company}}</view>
+        </view>
+
+        <view class="detail-info">
+          <view class="info-row">
+            <text class="info-icon">📅</text>
+            <text class="info-label">日期</text>
+            <text class="info-value">{{selectedTalk.dateFullText}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-icon">⏰</text>
+            <text class="info-label">时间</text>
+            <text class="info-value">{{selectedTalk.timeText}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-icon">📍</text>
+            <text class="info-label">地点</text>
+            <text class="info-value">{{selectedTalk.location}}</text>
+          </view>
+          <view wx:if="{{selectedTalk.maxCount}}" class="info-row">
+            <text class="info-icon">👥</text>
+            <text class="info-label">名额</text>
+            <text class="info-value {{selectedTalk.isFull ? 'full' : ''}}">
+              {{selectedTalk.isFull ? '已满' : (selectedTalk.registerCount || 0) + '/' + selectedTalk.maxCount}}
+            </text>
+          </view>
+          <view wx:if="{{selectedTalk.speaker}}" class="info-row">
+            <text class="info-icon">👤</text>
+            <text class="info-label">宣讲人</text>
+            <text class="info-value">{{selectedTalk.speaker}}</text>
+          </view>
+        </view>
+
+        <view wx:if="{{selectedTalk.description}}" class="detail-section">
+          <view class="section-title">活动介绍</view>
+          <view class="section-content">{{selectedTalk.description}}</view>
+        </view>
+
+        <view wx:if="{{selectedTalk.agenda && selectedTalk.agenda.length > 0}}" class="detail-section">
+          <view class="section-title">活动流程</view>
+          <view class="agenda-list">
+            <view wx:for="{{selectedTalk.agenda}}" wx:key="time" class="agenda-item">
+              <text class="agenda-time">{{item.time}}</text>
+              <text class="agenda-content">{{item.content}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{selectedTalk.benefits && selectedTalk.benefits.length > 0}}" class="detail-section">
+          <view class="section-title">参会福利</view>
+          <view class="benefit-tags">
+            <text wx:for="{{selectedTalk.benefits}}" wx:key="*this" class="benefit-tag">{{item}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <view
+          class="btn-sync {{selectedTalk.isSynced ? 'disabled' : ''}}"
+          catchtap="onSyncToCalendar"
+          data-id="{{selectedTalk.id}}"
+        >
+          {{selectedTalk.isSynced ? '已同步日历' : '📆 同步日历'}}
+        </view>
+        <view
+          class="btn-register {{selectedTalk.isRegistered || selectedTalk.isPast || selectedTalk.isFull ? 'disabled' : ''}}"
+          catchtap="onRegister"
+          data-id="{{selectedTalk.id}}"
+        >
+          {{selectedTalk.isPast ? '已结束' : selectedTalk.isFull ? '已满' : selectedTalk.isRegistered ? '已预约' : '立即预约'}}
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

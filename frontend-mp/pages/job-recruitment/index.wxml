@@ -1,0 +1,185 @@
+<view class="container {{darkMode ? 'dark' : ''}}">
+  <view class="header-banner">
+    <view class="banner-title">找到心仪的工作</view>
+    <view class="banner-subtitle">实习 · 校招 · 内推，一站式求职服务</view>
+    <view class="quick-actions">
+      <view class="quick-btn" bindtap="onNavToReferral">
+        <text class="quick-icon">🎫</text>
+        <text class="quick-label">内推码</text>
+      </view>
+      <view class="quick-btn" bindtap="onNavToCalendar">
+        <text class="quick-icon">📅</text>
+        <text class="quick-label">宣讲会</text>
+      </view>
+      <view class="quick-btn" bindtap="onNavToMyApplications">
+        <text class="quick-icon">📝</text>
+        <text class="quick-label">投递记录</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="搜索职位、公司、地点..."
+      value="{{searchKeyword}}"
+      bindinput="onSearchInput"
+      bindconfirm="onSearchConfirm"
+      confirm-type="search"
+    />
+    <view wx:if="{{searchKeyword}}" class="clear-btn" bindtap="onClearSearch">✕</view>
+    <view class="filter-btn" bindtap="onToggleFilter">
+      <text class="filter-icon">🔍</text>
+      <text>筛选</text>
+    </view>
+  </view>
+
+  <scroll-view class="tabs-scroll" scroll-x="true" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="tabs">
+      <view
+        wx:for="{{mainTabs}}"
+        wx:key="value"
+        class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onTabTap"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <scroll-view class="sort-scroll" scroll-x="true" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="sort-bar">
+      <view
+        wx:for="{{sortOptions}}"
+        wx:key="value"
+        class="sort-item {{currentSort === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onSortTap"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{showFilter}}" class="filter-panel">
+    <view class="filter-section">
+      <view class="filter-title">🏢 行业</view>
+      <view class="filter-options">
+        <view
+          wx:for="{{industries}}"
+          wx:key="value"
+          class="filter-option {{filterValues.industry === item.value ? 'active' : ''}}"
+          data-type="industry"
+          data-value="{{item.value}}"
+          bindtap="onFilterItemTap"
+        >
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="filter-section">
+      <view class="filter-title">🎓 年级要求</view>
+      <view class="filter-options">
+        <view
+          wx:for="{{grades}}"
+          wx:key="value"
+          class="filter-option {{filterValues.grade === item.value ? 'active' : ''}}"
+          data-type="grade"
+          data-value="{{item.value}}"
+          bindtap="onFilterItemTap"
+        >
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="filter-section">
+      <view class="filter-title">🔄 是否可转正</view>
+      <view class="filter-options">
+        <view
+          wx:for="{{convertibleOptions}}"
+          wx:key="value"
+          class="filter-option {{filterValues.convertible === item.value ? 'active' : ''}}"
+          data-type="convertible"
+          data-value="{{item.value}}"
+          bindtap="onFilterItemTap"
+        >
+          {{item.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="filter-actions">
+      <view class="btn-reset" bindtap="onResetFilter">重置</view>
+      <view class="btn-confirm" bindtap="onConfirmFilter">确定</view>
+    </view>
+  </view>
+
+  <view wx:if="{{jobList.length === 0}}" class="empty-state">
+    <view class="empty-icon">💼</view>
+    <view class="empty-text">暂无相关职位</view>
+    <view class="empty-tip">试试调整筛选条件</view>
+  </view>
+
+  <view wx:else class="job-list">
+    <view
+      wx:for="{{jobList}}"
+      wx:key="id"
+      class="job-card"
+      data-id="{{item.id}}"
+      bindtap="onNavToDetail"
+    >
+      <view class="job-header">
+        <view class="job-title">{{item.title}}</view>
+        <view
+          class="favorite-btn"
+          catchtap="onToggleFavorite"
+          data-id="{{item.id}}"
+        >
+          <text>{{item.isFavorited ? '❤️' : '🤍'}}</text>
+        </view>
+      </view>
+
+      <view class="job-tags">
+        <text class="tag tag-type">{{item.typeLabel}}</text>
+        <text class="tag tag-industry">{{item.industryLabel}}</text>
+        <text wx:if="{{item.convertible}}" class="tag tag-convertible">可转正</text>
+        <text wx:if="{{item.daysLeft !== null && item.daysLeft <= 7}}" class="tag tag-urgent">
+          {{item.daysLeft > 0 ? '剩' + item.daysLeft + '天' : '即将截止'}}
+        </text>
+      </view>
+
+      <view class="job-info-row">
+        <view class="info-col">
+          <text class="info-icon">🏢</text>
+          <text class="info-text">{{item.company}}</text>
+        </view>
+        <view class="info-col">
+          <text class="info-icon">📍</text>
+          <text class="info-text">{{item.location}}</text>
+        </view>
+      </view>
+
+      <view class="job-info-row">
+        <view class="info-col">
+          <text class="info-icon">💰</text>
+          <text class="info-text salary">{{item.salaryText}}</text>
+        </view>
+        <view class="info-col">
+          <text class="info-icon">⏰</text>
+          <text class="info-text">截止 {{item.deadlineText}}</text>
+        </view>
+      </view>
+
+      <view class="job-footer">
+        <view class="job-requirements">
+          <text class="req-label">要求：</text>
+          <text class="req-text">{{item.requirements[0]}}</text>
+        </view>
+        <view class="apply-count">{{item.applyCount || 0}}人投递</view>
+      </view>
+    </view>
+  </view>
+</view>

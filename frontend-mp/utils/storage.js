@@ -162,7 +162,15 @@ const STORAGE_KEYS = {
 
   GROUP_BUY_LIST: 'groupBuyList',
   GROUP_BUY_ORDER_LIST: 'groupBuyOrderList',
-  GROUP_BUY_NOTIFICATIONS: 'groupBuyNotifications'
+  GROUP_BUY_NOTIFICATIONS: 'groupBuyNotifications',
+
+  JOB_LIST: 'jobList',
+  JOB_FAVORITES: 'jobFavorites',
+  JOB_APPLICATIONS: 'jobApplications',
+  REFERRAL_CODE_LIST: 'referralCodeList',
+  CAREER_TALK_LIST: 'careerTalkList',
+  CALENDAR_SYNC_LIST: 'calendarSyncList',
+  RESUME_LIST: 'resumeList'
 };
 
 /**

@@ -10175,4 +10175,501 @@ const _tutorExports = {
   MOCK_TUTOR_CREDIT_BIND_LIST
 };
 
-Object.assign(module.exports, _workStudyExports, _campusCardExports, _votingExports, _tutorExports);
+// ==================== 实习招聘 / 校招内推 模拟数据 ====================
+
+const MOCK_JOB_LIST = [
+  {
+    id: 'job_001',
+    title: '前端开发实习生',
+    type: 'intern',
+    company: '字节跳动',
+    companyLogo: 'https://picsum.photos/seed/company1/100/100',
+    industry: 'internet',
+    city: 'beijing',
+    location: '北京市海淀区中关村',
+    salaryMin: 250,
+    salaryMax: 350,
+    salaryUnit: 'day',
+    salaryText: '250-350元/天',
+    gradeRequirement: ['junior', 'senior', 'master'],
+    convertible: true,
+    requirements: [
+      '熟悉 HTML/CSS/JavaScript',
+      '熟悉 React/Vue 框架',
+      '良好的编码习惯',
+      '有相关实习经验优先'
+    ],
+    description: '【岗位职责】\n1. 负责公司内部系统的前端开发工作\n2. 与产品、设计、后端团队紧密配合\n3. 参与技术方案讨论和代码评审\n\n【任职要求】\n1. 本科及以上学历，计算机相关专业\n2. 熟悉前端开发技术栈\n3. 良好的沟通能力和团队协作精神\n4. 每周至少实习3天，实习期3个月以上',
+    benefits: ['免费三餐', '下午茶', '健身房', '实习补贴'],
+    deadline: Date.now() + 30 * 86400000,
+    status: 'recruiting',
+    views: 1256,
+    applyCount: 89,
+    hr: {
+      name: '张女士',
+      avatar: 'https://picsum.photos/seed/hr1/100/100',
+      title: 'HRBP'
+    },
+    createTime: Date.now() - 3 * 86400000
+  },
+  {
+    id: 'job_002',
+    title: 'Java后端开发工程师（校招）',
+    type: 'fulltime',
+    company: '阿里巴巴',
+    companyLogo: 'https://picsum.photos/seed/company2/100/100',
+    industry: 'internet',
+    city: 'hangzhou',
+    location: '杭州市余杭区阿里巴巴西溪园区',
+    salaryMin: 18000,
+    salaryMax: 28000,
+    salaryUnit: 'month',
+    salaryText: '18k-28k/月',
+    gradeRequirement: ['senior', 'master', 'phd'],
+    convertible: false,
+    requirements: [
+      '熟练掌握 Java 编程语言',
+      '熟悉 Spring Boot 等框架',
+      '了解 MySQL、Redis 等数据库',
+      '有分布式系统开发经验优先'
+    ],
+    description: '【岗位职责】\n1. 负责电商平台后端系统开发\n2. 参与系统架构设计和优化\n3. 解决高并发场景下的技术难题\n\n【任职要求】\n1. 2026届本科及以上学历毕业生\n2. 扎实的计算机基础\n3. 良好的算法和数据结构基础\n4. 有相关项目经验优先',
+    benefits: ['六险一金', '年终奖金', '股票期权', '带薪年假'],
+    deadline: Date.now() + 60 * 86400000,
+    status: 'recruiting',
+    views: 3456,
+    applyCount: 256,
+    hr: {
+      name: '李先生',
+      avatar: 'https://picsum.photos/seed/hr2/100/100',
+      title: '高级招聘经理'
+    },
+    createTime: Date.now() - 7 * 86400000
+  },
+  {
+    id: 'job_003',
+    title: '产品经理实习生',
+    type: 'intern',
+    company: '腾讯',
+    companyLogo: 'https://picsum.photos/seed/company3/100/100',
+    industry: 'internet',
+    city: 'shenzhen',
+    location: '深圳市南山区科技园',
+    salaryMin: 200,
+    salaryMax: 300,
+    salaryUnit: 'day',
+    salaryText: '200-300元/天',
+    gradeRequirement: ['junior', 'senior', 'master'],
+    convertible: true,
+    requirements: [
+      '优秀的逻辑思维能力',
+      '良好的沟通表达能力',
+      '有产品相关经验优先',
+      '熟练使用 Axure、Figma 等工具'
+    ],
+    description: '【岗位职责】\n1. 参与微信小程序产品规划和设计\n2. 进行用户调研和需求分析\n3. 与研发团队协作推进产品迭代\n\n【任职要求】\n1. 本科及以上学历\n2. 对互联网产品有浓厚兴趣\n3. 有校园社团或项目经验\n4. 每周实习4天以上',
+    benefits: ['免费早餐', '夜宵补贴', '健身房', '导师一对一指导'],
+    deadline: Date.now() + 20 * 86400000,
+    status: 'recruiting',
+    views: 2345,
+    applyCount: 167,
+    hr: {
+      name: '王女士',
+      avatar: 'https://picsum.photos/seed/hr3/100/100',
+      title: '产品HR'
+    },
+    createTime: Date.now() - 5 * 86400000
+  },
+  {
+    id: 'job_004',
+    title: '数据分析实习生',
+    type: 'intern',
+    company: '招商银行',
+    companyLogo: 'https://picsum.photos/seed/company4/100/100',
+    industry: 'finance',
+    city: 'shanghai',
+    location: '上海市浦东新区陆家嘴',
+    salaryMin: 150,
+    salaryMax: 250,
+    salaryUnit: 'day',
+    salaryText: '150-250元/天',
+    gradeRequirement: ['junior', 'senior', 'master'],
+    convertible: false,
+    requirements: [
+      '熟悉 SQL 数据分析',
+      '掌握 Python/R',
+      '了解数据可视化工具',
+      '金融相关专业优先'
+    ],
+    description: '【岗位职责】\n1. 负责银行业务数据分析\n2. 制作数据报表和分析报告\n3. 参与数据产品的需求分析\n\n【任职要求】\n1. 本科及以上学历，统计学、数学等相关专业\n2. 有数据分析相关经验\n3. 良好的沟通能力\n4. 每周实习3天以上',
+    benefits: ['餐补', '交通补贴', '节日福利'],
+    deadline: Date.now() + 15 * 86400000,
+    status: 'recruiting',
+    views: 1890,
+    applyCount: 78,
+    hr: {
+      name: '赵先生',
+      avatar: 'https://picsum.photos/seed/hr4/100/100',
+      title: '人力资源'
+    },
+    createTime: Date.now() - 10 * 86400000
+  },
+  {
+    id: 'job_005',
+    title: 'UI/UX设计师（校招）',
+    type: 'fulltime',
+    company: '网易',
+    companyLogo: 'https://picsum.photos/seed/company5/100/100',
+    industry: 'internet',
+    city: 'hangzhou',
+    location: '杭州市滨江区网易大厦',
+    salaryMin: 15000,
+    salaryMax: 25000,
+    salaryUnit: 'month',
+    salaryText: '15k-25k/月',
+    gradeRequirement: ['senior', 'master'],
+    convertible: false,
+    requirements: [
+      '熟练使用 Figma、Sketch 等设计工具',
+      '有完整的作品集',
+      '良好的审美能力',
+      '了解前端基础优先'
+    ],
+    description: '【岗位职责】\n1. 负责游戏产品的界面设计\n2. 参与用户研究和交互设计\n3. 制定设计规范和组件库\n\n【任职要求】\n1. 2026届本科及以上学历\n2. 设计相关专业\n3. 有完整的设计作品集\n4. 对游戏设计有热情',
+    benefits: ['免费三餐', '健身房', '游戏内测资格', '年度旅游'],
+    deadline: Date.now() + 45 * 86400000,
+    status: 'recruiting',
+    views: 2789,
+    applyCount: 198,
+    hr: {
+      name: '刘女士',
+      avatar: 'https://picsum.photos/seed/hr5/100/100',
+      title: '设计部HR'
+    },
+    createTime: Date.now() - 12 * 86400000
+  },
+  {
+    id: 'job_006',
+    title: '算法工程师（校招）',
+    type: 'fulltime',
+    company: '华为',
+    companyLogo: 'https://picsum.photos/seed/company6/100/100',
+    industry: 'internet',
+    city: 'shenzhen',
+    location: '深圳市龙岗区坂田华为基地',
+    salaryMin: 25000,
+    salaryMax: 35000,
+    salaryUnit: 'month',
+    salaryText: '25k-35k/月',
+    gradeRequirement: ['senior', 'master', 'phd'],
+    convertible: false,
+    requirements: [
+      '扎实的算法和数据结构基础',
+      '熟悉机器学习/深度学习',
+      '有相关竞赛或项目经验',
+      '发表论文优先'
+    ],
+    description: '【岗位职责】\n1. 负责AI算法研发和优化\n2. 参与AI产品的技术攻关\n3. 跟进前沿技术研究\n\n【任职要求】\n1. 2026届硕士及以上学历\n2. 计算机、数学等相关专业\n3. 有算法竞赛获奖经历\n4. 良好的英文阅读能力',
+    benefits: ['六险一金', '年终奖金', '股票期权', '住房补贴'],
+    deadline: Date.now() + 50 * 86400000,
+    status: 'recruiting',
+    views: 4123,
+    applyCount: 312,
+    hr: {
+      name: '陈先生',
+      avatar: 'https://picsum.photos/seed/hr6/100/100',
+      title: '研发HR'
+    },
+    createTime: Date.now() - 8 * 86400000
+  }
+];
+
+const MOCK_REFERRAL_CODE_LIST = [
+  {
+    id: 'ref_001',
+    code: 'BYTEDANCE2026',
+    company: '字节跳动',
+    companyLogo: 'https://picsum.photos/seed/company1/100/100',
+    position: '前端开发、后端开发、产品经理',
+    publisher: {
+      id: 'alumni_001',
+      name: '学长小王',
+      avatar: 'https://picsum.photos/seed/alumni1/100/100',
+      graduationYear: '2020',
+      major: '计算机学院',
+      title: '资深前端工程师'
+    },
+    description: '字节跳动内推码，适合计算机相关专业同学，可跳过简历筛选直接进入面试环节。',
+    usageCount: 45,
+    successCount: 12,
+    expireTime: Date.now() + 30 * 86400000,
+    status: 'active',
+    createTime: Date.now() - 2 * 86400000
+  },
+  {
+    id: 'ref_002',
+    code: 'ALIBABA2026',
+    company: '阿里巴巴',
+    companyLogo: 'https://picsum.photos/seed/company2/100/100',
+    position: 'Java开发、算法、数据分析',
+    publisher: {
+      id: 'alumni_002',
+      name: '学姐小李',
+      avatar: 'https://picsum.photos/seed/alumni2/100/100',
+      graduationYear: '2019',
+      major: '计算机学院',
+      title: '技术主管'
+    },
+    description: '阿里内推，2026校招内推码，技术岗通用，有问题可以随时咨询我。',
+    usageCount: 78,
+    successCount: 23,
+    expireTime: Date.now() + 45 * 86400000,
+    status: 'active',
+    createTime: Date.now() - 5 * 86400000
+  },
+  {
+    id: 'ref_003',
+    code: 'TENCENT2026',
+    company: '腾讯',
+    companyLogo: 'https://picsum.photos/seed/company3/100/100',
+    position: '产品、设计、运营',
+    publisher: {
+      id: 'alumni_003',
+      name: '学长小张',
+      avatar: 'https://picsum.photos/seed/alumni3/100/100',
+      graduationYear: '2021',
+      major: '经济管理学院',
+      title: '高级产品经理'
+    },
+    description: '腾讯微信事业群内推，产品、设计、运营岗位均可投递，欢迎学弟学妹们！',
+    usageCount: 56,
+    successCount: 18,
+    expireTime: Date.now() + 20 * 86400000,
+    status: 'active',
+    createTime: Date.now() - 3 * 86400000
+  },
+  {
+    id: 'ref_004',
+    code: 'HUAWEI2026',
+    company: '华为',
+    companyLogo: 'https://picsum.photos/seed/company6/100/100',
+    position: '算法、开发、测试',
+    publisher: {
+      id: 'alumni_004',
+      name: '校友老刘',
+      avatar: 'https://picsum.photos/seed/alumni4/100/100',
+      graduationYear: '2018',
+      major: '电子信息学院',
+      title: '技术专家'
+    },
+    description: '华为2012实验室内推，算法、开发岗位，硕士及以上学历优先。',
+    usageCount: 34,
+    successCount: 9,
+    expireTime: Date.now() + 60 * 86400000,
+    status: 'active',
+    createTime: Date.now() - 7 * 86400000
+  }
+];
+
+const MOCK_CAREER_TALK_LIST = [
+  {
+    id: 'talk_001',
+    title: '字节跳动2026校园招聘宣讲会',
+    type: 'company',
+    company: '字节跳动',
+    companyLogo: 'https://picsum.photos/seed/company1/100/100',
+    date: '2026-06-20',
+    startTime: '19:00',
+    endTime: '21:00',
+    location: '学校体育馆',
+    address: '学校体育馆主会场',
+    description: '字节跳动2026校园招聘正式启动！技术、产品、设计、运营等多岗位开放，现场有精美礼品和面试直通卡！',
+    speaker: '张总',
+    speakerTitle: '人力资源总监',
+    coverImage: 'https://picsum.photos/seed/talk1/800/400',
+    registerCount: 568,
+    maxCount: 800,
+    syncToCalendar: false,
+    createTime: Date.now() - 3 * 86400000
+  },
+  {
+    id: 'talk_002',
+    title: '阿里巴巴技术分享会：AI时代的技术成长之路',
+    type: 'industry',
+    company: '阿里巴巴',
+    companyLogo: 'https://picsum.photos/seed/company2/100/100',
+    date: '2026-06-25',
+    startTime: '14:00',
+    endTime: '17:00',
+    location: '学术报告厅',
+    address: '行政楼三楼学术报告厅',
+    description: '邀请阿里巴巴技术专家分享AI技术发展趋势，以及技术人的职业成长路径。',
+    speaker: '李博士',
+    speakerTitle: '资深技术专家',
+    coverImage: 'https://picsum.photos/seed/talk2/800/400',
+    registerCount: 345,
+    maxCount: 500,
+    syncToCalendar: true,
+    createTime: Date.now() - 5 * 86400000
+  },
+  {
+    id: 'talk_003',
+    title: '校友分享会：从校园到职场',
+    type: 'alumni',
+    company: '多位校友分享',
+    companyLogo: 'https://picsum.photos/seed/alumni_share/100/100',
+    date: '2026-06-28',
+    startTime: '19:00',
+    endTime: '21:00',
+    location: '图书馆多功能厅',
+    address: '图书馆一楼多功能厅',
+    description: '邀请多位优秀校友分享职场经验，包括互联网、金融、国企等不同行业的工作体验。',
+    speaker: '多位校友',
+    speakerTitle: '各行业资深人士',
+    coverImage: 'https://picsum.photos/seed/talk3/800/400',
+    registerCount: 234,
+    maxCount: 300,
+    syncToCalendar: false,
+    createTime: Date.now() - 2 * 86400000
+  },
+  {
+    id: 'talk_004',
+    title: '2026届毕业生夏季招聘会',
+    type: 'job_fair',
+    company: '学校就业指导中心',
+    companyLogo: 'https://picsum.photos/seed/job_fair/100/100',
+    date: '2026-07-05',
+    startTime: '09:00',
+    endTime: '16:00',
+    location: '学校体育馆',
+    address: '学校体育馆',
+    description: '200+家企业参会，涵盖IT、金融、制造、教育等多个行业，提供5000+岗位。',
+    speaker: '多家企业HR',
+    speakerTitle: '企业代表',
+    coverImage: 'https://picsum.photos/seed/talk4/800/400',
+    registerCount: 1256,
+    maxCount: 2000,
+    syncToCalendar: true,
+    createTime: Date.now() - 7 * 86400000
+  },
+  {
+    id: 'talk_005',
+    title: '腾讯游戏专场宣讲会',
+    type: 'company',
+    company: '腾讯',
+    companyLogo: 'https://picsum.photos/seed/company3/100/100',
+    date: '2026-07-10',
+    startTime: '19:00',
+    endTime: '21:00',
+    location: '体育馆副馆',
+    address: '学校体育馆副馆',
+    description: '腾讯游戏2026校园招聘宣讲会，游戏开发、策划、运营、美术等岗位。',
+    speaker: '王总监',
+    speakerTitle: '游戏策划总监',
+    coverImage: 'https://picsum.photos/seed/talk5/800/400',
+    registerCount: 678,
+    maxCount: 1000,
+    syncToCalendar: false,
+    createTime: Date.now() - 4 * 86400000
+  }
+];
+
+const MOCK_JOB_APPLICATIONS = [
+  {
+    id: 'app_001',
+    jobId: 'job_001',
+    jobTitle: '前端开发实习生',
+    company: '字节跳动',
+    companyLogo: 'https://picsum.photos/seed/company1/100/100',
+    type: 'intern',
+    status: 'interview',
+    resumeType: 'upload',
+    resumeUrl: '',
+    formData: {
+      name: '张三',
+      phone: '138****1234',
+      email: 'zhangsan@example.com',
+      major: '计算机科学与技术',
+      grade: '大三',
+      experience: '有2段前端开发实习经验'
+    },
+    applyTime: Date.now() - 5 * 86400000,
+    updateTime: Date.now() - 2 * 86400000,
+    timeline: [
+      { status: 'pending', time: Date.now() - 5 * 86400000, remark: '简历已投递' },
+      { status: 'reviewing', time: Date.now() - 4 * 86400000, remark: '简历筛选中' },
+      { status: 'interview', time: Date.now() - 2 * 86400000, remark: '面试邀请已发送，请查收邮件' }
+    ]
+  },
+  {
+    id: 'app_002',
+    jobId: 'job_003',
+    jobTitle: '产品经理实习生',
+    company: '腾讯',
+    companyLogo: 'https://picsum.photos/seed/company3/100/100',
+    type: 'intern',
+    status: 'reviewing',
+    resumeType: 'form',
+    formData: {
+      name: '张三',
+      phone: '138****1234',
+      email: 'zhangsan@example.com',
+      major: '软件工程',
+      grade: '大三',
+      experience: '有产品相关项目经验'
+    },
+    applyTime: Date.now() - 3 * 86400000,
+    updateTime: Date.now() - 3 * 86400000,
+    timeline: [
+      { status: 'pending', time: Date.now() - 3 * 86400000, remark: '简历已投递' },
+      { status: 'reviewing', time: Date.now() - 2 * 86400000, remark: '简历筛选中' }
+    ]
+  },
+  {
+    id: 'app_003',
+    jobId: 'job_002',
+    jobTitle: 'Java后端开发工程师（校招）',
+    company: '阿里巴巴',
+    companyLogo: 'https://picsum.photos/seed/company2/100/100',
+    type: 'fulltime',
+    status: 'rejected',
+    resumeType: 'upload',
+    resumeUrl: '',
+    formData: {
+      name: '张三',
+      phone: '138****1234',
+      email: 'zhangsan@example.com',
+      major: '计算机科学与技术',
+      grade: '大四',
+      experience: '有Java后端开发经验'
+    },
+    applyTime: Date.now() - 15 * 86400000,
+    updateTime: Date.now() - 10 * 86400000,
+    timeline: [
+      { status: 'pending', time: Date.now() - 15 * 86400000, remark: '简历已投递' },
+      { status: 'reviewing', time: Date.now() - 14 * 86400000, remark: '简历筛选中' },
+      { status: 'interview', time: Date.now() - 12 * 86400000, remark: '面试邀请' },
+      { status: 'rejected', time: Date.now() - 10 * 86400000, remark: '很遗憾，本次未能通过面试' }
+    ]
+  }
+];
+
+const MOCK_RESUME_LIST = [
+  {
+    id: 'resume_001',
+    name: '张三_前端开发工程师简历.pdf',
+    size: '2.5MB',
+    uploadTime: Date.now() - 30 * 86400000,
+    url: ''
+  }
+];
+
+const _jobRecruitmentExports = {
+  MOCK_JOB_LIST,
+  MOCK_REFERRAL_CODE_LIST,
+  MOCK_CAREER_TALK_LIST,
+  MOCK_JOB_APPLICATIONS,
+  MOCK_RESUME_LIST
+};
+
+Object.assign(module.exports, _workStudyExports, _campusCardExports, _votingExports, _tutorExports, _jobRecruitmentExports);

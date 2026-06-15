@@ -1,0 +1,205 @@
+<view class="container {{darkMode ? 'dark' : ''}}">
+  <view class="header">
+    <view class="header-title">我的投递</view>
+    <view class="header-subtitle">实时掌握求职进度</view>
+    
+    <view class="stats-row">
+      <view class="stat-item">
+        <text class="stat-number">{{stats.total}}</text>
+        <text class="stat-label">总投递</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number pending">{{stats.pending}}</text>
+        <text class="stat-label">待处理</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number reviewing">{{stats.reviewing}}</text>
+        <text class="stat-label">处理中</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number interview">{{stats.interview}}</text>
+        <text class="stat-label">面试中</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number offer">{{stats.offer}}</text>
+        <text class="stat-label">Offer</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number rejected">{{stats.rejected}}</text>
+        <text class="stat-label">已拒绝</text>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view class="tabs-scroll" scroll-x="true" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="tabs">
+      <view
+        wx:for="{{tabs}}"
+        wx:key="value"
+        class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+        data-value="{{item.value}}"
+        bindtap="onTabTap"
+      >
+        {{item.label}}
+      </view>
+    </view>
+  </scroll-view>
+
+  <view wx:if="{{filteredList.length === 0}}" class="empty-state">
+    <view class="empty-icon">📭</view>
+    <view class="empty-text">暂无投递记录</view>
+    <view class="empty-tip">快去投递心仪的职位吧</view>
+  </view>
+
+  <view wx:else class="application-list">
+    <view
+      wx:for="{{filteredList}}"
+      wx:key="id"
+      class="application-card"
+      data-id="{{item.id}}"
+      bindtap="onApplicationTap"
+    >
+      <view class="card-header">
+        <view class="job-info">
+          <view class="job-title">{{item.jobTitle}}</view>
+          <view class="company-name">{{item.company}}</view>
+        </view>
+        <view class="status-badge" style="background: {{item.statusColor}}15; color: {{item.statusColor}};">
+          <text>{{item.statusIcon}}</text>
+          <text>{{item.statusLabel}}</text>
+        </view>
+      </view>
+
+      <view wx:if="{{item.latestTimeline}}" class="latest-status">
+        <text class="status-dot" style="background: {{item.latestTimeline.statusColor}};"></text>
+        <text class="status-text">{{item.latestTimeline.remark}}</text>
+        <text class="status-time">{{item.latestTimeline.timeText}}</text>
+      </view>
+
+      <view class="card-info-row">
+        <view class="info-item">
+          <text class="info-icon">📤</text>
+          <text>投递：{{item.applyDateText}}</text>
+        </view>
+        <view class="info-item" wx:if="{{item.applyMethod}}">
+          <text class="info-icon">{{item.applyMethod === 'resume' ? '📄' : '📝'}}</text>
+          <text>{{item.applyMethod === 'resume' ? '简历投递' : '表单投递'}}</text>
+        </view>
+      </view>
+
+      <view class="card-footer">
+        <view class="timeline-count">
+          <text>已更新 {{item.timeline.length}} 次</text>
+        </view>
+        <view class="card-actions">
+          <view class="action-btn" catchtap="onNavToJobDetail" data-job-id="{{item.jobId}}">
+            查看职位
+          </view>
+          <view class="action-btn primary" catchtap="onApplicationTap" data-id="{{item.id}}">
+            查看进度
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showDetailModal && selectedApplication}}" class="modal-overlay" catchtap="onCloseDetail">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <view class="modal-title">投递详情</view>
+        <view class="modal-close" bindtap="onCloseDetail">✕</view>
+      </view>
+
+      <view class="modal-body">
+        <view class="detail-header">
+          <view class="detail-job-title">{{selectedApplication.jobTitle}}</view>
+          <view class="detail-company">{{selectedApplication.company}}</view>
+          <view class="detail-status" style="background: {{selectedApplication.statusColor}}15; color: {{selectedApplication.statusColor}};">
+            {{selectedApplication.statusIcon}} {{selectedApplication.statusLabel}}
+          </view>
+        </view>
+
+        <view class="detail-info">
+          <view class="info-row">
+            <text class="info-icon">📅</text>
+            <text class="info-label">投递时间</text>
+            <text class="info-value">{{selectedApplication.applyTimeText}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-icon">🔄</text>
+            <text class="info-label">更新时间</text>
+            <text class="info-value">{{selectedApplication.updateTimeText || '-'}}</text>
+          </view>
+          <view class="info-row">
+            <text class="info-icon">📨</text>
+            <text class="info-label">投递方式</text>
+            <text class="info-value">{{selectedApplication.applyMethod === 'resume' ? '简历投递' : '表单投递'}}</text>
+          </view>
+        </view>
+
+        <view wx:if="{{selectedApplication.formData}}" class="detail-section">
+          <view class="section-title">投递信息</view>
+          <view class="form-data-list">
+            <view class="form-data-item">
+              <text class="form-data-label">姓名</text>
+              <text class="form-data-value">{{selectedApplication.formData.name}}</text>
+            </view>
+            <view class="form-data-item">
+              <text class="form-data-label">手机</text>
+              <text class="form-data-value">{{selectedApplication.formData.phone}}</text>
+            </view>
+            <view class="form-data-item">
+              <text class="form-data-label">学校</text>
+              <text class="form-data-value">{{selectedApplication.formData.school}}</text>
+            </view>
+            <view class="form-data-item">
+              <text class="form-data-label">专业</text>
+              <text class="form-data-value">{{selectedApplication.formData.major}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view wx:if="{{selectedApplication.resumeInfo}}" class="detail-section">
+          <view class="section-title">简历信息</view>
+          <view class="resume-info">
+            <text class="resume-icon">📄</text>
+            <text class="resume-name">{{selectedApplication.resumeInfo.fileName}}</text>
+          </view>
+        </view>
+
+        <view class="detail-section">
+          <view class="section-title">进度追踪</view>
+          <view class="timeline">
+            <view
+              wx:for="{{selectedApplication.timeline}}"
+              wx:key="time"
+              class="timeline-item {{item.isFirst ? 'first' : ''}} {{item.isLast ? 'last' : ''}}"
+            >
+              <view class="timeline-line" wx:if="{{!item.isFirst}}"></view>
+              <view class="timeline-dot" style="background: {{item.statusColor}};"></view>
+              <view class="timeline-line" wx:if="{{!item.isLast}}"></view>
+              <view class="timeline-content">
+                <view class="timeline-header">
+                  <text class="timeline-status" style="color: {{item.statusColor}};">{{item.statusLabel}}</text>
+                  <text class="timeline-time">{{item.timeText}}</text>
+                </view>
+                <view class="timeline-remark">{{item.remark}}</view>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <view class="btn-withdraw" catchtap="onWithdrawApplication" data-id="{{selectedApplication.id}}">
+          撤销投递
+        </view>
+        <view class="btn-contact" catchtap="onContactHR" data-id="{{selectedApplication.id}}">
+          联系HR
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

@@ -1,0 +1,173 @@
+<view class="container {{darkMode ? 'dark' : ''}}">
+  <view class="header">
+    <view class="header-title">内推专区</view>
+    <view class="header-subtitle">校友学长分享，助你拿Offer快人一步</view>
+  </view>
+
+  <view class="search-bar">
+    <input
+      class="search-input"
+      placeholder="搜索公司、职位、内推码..."
+      value="{{searchKeyword}}"
+      bindinput="onSearchInput"
+      bindconfirm="onSearchConfirm"
+      confirm-type="search"
+    />
+    <view wx:if="{{searchKeyword}}" class="clear-btn" bindtap="onClearSearch">✕</view>
+  </view>
+
+  <view class="action-bar">
+    <view class="publish-btn" bindtap="onShowPublish">
+      <text class="publish-icon">➕</text>
+      <text>发布内推码</text>
+    </view>
+  </view>
+
+  <view wx:if="{{referralList.length === 0}}" class="empty-state">
+    <view class="empty-icon">🎫</view>
+    <view class="empty-text">暂无内推码</view>
+    <view class="empty-tip">点击上方按钮发布第一个内推码</view>
+  </view>
+
+  <view wx:else class="referral-list">
+    <view
+      wx:for="{{referralList}}"
+      wx:key="id"
+      class="referral-card"
+    >
+      <view class="card-header">
+        <view class="company-logo">{{item.companyInitial}}</view>
+        <view class="company-info">
+          <view class="company-name">{{item.company}}</view>
+          <view class="position-name">{{item.position}}</view>
+        </view>
+        <view class="status-tag" style="background: {{item.statusColor}}15; color: {{item.statusColor}};">
+          {{item.statusLabel}}
+        </view>
+      </view>
+
+      <view wx:if="{{item.description}}" class="card-description">
+        {{item.description}}
+      </view>
+
+      <view class="code-section">
+        <view class="code-label">内推码</view>
+        <view class="code-value">{{item.code}}</view>
+        <view class="copy-btn" bindtap="onCopyCode" data-code="{{item.code}}">
+          📋 复制
+        </view>
+      </view>
+
+      <view class="card-footer">
+        <view class="publisher-info">
+          <text class="publisher-icon">{{item.publisherType === 'alumni' ? '🎓' : '👔'}}</text>
+          <text class="publisher-text">{{item.publisherName}} · {{item.publishTimeText}}</text>
+        </view>
+        <view class="expire-info" wx:if="{{item.daysLeft !== null}}">
+          <text class="expire-icon">⏰</text>
+          <text class="{{item.daysLeft <= 7 ? 'urgent' : ''}}">
+            {{item.daysLeft > 0 ? '剩' + item.daysLeft + '天' : '即将过期'}}
+          </text>
+        </view>
+      </view>
+
+      <view class="usage-info">
+        <text>已有 {{item.usageCount || 0}} 人使用</text>
+      </view>
+
+      <view class="use-btn" bindtap="onUseCode" data-id="{{item.id}}" data-code="{{item.code}}">
+        使用内推码
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{showPublishModal}}" class="modal-overlay" catchtap="onClosePublish">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <view class="modal-title">发布内推码</view>
+        <view class="modal-close" bindtap="onClosePublish">✕</view>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-group">
+          <view class="form-label required">公司名称</view>
+          <input
+            class="form-input"
+            placeholder="如：字节跳动"
+            value="{{publishForm.company}}"
+            data-field="company"
+            bindinput="onPublishInput"
+          />
+        </view>
+
+        <view class="form-group">
+          <view class="form-label required">职位名称</view>
+          <input
+            class="form-input"
+            placeholder="如：前端开发工程师"
+            value="{{publishForm.position}}"
+            data-field="position"
+            bindinput="onPublishInput"
+          />
+        </view>
+
+        <view class="form-group">
+          <view class="form-label required">内推码</view>
+          <input
+            class="form-input"
+            placeholder="输入内推码"
+            value="{{publishForm.code}}"
+            data-field="code"
+            bindinput="onPublishInput"
+          />
+        </view>
+
+        <view class="form-group">
+          <view class="form-label">内推说明</view>
+          <textarea
+            class="form-textarea"
+            placeholder="描述内推福利、流程等..."
+            value="{{publishForm.description}}"
+            data-field="description"
+            bindinput="onPublishInput"
+            maxlength="200"
+            auto-height
+          />
+        </view>
+
+        <view class="form-group">
+          <view class="form-label">有效期</view>
+          <view class="expire-options">
+            <view
+              wx:for="{{[7, 14, 30, 60, 0]}}"
+              wx:key="*this"
+              class="expire-item {{publishForm.expireDays === item ? 'active' : ''}}"
+              data-value="{{item}}"
+              bindtap="onExpireDaysSelect"
+            >
+              {{item === 0 ? '长期' : item + '天'}}
+            </view>
+          </view>
+        </view>
+
+        <view class="form-group">
+          <view class="form-label">联系方式（选填）</view>
+          <input
+            class="form-input"
+            placeholder="微信/邮箱等，方便跟进"
+            value="{{publishForm.contact}}"
+            data-field="contact"
+            bindinput="onPublishInput"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <view class="btn-cancel" bindtap="onClosePublish">取消</view>
+        <view class="btn-confirm" bindtap="onSubmitPublish">发布</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>

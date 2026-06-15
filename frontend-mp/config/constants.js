@@ -2204,6 +2204,176 @@ const WORK_STUDY_SALARY_STATUS_MAP = WORK_STUDY_SALARY_STATUS.reduce((acc, s) =>
   return acc;
 }, {});
 
+// ==================== 实习招聘 / 校招内推 ====================
+
+const JOB_TYPES = [
+  { value: 'intern', label: '实习', color: '#10B981', icon: '📋' },
+  { value: 'fulltime', label: '全职', color: '#3B82F6', icon: '💼' },
+  { value: 'parttime', label: '兼职', color: '#8B5CF6', icon: '⏰' }
+];
+
+const JOB_TYPE_MAP = JOB_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, color: t.color, icon: t.icon };
+  return acc;
+}, {});
+
+const JOB_INDUSTRIES = [
+  { value: 'internet', label: '互联网/IT', icon: '💻', color: '#3B82F6' },
+  { value: 'finance', label: '金融/银行', icon: '💰', color: '#10B981' },
+  { value: 'education', label: '教育/培训', icon: '📚', color: '#F59E0B' },
+  { value: 'medical', label: '医疗/健康', icon: '🏥', color: '#EF4444' },
+  { value: 'manufacturing', label: '制造业', icon: '🏭', color: '#8B5CF6' },
+  { value: 'consulting', label: '咨询/服务', icon: '💼', color: '#EC4899' },
+  { value: 'media', label: '传媒/广告', icon: '📺', color: '#14B8A6' },
+  { value: 'government', label: '政府/事业单位', icon: '🏛️', color: '#6366F1' },
+  { value: 'real_estate', label: '房地产/建筑', icon: '🏢', color: '#F97316' },
+  { value: 'retail', label: '零售/电商', icon: '🛒', color: '#22C55E' },
+  { value: 'other', label: '其他行业', icon: '📌', color: '#6B7280' }
+];
+
+const JOB_INDUSTRY_MAP = JOB_INDUSTRIES.reduce((acc, i) => {
+  acc[i.value] = { label: i.label, icon: i.icon, color: i.color };
+  return acc;
+}, {});
+
+const JOB_GRADE_REQUIREMENTS = [
+  { value: 'freshman', label: '大一' },
+  { value: 'sophomore', label: '大二' },
+  { value: 'junior', label: '大三' },
+  { value: 'senior', label: '大四' },
+  { value: 'master', label: '硕士' },
+  { value: 'phd', label: '博士' },
+  { value: 'unlimited', label: '不限' }
+];
+
+const JOB_GRADE_MAP = JOB_GRADE_REQUIREMENTS.reduce((acc, g) => {
+  acc[g.value] = { label: g.label };
+  return acc;
+}, {});
+
+const JOB_SALARY_RANGES = [
+  { value: '0-100', label: '100元/天以下', min: 0, max: 100 },
+  { value: '100-200', label: '100-200元/天', min: 100, max: 200 },
+  { value: '200-300', label: '200-300元/天', min: 200, max: 300 },
+  { value: '300-500', label: '300-500元/天', min: 300, max: 500 },
+  { value: '500+', label: '500元/天以上', min: 500, max: Infinity },
+  { value: 'monthly_5k-10k', label: '5k-10k/月', min: 5000, max: 10000 },
+  { value: 'monthly_10k-20k', label: '10k-20k/月', min: 10000, max: 20000 },
+  { value: 'monthly_20k+', label: '20k+/月', min: 20000, max: Infinity }
+];
+
+const JOB_CITIES = [
+  { value: 'beijing', label: '北京' },
+  { value: 'shanghai', label: '上海' },
+  { value: 'guangzhou', label: '广州' },
+  { value: 'shenzhen', label: '深圳' },
+  { value: 'hangzhou', label: '杭州' },
+  { value: 'nanjing', label: '南京' },
+  { value: 'chengdu', label: '成都' },
+  { value: 'wuhan', label: '武汉' },
+  { value: 'xian', label: '西安' },
+  { value: 'other', label: '其他城市' }
+];
+
+const JOB_CITY_MAP = JOB_CITIES.reduce((acc, c) => {
+  acc[c.value] = { label: c.label };
+  return acc;
+}, {});
+
+const JOB_STATUS = [
+  { value: 'recruiting', label: '招聘中', color: '#10B981', icon: '💼' },
+  { value: 'interview', label: '面试中', color: '#3B82F6', icon: '👥' },
+  { value: 'closed', label: '已结束', color: '#6B7280', icon: '📦' }
+];
+
+const JOB_STATUS_MAP = JOB_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const JOB_APPLICATION_STATUS = [
+  { value: 'pending', label: '待处理', color: '#F59E0B', icon: '⏳' },
+  { value: 'reviewing', label: '简历筛选中', color: '#3B82F6', icon: '📋' },
+  { value: 'interview', label: '面试邀请', color: '#8B5CF6', icon: '👥' },
+  { value: 'offer', label: '已录用', color: '#10B981', icon: '🎉' },
+  { value: 'rejected', label: '未通过', color: '#EF4444', icon: '❌' },
+  { value: 'cancelled', label: '已取消', color: '#6B7280', icon: '✕' }
+];
+
+const JOB_APPLICATION_STATUS_MAP = JOB_APPLICATION_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const JOB_APPLICATION_STATUS_TABS = [
+  { value: 'all', label: '全部' },
+  ...JOB_APPLICATION_STATUS
+];
+
+const JOB_MAIN_TABS = [
+  { value: 'jobs', label: '职位列表', icon: '📋' },
+  { value: 'referral', label: '内推专区', icon: '🎫' },
+  { value: 'calendar', label: '宣讲日历', icon: '📅' },
+  { value: 'my', label: '我的', icon: '👤' }
+];
+
+const JOB_LIST_TABS = [
+  { value: 'all', label: '全部' },
+  { value: 'intern', label: '实习' },
+  { value: 'fulltime', label: '全职' }
+];
+
+const JOB_SORT_OPTIONS = [
+  { value: 'latest', label: '最新发布', field: 'createTime', order: 'desc' },
+  { value: 'salary_desc', label: '薪资最高', field: 'salaryMax', order: 'desc' },
+  { value: 'deadline_asc', label: '即将截止', field: 'deadline', order: 'asc' },
+  { value: 'views', label: '最多浏览', field: 'views', order: 'desc' }
+];
+
+const JOB_FILTER_OPTIONS = {
+  industry: JOB_INDUSTRIES,
+  grade: JOB_GRADE_REQUIREMENTS,
+  convertible: [
+    { value: 'all', label: '不限' },
+    { value: 'yes', label: '可转正' },
+    { value: 'no', label: '不可转正' }
+  ]
+};
+
+const RESUME_TYPES = [
+  { value: 'upload', label: '上传简历PDF', icon: '📄' },
+  { value: 'form', label: '填写表单', icon: '📝' }
+];
+
+const REFERRAL_STATUS = [
+  { value: 'active', label: '有效', color: '#10B981', icon: '✅' },
+  { value: 'used', label: '已使用', color: '#6B7280', icon: '📦' },
+  { value: 'expired', label: '已过期', color: '#EF4444', icon: '⏰' }
+];
+
+const REFERRAL_STATUS_MAP = REFERRAL_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const CAREER_TALK_TYPES = [
+  { value: 'company', label: '企业宣讲会', icon: '🏢', color: '#3B82F6' },
+  { value: 'industry', label: '行业分享会', icon: '📊', color: '#10B981' },
+  { value: 'alumni', label: '校友分享会', icon: '👨‍🎓', color: '#F59E0B' },
+  { value: 'job_fair', label: '招聘会', icon: '🎪', color: '#8B5CF6' }
+];
+
+const CAREER_TALK_TYPE_MAP = CAREER_TALK_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, icon: t.icon, color: t.color };
+  return acc;
+}, {});
+
+const CALENDAR_SYNC_STATUS = [
+  { value: 'synced', label: '已同步', color: '#10B981', icon: '✅' },
+  { value: 'pending', label: '待同步', color: '#F59E0B', icon: '⏳' },
+  { value: 'failed', label: '同步失败', color: '#EF4444', icon: '❌' }
+];
+
 const MOCK_LABS = [
   {
     id: 'lab_001',
@@ -2758,6 +2928,31 @@ module.exports = {
   WORK_STUDY_HOURS_STATUS_MAP,
   WORK_STUDY_SALARY_STATUS,
   WORK_STUDY_SALARY_STATUS_MAP,
+
+  JOB_TYPES,
+  JOB_TYPE_MAP,
+  JOB_INDUSTRIES,
+  JOB_INDUSTRY_MAP,
+  JOB_GRADE_REQUIREMENTS,
+  JOB_GRADE_MAP,
+  JOB_SALARY_RANGES,
+  JOB_CITIES,
+  JOB_CITY_MAP,
+  JOB_STATUS,
+  JOB_STATUS_MAP,
+  JOB_APPLICATION_STATUS,
+  JOB_APPLICATION_STATUS_MAP,
+  JOB_APPLICATION_STATUS_TABS,
+  JOB_MAIN_TABS,
+  JOB_LIST_TABS,
+  JOB_SORT_OPTIONS,
+  JOB_FILTER_OPTIONS,
+  RESUME_TYPES,
+  REFERRAL_STATUS,
+  REFERRAL_STATUS_MAP,
+  CAREER_TALK_TYPES,
+  CAREER_TALK_TYPE_MAP,
+  CALENDAR_SYNC_STATUS,
 
   VOTING_STATUS,
   VOTING_STATUS_MAP,

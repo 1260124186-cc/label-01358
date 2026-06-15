@@ -1,0 +1,176 @@
+<view class="container {{darkMode ? 'dark' : ''}}" wx:if="{{job}}">
+  <view class="header">
+    <view class="job-title">{{job.title}}</view>
+    <view class="job-tags">
+      <text class="tag tag-type">{{formattedContent.typeLabel}}</text>
+      <text class="tag tag-industry">{{formattedContent.industryLabel}}</text>
+      <text wx:if="{{job.convertible}}" class="tag tag-convertible">可转正</text>
+      <text wx:if="{{formattedContent.daysLeft !== null && formattedContent.daysLeft <= 7}}" class="tag tag-urgent">
+        {{formattedContent.daysLeft > 0 ? '剩' + formattedContent.daysLeft + '天' : '即将截止'}}
+      </text>
+    </view>
+  </view>
+
+  <view class="info-card">
+    <view class="info-row">
+      <view class="info-item">
+        <text class="info-icon">💰</text>
+        <view class="info-content">
+          <text class="info-label">薪资</text>
+          <text class="info-value salary">{{formattedContent.salaryText}}</text>
+        </view>
+      </view>
+      <view class="info-item">
+        <text class="info-icon">📍</text>
+        <view class="info-content">
+          <text class="info-label">地点</text>
+          <text class="info-value">{{formattedContent.cityLabel}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-row">
+      <view class="info-item" bindtap="onCopyCompany">
+        <text class="info-icon">🏢</text>
+        <view class="info-content">
+          <text class="info-label">公司</text>
+          <text class="info-value clickable">{{job.company}} 📋</text>
+        </view>
+      </view>
+      <view class="info-item">
+        <text class="info-icon">⏰</text>
+        <view class="info-content">
+          <text class="info-label">截止</text>
+          <text class="info-value {{isExpired ? 'expired' : ''}}">{{formattedContent.deadlineText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="info-row">
+      <view class="info-item">
+        <text class="info-icon">👁️</text>
+        <view class="info-content">
+          <text class="info-label">浏览</text>
+          <text class="info-value">{{job.views || 0}}次</text>
+        </view>
+      </view>
+      <view class="info-item">
+        <text class="info-icon">📤</text>
+        <view class="info-content">
+          <text class="info-label">投递</text>
+          <text class="info-value">{{job.applyCount || 0}}人</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">
+      <text class="section-icon">📋</text>
+      <text>职位描述</text>
+    </view>
+    <view class="section-content">
+      <text class="content-text">{{job.description}}</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">
+      <text class="section-icon">✅</text>
+      <text>任职要求</text>
+    </view>
+    <view class="section-content">
+      <view class="req-list">
+        <view class="req-item" wx:for="{{job.requirements}}" wx:key="*this">
+          <text class="req-bullet">•</text>
+          <text class="req-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{formattedContent.gradeLabels.length > 0}}">
+    <view class="section-title">
+      <text class="section-icon">🎓</text>
+      <text>年级要求</text>
+    </view>
+    <view class="section-content">
+      <view class="grade-tags">
+        <text class="grade-tag" wx:for="{{formattedContent.gradeLabels}}" wx:key="*this">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section" wx:if="{{job.benefits && job.benefits.length > 0}}">
+    <view class="section-title">
+      <text class="section-icon">🎁</text>
+      <text>福利待遇</text>
+    </view>
+    <view class="section-content">
+      <view class="benefit-list">
+        <view class="benefit-item" wx:for="{{job.benefits}}" wx:key="*this">
+          <text class="benefit-icon">✓</text>
+          <text class="benefit-text">{{item}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="section-title">
+      <text class="section-icon">ℹ️</text>
+      <text>其他信息</text>
+    </view>
+    <view class="section-content">
+      <view class="meta-list">
+        <view class="meta-item">
+          <text class="meta-label">发布时间</text>
+          <text class="meta-value">{{formattedContent.publishTimeText}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-label">更新时间</text>
+          <text class="meta-value">{{formattedContent.updateTimeText}}</text>
+        </view>
+        <view class="meta-item">
+          <text class="meta-label">招聘人数</text>
+          <text class="meta-value">{{job.recruitCount || '若干'}}人</text>
+        </view>
+        <view class="meta-item" wx:if="{{job.workExperience}}">
+          <text class="meta-label">工作经验</text>
+          <text class="meta-value">{{job.workExperience}}</text>
+        </view>
+        <view class="meta-item" wx:if="{{job.education}}">
+          <text class="meta-label">学历要求</text>
+          <text class="meta-value">{{job.education}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="company-section" wx:if="{{job.companyIntro}}">
+    <view class="section-title">
+      <text class="section-icon">🏛️</text>
+      <text>公司介绍</text>
+    </view>
+    <view class="section-content">
+      <text class="content-text">{{job.companyIntro}}</text>
+    </view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="action-btn favorite" bindtap="onToggleFavorite">
+      <text class="action-icon">{{isFavorited ? '❤️' : '🤍'}}</text>
+      <text class="action-text">{{isFavorited ? '已收藏' : '收藏'}}</text>
+    </view>
+    <button class="action-btn apply" bindtap="onApply" disabled="{{isExpired}}">
+      <text class="action-icon">📮</text>
+      <text class="action-text">{{isExpired ? '已截止' : '立即投递'}}</text>
+    </button>
+  </view>
+
+  <view class="safe-bottom"></view>
+</view>
+
+<view wx:else class="loading">
+  <text>加载中...</text>
+</view>
