@@ -32,15 +32,18 @@ const YEAR_OPTIONS = [
 Page({
   data: {
     darkMode: false,
+    pageStyle: 'background-color: #F8F9FA; color: #2C3E50;',
+    pageClass: 'page',
+    modalClass: 'material-modal',
     currentTab: 'policy',
-    tabs: TABS,
+    tabs: TABS.map(t => ({ ...t, activeClass: 'tab-item' + (t.value === 'policy' ? ' active' : '') })),
 
-    categoryOptions: CATEGORY_OPTIONS,
+    categoryOptions: CATEGORY_OPTIONS.map(c => ({ ...c, activeClass: 'filter-chip' + (c.value === 'all' ? ' active' : '') })),
     currentCategory: 'all',
     sortOptions: SORT_OPTIONS,
     currentSort: 'default',
     currentSortLabel: '默认排序',
-    yearOptions: YEAR_OPTIONS,
+    yearOptions: YEAR_OPTIONS.map(y => ({ ...y, activeClass: 'filter-chip' + (y.value === 'all' ? ' active' : '') })),
     currentYear: 'all',
     searchKeyword: '',
 
@@ -78,6 +81,16 @@ Page({
     const app = getApp();
     const { isDark } = app.globalData;
     this.setData({ darkMode: isDark || false });
+    this.updatePageStyle();
+  },
+
+  updatePageStyle() {
+    const dark = this.data.darkMode;
+    this.setData({
+      pageStyle: 'background-color: ' + (dark ? '#0F1117' : '#F8F9FA') + '; color: ' + (dark ? '#E8ECF1' : '#2C3E50') + ';',
+      pageClass: 'page' + (dark ? ' dark' : ''),
+      modalClass: 'material-modal' + (this.data.showMaterialModal ? ' show' : '')
+    });
   },
 
   onPullDownRefresh() {
@@ -147,14 +160,19 @@ Page({
     const previewEligibility = eligibilityList.slice(0, 2);
     const hasMoreEligibility = eligibilityList.length > 2;
     const eligibilityMoreCount = eligibilityList.length;
+    const daysLeft = this.calculateDaysLeft(item.applyEndDate);
 
     return {
       ...item,
-      daysLeft: this.calculateDaysLeft(item.applyEndDate),
+      daysLeft,
       categoryColor: this.getCategoryColor(item.category),
       previewEligibility,
       hasMoreEligibility,
-      eligibilityMoreCount
+      eligibilityMoreCount,
+      badgeClass: 'days-badge' + (daysLeft.urgent ? ' urgent' : '') + (daysLeft.expired ? ' expired' : ''),
+      applyBtnClass: 'action-btn action-primary' + (daysLeft.expired ? ' disabled' : ''),
+      applyBtnText: daysLeft.expired ? '已截止' : '立即申请',
+      amountDisplayText: '💰 ' + (item.amountText || (item.amount + '元'))
     };
   },
 
@@ -163,10 +181,10 @@ Page({
     const end = new Date(endDate);
     const diffTime = end - now;
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    if (diffDays < 0) return { text: '已截止', urgent: true, expired: true };
-    if (diffDays === 0) return { text: '今天截止', urgent: true, expired: false };
-    if (diffDays <= 7) return { text: `剩余${diffDays}天`, urgent: true, expired: false };
-    return { text: `剩余${diffDays}天`, urgent: false, expired: false };
+    if (diffDays < 0) return { text: '已截止', urgent: true, expired: true, urgentClass: 'urgent' };
+    if (diffDays === 0) return { text: '今天截止', urgent: true, expired: false, urgentClass: 'urgent' };
+    if (diffDays <= 7) return { text: `剩余${diffDays}天`, urgent: true, expired: false, urgentClass: 'urgent' };
+    return { text: `剩余${diffDays}天`, urgent: false, expired: false, urgentClass: '' };
   },
 
   getCategoryColor(category) {
@@ -188,22 +206,33 @@ Page({
       userProfile.awardsCount = (userProfile.awards || []).length;
       userProfile.clubCount = (userProfile.clubPositions || []).length;
       userProfile.researchCount = (userProfile.researchExperience || []).length;
+      userProfile.avatarLetter = userProfile.name ? userProfile.name.charAt(0) : '';
+      userProfile.comprehensiveRankPercentText = '前 ' + userProfile.comprehensiveRankPercent + '%';
+      userProfile.gpaRankPercentText = '前 ' + userProfile.gpaRankPercent + '%';
+      userProfile.volunteerHoursText = userProfile.volunteerHours + '小时志愿';
     }
     this.setData({ userProfile });
+    this.updatePageStyle();
   },
 
   loadMatchedList() {
     const matchedList = dataService.getMatchedScholarships();
     const matchedWithUI = matchedList.map(item => {
       const formatted = this.formatPolicyItem(item);
+      const matchLevelText = item.matchLevel === 'high' ? '高度匹配' :
+        item.matchLevel === 'medium' ? '较为匹配' : '一般匹配';
+      const matchLevelColor = item.matchLevel === 'high' ? '#10B981' :
+        item.matchLevel === 'medium' ? '#3B82F6' : '#8B5CF6';
+      const matchProgressPercent = Math.min(100, item.matchScore);
       return {
         ...formatted,
-        matchLevelText: item.matchLevel === 'high' ? '高度匹配' :
-          item.matchLevel === 'medium' ? '较为匹配' : '一般匹配',
-        matchLevelColor: item.matchLevel === 'high' ? '#10B981' :
-          item.matchLevel === 'medium' ? '#3B82F6' : '#8B5CF6',
-        matchProgressPercent: Math.min(100, item.matchScore),
-        matchReasonsPreview: (item.matchReasons || []).slice(0, 3)
+        matchLevelText,
+        matchLevelColor,
+        matchProgressPercent,
+        matchReasonsPreview: (item.matchReasons || []).slice(0, 3),
+        matchLevelBadgeStyle: 'background-color: ' + matchLevelColor + '20; color: ' + matchLevelColor + ';',
+        matchBarStyle: 'width: ' + matchProgressPercent + '%; background: linear-gradient(90deg, ' + matchLevelColor + ' 0%, ' + matchLevelColor + 'CC 100%);',
+        matchScoreText: '匹配度 ' + item.matchScore + '%'
       };
     });
     this.setData({ matchedList: matchedWithUI });
@@ -211,16 +240,28 @@ Page({
 
   loadApplicationList() {
     const list = dataService.getScholarshipApplicationList();
-    const listWithUI = list.map(item => ({
-      ...item,
-      statusText: this.getApplicationStatusText(item.status),
-      statusColor: this.getApplicationStatusColor(item.status),
-      progressPercent: Math.round((item.currentStep / item.totalSteps) * 100),
-      applyTimeText: util.formatDate(item.applyTime),
-      completedSteps: item.steps.slice(0, item.currentStep),
-      pendingSteps: item.steps.slice(item.currentStep),
-      hasRemark: !!item.remark
-    }));
+    const listWithUI = list.map(item => {
+      const statusColor = this.getApplicationStatusColor(item.status);
+      const formattedSteps = (item.steps || []).map(step => ({
+        ...step,
+        stepClass: 'step-item ' + (step.status === 'completed' ? 'completed' : step.status === 'in_progress' ? 'in-progress' : 'pending'),
+        stepIcon: step.status === 'completed' ? '✓' : step.status === 'in_progress' ? '⏳' : ''
+      }));
+      return {
+        ...item,
+        statusText: this.getApplicationStatusText(item.status),
+        statusColor,
+        progressPercent: Math.round((item.currentStep / item.totalSteps) * 100),
+        applyTimeText: util.formatDate(item.applyTime),
+        hasRemark: !!item.remark,
+        statusBadgeStyle: 'background-color: ' + statusColor + '20; color: ' + statusColor + ';',
+        amountText: item.amount + '元',
+        amountDisplayText: '💰 ' + item.amount + '元',
+        stepProgressText: item.currentStep + '/' + item.totalSteps + ' 步',
+        progressBarStyle: 'width: ' + Math.round((item.currentStep / item.totalSteps) * 100) + '%; background-color: ' + statusColor + ';',
+        steps: formattedSteps
+      };
+    });
 
     const approved = listWithUI.filter(a => a.status === 'approved').length;
     const reviewing = listWithUI.filter(a => a.status === 'reviewing' || a.status === 'pending').length;
@@ -279,14 +320,18 @@ Page({
     const list = dataService.getScholarshipPublicList(filters);
     const listWithUI = list.map(item => {
       const winnerList = item.list || [];
+      const totalAmount = winnerList.reduce((sum, i) => sum + i.amount, 0);
+      const studentCount = winnerList.length;
       return {
         ...item,
         publishTimeText: util.formatDate(item.publishTime),
-        totalAmount: winnerList.reduce((sum, i) => sum + i.amount, 0),
-        studentCount: winnerList.length,
+        totalAmount,
+        studentCount,
+        totalAmountText: totalAmount + '元',
+        studentCountText: studentCount + '人获奖',
         previewWinners: winnerList.slice(0, 4),
-        moreWinnersCount: Math.max(0, winnerList.length - 4),
-        hasMoreWinners: winnerList.length > 4
+        moreWinnersCount: Math.max(0, studentCount - 4),
+        hasMoreWinners: studentCount > 4
       };
     });
     this.setData({ publicList: listWithUI });
@@ -294,7 +339,10 @@ Page({
 
   onTabChange(e) {
     const tab = e.currentTarget.dataset.value;
-    this.setData({ currentTab: tab });
+    this.setData({
+      currentTab: tab,
+      tabs: TABS.map(t => ({ ...t, activeClass: 'tab-item' + (t.value === tab ? ' active' : '') }))
+    });
     if (tab === 'match') {
       this.loadMatchedList();
     } else if (tab === 'progress') {
@@ -304,19 +352,26 @@ Page({
 
   onCategoryChange(e) {
     const value = e.currentTarget.dataset.value;
-    this.setData({ currentCategory: value });
+    this.setData({
+      currentCategory: value,
+      categoryOptions: CATEGORY_OPTIONS.map(c => ({ ...c, activeClass: 'filter-chip' + (c.value === value ? ' active' : '') }))
+    });
     this.applyFilters();
   },
 
-  onSortChange(e) {
-    const value = e.currentTarget.dataset.value;
-    this.setData({ currentSort: value });
+  onSortChange() {
+    const { currentSort } = this.data;
+    const nextSortValue = currentSort === 'amount' ? 'deadline' : currentSort === 'deadline' ? 'default' : 'amount';
+    this.setData({ currentSort: nextSortValue });
     this.applyFilters();
   },
 
   onYearChange(e) {
     const value = e.currentTarget.dataset.value;
-    this.setData({ currentYear: value });
+    this.setData({
+      currentYear: value,
+      yearOptions: YEAR_OPTIONS.map(y => ({ ...y, activeClass: 'filter-chip' + (y.value === value ? ' active' : '') }))
+    });
     this.loadPublicList();
   },
 
@@ -447,12 +502,16 @@ ${policy.contactName}：${policy.contactPhone}`;
     this.setData({
       showMaterialModal: true,
       modalMaterials,
-      selectedPolicyId: id
+      selectedPolicyId: id,
+      modalClass: 'material-modal show'
     });
   },
 
   closeMaterialModal() {
-    this.setData({ showMaterialModal: false });
+    this.setData({
+      showMaterialModal: false,
+      modalClass: 'material-modal'
+    });
   },
 
   onMaterialClick(e) {

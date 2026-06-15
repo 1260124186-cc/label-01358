@@ -1,8 +1,8 @@
-<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
-<view class="page {{darkMode ? 'dark' : ''}}">
+<page-meta page-style="{{pageStyle}}"/>
+<view class="{{pageClass}}">
   <view class="tab-bar">
     <view
-      class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+      class="{{item.activeClass}}"
       wx:for="{{tabs}}"
       wx:key="value"
       bindtap="onTabChange"
@@ -31,7 +31,7 @@
         <scroll-view class="filter-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
           <view class="filter-chips">
             <view
-              class="filter-chip {{currentCategory === item.value ? 'active' : ''}}"
+              class="{{item.activeClass}}"
               wx:for="{{categoryOptions}}"
               wx:key="value"
               bindtap="onCategoryChange"
@@ -41,7 +41,7 @@
             </view>
           </view>
         </scroll-view>
-        <view class="sort-btn" bindtap="onSortChange" data-value="{{currentSort === 'amount' ? 'deadline' : currentSort === 'deadline' ? 'default' : 'amount'}}">
+        <view class="sort-btn" bindtap="onSortChange">
           <text class="sort-icon">📊</text>
           <text class="sort-text">{{currentSortLabel}}</text>
         </view>
@@ -68,8 +68,8 @@
               </view>
             </view>
             <view class="policy-amount-row">
-              <text class="policy-amount">💰 {{item.amountText}}</text>
-              <view class="days-badge {{item.daysLeft.urgent ? 'urgent' : ''}} {{item.daysLeft.expired ? 'expired' : ''}}">
+              <text class="policy-amount">{{item.amountDisplayText}}</text>
+              <view class="{{item.badgeClass}}">
                 {{item.daysLeft.text}}
               </view>
             </view>
@@ -109,9 +109,9 @@
               <text class="btn-icon">📋</text>
               <text class="btn-text">材料清单</text>
             </view>
-            <view class="action-btn action-primary {{item.daysLeft.expired ? 'disabled' : ''}}" catchtap="onApplyClick" data-id="{{item.id}}">
+            <view class="{{item.applyBtnClass}}" catchtap="onApplyClick" data-id="{{item.id}}">
               <text class="btn-icon">✍️</text>
-              <text class="btn-text">{{item.daysLeft.expired ? '已截止' : '立即申请'}}</text>
+              <text class="btn-text">{{item.applyBtnText}}</text>
             </view>
           </view>
         </view>
@@ -124,7 +124,7 @@
       <view class="user-profile-card gradient-card profile-gradient" wx:if="{{userProfile}}">
         <view class="profile-header">
           <view class="avatar-circle">
-            <text class="avatar-text">{{userProfile.name.charAt(0)}}</text>
+            <text class="avatar-text">{{userProfile.avatarLetter}}</text>
           </view>
           <view class="profile-info">
             <text class="profile-name">{{userProfile.name}}</text>
@@ -147,14 +147,14 @@
             <view class="stat-info-rank">
               <text class="stat-value rank-{{userProfile.rankPercentClass}}">{{userProfile.gpaRank}}/{{userProfile.majorTotal}}</text>
               <text class="stat-label">专业排名</text>
-              <text class="stat-percent">前 {{userProfile.gpaRankPercent}}%</text>
+              <text class="stat-percent">{{userProfile.gpaRankPercentText}}</text>
             </view>
           </view>
           <view class="stat-item">
             <view class="stat-info-rank">
               <text class="stat-value rank-{{userProfile.rankPercentClass}}">{{userProfile.comprehensiveRank}}/{{userProfile.majorTotal}}</text>
               <text class="stat-label">综测排名</text>
-              <text class="stat-percent">前 {{userProfile.comprehensiveRankPercent}}%</text>
+              <text class="stat-percent">{{userProfile.comprehensiveRankPercentText}}</text>
             </view>
           </view>
         </view>
@@ -174,7 +174,7 @@
           </view>
           <view class="profile-tag">
             <text class="tag-icon">💝</text>
-            <text class="tag-text">{{userProfile.volunteerHours}}小时志愿</text>
+            <text class="tag-text">{{userProfile.volunteerHoursText}}</text>
           </view>
         </view>
       </view>
@@ -195,18 +195,18 @@
           <view class="match-header">
             <view class="match-title-row">
               <text class="match-name">{{item.name}}</text>
-              <view class="match-level-badge" style="background-color: {{item.matchLevelColor}}20; color: {{item.matchLevelColor}};">
+              <view class="match-level-badge" style="{{item.matchLevelBadgeStyle}}">
                 {{item.matchLevelText}}
               </view>
             </view>
-            <text class="match-amount">💰 {{item.amountText}}</text>
+            <text class="match-amount">{{item.amountDisplayText}}</text>
           </view>
 
           <view class="match-score-section">
             <view class="score-bar">
-              <view class="score-fill" style="width: {{item.matchProgressPercent}}%; background: linear-gradient(90deg, {{item.matchLevelColor}} 0%, {{item.matchLevelColor}}CC 100%);"></view>
+              <view class="score-fill" style="{{item.matchBarStyle}}"></view>
             </view>
-            <text class="score-text">匹配度 {{item.matchScore}}%</text>
+            <text class="score-text">{{item.matchScoreText}}</text>
           </view>
 
           <view class="match-reasons">
@@ -220,7 +220,7 @@
               <view class="policy-tag small" style="background-color: {{item.categoryColor.bg}}; color: {{item.categoryColor.text}};">
                 {{item.categoryColor.label}}
               </view>
-              <view class="days-badge small {{item.daysLeft.urgent ? 'urgent' : ''}}">
+              <view class="days-badge small {{item.daysLeft.urgentClass}}">
                 {{item.daysLeft.text}}
               </view>
             </view>
@@ -269,35 +269,35 @@
         >
           <view class="app-header">
             <text class="app-name">{{item.scholarshipName}}</text>
-            <view class="app-status-badge" style="background-color: {{item.statusColor}}20; color: {{item.statusColor}};">
+            <view class="app-status-badge" style="{{item.statusBadgeStyle}}">
               {{item.statusText}}
             </view>
           </view>
 
           <view class="app-info-row">
-            <text class="app-amount">💰 {{item.amount}}元</text>
+            <text class="app-amount">{{item.amountDisplayText}}</text>
             <text class="app-time">📅 {{item.applyTimeText}}</text>
           </view>
 
           <view class="app-progress-section">
             <view class="progress-header">
               <text class="progress-label">申请进度</text>
-              <text class="progress-text">{{item.currentStep}}/{{item.totalSteps}} 步</text>
+              <text class="progress-text">{{item.stepProgressText}}</text>
             </view>
             <view class="progress-bar-bg">
-              <view class="progress-bar-fill" style="width: {{item.progressPercent}}%; background-color: {{item.statusColor}};"></view>
+              <view class="progress-bar-fill" style="{{item.progressBarStyle}}"></view>
             </view>
           </view>
 
           <view class="app-steps">
             <view
-              class="step-item {{step.status === 'completed' ? 'completed' : step.status === 'in_progress' ? 'in-progress' : 'pending'}}"
+              class="{{step.stepClass}}"
               wx:for="{{item.steps}}"
               wx:for-item="step"
               wx:key="name"
             >
               <view class="step-dot">
-                <text class="step-icon">{{step.status === 'completed' ? '✓' : step.status === 'in_progress' ? '⏳' : ''}}</text>
+                <text class="step-icon">{{step.stepIcon}}</text>
               </view>
               <text class="step-name">{{step.name}}</text>
             </view>
@@ -372,7 +372,7 @@
         <scroll-view class="filter-scroll" scroll-x="{{true}}" show-scrollbar="{{false}}">
           <view class="filter-chips">
             <view
-              class="filter-chip {{currentYear === item.value ? 'active' : ''}}"
+              class="{{item.activeClass}}"
               wx:for="{{yearOptions}}"
               wx:key="value"
               bindtap="onYearChange"
@@ -410,11 +410,11 @@
           <view class="public-stats">
             <view class="public-stat-item">
               <text class="stat-icon">👥</text>
-              <text class="stat-text">{{item.studentCount}}人获奖</text>
+              <text class="stat-text">{{item.studentCountText}}</text>
             </view>
             <view class="public-stat-item">
               <text class="stat-icon">💰</text>
-              <text class="stat-text">{{item.totalAmount}}元</text>
+              <text class="stat-text">{{item.totalAmountText}}</text>
             </view>
             <view class="public-stat-item">
               <text class="stat-icon">🏢</text>
@@ -454,7 +454,7 @@
     <view class="bottom-space"></view>
   </scroll-view>
 
-  <view class="material-modal {{showMaterialModal ? 'show' : ''}}" catchtap="closeMaterialModal">
+  <view class="{{modalClass}}" catchtap="closeMaterialModal">
     <view class="modal-content" catchtap="">
       <view class="modal-header">
         <text class="modal-title">📋 所需材料清单</text>
