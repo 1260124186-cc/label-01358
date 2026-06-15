@@ -202,6 +202,14 @@
         <text class="menu-arrow">›</text>
       </view>
 
+      <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="privacySettings" aria-role="button" aria-label="隐私设置">
+        <view class="menu-icon-wrap" style="background-color: #DBEAFE;">
+          <text class="menu-icon">🔒</text>
+        </view>
+        <text class="menu-text">隐私与数据</text>
+        <text class="menu-arrow">›</text>
+      </view>
+
       <view class="menu-item" hover-class="menu-item-hover" bindtap="onMenuTap" data-type="changelog" aria-role="button" aria-label="更新日志">
         <view class="menu-icon-wrap" style="background-color: #DBEAFE;">
           <text class="menu-icon">📋</text>

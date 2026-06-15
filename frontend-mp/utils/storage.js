@@ -203,7 +203,10 @@ const STORAGE_KEYS = {
 
   KEYWORD_SUBSCRIPTIONS: 'keywordSubscriptions',
   KEYWORD_SUBSCRIPTION_SETTINGS: 'keywordSubscriptionSettings',
-  KEYWORD_NOTIFICATION_LOG: 'keywordNotificationLog'
+  KEYWORD_NOTIFICATION_LOG: 'keywordNotificationLog',
+
+  PRIVACY_SETTINGS: 'privacySettings',
+  USER_DELETED_ACCOUNT: 'userDeletedAccount'
 };
 
 /**

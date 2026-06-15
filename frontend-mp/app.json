@@ -232,7 +232,8 @@
     "pages/library/my-seats/index",
     "pages/library/recommend/index",
     "pages/keyword-subscription/index",
-    "pages/keyword-subscription/edit"
+    "pages/keyword-subscription/edit",
+    "pages/privacy-settings/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

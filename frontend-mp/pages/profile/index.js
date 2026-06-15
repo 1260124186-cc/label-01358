@@ -184,6 +184,9 @@ Page({
       case 'keywordSubscription':
         util.navigateTo('/pages/keyword-subscription/index');
         break;
+      case 'privacySettings':
+        util.navigateTo('/pages/privacy-settings/index');
+        break;
     }
   },
 
