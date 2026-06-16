@@ -212,7 +212,10 @@ const STORAGE_KEYS = {
   KEYWORD_NOTIFICATION_LOG: 'keywordNotificationLog',
 
   PRIVACY_SETTINGS: 'privacySettings',
-  USER_DELETED_ACCOUNT: 'userDeletedAccount'
+  USER_DELETED_ACCOUNT: 'userDeletedAccount',
+
+  PERSONAL_TODO_LIST: 'personalTodoList',
+  CALENDAR_EVENT_CACHE: 'calendarEventCache'
 };
 
 /**

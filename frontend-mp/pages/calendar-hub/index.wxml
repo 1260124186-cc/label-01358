@@ -1,0 +1,387 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F0F5FF'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="calendar-page {{darkMode ? 'dark' : ''}}">
+  <view class="page-header">
+    <view class="header-top">
+      <view class="page-title">📅 校园日历</view>
+      <view class="header-actions">
+        <view class="action-btn" bindtap="onToggleFilterPanel">
+          <text class="action-icon">🔍</text>
+        </view>
+        <view class="action-btn" bindtap="onExport">
+          <text class="action-icon">📤</text>
+        </view>
+      </view>
+    </view>
+    <view class="view-tabs">
+      <view
+        class="view-tab {{viewMode === 'month' ? 'active' : ''}}"
+        bindtap="switchViewMode"
+        data-mode="month"
+      >
+        <text class="view-tab-text">月</text>
+      </view>
+      <view
+        class="view-tab {{viewMode === 'week' ? 'active' : ''}}"
+        bindtap="switchViewMode"
+        data-mode="week"
+      >
+        <text class="view-tab-text">周</text>
+      </view>
+      <view
+        class="view-tab {{viewMode === 'day' ? 'active' : ''}}"
+        bindtap="switchViewMode"
+        data-mode="day"
+      >
+        <text class="view-tab-text">日</text>
+      </view>
+    </view>
+  </view>
+
+  <scroll-view class="calendar-scroll" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+    <view class="calendar-content">
+
+      <view class="calendar-nav">
+        <view class="nav-btn" bindtap="onPrevMonth" wx:if="{{viewMode === 'month'}}">
+          <text class="nav-icon">◀</text>
+        </view>
+        <view class="nav-btn" bindtap="onPrevWeek" wx:elif="{{viewMode === 'week'}}">
+          <text class="nav-icon">◀</text>
+        </view>
+        <view class="nav-btn" bindtap="onPrevDay" wx:else>
+          <text class="nav-icon">◀</text>
+        </view>
+
+        <view class="nav-title" bindtap="goToToday">
+          <text class="nav-title-text" wx:if="{{viewMode === 'month'}}">{{currentYear}}年{{currentMonth + 1}}月</text>
+          <text class="nav-title-text" wx:elif="{{viewMode === 'week'}}">{{currentWeekRange}}</text>
+          <text class="nav-title-text" wx:else>{{selectedDate}}</text>
+        </view>
+
+        <view class="nav-btn" bindtap="onNextMonth" wx:if="{{viewMode === 'month'}}">
+          <text class="nav-icon">▶</text>
+        </view>
+        <view class="nav-btn" bindtap="onNextWeek" wx:elif="{{viewMode === 'week'}}">
+          <text class="nav-icon">▶</text>
+        </view>
+        <view class="nav-btn" bindtap="onNextDay" wx:else>
+          <text class="nav-icon">▶</text>
+        </view>
+      </view>
+
+      <view class="month-view" wx:if="{{viewMode === 'month'}}">
+        <view class="weekday-header">
+          <view class="weekday-item" wx:for="{{['日', '一', '二', '三', '四', '五', '六']}}" wx:key="*this">
+            <text class="weekday-text">{{item}}</text>
+          </view>
+        </view>
+
+        <view class="month-grid">
+          <view
+            class="month-day {{item.isCurrentMonth ? '' : 'other-month'}} {{item.isToday ? 'today' : ''}} {{selectedDate === item.dateKey ? 'selected' : ''}}"
+            wx:for="{{monthDays}}"
+            wx:key="dateKey"
+            bindtap="onDateTap"
+            data-date-key="{{item.dateKey}}"
+          >
+            <text class="day-number">{{item.day}}</text>
+            <view class="day-events">
+              <view
+                class="day-event-dot"
+                wx:for="{{item.events}}"
+                wx:for-item="evt"
+                wx:key="id"
+                style="background: {{eventTypeConfig[evt.type].color}}"
+              ></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="week-view" wx:elif="{{viewMode === 'week'}}">
+        <view class="week-day-list">
+          <view
+            class="week-day-item {{item.isToday ? 'today' : ''}} {{selectedDate === item.dateKey ? 'selected' : ''}}"
+            wx:for="{{weekDays}}"
+            wx:key="dateKey"
+            bindtap="onDateTap"
+            data-date-key="{{item.dateKey}}"
+          >
+            <view class="week-day-header">
+              <text class="week-day-name">{{item.weekDay}}</text>
+              <text class="week-day-num">{{item.dayNum || item.day}}</text>
+            </view>
+            <view class="week-day-events">
+              <view
+                class="week-event-item"
+                wx:for="{{item.events}}"
+                wx:for-item="evt"
+                wx:key="id"
+                style="background: {{eventTypeConfig[evt.type].bgColor}}; border-left-color: {{eventTypeConfig[evt.type].color}};"
+                catchtap="onEventTap"
+                data-event="{{evt}}"
+              >
+                <text class="week-event-title">{{evt.title}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view class="day-view" wx:else>
+        <view class="day-date-header">
+          <text class="day-date-text">{{selectedDate}}</text>
+          <text class="day-event-count">共 {{dayEvents.length}} 项安排</text>
+        </view>
+
+        <view class="day-event-list" wx:if="{{dayEvents.length > 0}}">
+          <view
+            class="day-event-card {{item.isCompleted ? 'completed' : ''}}"
+            wx:for="{{dayEvents}}"
+            wx:key="id"
+            bindtap="onEventTap"
+            data-event="{{item}}"
+          >
+            <view class="event-time-col">
+              <text class="event-time-text">{{item.timeText}}</text>
+            </view>
+            <view class="event-content-col" style="border-left-color: {{item.config.color}};">
+              <view class="event-type-tag" style="background: {{item.config.bgColor}}; color: {{item.config.color}};">
+                <text class="event-type-icon">{{item.config.icon}}</text>
+                <text class="event-type-label">{{item.config.label}}</text>
+              </view>
+              <text class="event-title">{{item.title}}</text>
+              <text class="event-subtitle" wx:if="{{item.subtitle}}">{{item.subtitle}}</text>
+              <text class="event-location" wx:if="{{item.location}}">📍 {{item.location}}</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="empty-state" wx:else>
+          <text class="empty-icon">🎉</text>
+          <text class="empty-text">今天没有安排</text>
+          <text class="empty-subtitle">享受悠闲的一天吧~</text>
+        </view>
+      </view>
+
+      <view class="add-todo-btn" bindtap="onAddTodo">
+        <text class="add-icon">➕</text>
+        <text class="add-text">添加待办</text>
+      </view>
+
+    </view>
+  </scroll-view>
+
+  <view class="event-detail-modal {{showEventDetail ? 'show' : ''}}" catchtap="onCloseEventDetail">
+    <view class="modal-mask"></view>
+    <view class="modal-content event-detail-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <view class="event-type-badge" style="background: {{selectedEvent.config.bgColor}}; color: {{selectedEvent.config.color}};">
+          <text class="badge-icon">{{selectedEvent.config.icon}}</text>
+          <text class="badge-label">{{selectedEvent.config.label}}</text>
+        </view>
+        <view class="close-btn" bindtap="onCloseEventDetail">
+          <text class="close-icon">✕</text>
+        </view>
+      </view>
+
+      <view class="event-detail-body">
+        <text class="detail-title">{{selectedEvent.title}}</text>
+        <view class="detail-info-row">
+          <text class="detail-info-icon">📅</text>
+          <text class="detail-info-text">{{selectedEvent.dateText}}</text>
+        </view>
+        <view class="detail-info-row">
+          <text class="detail-info-icon">⏰</text>
+          <text class="detail-info-text">{{selectedEvent.timeText}}</text>
+        </view>
+        <view class="detail-info-row" wx:if="{{selectedEvent.location}}">
+          <text class="detail-info-icon">📍</text>
+          <text class="detail-info-text">{{selectedEvent.location}}</text>
+        </view>
+        <view class="detail-info-row" wx:if="{{selectedEvent.subtitle}}">
+          <text class="detail-info-icon">📝</text>
+          <text class="detail-info-text">{{selectedEvent.subtitle}}</text>
+        </view>
+        <view class="detail-info-row" wx:if="{{selectedEvent.seatNo}}">
+          <text class="detail-info-icon">💺</text>
+          <text class="detail-info-text">座位号 {{selectedEvent.seatNo}}</text>
+        </view>
+        <view class="detail-info-row" wx:if="{{selectedEvent.hours}}">
+          <text class="detail-info-icon">⏱️</text>
+          <text class="detail-info-text">志愿时长 {{selectedEvent.hours}} 小时</text>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <view
+          class="detail-btn primary" wx:if="{{selectedEvent.navigateUrl}}" bindtap="onNavigateToOriginal" data-url="{{selectedEvent.navigateUrl}}">
+          <text class="btn-text">查看详情</text>
+        </view>
+        <view
+          class="detail-btn secondary" wx:if="{{selectedEvent.type === 'todo' && !selectedEvent.isCompleted}}" bindtap="onToggleTodoComplete" data-id="{{selectedEvent.originalData.id}}">
+          <text class="btn-text">标记完成</text>
+        </view>
+        <view
+          class="detail-btn danger" wx:if="{{selectedEvent.type === 'todo'}}" catchtap="onDeleteTodo" data-id="{{selectedEvent.originalData.id}}">
+          <text class="btn-text">删除</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="add-todo-modal {{showAddTodo ? 'show' : ''}}" catchtap="onCloseAddTodo">
+    <view class="modal-mask"></view>
+    <view class="modal-content add-todo-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">添加待办</text>
+        <view class="close-btn" bindtap="onCloseAddTodo">
+          <text class="close-icon">✕</text>
+        </view>
+      </view>
+
+      <view class="form-body">
+        <view class="form-item">
+          <text class="form-label">标题</text>
+          <input
+            class="form-input"
+            placeholder="请输入待办标题"
+            value="{{todoForm.title}}"
+            bindinput="onTodoTitleInput"
+            maxlength="50"
+          />
+        </view>
+
+        <view class="form-row">
+          <view class="form-item half">
+            <text class="form-label">日期</text>
+            <picker mode="date" value="{{todoForm.date}}" bindchange="onTodoDateChange">
+              <view class="form-picker">
+                <text class="picker-text">{{todoForm.date}}</text>
+                <text class="picker-arrow">▼</text>
+              </view>
+            </picker>
+          </view>
+          <view class="form-item half">
+            <text class="form-label">时间</text>
+            <picker mode="time" value="{{todoForm.time}}" bindchange="onTodoTimeChange">
+              <view class="form-picker">
+                <text class="picker-text">{{todoForm.time}}</text>
+                <text class="picker-arrow">▼</text>
+              </view>
+            </picker>
+          </view>
+        </view>
+
+        <view class="form-item">
+          <text class="form-label">描述</text>
+          <textarea
+            class="form-textarea"
+            placeholder="请输入待办描述（选填）"
+            value="{{todoForm.description}}"
+            bindinput="onTodoDescInput"
+            maxlength="200"
+          ></textarea>
+        </view>
+
+        <view class="form-item form-switch-item">
+          <text class="form-label">开启提醒</text>
+          <switch
+            class="form-switch"
+            checked="{{todoForm.reminder}}"
+            bindchange="onTodoReminderToggle"
+            color="#EC4899"
+          />
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <view class="detail-btn secondary" bindtap="onCloseAddTodo">
+          <text class="btn-text">取消</text>
+        </view>
+        <view class="detail-btn primary" bindtap="onSaveTodo">
+          <text class="btn-text">保存</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="filter-panel {{showFilter ? 'show' : ''}}">
+    <view class="filter-mask" bindtap="onToggleFilterPanel"></view>
+    <view class="filter-content">
+      <view class="filter-header">
+        <text class="filter-title">筛选类型</text>
+        <text class="filter-reset" bindtap="onResetFilter">重置</text>
+      </view>
+      <view class="filter-type-list">
+        <view
+          class="filter-type-item {{filterTypes.indexOf(type) > -1 ? 'active' : ''}}"
+          wx:for="{{eventTypes}}"
+          wx:for-item="type"
+          wx:key="*this"
+          bindtap="onToggleFilterType"
+          data-type="{{type}}"
+        >
+          <text class="filter-type-icon">{{eventTypeConfig[type].icon}}</text>
+          <text class="filter-type-label">{{eventTypeConfig[type].label}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="export-modal {{showExport ? 'show' : ''}}" catchtap="onCloseExport">
+    <view class="modal-mask"></view>
+    <view class="modal-content export-content" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">本周日程</text>
+        <view class="close-btn" bindtap="onCloseExport">
+          <text class="close-icon">✕</text>
+        </view>
+      </view>
+
+      <view class="export-preview">
+        <view class="export-card">
+          <view class="export-card-header">
+            <text class="export-card-title">📅 我的本周日程</text>
+            <text class="export-card-subtitle">{{exportWeekRange}}</text>
+          </view>
+          <view class="export-week-list">
+            <view class="export-day-item" wx:for="{{exportWeekData}}" wx:key="dateKey">
+              <view class="export-day-header">
+                <text class="export-day-name">{{item.day}}</text>
+                <text class="export-day-num">{{item.dayNum}}</text>
+              </view>
+              <view class="export-day-events">
+                <view
+                  class="export-event-item"
+                  wx:for="{{item.events}}"
+                  wx:for-item="evt"
+                  wx:key="id"
+                  style="border-left-color: {{eventTypeConfig[evt.type].color}};"
+                >
+                  <view class="export-event-dot" style="background: {{eventTypeConfig[evt.type].color}};"></view>
+                  <text class="export-event-title">{{evt.title}}</text>
+                </view>
+                <view class="export-empty" wx:if="{{item.events.length === 0}}">
+                  <text class="export-empty-text">暂无安排</text>
+                </view>
+              </view>
+            </view>
+          </view>
+          <view class="export-card-footer">
+            <text class="export-footer-text">校园生活服务 · 日历中心</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <view class="detail-btn secondary" bindtap="onSaveImage">
+          <text class="btn-text">保存图片</text>
+        </view>
+        <view class="detail-btn primary" bindtap="onShareImage">
+          <text class="btn-text">分享</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+</view>
