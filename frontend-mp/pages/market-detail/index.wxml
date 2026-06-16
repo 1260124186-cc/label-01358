@@ -20,7 +20,7 @@
       </swiper-item>
     </swiper>
     <view class="image-counter">{{currentImageIndex + 1}}/{{detail.images.length}}</view>
-    <view class="status-badge status-{{detail.status}}">
+    <view class="status-badge status-{{detail.displayStatus}}">
       <text class="status-badge-text">{{detail.statusText}}</text>
     </view>
   </view>
@@ -85,7 +85,7 @@
     </view>
     <view class="info-tags">
       <text class="info-tag">{{detail.categoryText}}</text>
-      <text class="info-tag status-{{detail.status}}">{{detail.statusText}}</text>
+      <text class="info-tag status-{{detail.displayStatus}}">{{detail.statusText}}</text>
     </view>
 
     <!-- 卖家操作区 -->
@@ -186,6 +186,164 @@
     </view>
   </view>
 
+  <!-- 议价记录区 -->
+  <view class="offer-section" wx:if="{{canViewOffers}}">
+    <view class="section-title">
+      议价记录
+      <text class="offer-count" wx:if="{{activeOfferCount > 0}}">({{activeOfferCount}}个进行中)</text>
+    </view>
+
+    <!-- 卖家视角：所有出价列表 -->
+    <view class="offer-list" wx:if="{{isOwner && offers.length > 0}}">
+      <view
+        class="offer-item"
+        wx:for="{{offers}}"
+        wx:key="id"
+      >
+        <view class="offer-header">
+          <view class="offer-user">
+            <image
+              class="offer-avatar"
+              src="{{item.userAvatar || '/assets/images/default-avatar.png'}}"
+              mode="aspectFill"
+            />
+            <view class="offer-user-info">
+              <text class="offer-user-name">{{item.userName}}</text>
+              <text class="offer-time">{{item.timeText}}</text>
+            </view>
+          </view>
+          <view class="offer-status" style="color: {{item.statusColor}}">
+            <text class="offer-status-icon">{{item.statusIcon}}</text>
+            <text class="offer-status-text">{{item.statusText}}</text>
+          </view>
+        </view>
+
+        <view class="offer-price-row">
+          <text class="offer-price-label">出价：</text>
+          <text class="offer-price">¥{{item.priceText}}</text>
+          <text class="offer-original-price">(原价 ¥{{item.itemPriceText}})</text>
+        </view>
+
+        <view class="offer-message" wx:if="{{item.message}}">
+          <text class="offer-message-text">{{item.message}}</text>
+        </view>
+
+        <view class="offer-time-left" wx:if="{{item.hasTimeLeft}}" style="color: {{item.timeLeftColor}}">
+          <text class="time-left-icon">⏰</text>
+          <text class="time-left-text">{{item.timeLeftText}}</text>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="offer-actions" wx:if="{{item.canAccept || item.canReject || item.canCounter}}">
+          <view class="offer-btn offer-btn-reject" bindtap="onRejectOffer" data-offer-id="{{item.id}}">
+            拒绝
+          </view>
+          <view class="offer-btn offer-btn-counter" bindtap="onShowCounterModal" data-offer-id="{{item.id}}" data-current-price="{{item.price}}">
+            还价
+          </view>
+          <view class="offer-btn offer-btn-accept" bindtap="onAcceptOffer" data-offer-id="{{item.id}}">
+            接受
+          </view>
+        </view>
+
+        <!-- 议价历史 -->
+        <view class="offer-history" wx:if="{{item.history && item.history.length > 1}}">
+          <view class="history-title">议价历史</view>
+          <view
+            class="history-item"
+            wx:for="{{item.history}}"
+            wx:for-item="h"
+            wx:key="time"
+          >
+            <view class="history-dot"></view>
+            <view class="history-content">
+              <view class="history-header">
+                <text class="history-action">{{h.action === 'offer' ? '买家出价' : h.action === 'counter' ? '卖家还价' : h.action === 'accept' ? '卖家接受' : h.action === 'reject' ? '卖家拒绝' : h.action === 'cancel' ? '买家取消' : h.action === 'auto_cancel' ? '系统取消' : h.action}}</text>
+                <text class="history-time">{{h.timeText}}</text>
+              </view>
+              <view class="history-price" wx:if="{{h.priceText}}">
+                <text class="history-price-text">¥{{h.priceText}}</text>
+              </view>
+              <view class="history-message" wx:if="{{h.message}}">
+                <text class="history-message-text">{{h.message}}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 买家视角：我的出价 -->
+    <view class="my-offer-card" wx:if="{{!isOwner && myOffer}}">
+      <view class="my-offer-header">
+        <text class="my-offer-title">我的出价</text>
+        <view class="my-offer-status" style="color: {{myOffer.statusColor}}">
+          <text class="my-offer-status-icon">{{myOffer.statusIcon}}</text>
+          <text class="my-offer-status-text">{{myOffer.statusText}}</text>
+        </view>
+      </view>
+
+      <view class="my-offer-price-row">
+        <text class="my-offer-price-label">出价金额：</text>
+        <text class="my-offer-price">¥{{myOffer.priceText}}</text>
+      </view>
+
+      <view class="my-offer-message" wx:if="{{myOffer.message}}">
+        <text class="my-offer-message-label">留言：</text>
+        <text class="my-offer-message-text">{{myOffer.message}}</text>
+      </view>
+
+      <view class="my-offer-time" wx:if="{{myOffer.hasTimeLeft}}" style="color: {{myOffer.timeLeftColor}}">
+        <text class="my-offer-time-icon">⏰</text>
+        <text class="my-offer-time-text">{{myOffer.timeLeftText}}</text>
+      </view>
+
+      <view class="my-offer-actions" wx:if="{{myOffer.canCancel}}">
+        <view class="my-offer-btn my-offer-btn-cancel" bindtap="onCancelOffer" data-offer-id="{{myOffer.id}}">
+          取消出价
+        </view>
+      </view>
+
+      <!-- 议价历史 -->
+      <view class="offer-history" wx:if="{{myOffer.history && myOffer.history.length > 1}}">
+        <view class="history-title">议价历史</view>
+        <view
+          class="history-item"
+          wx:for="{{myOffer.history}}"
+          wx:for-item="h"
+          wx:key="time"
+        >
+          <view class="history-dot"></view>
+          <view class="history-content">
+            <view class="history-header">
+              <text class="history-action">{{h.action === 'offer' ? '我出价' : h.action === 'counter' ? '卖家还价' : h.action === 'accept' ? '卖家接受' : h.action === 'reject' ? '卖家拒绝' : h.action === 'cancel' ? '我取消' : h.action === 'auto_cancel' ? '系统取消' : h.action}}</text>
+              <text class="history-time">{{h.timeText}}</text>
+            </view>
+            <view class="history-price" wx:if="{{h.priceText}}">
+              <text class="history-price-text">¥{{h.priceText}}</text>
+            </view>
+            <view class="history-message" wx:if="{{h.message}}">
+              <text class="history-message-text">{{h.message}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 买家视角：未出价 -->
+    <view class="offer-empty" wx:if="{{!isOwner && !myOffer}}">
+      <text class="offer-empty-text">您还没有出价</text>
+      <view class="offer-empty-btn" bindtap="onShowOfferModal">
+        立即出价
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="offer-empty" wx:if="{{isOwner && offers.length === 0}}">
+      <text class="offer-empty-text">暂无买家出价</text>
+    </view>
+  </view>
+
   <!-- 评论区 -->
   <view class="comment-section">
     <view class="section-title">
@@ -257,13 +415,17 @@
     enableShare="{{detailConfig.enableShare}}"
     enableReport="{{detailConfig.enableReport}}"
     enableContact="{{detailConfig.enableContact}}"
-    contactText="立即联系卖家"
+    enableOffer="{{!isOwner && detail.status === 'selling'}}"
+    contactText="联系卖家"
     ownerText="编辑商品"
+    offerText="我要出价"
     contactDisabled="{{detail.status === 'sold'}}"
+    offerDisabled="{{detail.status !== 'selling' || myOffer && (myOffer.status === 'pending' || myOffer.status === 'countered')}}"
     bind:favorite="onToggleFavorite"
     bind:share="onShare"
     bind:report="onReport"
     bind:contact="{{isOwner ? 'onEdit' : 'onContact'}}"
+    bind:offer="onShowOfferModal"
   />
 
   <!-- 分享卡片 -->
@@ -279,6 +441,98 @@
     bind:close="onCloseShareCard"
     bind:save="onSaveShareImage"
   />
+
+  <!-- 出价弹窗 -->
+  <view class="modal-mask" wx:if="{{showOfferModal}}" bindtap="onHideOfferModal">
+    <view class="modal-content offer-modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">我要出价</text>
+        <view class="modal-close" bindtap="onHideOfferModal">
+          <text class="close-icon">✕</text>
+        </view>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">出价金额（元）</text>
+          <input
+            class="form-input"
+            type="digit"
+            placeholder="请输入出价金额"
+            value="{{offerPrice}}"
+            bindinput="onOfferPriceInput"
+            maxlength="10"
+          />
+        </view>
+        <view class="form-item">
+          <text class="form-label">留言（选填）</text>
+          <textarea
+            class="form-textarea"
+            placeholder="可以给卖家留言，说明您的需求..."
+            value="{{offerMessage}}"
+            bindinput="onOfferMessageInput"
+            maxlength="200"
+            auto-height
+          />
+        </view>
+        <view class="offer-tip">
+          <text class="tip-icon">💡</text>
+          <text class="tip-text">出价后请等待卖家回复，48小时内未处理将自动失效</text>
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn modal-btn-cancel" bindtap="onHideOfferModal">
+          取消
+        </view>
+        <view class="modal-btn modal-btn-confirm" bindtap="onSubmitOffer">
+          提交出价
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 还价弹窗 -->
+  <view class="modal-mask" wx:if="{{showCounterModal}}" bindtap="onHideCounterModal">
+    <view class="modal-content offer-modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">卖家还价</text>
+        <view class="modal-close" bindtap="onHideCounterModal">
+          <text class="close-icon">✕</text>
+        </view>
+      </view>
+      <view class="modal-body">
+        <view class="form-item">
+          <text class="form-label">还价金额（元）</text>
+          <input
+            class="form-input"
+            type="digit"
+            placeholder="请输入还价金额"
+            value="{{counterPrice}}"
+            bindinput="onCounterPriceInput"
+            maxlength="10"
+          />
+        </view>
+        <view class="form-item">
+          <text class="form-label">留言（选填）</text>
+          <textarea
+            class="form-textarea"
+            placeholder="可以给买家留言，说明原因..."
+            value="{{counterMessage}}"
+            bindinput="onCounterMessageInput"
+            maxlength="200"
+            auto-height
+          />
+        </view>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn modal-btn-cancel" bindtap="onHideCounterModal">
+          取消
+        </view>
+        <view class="modal-btn modal-btn-confirm" bindtap="onSubmitCounter">
+          发送还价
+        </view>
+      </view>
+    </view>
+  </view>
 </view>
 
 <view class="page empty-page {{darkMode ? 'dark' : ''}}" wx:else>

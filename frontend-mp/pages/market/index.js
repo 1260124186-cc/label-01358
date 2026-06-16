@@ -243,10 +243,22 @@ pageOptions = mixinList(pageOptions, {
     });
   },
   formatItem: function(item) {
+    const activeOfferCount = dataService.getItemActiveOfferCount(item.id);
+    const isNegotiating = item.status === 'selling' && activeOfferCount > 0;
+
+    let displayStatus = item.status;
+    let statusText = constants.getLabelByValue(constants.MARKET_STATUS, item.status);
+    if (isNegotiating) {
+      displayStatus = 'negotiating';
+      statusText = '议价中';
+    }
+
     const formatted = {
       ...item,
       priceText: util.formatPrice(item.price),
-      statusText: constants.getLabelByValue(constants.MARKET_STATUS, item.status)
+      displayStatus,
+      statusText,
+      isNegotiating
     };
 
     if (item._distance !== undefined && item._distance !== Infinity) {

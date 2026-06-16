@@ -114,6 +114,22 @@ const MARKET_STATUS = [
   { value: 'sold', label: '已售出' }
 ];
 
+const MARKET_OFFER_STATUS = [
+  { value: 'pending', label: '待处理', color: '#F59E0B', icon: '⏳' },
+  { value: 'accepted', label: '已接受', color: '#10B981', icon: '✅' },
+  { value: 'rejected', label: '已拒绝', color: '#EF4444', icon: '❌' },
+  { value: 'countered', label: '卖家还价', color: '#8B5CF6', icon: '💬' },
+  { value: 'expired', label: '已超时', color: '#6B7280', icon: '⏰' },
+  { value: 'cancelled', label: '已取消', color: '#6B7280', icon: '↩️' }
+];
+
+const MARKET_OFFER_STATUS_MAP = MARKET_OFFER_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const MARKET_OFFER_TIMEOUT_HOURS = 48;
+
 const SURVEY_QUESTION_TYPES = [
   { value: 'single', label: '单选题' },
   { value: 'multiple', label: '多选题' },
@@ -3419,6 +3435,9 @@ module.exports = {
   SEARCH_TABS,
   PHONEBOOK_TABS,
   MARKET_STATUS,
+  MARKET_OFFER_STATUS,
+  MARKET_OFFER_STATUS_MAP,
+  MARKET_OFFER_TIMEOUT_HOURS,
   SURVEY_QUESTION_TYPES,
   SURVEY_STATUS,
   SURVEY_LOGIC_OPERATORS,

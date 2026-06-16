@@ -434,6 +434,447 @@ function increaseMarketViews(id) {
   return false;
 }
 
+// ==================== 二手议价 ====================
+
+function checkAndUpdateExpiredOffers(itemId = '') {
+  const list = storage.getList(STORAGE_KEYS.MARKET_OFFERS);
+  const now = Date.now();
+  const timeoutMs = constants.MARKET_OFFER_TIMEOUT_HOURS * 60 * 60 * 1000;
+  let hasChanges = false;
+
+  const updatedList = list.map(offer => {
+    if (itemId && offer.itemId !== itemId) return offer;
+    if (offer.status !== 'pending' && offer.status !== 'countered') return offer;
+
+    const expireTime = (offer.updateTime || offer.createTime) + timeoutMs;
+    if (now >= expireTime) {
+      hasChanges = true;
+      return { ...offer, status: 'expired', updateTime: now };
+    }
+    return offer;
+  });
+
+  if (hasChanges) {
+    storage.set(STORAGE_KEYS.MARKET_OFFERS, updatedList);
+  }
+
+  return hasChanges;
+}
+
+function getMarketOffersByItem(itemId, options = {}) {
+  checkAndUpdateExpiredOffers(itemId);
+
+  const list = storage.getList(STORAGE_KEYS.MARKET_OFFERS);
+  let offers = list.filter(item => item.itemId === itemId);
+
+  if (options.status) {
+    offers = offers.filter(item => item.status === options.status);
+  }
+
+  if (options.userId) {
+    offers = offers.filter(item => item.userId === options.userId);
+  }
+
+  return offers.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getMarketOffersByUser(userId, options = {}) {
+  checkAndUpdateExpiredOffers();
+
+  const list = storage.getList(STORAGE_KEYS.MARKET_OFFERS);
+  let offers = list.filter(item => {
+    if (options.role === 'buyer') {
+      return item.userId === userId;
+    } else if (options.role === 'seller') {
+      return item.sellerId === userId;
+    }
+    return item.userId === userId || item.sellerId === userId;
+  });
+
+  if (options.status) {
+    offers = offers.filter(item => item.status === options.status);
+  }
+
+  return offers.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getMarketOfferDetail(offerId) {
+  checkAndUpdateExpiredOffers();
+
+  const list = storage.getList(STORAGE_KEYS.MARKET_OFFERS);
+  return list.find(item => item.id === offerId) || null;
+}
+
+function createMarketOffer(itemId, data) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  if (!userInfo.id) {
+    return { success: false, message: '请先登录' };
+  }
+
+  const item = getMarketDetail(itemId);
+  if (!item) {
+    return { success: false, message: '商品不存在' };
+  }
+
+  if (item.status !== 'selling') {
+    return { success: false, message: '商品不在出售中，无法议价' };
+  }
+
+  if (item.userId === userInfo.id) {
+    return { success: false, message: '不能对自己的商品出价' };
+  }
+
+  if (!data.price || data.price <= 0) {
+    return { success: false, message: '请输入有效的出价金额' };
+  }
+
+  checkAndUpdateExpiredOffers(itemId);
+
+  const existingOffers = getMarketOffersByItem(itemId, { userId: userInfo.id });
+  const hasPendingOffer = existingOffers.some(
+    o => o.status === 'pending' || o.status === 'countered'
+  );
+
+  if (hasPendingOffer) {
+    return { success: false, message: '您已有待处理的出价，请等待卖家回复' };
+  }
+
+  const offer = {
+    id: util.generateId(),
+    itemId,
+    itemTitle: item.title,
+    itemImage: item.images && item.images[0] ? item.images[0] : '',
+    itemPrice: item.price,
+    userId: userInfo.id,
+    userName: userInfo.nickName || '匿名用户',
+    userAvatar: userInfo.avatarUrl || '',
+    sellerId: item.userId,
+    sellerName: item.userName || '卖家',
+    price: Number(data.price),
+    message: data.message || '',
+    status: 'pending',
+    createTime: Date.now(),
+    updateTime: Date.now(),
+    history: [
+      {
+        action: 'offer',
+        price: Number(data.price),
+        message: data.message || '',
+        operatorId: userInfo.id,
+        operatorName: userInfo.nickName || '匿名用户',
+        time: Date.now()
+      }
+    ]
+  };
+
+  const success = storage.addToList(STORAGE_KEYS.MARKET_OFFERS, offer);
+
+  if (success) {
+    createNotification({
+      userId: item.userId,
+      type: 'transaction',
+      subType: 'offer',
+      title: '收到新的议价',
+      content: `${userInfo.nickName || '有人'}对商品「${item.title}」出价 ¥${data.price}`,
+      data: {
+        offerId: offer.id,
+        itemId,
+        price: data.price
+      }
+    });
+
+    return { success: true, data: offer };
+  }
+
+  return { success: false, message: '出价失败，请重试' };
+}
+
+function acceptMarketOffer(offerId) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const offer = getMarketOfferDetail(offerId);
+  if (!offer) {
+    return { success: false, message: '出价记录不存在' };
+  }
+
+  if (offer.sellerId !== userInfo.id) {
+    return { success: false, message: '只有卖家才能接受出价' };
+  }
+
+  if (offer.status !== 'pending' && offer.status !== 'countered') {
+    return { success: false, message: '该出价状态无法接受' };
+  }
+
+  const item = getMarketDetail(offer.itemId);
+  if (!item) {
+    return { success: false, message: '商品不存在' };
+  }
+
+  if (item.status !== 'selling') {
+    return { success: false, message: '商品状态已变更，无法接受出价' };
+  }
+
+  const list = storage.getList(STORAGE_KEYS.MARKET_OFFERS);
+  const updatedList = list.map(o => {
+    if (o.id === offerId) {
+      return {
+        ...o,
+        status: 'accepted',
+        updateTime: Date.now(),
+        history: [
+          ...o.history,
+          {
+            action: 'accept',
+            price: o.price,
+            message: '',
+            operatorId: userInfo.id,
+            operatorName: userInfo.nickName || '卖家',
+            time: Date.now()
+          }
+        ]
+      };
+    }
+    if (o.itemId === offer.itemId && o.id !== offerId && (o.status === 'pending' || o.status === 'countered')) {
+      return {
+        ...o,
+        status: 'cancelled',
+        updateTime: Date.now(),
+        history: [
+          ...o.history,
+          {
+            action: 'auto_cancel',
+            price: o.price,
+            message: '卖家已接受其他出价',
+            operatorId: 'system',
+            operatorName: '系统',
+            time: Date.now()
+          }
+        ]
+      };
+    }
+    return o;
+  });
+
+  storage.set(STORAGE_KEYS.MARKET_OFFERS, updatedList);
+
+  updateMarketItem(offer.itemId, { status: 'reserved' });
+
+  createNotification({
+    userId: offer.userId,
+    type: 'transaction',
+    subType: 'offer_accepted',
+    title: '出价已被接受',
+    content: `卖家接受了您对商品「${item.title}」的出价 ¥${offer.price}`,
+    data: {
+      offerId,
+      itemId: offer.itemId,
+      price: offer.price
+    }
+  });
+
+  const otherBuyers = updatedList
+    .filter(o => o.itemId === offer.itemId && o.id !== offerId && o.status === 'cancelled')
+    .map(o => o.userId);
+
+  otherBuyers.forEach(buyerId => {
+    if (buyerId !== offer.userId) {
+      createNotification({
+        userId: buyerId,
+        type: 'transaction',
+        subType: 'offer_cancelled',
+        title: '出价已失效',
+        content: `商品「${item.title}」已被其他买家预订`,
+        data: {
+          itemId: offer.itemId
+        }
+      });
+    }
+  });
+
+  return { success: true };
+}
+
+function rejectMarketOffer(offerId, reason = '') {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const offer = getMarketOfferDetail(offerId);
+  if (!offer) {
+    return { success: false, message: '出价记录不存在' };
+  }
+
+  if (offer.sellerId !== userInfo.id) {
+    return { success: false, message: '只有卖家才能拒绝出价' };
+  }
+
+  if (offer.status !== 'pending' && offer.status !== 'countered') {
+    return { success: false, message: '该出价状态无法拒绝' };
+  }
+
+  const item = getMarketDetail(offer.itemId);
+
+  const success = storage.updateInList(STORAGE_KEYS.MARKET_OFFERS, offerId, {
+    status: 'rejected',
+    rejectReason: reason,
+    updateTime: Date.now(),
+    history: [
+      ...offer.history,
+      {
+        action: 'reject',
+        price: offer.price,
+        message: reason,
+        operatorId: userInfo.id,
+        operatorName: userInfo.nickName || '卖家',
+        time: Date.now()
+      }
+    ]
+  });
+
+  if (success) {
+    createNotification({
+      userId: offer.userId,
+      type: 'transaction',
+      subType: 'offer_rejected',
+      title: '出价被拒绝',
+      content: `卖家拒绝了您对商品「${item ? item.title : ''}」的出价 ¥${offer.price}`,
+      data: {
+        offerId,
+        itemId: offer.itemId,
+        price: offer.price
+      }
+    });
+  }
+
+  return { success };
+}
+
+function counterMarketOffer(offerId, counterPrice, message = '') {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const offer = getMarketOfferDetail(offerId);
+  if (!offer) {
+    return { success: false, message: '出价记录不存在' };
+  }
+
+  if (offer.sellerId !== userInfo.id) {
+    return { success: false, message: '只有卖家才能还价' };
+  }
+
+  if (offer.status !== 'pending' && offer.status !== 'countered') {
+    return { success: false, message: '该出价状态无法还价' };
+  }
+
+  if (!counterPrice || counterPrice <= 0) {
+    return { success: false, message: '请输入有效的还价金额' };
+  }
+
+  const item = getMarketDetail(offer.itemId);
+
+  const success = storage.updateInList(STORAGE_KEYS.MARKET_OFFERS, offerId, {
+    status: 'countered',
+    price: Number(counterPrice),
+    updateTime: Date.now(),
+    history: [
+      ...offer.history,
+      {
+        action: 'counter',
+        price: Number(counterPrice),
+        message,
+        operatorId: userInfo.id,
+        operatorName: userInfo.nickName || '卖家',
+        time: Date.now()
+      }
+    ]
+  });
+
+  if (success) {
+    createNotification({
+      userId: offer.userId,
+      type: 'transaction',
+      subType: 'offer_countered',
+      title: '卖家还价了',
+      content: `卖家对商品「${item ? item.title : ''}」还价 ¥${counterPrice}`,
+      data: {
+        offerId,
+        itemId: offer.itemId,
+        price: counterPrice
+      }
+    });
+  }
+
+  return { success };
+}
+
+function cancelMarketOffer(offerId) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const offer = getMarketOfferDetail(offerId);
+  if (!offer) {
+    return { success: false, message: '出价记录不存在' };
+  }
+
+  if (offer.userId !== userInfo.id) {
+    return { success: false, message: '只有买家才能取消出价' };
+  }
+
+  if (offer.status !== 'pending' && offer.status !== 'countered') {
+    return { success: false, message: '该出价状态无法取消' };
+  }
+
+  const item = getMarketDetail(offer.itemId);
+
+  const success = storage.updateInList(STORAGE_KEYS.MARKET_OFFERS, offerId, {
+    status: 'cancelled',
+    updateTime: Date.now(),
+    history: [
+      ...offer.history,
+      {
+        action: 'cancel',
+        price: offer.price,
+        message: '',
+        operatorId: userInfo.id,
+        operatorName: userInfo.nickName || '买家',
+        time: Date.now()
+      }
+    ]
+  });
+
+  if (success) {
+    createNotification({
+      userId: offer.sellerId,
+      type: 'transaction',
+      subType: 'offer_cancelled',
+      title: '买家取消了出价',
+      content: `${userInfo.nickName || '买家'}取消了对商品「${item ? item.title : ''}」的出价`,
+      data: {
+        offerId,
+        itemId: offer.itemId
+      }
+    });
+  }
+
+  return { success };
+}
+
+function hasActiveOffer(itemId, userId) {
+  checkAndUpdateExpiredOffers(itemId);
+
+  const offers = getMarketOffersByItem(itemId, { userId });
+  return offers.some(o => o.status === 'pending' || o.status === 'countered');
+}
+
+function getItemActiveOfferCount(itemId) {
+  checkAndUpdateExpiredOffers(itemId);
+
+  const offers = getMarketOffersByItem(itemId);
+  return offers.filter(o => o.status === 'pending' || o.status === 'countered').length;
+}
+
 // ==================== 收藏 ====================
 
 /**
@@ -10237,6 +10678,18 @@ module.exports = {
   deleteMarketItem,
   increaseMarketViews,
   getMyMarketList,
+
+  getMarketOffersByItem,
+  getMarketOffersByUser,
+  getMarketOfferDetail,
+  createMarketOffer,
+  acceptMarketOffer,
+  rejectMarketOffer,
+  counterMarketOffer,
+  cancelMarketOffer,
+  hasActiveOffer,
+  getItemActiveOfferCount,
+  checkAndUpdateExpiredOffers,
 
   getFavorites,
   addFavorite,

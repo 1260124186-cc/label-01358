@@ -29,15 +29,39 @@
     </view>
   </view>
 
-  <view class="bottom-button-wrap">
-    <btn
-      type="primary"
-      size="large"
-      block="{{true}}"
-      disabled="{{contactDisabled}}"
-      bind:click="onContact"
-    >
-      {{isOwner ? ownerText : contactText}}
-    </btn>
+  <view class="bottom-button-wrap {{enableOffer && !isOwner ? 'two-buttons' : ''}}">
+    <block wx:if="{{enableOffer && !isOwner}}">
+      <btn
+        type="default"
+        size="large"
+        block="{{false}}"
+        disabled="{{contactDisabled}}"
+        bind:click="onContact"
+        class="contact-btn"
+      >
+        {{contactText}}
+      </btn>
+      <btn
+        type="primary"
+        size="large"
+        block="{{false}}"
+        disabled="{{offerDisabled}}"
+        bind:click="onOffer"
+        class="offer-btn"
+      >
+        {{offerText}}
+      </btn>
+    </block>
+    <block wx:else>
+      <btn
+        type="primary"
+        size="large"
+        block="{{true}}"
+        disabled="{{contactDisabled}}"
+        bind:click="onContact"
+      >
+        {{isOwner ? ownerText : contactText}}
+      </btn>
+    </block>
   </view>
 </view>

@@ -61,6 +61,19 @@
   min-width: 0;
 }
 
+.bottom-button-wrap.two-buttons {
+  display: flex;
+  gap: 16rpx;
+}
+
+.bottom-button-wrap.two-buttons .contact-btn {
+  flex: 1;
+}
+
+.bottom-button-wrap.two-buttons .offer-btn {
+  flex: 1.2;
+}
+
 @media (prefers-color-scheme: dark) {
   .detail-bottom-bar {
     background: #1A1D24;

@@ -24,7 +24,18 @@ let pageOptions = {
     isAdmin: false,
     currentUserId: '',
     markers: [],
-    mapScale: 16
+    mapScale: 16,
+    showOfferModal: false,
+    offerPrice: '',
+    offerMessage: '',
+    offers: [],
+    canViewOffers: false,
+    myOffer: null,
+    showCounterModal: false,
+    counterOfferId: '',
+    counterPrice: '',
+    counterMessage: '',
+    activeOfferCount: 0
   },
 
   onLoad(options) {
@@ -47,6 +58,17 @@ let pageOptions = {
       const discountText = this.calculateDiscount(detail.price, detail.originalPrice);
       const saveText = this.calculateSave(detail.price, detail.originalPrice);
       const hasLocation = detail.latitude !== undefined && detail.longitude !== undefined && detail.address;
+
+      const activeOfferCount = dataService.getItemActiveOfferCount(this.data.id);
+      const isNegotiating = detail.status === 'selling' && activeOfferCount > 0;
+
+      let displayStatus = detail.status;
+      let displayStatusText = constants.getLabelByValue(constants.MARKET_STATUS, detail.status);
+      if (isNegotiating) {
+        displayStatus = 'negotiating';
+        displayStatusText = '议价中';
+      }
+
       const formattedDetail = {
         ...detail,
         priceText: util.formatPrice(detail.price),
@@ -57,7 +79,10 @@ let pageOptions = {
         viewsText: this.formatViews(detail.views),
         timeText: util.relativeTime(detail.createTime),
         categoryText: constants.getLabelByValue(constants.MARKET_CATEGORIES, detail.category),
-        statusText: constants.getLabelByValue(constants.MARKET_STATUS, detail.status),
+        statusText: displayStatusText,
+        displayStatus,
+        isNegotiating,
+        activeOfferCount,
         hasLocation
       };
 
@@ -94,6 +119,8 @@ let pageOptions = {
       this.loadUserInfo();
 
       this.loadComments();
+
+      this.loadOffers();
     }
   },
 
@@ -331,6 +358,271 @@ let pageOptions = {
     } else {
       util.showError('删除失败，请重试');
     }
+  },
+
+  loadOffers() {
+    const { id, currentUserId, detail } = this.data;
+    if (!id || !detail) return;
+
+    const isOwner = detail.userId === currentUserId;
+    const canViewOffers = isOwner || currentUserId;
+
+    if (!canViewOffers) {
+      this.setData({ offers: [], canViewOffers: false, myOffer: null, activeOfferCount: 0 });
+      return;
+    }
+
+    let offers = dataService.getMarketOffersByItem(id);
+    const activeOfferCount = offers.filter(o => o.status === 'pending' || o.status === 'countered').length;
+
+    if (!isOwner) {
+      offers = offers.filter(o => o.userId === currentUserId);
+    }
+
+    const formattedOffers = offers.map(offer => {
+      const statusInfo = constants.MARKET_OFFER_STATUS_MAP[offer.status] || {};
+      const timeLeft = this.calculateOfferTimeLeft(offer);
+      const history = (offer.history || []).map(h => ({
+        ...h,
+        timeText: util.relativeTime(h.time),
+        priceText: h.price ? util.formatPrice(h.price) : ''
+      }));
+
+      return {
+        ...offer,
+        priceText: util.formatPrice(offer.price),
+        itemPriceText: util.formatPrice(offer.itemPrice),
+        statusText: statusInfo.label || offer.status,
+        statusColor: statusInfo.color || '#666',
+        statusIcon: statusInfo.icon || '',
+        timeText: util.relativeTime(offer.createTime),
+        updateTimeText: util.relativeTime(offer.updateTime),
+        timeLeftText: timeLeft.text,
+        timeLeftColor: timeLeft.color,
+        hasTimeLeft: timeLeft.hasTimeLeft,
+        isMyOffer: offer.userId === currentUserId,
+        isSeller: isOwner,
+        canAccept: isOwner && (offer.status === 'pending' || offer.status === 'countered'),
+        canReject: isOwner && (offer.status === 'pending' || offer.status === 'countered'),
+        canCounter: isOwner && (offer.status === 'pending' || offer.status === 'countered'),
+        canCancel: offer.userId === currentUserId && (offer.status === 'pending' || offer.status === 'countered'),
+        history: history.reverse()
+      };
+    });
+
+    let myOffer = null;
+    if (!isOwner && currentUserId) {
+      const myOffers = formattedOffers.filter(o => o.userId === currentUserId);
+      myOffer = myOffers.length > 0 ? myOffers[0] : null;
+    }
+
+    this.setData({
+      offers: formattedOffers,
+      canViewOffers: true,
+      myOffer,
+      activeOfferCount
+    });
+  },
+
+  calculateOfferTimeLeft(offer) {
+    if (offer.status !== 'pending' && offer.status !== 'countered') {
+      return { text: '', color: '', hasTimeLeft: false };
+    }
+
+    const now = Date.now();
+    const updateTime = offer.updateTime || offer.createTime;
+    const timeoutMs = constants.MARKET_OFFER_TIMEOUT_HOURS * 60 * 60 * 1000;
+    const expireTime = updateTime + timeoutMs;
+    const timeLeft = expireTime - now;
+
+    if (timeLeft <= 0) {
+      return { text: '已超时', color: '#6B7280', hasTimeLeft: false };
+    }
+
+    const hours = Math.floor(timeLeft / (60 * 60 * 1000));
+    const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000));
+
+    let text = '';
+    let color = '#10B981';
+
+    if (hours > 0) {
+      text = `剩余 ${hours} 小时 ${minutes} 分钟`;
+    } else {
+      text = `剩余 ${minutes} 分钟`;
+      color = '#EF4444';
+    }
+
+    if (hours < 6) {
+      color = '#F59E0B';
+    }
+
+    return { text, color, hasTimeLeft: true };
+  },
+
+  onShowOfferModal() {
+    if (!util.checkLogin()) {
+      return;
+    }
+
+    const { detail, isOwner } = this.data;
+
+    if (!detail || detail.status !== 'selling') {
+      util.showToast('商品不在出售中，无法议价');
+      return;
+    }
+
+    if (isOwner) {
+      util.showToast('不能对自己的商品出价');
+      return;
+    }
+
+    this.setData({
+      showOfferModal: true,
+      offerPrice: '',
+      offerMessage: ''
+    });
+  },
+
+  onHideOfferModal() {
+    this.setData({ showOfferModal: false });
+  },
+
+  onOfferPriceInput(e) {
+    this.setData({ offerPrice: e.detail.value });
+  },
+
+  onOfferMessageInput(e) {
+    this.setData({ offerMessage: e.detail.value });
+  },
+
+  onSubmitOffer() {
+    const { id, offerPrice, offerMessage } = this.data;
+
+    if (!offerPrice || isNaN(Number(offerPrice)) || Number(offerPrice) <= 0) {
+      util.showToast('请输入有效的出价金额');
+      return;
+    }
+
+    const result = dataService.createMarketOffer(id, {
+      price: Number(offerPrice),
+      message: offerMessage.trim()
+    });
+
+    if (result.success) {
+      util.showSuccess('出价成功');
+      this.setData({ showOfferModal: false });
+      this.loadDetail();
+    } else {
+      util.showError(result.message || '出价失败');
+    }
+  },
+
+  onAcceptOffer(e) {
+    const { offerId } = e.currentTarget.dataset;
+
+    wx.showModal({
+      title: '确认接受出价',
+      content: '接受出价后，商品将自动标记为已预订，其他买家的出价将被取消。确定接受此出价吗？',
+      success: (res) => {
+        if (res.confirm) {
+          const result = dataService.acceptMarketOffer(offerId);
+          if (result.success) {
+            util.showSuccess('已接受出价');
+            this.loadDetail();
+          } else {
+            util.showError(result.message || '操作失败');
+          }
+        }
+      }
+    });
+  },
+
+  onRejectOffer(e) {
+    const { offerId } = e.currentTarget.dataset;
+
+    wx.showModal({
+      title: '拒绝出价',
+      content: '确定要拒绝此出价吗？',
+      success: (res) => {
+        if (res.confirm) {
+          const result = dataService.rejectMarketOffer(offerId);
+          if (result.success) {
+            util.showSuccess('已拒绝');
+            this.loadDetail();
+          } else {
+            util.showError(result.message || '操作失败');
+          }
+        }
+      }
+    });
+  },
+
+  onShowCounterModal(e) {
+    const { offerId, currentPrice } = e.currentTarget.dataset;
+    this.setData({
+      showCounterModal: true,
+      counterOfferId: offerId,
+      counterPrice: currentPrice || '',
+      counterMessage: ''
+    });
+  },
+
+  onHideCounterModal() {
+    this.setData({ showCounterModal: false });
+  },
+
+  onCounterPriceInput(e) {
+    this.setData({ counterPrice: e.detail.value });
+  },
+
+  onCounterMessageInput(e) {
+    this.setData({ counterMessage: e.detail.value });
+  },
+
+  onSubmitCounter() {
+    const { counterOfferId, counterPrice, counterMessage } = this.data;
+
+    if (!counterPrice || isNaN(Number(counterPrice)) || Number(counterPrice) <= 0) {
+      util.showToast('请输入有效的还价金额');
+      return;
+    }
+
+    const result = dataService.counterMarketOffer(
+      counterOfferId,
+      Number(counterPrice),
+      counterMessage.trim()
+    );
+
+    if (result.success) {
+      util.showSuccess('已发送还价');
+      this.setData({ showCounterModal: false });
+      this.loadDetail();
+    } else {
+      util.showError(result.message || '操作失败');
+    }
+  },
+
+  onCancelOffer(e) {
+    const { offerId } = e.currentTarget.dataset;
+
+    wx.showModal({
+      title: '取消出价',
+      content: '确定要取消此出价吗？',
+      success: (res) => {
+        if (res.confirm) {
+          const result = dataService.cancelMarketOffer(offerId);
+          if (result.success) {
+            util.showSuccess('已取消出价');
+            this.loadDetail();
+          } else {
+            util.showError(result.message || '操作失败');
+          }
+        }
+      }
+    });
+  },
+
+  stopPropagation() {
   },
 
   getShareTitle() {

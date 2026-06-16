@@ -57,6 +57,10 @@
   background: linear-gradient(135deg, rgba(107, 114, 128, 0.9) 0%, rgba(156, 163, 175, 0.9) 100%);
 }
 
+.status-badge.status-negotiating {
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.9) 0%, rgba(142, 68, 173, 0.9) 100%);
+}
+
 .status-badge-text {
   font-size: 24rpx;
   font-weight: 600;
@@ -269,6 +273,11 @@
 .info-tag.status-sold {
   color: var(--color-text-muted);
   background-color: var(--color-bg-input);
+}
+
+.info-tag.status-negotiating {
+  color: #9B59B6;
+  background: linear-gradient(135deg, #F5EEF8 0%, #E8DAEF 100%);
 }
 
 /* ==================== 卖家操作 ==================== */
@@ -820,4 +829,571 @@
 .map-view {
   width: 100%;
   height: 100%;
+}
+
+/* ==================== 议价记录区 ==================== */
+.offer-section {
+  padding: 0 24rpx;
+  margin-bottom: 20rpx;
+}
+
+.offer-count {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+  font-weight: 400;
+  margin-left: 8rpx;
+}
+
+.offer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.offer-item {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: 24rpx;
+  box-shadow: var(--shadow-card);
+}
+
+.offer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.offer-user {
+  display: flex;
+  align-items: center;
+}
+
+.offer-avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  background-color: var(--color-bg-input);
+  flex-shrink: 0;
+}
+
+.offer-user-info {
+  margin-left: 16rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.offer-user-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: 4rpx;
+}
+
+.offer-time {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+
+.offer-status {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.offer-status-icon {
+  font-size: 28rpx;
+  margin-right: 6rpx;
+}
+
+.offer-status-text {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.offer-price-row {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 12rpx;
+}
+
+.offer-price-label {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+}
+
+.offer-price {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0 8rpx;
+}
+
+.offer-original-price {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+
+.offer-message {
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-md);
+  padding: 16rpx 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.offer-message-text {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.offer-time-left {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+
+.time-left-icon {
+  font-size: 24rpx;
+  margin-right: 6rpx;
+}
+
+.time-left-text {
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.offer-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.offer-btn {
+  flex: 1;
+  height: 68rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  font-size: 26rpx;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.offer-btn:active {
+  transform: scale(0.96);
+  opacity: 0.8;
+}
+
+.offer-btn-reject {
+  background-color: var(--color-bg-input);
+  color: var(--color-text-secondary);
+}
+
+.offer-btn-counter {
+  background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+  color: #FFFFFF;
+}
+
+.offer-btn-accept {
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  color: #FFFFFF;
+}
+
+/* 我的出价卡片 */
+.my-offer-card {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  padding: 24rpx;
+  box-shadow: var(--shadow-card);
+}
+
+.my-offer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.my-offer-title {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.my-offer-status {
+  display: flex;
+  align-items: center;
+}
+
+.my-offer-status-icon {
+  font-size: 28rpx;
+  margin-right: 6rpx;
+}
+
+.my-offer-status-text {
+  font-size: 26rpx;
+  font-weight: 600;
+}
+
+.my-offer-price-row {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 12rpx;
+}
+
+.my-offer-price-label {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+}
+
+.my-offer-price {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-left: 8rpx;
+}
+
+.my-offer-message {
+  margin-bottom: 16rpx;
+}
+
+.my-offer-message-label {
+  font-size: 26rpx;
+  color: var(--color-text-secondary);
+}
+
+.my-offer-message-text {
+  font-size: 26rpx;
+  color: var(--color-text-primary);
+  margin-top: 8rpx;
+  line-height: 1.6;
+}
+
+.my-offer-time {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.my-offer-time-icon {
+  font-size: 24rpx;
+  margin-right: 6rpx;
+}
+
+.my-offer-time-text {
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.my-offer-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.my-offer-btn {
+  flex: 1;
+  height: 68rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-full);
+  font-size: 26rpx;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.my-offer-btn:active {
+  transform: scale(0.96);
+  opacity: 0.8;
+}
+
+.my-offer-btn-cancel {
+  background-color: var(--color-bg-input);
+  color: var(--color-text-secondary);
+}
+
+/* 议价历史 */
+.offer-history {
+  margin-top: 20rpx;
+  padding-top: 20rpx;
+  border-top: 1rpx solid var(--color-border-light);
+}
+
+.history-title {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 16rpx;
+}
+
+.history-item {
+  display: flex;
+  align-items: flex-start;
+  padding-left: 8rpx;
+  margin-bottom: 16rpx;
+  position: relative;
+}
+
+.history-item:last-child {
+  margin-bottom: 0;
+}
+
+.history-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  margin-top: 10rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.history-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8rpx;
+}
+
+.history-action {
+  font-size: 26rpx;
+  font-weight: 500;
+  color: var(--color-text-primary);
+}
+
+.history-time {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+  margin-left: 12rpx;
+}
+
+.history-price {
+  margin-bottom: 6rpx;
+}
+
+.history-price-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.history-message {
+  margin-top: 6rpx;
+}
+
+.history-message-text {
+  font-size: 24rpx;
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* 空状态 */
+.offer-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60rpx 0;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.offer-empty-text {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+  margin-bottom: 20rpx;
+}
+
+.offer-empty-btn {
+  padding: 16rpx 40rpx;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #FF8E8E 100%);
+  color: #FFFFFF;
+  font-size: 26rpx;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  transition: all var(--transition-fast);
+}
+
+.offer-empty-btn:active {
+  transform: scale(0.96);
+  opacity: 0.8;
+}
+
+/* ==================== 弹窗 ==================== */
+.modal-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-content {
+  width: 80%;
+  max-width: 600rpx;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  animation: slideUp 0.25s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 24rpx;
+  border-bottom: 1rpx solid var(--color-border-light);
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.modal-close {
+  width: 48rpx;
+  height: 48rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.modal-close:active {
+  transform: scale(0.9);
+  opacity: 0.7;
+}
+
+.close-icon {
+  font-size: 32rpx;
+  color: var(--color-text-muted);
+}
+
+.modal-body {
+  padding: 24rpx;
+}
+
+.form-item {
+  margin-bottom: 24rpx;
+}
+
+.form-item:last-child {
+  margin-bottom: 0;
+}
+
+.form-label {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  margin-bottom: 12rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 160rpx;
+  padding: 16rpx 20rpx;
+  font-size: 28rpx;
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-input);
+  border-radius: var(--radius-md);
+  box-sizing: border-box;
+  line-height: 1.6;
+}
+
+.offer-tip {
+  display: flex;
+  align-items: flex-start;
+  padding: 16rpx 20rpx;
+  background-color: rgba(245, 158, 11, 0.1);
+  border-radius: var(--radius-md);
+  margin-top: 8rpx;
+}
+
+.tip-icon {
+  font-size: 28rpx;
+  margin-right: 10rpx;
+  flex-shrink: 0;
+}
+
+.tip-text {
+  font-size: 24rpx;
+  color: #D97706;
+  line-height: 1.5;
+}
+
+.modal-footer {
+  display: flex;
+  border-top: 1rpx solid var(--color-border-light);
+}
+
+.modal-btn {
+  flex: 1;
+  height: 96rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  transition: all var(--transition-fast);
+}
+
+.modal-btn:active {
+  opacity: 0.8;
+}
+
+.modal-btn-cancel {
+  color: var(--color-text-secondary);
+  border-right: 1rpx solid var(--color-border-light);
+}
+
+.modal-btn-confirm {
+  color: var(--color-primary);
 }

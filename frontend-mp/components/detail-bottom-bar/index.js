@@ -24,6 +24,10 @@ Component({
       type: Boolean,
       value: true
     },
+    enableOffer: {
+      type: Boolean,
+      value: false
+    },
     contactText: {
       type: String,
       value: '立即联系'
@@ -32,7 +36,15 @@ Component({
       type: String,
       value: '编辑'
     },
+    offerText: {
+      type: String,
+      value: '我要出价'
+    },
     contactDisabled: {
+      type: Boolean,
+      value: false
+    },
+    offerDisabled: {
       type: Boolean,
       value: false
     }
@@ -54,6 +66,11 @@ Component({
     onContact() {
       if (this.data.contactDisabled) return;
       this.triggerEvent('contact');
+    },
+
+    onOffer() {
+      if (this.data.offerDisabled) return;
+      this.triggerEvent('offer');
     }
   }
 });

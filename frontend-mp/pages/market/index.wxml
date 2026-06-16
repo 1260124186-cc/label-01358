@@ -86,7 +86,7 @@
               src="{{item.images[0] || '/assets/images/default-goods.png'}}"
               mode="aspectFill"
             />
-            <view class="goods-status {{item.status}}" wx:if="{{item.status !== 'selling'}}">
+            <view class="goods-status {{item.displayStatus}}" wx:if="{{item.status !== 'selling' || item.isNegotiating}}">
               {{item.statusText}}
             </view>
           </view>

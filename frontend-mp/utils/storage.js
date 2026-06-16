@@ -86,6 +86,7 @@ const STORAGE_KEYS = {
   SCENERY_MANAGE: 'sceneryManage',
   LOST_FOUND_COMMENTS: 'lostFoundComments',
   MARKET_COMMENTS: 'marketComments',
+  MARKET_OFFERS: 'marketOffers',
   TICKET_ORDER_LIST: 'ticketOrderList',
   TICKET_VERIFY_LOG: 'ticketVerifyLog',
   USER_WALLET: 'userWallet',
