@@ -1,0 +1,77 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 核心数据 -->
+  <view class="stats-section">
+    <view class="section-title">核心数据</view>
+    <view class="stats-grid">
+      <view class="stat-card" style="background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);">
+        <text class="stat-value">{{stats.memberCount}}</text>
+        <text class="stat-label">社团成员</text>
+      </view>
+      <view class="stat-card" style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%);">
+        <text class="stat-value">{{stats.activityCount}}</text>
+        <text class="stat-label">活动总数</text>
+      </view>
+      <view class="stat-card" style="background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);">
+        <text class="stat-value">{{stats.avgParticipationRate}}%</text>
+        <text class="stat-label">平均参与率</text>
+      </view>
+      <view class="stat-card" style="background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);">
+        <text class="stat-value">{{stats.monthActiveCount}}</text>
+        <text class="stat-label">本月活跃</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 更多数据 -->
+  <view class="stats-section">
+    <view class="section-title">更多数据</view>
+    <view class="more-stats">
+      <view class="more-stat-item">
+        <text class="more-stat-icon">📢</text>
+        <view class="more-stat-info">
+          <text class="more-stat-value">{{stats.announcementCount}}</text>
+          <text class="more-stat-label">发布公告</text>
+        </view>
+      </view>
+      <view class="more-stat-item">
+        <text class="more-stat-icon">🆕</text>
+        <view class="more-stat-info">
+          <text class="more-stat-value">{{stats.newMembersThisMonth}}</text>
+          <text class="more-stat-label">本月新成员</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 近期活动 -->
+  <view class="stats-section">
+    <view class="section-title">近期活动</view>
+    <view class="activity-list">
+      <view class="activity-item" wx:for="{{recentActivities}}" wx:key="id">
+        <view class="activity-info">
+          <view class="activity-name">{{item.title}}</view>
+          <view class="activity-time">{{item.activityTimeText}}</view>
+        </view>
+        <view class="activity-stats">
+          <view class="stat-row">
+            <text class="stat-label">报名</text>
+            <text class="stat-value">{{item.registrationCount}}人</text>
+          </view>
+          <view class="stat-row">
+            <text class="stat-label">签到</text>
+            <text class="stat-value">{{item.checkinCount}}人</text>
+          </view>
+          <view class="stat-row">
+            <text class="stat-label">参与率</text>
+            <text class="stat-value rate">{{item.participationRate}}%</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    
+    <view class="empty-state" wx:if="{{recentActivities.length === 0}}">
+      <text class="empty-text">暂无活动数据</text>
+    </view>
+  </view>
+</view>

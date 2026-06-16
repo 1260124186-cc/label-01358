@@ -12,7 +12,10 @@ mixPage({
     activityList: [],
     activityType: 'all',
     isMember: false,
-    memberRole: ''
+    memberRole: '',
+    isAdmin: false,
+    isPresident: false,
+    pendingRequestCount: 0
   },
 
   onLoad(options) {
@@ -65,6 +68,10 @@ mixPage({
       memberRole = m ? m.role : 'member';
     }
 
+    const isPresident = dataService.isClubPresident(this.data.clubId, userId);
+    const isAdmin = dataService.isClubAdmin(this.data.clubId, userId);
+    const pendingRequestCount = isAdmin ? dataService.getPendingJoinRequestCount(this.data.clubId) : 0;
+
     this.setData({
       club: {
         ...club,
@@ -79,7 +86,10 @@ mixPage({
       })),
       activityList: formattedActivities,
       isMember,
-      memberRole
+      memberRole,
+      isPresident,
+      isAdmin,
+      pendingRequestCount
     });
 
     util.hideLoading();
@@ -166,6 +176,15 @@ mixPage({
       return;
     }
     util.navigateTo('/pages/club-activity/publish?clubId=' + this.data.clubId);
+  },
+
+  onManageClub() {
+    if (!util.checkLogin()) return;
+    if (!this.data.isAdmin) {
+      util.showToast('您没有管理权限');
+      return;
+    }
+    util.navigateTo('/pages/club-manage/index?id=' + this.data.clubId);
   },
 
   onShareAppMessage() {

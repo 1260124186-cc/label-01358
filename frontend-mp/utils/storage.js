@@ -53,6 +53,8 @@ const STORAGE_KEYS = {
   CLUB_ACTIVITY_LIST: 'clubActivityList',
   CLUB_ACTIVITY_REGISTRATION_LIST: 'clubActivityRegistrationList',
   CLUB_ACTIVITY_CHECKIN_LIST: 'clubActivityCheckinList',
+  CLUB_JOIN_REQUESTS: 'clubJoinRequests',
+  CLUB_ANNOUNCEMENTS: 'clubAnnouncements',
   POI_LIST: 'poiList',
   MAP_FAVORITES: 'mapFavorites',
   MAP_SEARCH_HISTORY: 'mapSearchHistory',

@@ -1,0 +1,51 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="form-section">
+    <view class="section-title">社团封面</view>
+    <view class="cover-upload" bindtap="onChooseCover">
+      <image wx:if="{{cover}}" class="cover-image" src="{{cover}}" mode="aspectFill"></image>
+      <view wx:else class="cover-placeholder">
+        <text class="upload-icon">📷</text>
+        <text class="upload-text">点击上传封面</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">社团名称</view>
+    <view class="input-wrapper">
+      <input 
+        class="input" 
+        placeholder="请输入社团名称" 
+        value="{{name}}" 
+        bindinput="onNameInput"
+        maxlength="20"
+      />
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-title">社团简介</view>
+    <view class="textarea-wrapper">
+      <textarea 
+        class="textarea" 
+        placeholder="请输入社团简介" 
+        value="{{description}}" 
+        bindinput="onDescInput"
+        maxlength="500"
+        auto-height
+      />
+      <view class="char-count">{{description.length}}/500</view>
+    </view>
+  </view>
+
+  <view class="submit-section">
+    <button 
+      class="submit-btn {{saving ? 'disabled' : ''}}" 
+      bindtap="onSave"
+      disabled="{{saving}}"
+    >
+      {{saving ? '保存中...' : '保存修改'}}
+    </button>
+  </view>
+</view>

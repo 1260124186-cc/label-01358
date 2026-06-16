@@ -1,0 +1,83 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header">
+    <view class="back-btn" bindtap="onBack">
+      <text class="back-icon">←</text>
+    </view>
+    <view class="title">活动管理</view>
+    <view class="publish-btn" bindtap="onPublish">
+      <text class="publish-icon">+</text>
+    </view>
+  </view>
+
+  <view class="tabs">
+    <view 
+      class="tab-item {{status === item.value ? 'active' : ''}}"
+      wx:for="{{statusTabs}}"
+      wx:key="value"
+      data-value="{{item.value}}"
+      bindtap="onStatusTap"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <view class="activity-list" wx:if="{{activities.length > 0}}">
+    <view 
+      class="activity-card"
+      wx:for="{{activities}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onActivityTap"
+      hover-class="activity-card-hover"
+    >
+      <view class="activity-cover" wx:if="{{item.cover}}">
+        <image src="{{item.cover}}" mode="aspectFill" class="cover-img"></image>
+      </view>
+      <view class="activity-cover placeholder" wx:else>
+        <text class="cover-icon">📅</text>
+      </view>
+      
+      <view class="activity-info">
+        <view class="activity-header">
+          <view class="activity-title">{{item.title}}</view>
+          <view class="status-tag" style="background-color: {{item.statusColor}}20; color: {{item.statusColor}};">
+            {{item.statusText}}
+          </view>
+        </view>
+        
+        <view class="activity-meta">
+          <text class="meta-item">🕐 {{item.activityTimeText}}</text>
+          <text class="meta-item" wx:if="{{item.location}}">📍 {{item.location}}</text>
+        </view>
+        
+        <view class="activity-stats">
+          <view class="stat-item">
+            <text class="stat-value">{{item.registrationCount}}</text>
+            <text class="stat-label">报名</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value">{{item.checkinCount}}</text>
+            <text class="stat-label">签到</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value rate">{{item.participationRate}}%</text>
+            <text class="stat-label">签到率</text>
+          </view>
+          <view class="stat-item capacity" wx:if="{{item.capacity}}">
+            <text class="stat-value">{{item.capacity}}</text>
+            <text class="stat-label">容量</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="activity-arrow">›</view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <view class="empty-icon">📅</view>
+    <view class="empty-text">暂无活动</view>
+    <view class="empty-desc">点击右上角发布新活动</view>
+  </view>
+</view>

@@ -20,9 +20,17 @@
     </view>
 
     <view class="quick-actions">
+      <view class="qa-item" bindtap="onScanCheckin">
+        <view class="qa-icon">📱</view>
+        <view class="qa-text">扫码签到</view>
+      </view>
       <view class="qa-item" bindtap="onGoVerify">
         <view class="qa-icon">📷</view>
         <view class="qa-text">扫码验票</view>
+      </view>
+      <view class="qa-item" bindtap="onExportCheckin">
+        <view class="qa-icon">📋</view>
+        <view class="qa-text">签到表</view>
       </view>
       <view class="qa-item" bindtap="onExportData">
         <view class="qa-icon">📤</view>
@@ -65,7 +73,7 @@
       bindtap="onSwitchView"
     >
       <text class="vt-text">{{item.label}}</text>
-      <text class="vt-count">{{item.value === 'registrations' ? registrations.length : orders.length}}</text>
+      <text class="vt-count">{{item.value === 'registrations' ? registrations.length : item.value === 'checkins' ? checkins.length : orders.length}}</text>
     </view>
   </view>
 
@@ -105,6 +113,46 @@
         data-user-id="{{item.userId}}"
         catchtap="onToggleCheckIn"
       >{{item.checkedIn ? '撤销' : '签到'}}</view>
+    </view>
+  </view>
+
+  <view class="list-wrap" wx:if="{{currentView === 'checkins'}}">
+    <view wx:if="{{checkins.length === 0}}" class="empty-state">
+      <view class="empty-icon">✅</view>
+      <view class="empty-text">暂无签到记录</view>
+      <view class="empty-sub">活动开始后会有签到数据</view>
+    </view>
+
+    <view
+      wx:for="{{checkins}}"
+      wx:key="userId"
+      class="member-card"
+      data-user-id="{{item.userId}}"
+      bindtap="onShowRegistrationDetail"
+    >
+      <view class="member-left">
+        <view class="avatar-mini">{{item.userName ? item.userName[0] : '?'}}</view>
+      </view>
+      <view class="member-body">
+        <view class="mb-row">
+          <view class="mb-name">{{item.userName}}</view>
+          <view class="mb-status checked">
+            ✓ 已签到
+          </view>
+        </view>
+        <view class="mb-info">
+          <text class="mb-info-item">学号：{{item.studentNo || '-'}}</text>
+        </view>
+        <view class="mb-info">
+          <text class="mb-info-item">专业：{{item.major || '-'}}</text>
+          <text class="mb-time">签到于 {{f.formatShortTime(item.checkInTime)}}</text>
+        </view>
+      </view>
+      <view
+        class="action-mini undo"
+        data-user-id="{{item.userId}}"
+        catchtap="onToggleCheckIn"
+      >撤销</view>
     </view>
   </view>
 

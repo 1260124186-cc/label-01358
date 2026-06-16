@@ -16,10 +16,12 @@ Page({
     currentView: 'registrations',
     viewTabs: [
       { value: 'registrations', label: '报名名单' },
+      { value: 'checkins', label: '签到名单' },
       { value: 'orders', label: '购票订单' }
     ],
     ticketStats: { sold: 0, verified: 0, refunded: 0, revenue: 0 },
     registrations: [],
+    checkins: [],
     orders: [],
     orderVerifiedCounts: {},
     orderUnverifiedCounts: {},
@@ -50,6 +52,10 @@ Page({
 
     const registrations = activity && activity.registrations ? activity.registrations : [];
     const sortedRegs = [...registrations].sort((a, b) => b.registeredAt - a.registeredAt);
+    
+    const checkins = registrations.filter(r => r.checkedIn).sort((a, b) => {
+      return (b.checkInTime || 0) - (a.checkInTime || 0);
+    });
 
     const allOrders = dataService.getTicketOrderList() || [];
     const orders = allOrders
@@ -72,6 +78,7 @@ Page({
       activity,
       ticketStats,
       registrations: sortedRegs,
+      checkins,
       orders,
       orderVerifiedCounts,
       orderUnverifiedCounts,
@@ -93,6 +100,62 @@ Page({
     wx.navigateTo({
       url: `/pages/club-activity/verify?activityId=${this.data.activityId}`
     });
+  },
+
+  onScanCheckin() {
+    wx.scanCode({
+      scanType: ['qrCode'],
+      success: (res) => {
+        const result = dataService.scanCheckin(this.data.activityId, res.result);
+        if (result.success) {
+          wx.showToast({ title: '签到成功', icon: 'success' });
+          wx.vibrateShort({ type: 'light' });
+          this.initData();
+        } else {
+          wx.showToast({ title: result.message || '签到失败', icon: 'none' });
+          wx.vibrateShort({ type: 'heavy' });
+        }
+      },
+      fail: () => {
+        wx.showToast({ title: '扫码取消', icon: 'none' });
+      }
+    });
+  },
+
+  onExportCheckin() {
+    const text = this.generateCheckinExportText();
+    wx.setClipboardData({
+      data: text,
+      success: () => wx.showToast({ title: '签到表已复制', icon: 'success' })
+    });
+  },
+
+  generateCheckinExportText() {
+    const { activity, registrations, checkins } = this.data;
+    const checkinRate = registrations.length > 0 
+      ? Math.round(checkins.length / registrations.length * 100) 
+      : 0;
+    
+    let text = `=== ${activity.title} - 签到表 ===\n`;
+    text += `活动时间：${this.formatFullTime(activity.startAt)}\n`;
+    text += `报名人数：${registrations.length}人\n`;
+    text += `签到人数：${checkins.length}人\n`;
+    text += `签到率：${checkinRate}%\n\n`;
+
+    text += `--- 签到名单 (${checkins.length}人) ---\n`;
+    text += `序号\t姓名\t学号\t专业\t签到时间\n`;
+    checkins.forEach((r, i) => {
+      text += `${i + 1}\t${r.userName}\t${r.studentNo || '-'}\t${r.major || '-'}\t${this.formatFullTime(r.checkInTime)}\n`;
+    });
+    text += `\n`;
+
+    text += `--- 未签到名单 (${registrations.length - checkins.length}人) ---\n`;
+    const notChecked = registrations.filter(r => !r.checkedIn);
+    notChecked.forEach((r, i) => {
+      text += `${i + 1}\t${r.userName}\t${r.studentNo || '-'}\t${r.major || '-'}\n`;
+    });
+
+    return text;
   },
 
   onShowRegistrationDetail(e) {

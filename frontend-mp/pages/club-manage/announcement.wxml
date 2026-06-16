@@ -1,0 +1,81 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header">
+    <view class="header-info">
+      <text class="header-title">社团公告</text>
+      <text class="header-desc">共 {{announcements.length}} 条公告</text>
+    </view>
+    <button class="publish-btn" bindtap="onPublishTap">发布公告</button>
+  </view>
+
+  <view class="announcement-list" wx:if="{{announcements.length > 0}}">
+    <view class="announcement-card" wx:for="{{announcements}}" wx:key="id">
+      <view class="card-header">
+        <view class="title-row">
+          <view class="important-tag" wx:if="{{item.isImportant}}">
+            <text>📌 重要</text>
+          </view>
+          <text class="title">{{item.title}}</text>
+        </view>
+        <view class="delete-btn" data-id="{{item.id}}" catchtap="onDelete">删除</view>
+      </view>
+      <view class="content">{{item.content}}</view>
+      <view class="card-footer">
+        <text class="time">{{item.createTimeText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <view class="empty-icon">📢</view>
+    <view class="empty-text">暂无公告</view>
+    <view class="empty-desc">点击右上角发布第一条公告吧</view>
+  </view>
+
+  <!-- 发布公告弹窗 -->
+  <view class="publish-modal" wx:if="{{showPublish}}" catchtap="onClosePublish">
+    <view class="modal-content" catchtap="">
+      <view class="modal-header">
+        <text class="modal-title">发布公告</text>
+        <text class="modal-close" bindtap="onClosePublish">×</text>
+      </view>
+      
+      <view class="modal-body">
+        <view class="form-item">
+        <view class="form-label">公告标题</view>
+        <input 
+          class="form-input" 
+          placeholder="请输入公告标题" 
+          value="{{title}}" 
+          bindinput="onTitleInput"
+          maxlength="30"
+        />
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label">公告内容</view>
+        <textarea 
+          class="form-textarea" 
+          placeholder="请输入公告内容" 
+          value="{{content}}" 
+          bindinput="onContentInput"
+          maxlength="500"
+        />
+      </view>
+
+      <view class="form-item switch-item" bindtap="onToggleImportant">
+        <view class="switch-label">
+          <text>设为重要公告</text>
+          <text class="switch-desc">重要公告会显示在最顶部</text>
+        </view>
+        <switch checked="{{isImportant}}" color="#10B981" />
+      </view>
+      </view>
+      
+      <view class="modal-footer">
+        <button class="cancel-btn" bindtap="onClosePublish">取消</button>
+        <button class="confirm-btn" bindtap="onSubmit">发布</button>
+      </view>
+    </view>
+  </view>
+</view>

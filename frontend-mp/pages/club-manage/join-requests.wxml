@@ -1,0 +1,51 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="tabs">
+    <view 
+      class="tab-item {{status === item.value ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="value"
+      data-value="{{item.value}}"
+      bindtap="onTabChange"
+    >
+      {{item.label}}
+    </view>
+  </view>
+
+  <view class="list" wx:if="{{requestList.length > 0}}">
+    <view class="request-card" wx:for="{{requestList}}" wx:key="id">
+      <view class="card-header">
+        <view class="user-info">
+          <view class="avatar">{{item.avatarInitial}}</view>
+          <view class="user-detail">
+            <view class="user-name">{{item.name}}</view>
+            <view class="request-time">{{item.createTimeText}}</view>
+          </view>
+        </view>
+        <view class="status-tag" style="background-color: {{item.statusColor}}20; color: {{item.statusColor}};">
+          {{item.statusText}}
+        </view>
+      </view>
+      
+      <view class="card-body" wx:if="{{item.reason}}">
+        <view class="label">申请理由</view>
+        <view class="reason-text">{{item.reason}}</view>
+      </view>
+
+      <view class="card-body" wx:if="{{item.rejectReason}}">
+        <view class="label">拒绝原因</view>
+        <view class="reason-text">{{item.rejectReason}}</view>
+      </view>
+
+      <view class="card-actions" wx:if="{{status === 'pending'}}">
+        <button class="btn btn-reject" data-id="{{item.id}}" bindtap="onReject">拒绝</button>
+        <button class="btn btn-approve" data-id="{{item.id}}" bindtap="onApprove">通过</button>
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:else>
+    <view class="empty-icon">📋</view>
+    <view class="empty-text">暂无申请记录</view>
+  </view>
+</view>

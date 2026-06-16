@@ -4844,13 +4844,16 @@ const MOCK_CLUBS = [
     cover: 'https://picsum.photos/seed/club1cover/800/400',
     memberCount: 328,
     activityCount: 56,
+    presidentId: 'user_001',
     presidentName: '李明',
     presidentAvatar: '',
+    admins: ['user_001', 'user_002', 'user_003'],
     contactPhone: '13800138010',
     contactWechat: 'cs_club_2026',
     location: '信息楼305室',
     foundedDate: '2010-09-01',
-    tags: ['编程', 'AI', '算法', '开源']
+    tags: ['编程', 'AI', '算法', '开源'],
+    needApproval: true
   },
   {
     id: 'club_002',
@@ -4862,13 +4865,16 @@ const MOCK_CLUBS = [
     cover: 'https://picsum.photos/seed/club2cover/800/400',
     memberCount: 186,
     activityCount: 92,
+    presidentId: 'user_009',
     presidentName: '王强',
     presidentAvatar: '',
+    admins: ['user_009', 'user_010'],
     contactPhone: '13800138011',
     contactWechat: 'basketball_xd',
     location: '体育馆201室',
     foundedDate: '2008-05-15',
-    tags: ['篮球', '运动', '比赛', '健身']
+    tags: ['篮球', '运动', '比赛', '健身'],
+    needApproval: false
   },
   {
     id: 'club_003',
@@ -4880,13 +4886,16 @@ const MOCK_CLUBS = [
     cover: 'https://picsum.photos/seed/club3cover/800/400',
     memberCount: 152,
     activityCount: 38,
+    presidentId: 'user_013',
     presidentName: '张雨薇',
     presidentAvatar: '',
+    admins: ['user_013', 'user_014'],
     contactPhone: '13800138012',
     contactWechat: 'drama_club',
     location: '大学生活动中心4楼',
     foundedDate: '2012-03-20',
-    tags: ['话剧', '表演', '导演', '编剧']
+    tags: ['话剧', '表演', '导演', '编剧'],
+    needApproval: true
   },
   {
     id: 'club_004',
@@ -4898,13 +4907,16 @@ const MOCK_CLUBS = [
     cover: 'https://picsum.photos/seed/club4cover/800/400',
     memberCount: 520,
     activityCount: 128,
+    presidentId: 'user_017',
     presidentName: '刘思琪',
     presidentAvatar: '',
+    admins: ['user_017'],
     contactPhone: '13800138013',
     contactWechat: 'volunteer_love',
     location: '行政楼B201',
     foundedDate: '2006-09-01',
-    tags: ['志愿', '公益', '环保', '支教']
+    tags: ['志愿', '公益', '环保', '支教'],
+    needApproval: false
   },
   {
     id: 'club_005',
@@ -4916,13 +4928,16 @@ const MOCK_CLUBS = [
     cover: 'https://picsum.photos/seed/club5cover/800/400',
     memberCount: 98,
     activityCount: 42,
+    presidentId: 'user_021',
     presidentName: '陈雅文',
     presidentAvatar: '',
+    admins: ['user_021'],
     contactPhone: '13800138014',
     contactWechat: 'literature_club',
     location: '图书馆3楼会议室',
     foundedDate: '2015-04-10',
-    tags: ['文学', '写作', '阅读', '诗歌']
+    tags: ['文学', '写作', '阅读', '诗歌'],
+    needApproval: true
   },
   {
     id: 'club_006',
@@ -4934,37 +4949,40 @@ const MOCK_CLUBS = [
     cover: 'https://picsum.photos/seed/club6cover/800/400',
     memberCount: 245,
     activityCount: 78,
+    presidentId: 'user_025',
     presidentName: '林小舞',
     presidentAvatar: '',
+    admins: ['user_025'],
     contactPhone: '13800138015',
     contactWechat: 'dance_union',
     location: '大学生活动中心3楼舞蹈室',
     foundedDate: '2011-10-01',
-    tags: ['舞蹈', '街舞', '爵士', '表演']
+    tags: ['舞蹈', '街舞', '爵士', '表演'],
+    needApproval: false
   }
 ];
 
 const MOCK_CLUB_MEMBERS = {
   club_001: [
-    { id: 'm1', userId: 'user_001', name: '李明', role: 'president', avatar: '', joinTime: Date.now() - 720 * 86400000 },
-    { id: 'm2', userId: 'user_002', name: '张华', role: 'vice_president', avatar: '', joinTime: Date.now() - 600 * 86400000 },
-    { id: 'm3', userId: 'user_003', name: '王磊', role: 'officer', avatar: '', joinTime: Date.now() - 480 * 86400000 },
-    { id: 'm4', userId: 'user_004', name: '赵雪', role: 'member', avatar: '', joinTime: Date.now() - 360 * 86400000 },
-    { id: 'm5', userId: 'user_005', name: '孙浩', role: 'member', avatar: '', joinTime: Date.now() - 240 * 86400000 },
-    { id: 'm6', userId: 'user_006', name: '周婷', role: 'member', avatar: '', joinTime: Date.now() - 180 * 86400000 },
-    { id: 'm7', userId: 'user_007', name: '吴刚', role: 'member', avatar: '', joinTime: Date.now() - 120 * 86400000 },
-    { id: 'm8', userId: 'user_008', name: '郑悦', role: 'member', avatar: '', joinTime: Date.now() - 60 * 86400000 }
+    { id: 'm1', userId: 'user_001', name: '李明', role: 'president', avatar: '', joinTime: Date.now() - 720 * 86400000, studentNo: '2021001', major: '计算机科学与技术', grade: '大三' },
+    { id: 'm2', userId: 'user_002', name: '张华', role: 'vicePresident', avatar: '', joinTime: Date.now() - 600 * 86400000, studentNo: '2021002', major: '计算机科学与技术', grade: '大三' },
+    { id: 'm3', userId: 'user_003', name: '王磊', role: 'director', avatar: '', joinTime: Date.now() - 480 * 86400000, studentNo: '2021003', major: '软件工程', grade: '大二' },
+    { id: 'm4', userId: 'user_004', name: '赵雪', role: 'member', avatar: '', joinTime: Date.now() - 360 * 86400000, studentNo: '2022004', major: '计算机科学与技术', grade: '大二' },
+    { id: 'm5', userId: 'user_005', name: '孙浩', role: 'member', avatar: '', joinTime: Date.now() - 240 * 86400000, studentNo: '2022005', major: '软件工程', grade: '大二' },
+    { id: 'm6', userId: 'user_006', name: '周婷', role: 'member', avatar: '', joinTime: Date.now() - 180 * 86400000, studentNo: '2023006', major: '人工智能', grade: '大一' },
+    { id: 'm7', userId: 'user_007', name: '吴刚', role: 'member', avatar: '', joinTime: Date.now() - 120 * 86400000, studentNo: '2023007', major: '计算机科学与技术', grade: '大一' },
+    { id: 'm8', userId: 'user_008', name: '郑悦', role: 'member', avatar: '', joinTime: Date.now() - 60 * 86400000, studentNo: '2023008', major: '人工智能', grade: '大一' }
   ],
   club_002: [
-    { id: 'm9', userId: 'user_009', name: '王强', role: 'president', avatar: '', joinTime: Date.now() - 700 * 86400000 },
-    { id: 'm10', userId: 'user_010', name: '马超', role: 'vice_president', avatar: '', joinTime: Date.now() - 500 * 86400000 },
-    { id: 'm11', userId: 'user_011', name: '朱杰', role: 'member', avatar: '', joinTime: Date.now() - 300 * 86400000 },
-    { id: 'm12', userId: 'user_012', name: '徐健', role: 'member', avatar: '', joinTime: Date.now() - 200 * 86400000 }
+    { id: 'm9', userId: 'user_009', name: '王强', role: 'president', avatar: '', joinTime: Date.now() - 700 * 86400000, studentNo: '2021009', major: '体育教育', grade: '大三' },
+    { id: 'm10', userId: 'user_010', name: '马超', role: 'vicePresident', avatar: '', joinTime: Date.now() - 500 * 86400000, studentNo: '2021010', major: '运动训练', grade: '大三' },
+    { id: 'm11', userId: 'user_011', name: '朱杰', role: 'member', avatar: '', joinTime: Date.now() - 300 * 86400000, studentNo: '2022011', major: '体育教育', grade: '大二' },
+    { id: 'm12', userId: 'user_012', name: '徐健', role: 'member', avatar: '', joinTime: Date.now() - 200 * 86400000, studentNo: '2022012', major: '运动训练', grade: '大二' }
   ],
   club_003: [
-    { id: 'm13', userId: 'user_013', name: '张雨薇', role: 'president', avatar: '', joinTime: Date.now() - 650 * 86400000 },
-    { id: 'm14', userId: 'user_014', name: '何娜', role: 'officer', avatar: '', joinTime: Date.now() - 400 * 86400000 },
-    { id: 'm15', userId: 'user_015', name: '宋佳', role: 'member', avatar: '', joinTime: Date.now() - 250 * 86400000 }
+    { id: 'm13', userId: 'user_013', name: '张雨薇', role: 'president', avatar: '', joinTime: Date.now() - 650 * 86400000, studentNo: '2021013', major: '戏剧影视文学', grade: '大三' },
+    { id: 'm14', userId: 'user_014', name: '何娜', role: 'director', avatar: '', joinTime: Date.now() - 400 * 86400000, studentNo: '2021014', major: '表演', grade: '大三' },
+    { id: 'm15', userId: 'user_015', name: '宋佳', role: 'member', avatar: '', joinTime: Date.now() - 250 * 86400000, studentNo: '2022015', major: '戏剧影视文学', grade: '大二' }
   ]
 };
 
@@ -5162,6 +5180,117 @@ const MOCK_CLUB_ACTIVITIES = [
     checkInCode: 'CLUB-ACT-009-QR'
   }
 ];
+
+const MOCK_CLUB_JOIN_REQUESTS = {
+  club_001: [
+    {
+      id: 'req_001',
+      userId: 'user_101',
+      userName: '周小明',
+      avatar: '',
+      studentNo: '2023010101',
+      major: '计算机科学与技术',
+      grade: '2023',
+      reason: '对编程很感兴趣，希望能加入协会学习更多技术',
+      status: 'pending',
+      createTime: Date.now() - 3600000
+    },
+    {
+      id: 'req_002',
+      userId: 'user_102',
+      userName: '吴婷婷',
+      avatar: '',
+      studentNo: '2024020202',
+      major: '软件工程',
+      grade: '2024',
+      reason: '想参加黑客马拉松，提升编程能力',
+      status: 'pending',
+      createTime: Date.now() - 7200000
+    },
+    {
+      id: 'req_003',
+      userId: 'user_103',
+      userName: '郑浩宇',
+      avatar: '',
+      studentNo: '2023030303',
+      major: '人工智能',
+      grade: '2023',
+      reason: '之前有Python基础，想深入学习AI相关技术',
+      status: 'approved',
+      createTime: Date.now() - 86400000
+    },
+    {
+      id: 'req_004',
+      userId: 'user_104',
+      userName: '孙佳怡',
+      avatar: '',
+      studentNo: '2024040404',
+      major: '数据科学',
+      grade: '2024',
+      reason: '想认识更多志同道合的朋友',
+      status: 'rejected',
+      rejectReason: '专业不符，建议关注其他相关社团',
+      createTime: Date.now() - 172800000
+    }
+  ],
+  club_003: [
+    {
+      id: 'req_005',
+      userId: 'user_105',
+      userName: '钱雨涵',
+      avatar: '',
+      studentNo: '2023050505',
+      major: '戏剧影视文学',
+      grade: '2023',
+      reason: '热爱话剧表演，有一定表演基础',
+      status: 'pending',
+      createTime: Date.now() - 10800000
+    }
+  ]
+};
+
+const MOCK_CLUB_ANNOUNCEMENTS = {
+  club_001: [
+    {
+      id: 'ann_001',
+      title: 'AI大模型技术分享会报名通知',
+      content: '各位同学，本学期第一场技术分享会来啦！我们邀请了业界资深算法工程师为大家分享AI大模型技术。\n\n时间：本周六下午2点\n地点：信息楼报告厅\n报名方式：点击活动页面直接报名\n\n名额有限，先到先得！',
+      publisherId: 'user_001',
+      publisherName: '李明',
+      isImportant: true,
+      createTime: Date.now() - 86400000
+    },
+    {
+      id: 'ann_002',
+      title: '24小时黑客马拉松即将开赛',
+      content: '一年一度的黑客马拉松将于下周末举行！24小时极限编程挑战，丰厚奖金等你来拿！\n\n报名截止：本周五晚8点\n组队要求：2-4人组队\n奖项设置：一等奖3000元、二等奖1500元、三等奖800元\n\n点击下方链接立即报名！',
+      publisherId: 'user_002',
+      publisherName: '张华',
+      isImportant: false,
+      createTime: Date.now() - 172800000
+    },
+    {
+      id: 'ann_003',
+      title: '新学期社团招新圆满结束',
+      content: '感谢大家对计算机协会的支持！本学期招新共收到200+份申请，经过面试选拔，最终录取了80名新成员。\n\n迎新见面会将于周三晚7点在信息楼305举行，请新成员准时参加。\n\n未入选的同学也不要灰心，我们会不定期开放补录通道，请持续关注！',
+      publisherId: 'user_001',
+      publisherName: '李明',
+      isImportant: false,
+      createTime: Date.now() - 259200000
+    }
+  ],
+  club_002: [
+    {
+      id: 'ann_004',
+      title: '春季3V3篮球联赛报名开始',
+      content: '各位篮球爱好者注意了！春季3V3篮球联赛报名正式开始！\n\n比赛时间：3月15日-3月20日\n比赛地点：西区篮球场\n报名方式：以队为单位报名，每队3-5人\n报名截止：3月10日晚12点\n\n冠军队伍将获得奖杯和定制篮球！',
+      publisherId: 'user_009',
+      publisherName: '王强',
+      isImportant: true,
+      createTime: Date.now() - 43200000
+    }
+  ]
+};
 
 const MOCK_COURSES = [
   {
@@ -8840,6 +8969,8 @@ module.exports = {
   MOCK_CLUBS,
   MOCK_CLUB_MEMBERS,
   MOCK_CLUB_ACTIVITIES,
+  MOCK_CLUB_JOIN_REQUESTS,
+  MOCK_CLUB_ANNOUNCEMENTS,
   MOCK_COURSES,
   MOCK_EXAM_SCORES,
   MOCK_EXAM_SCHEDULE,

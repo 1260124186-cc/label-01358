@@ -1,0 +1,142 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding: 24rpx;
+}
+
+.member-count {
+  display: flex;
+  align-items: baseline;
+  gap: 12rpx;
+  margin-bottom: 24rpx;
+  padding: 0 8rpx;
+}
+
+.count-num {
+  font-size: 48rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.count-label {
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+}
+
+.member-list {
+  background-color: var(--color-bg-card);
+  border-radius: 24rpx;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.member-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx;
+  border-bottom: 1rpx solid var(--color-border);
+}
+
+.member-card:last-child {
+  border-bottom: none;
+}
+
+.member-left {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  flex: 1;
+}
+
+.avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #FFFFFF;
+  font-size: 36rpx;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10rpx;
+  flex: 1;
+}
+
+.member-name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.member-meta {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.role-tag {
+  padding: 4rpx 12rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  border-radius: 6rpx;
+}
+
+.join-time {
+  font-size: 24rpx;
+  color: var(--color-text-muted);
+}
+
+.member-actions {
+  display: flex;
+  gap: 16rpx;
+}
+
+.action-btn {
+  padding: 12rpx 24rpx;
+  font-size: 24rpx;
+  font-weight: 500;
+  border-radius: 12rpx;
+  flex-shrink: 0;
+}
+
+.role-btn {
+  background-color: #EFF6FF;
+  color: #3B82F6;
+}
+
+.remove-btn {
+  background-color: #FEF2F2;
+  color: #EF4444;
+}
+
+.president-tag {
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.empty-icon {
+  font-size: 96rpx;
+  margin-bottom: 24rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: var(--color-text-secondary);
+}

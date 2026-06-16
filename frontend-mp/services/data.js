@@ -4528,6 +4528,8 @@ function initClubData() {
   if (clubInitialized) return;
   const existingClubs = storage.get(STORAGE_KEYS.CLUB_LIST);
   const existingActivities = storage.get(STORAGE_KEYS.CLUB_ACTIVITY_LIST);
+  const existingJoinRequests = storage.get(STORAGE_KEYS.CLUB_JOIN_REQUESTS);
+  const existingAnnouncements = storage.get(STORAGE_KEYS.CLUB_ANNOUNCEMENTS);
 
   if (!existingClubs || existingClubs.length === 0) {
     const clubs = mockData.MOCK_CLUBS.map((item, index) => ({
@@ -4551,6 +4553,14 @@ function initClubData() {
       updateTime: now - (index + 1) * 86400000
     }));
     storage.set(STORAGE_KEYS.CLUB_ACTIVITY_LIST, activities);
+  }
+
+  if (!existingJoinRequests) {
+    storage.set(STORAGE_KEYS.CLUB_JOIN_REQUESTS, mockData.MOCK_CLUB_JOIN_REQUESTS || {});
+  }
+
+  if (!existingAnnouncements) {
+    storage.set(STORAGE_KEYS.CLUB_ANNOUNCEMENTS, mockData.MOCK_CLUB_ANNOUNCEMENTS || {});
   }
 
   clubInitialized = true;
@@ -4673,6 +4683,375 @@ function leaveClub(clubId, userId) {
   }
 
   return { success: true };
+}
+
+function isClubAdmin(clubId, userId) {
+  initClubData();
+  const club = getClubDetail(clubId);
+  if (!club) return false;
+  return (club.admins || []).includes(userId);
+}
+
+function isClubPresident(clubId, userId) {
+  initClubData();
+  const club = getClubDetail(clubId);
+  if (!club) return false;
+  return club.presidentId === userId;
+}
+
+function getClubJoinRequests(clubId, status = '') {
+  initClubData();
+  const requestMap = storage.get(STORAGE_KEYS.CLUB_JOIN_REQUESTS) || {};
+  let requests = requestMap[clubId] || [];
+  if (status) {
+    requests = requests.filter(r => r.status === status);
+  }
+  return requests.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getPendingJoinRequestCount(clubId) {
+  const requests = getClubJoinRequests(clubId, 'pending');
+  return requests.length;
+}
+
+function submitJoinRequest(clubId, userData, reason = '') {
+  initClubData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userData.userId || userInfo.id || 'test_user';
+
+  if (isClubMember(clubId, userId)) {
+    return { success: false, message: '您已是该社团成员' };
+  }
+
+  const requestMap = storage.get(STORAGE_KEYS.CLUB_JOIN_REQUESTS) || {};
+  const requests = requestMap[clubId] || [];
+
+  const existingRequest = requests.find(r => r.userId === userId && r.status === 'pending');
+  if (existingRequest) {
+    return { success: false, message: '您已有待审批的申请' };
+  }
+
+  const club = getClubDetail(clubId);
+  if (!club) {
+    return { success: false, message: '社团不存在' };
+  }
+
+  if (club.needApproval === false) {
+    const result = joinClub(clubId, {
+      userId,
+      name: userData.userName || userInfo.nickname || '新成员',
+      avatar: userData.avatar || userInfo.avatar || '',
+      role: 'member'
+    });
+    return result;
+  }
+
+  const newRequest = {
+    id: util.generateId(),
+    userId,
+    userName: userData.userName || userInfo.nickname || '新成员',
+    avatar: userData.avatar || userInfo.avatar || '',
+    studentNo: userData.studentNo || '',
+    major: userData.major || '',
+    grade: userData.grade || '',
+    reason,
+    status: 'pending',
+    createTime: Date.now()
+  };
+
+  requests.unshift(newRequest);
+  requestMap[clubId] = requests;
+  storage.set(STORAGE_KEYS.CLUB_JOIN_REQUESTS, requestMap);
+
+  return { success: true, request: newRequest, message: '申请已提交，等待社长审核' };
+}
+
+function approveJoinRequest(clubId, requestId) {
+  initClubData();
+  const requestMap = storage.get(STORAGE_KEYS.CLUB_JOIN_REQUESTS) || {};
+  const requests = requestMap[clubId] || [];
+  const requestIndex = requests.findIndex(r => r.id === requestId);
+
+  if (requestIndex === -1) {
+    return { success: false, message: '申请不存在' };
+  }
+
+  const request = requests[requestIndex];
+  if (request.status !== 'pending') {
+    return { success: false, message: '申请已处理' };
+  }
+
+  const result = joinClub(clubId, {
+    userId: request.userId,
+    name: request.userName,
+    avatar: request.avatar,
+    role: 'member'
+  });
+
+  if (result.success) {
+    requests[requestIndex] = { ...request, status: 'approved', approveTime: Date.now() };
+    requestMap[clubId] = requests;
+    storage.set(STORAGE_KEYS.CLUB_JOIN_REQUESTS, requestMap);
+    return { success: true, message: '已通过申请' };
+  }
+
+  return result;
+}
+
+function rejectJoinRequest(clubId, requestId, reason = '') {
+  initClubData();
+  const requestMap = storage.get(STORAGE_KEYS.CLUB_JOIN_REQUESTS) || {};
+  const requests = requestMap[clubId] || [];
+  const requestIndex = requests.findIndex(r => r.id === requestId);
+
+  if (requestIndex === -1) {
+    return { success: false, message: '申请不存在' };
+  }
+
+  const request = requests[requestIndex];
+  if (request.status !== 'pending') {
+    return { success: false, message: '申请已处理' };
+  }
+
+  requests[requestIndex] = { ...request, status: 'rejected', rejectReason: reason, rejectTime: Date.now() };
+  requestMap[clubId] = requests;
+  storage.set(STORAGE_KEYS.CLUB_JOIN_REQUESTS, requestMap);
+
+  return { success: true, message: '已拒绝申请' };
+}
+
+function removeClubMember(clubId, userId) {
+  return leaveClub(clubId, userId);
+}
+
+function updateMemberRole(clubId, userId, newRole) {
+  initClubData();
+  const memberMap = storage.get(STORAGE_KEYS.CLUB_MEMBER_LIST) || {};
+  const members = memberMap[clubId] || [];
+  const memberIndex = members.findIndex(m => m.userId === userId);
+
+  if (memberIndex === -1) {
+    return { success: false, message: '成员不存在' };
+  }
+
+  if (newRole === 'president') {
+    const oldPresidentIndex = members.findIndex(m => m.role === 'president');
+    if (oldPresidentIndex > -1) {
+      members[oldPresidentIndex] = { ...members[oldPresidentIndex], role: 'member' };
+    }
+    const club = getClubDetail(clubId);
+    if (club) {
+      storage.updateInList(STORAGE_KEYS.CLUB_LIST, clubId, {
+        presidentId: userId,
+        presidentName: members[memberIndex].name,
+        presidentAvatar: members[memberIndex].avatar
+      });
+    }
+  }
+
+  members[memberIndex] = { ...members[memberIndex], role: newRole };
+  memberMap[clubId] = members;
+  storage.set(STORAGE_KEYS.CLUB_MEMBER_LIST, memberMap);
+
+  return { success: true, message: '角色已更新' };
+}
+
+function updateClubInfo(clubId, updates) {
+  initClubData();
+  const success = storage.updateInList(STORAGE_KEYS.CLUB_LIST, clubId, {
+    ...updates,
+    updateTime: Date.now()
+  });
+  return success;
+}
+
+function getClubAnnouncements(clubId) {
+  initClubData();
+  const announcementMap = storage.get(STORAGE_KEYS.CLUB_ANNOUNCEMENTS) || {};
+  const announcements = announcementMap[clubId] || [];
+  return announcements.sort((a, b) => b.createTime - a.createTime);
+}
+
+function publishClubAnnouncement(clubId, title, content, isImportant = false) {
+  initClubData();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const club = getClubDetail(clubId);
+
+  const announcementMap = storage.get(STORAGE_KEYS.CLUB_ANNOUNCEMENTS) || {};
+  const announcements = announcementMap[clubId] || [];
+
+  const newAnnouncement = {
+    id: util.generateId(),
+    title,
+    content,
+    publisherId: userInfo.id || 'admin',
+    publisherName: userInfo.nickname || '管理员',
+    isImportant,
+    clubId,
+    clubName: club ? club.name : '',
+    createTime: Date.now()
+  };
+
+  announcements.unshift(newAnnouncement);
+  announcementMap[clubId] = announcements;
+  storage.set(STORAGE_KEYS.CLUB_ANNOUNCEMENTS, announcementMap);
+
+  createNotification({
+    type: 'activity',
+    subType: 'club_announcement',
+    title: `${club ? club.name : '社团'}发布新公告`,
+    content: title,
+    data: {
+      clubId,
+      announcementId: newAnnouncement.id,
+      clubName: club ? club.name : ''
+    },
+    extra: {
+      isImportant,
+      icon: isImportant ? '📌' : '📢',
+      typeColor: isImportant ? '#FEF3C7' : '#DBEAFE',
+      typeIconColor: isImportant ? '#F59E0B' : '#3B82F6'
+    }
+  });
+
+  return { success: true, announcement: newAnnouncement };
+}
+
+function deleteClubAnnouncement(clubId, announcementId) {
+  initClubData();
+  const announcementMap = storage.get(STORAGE_KEYS.CLUB_ANNOUNCEMENTS) || {};
+  const announcements = announcementMap[clubId] || [];
+  const filtered = announcements.filter(a => a.id !== announcementId);
+  announcementMap[clubId] = filtered;
+  storage.set(STORAGE_KEYS.CLUB_ANNOUNCEMENTS, announcementMap);
+  return true;
+}
+
+function getClubStats(clubId) {
+  initClubData();
+  const club = getClubDetail(clubId);
+  if (!club) return null;
+
+  const members = getClubMembers(clubId);
+  const activities = getClubActivities(clubId);
+  const announcements = getClubAnnouncements(clubId);
+
+  const memberCount = members.length;
+  const activityCount = activities.length;
+  const announcementCount = announcements.length;
+
+  const now = Date.now();
+  const oneMonthAgo = now - 30 * 86400000;
+
+  const monthActivities = activities.filter(a => {
+    const activityTime = new Date(a.activityTime).getTime();
+    return activityTime >= oneMonthAgo && activityTime <= now;
+  });
+
+  const newMembersThisMonth = members.filter(m => {
+    return m.joinTime && m.joinTime >= oneMonthAgo;
+  }).length;
+
+  let totalRegistrations = 0;
+  let totalCheckins = 0;
+  let recentActiveMembers = new Set();
+
+  activities.forEach(activity => {
+    const regs = activity.registrations || [];
+    totalRegistrations += regs.length;
+    const checkins = regs.filter(r => r.checkedIn);
+    totalCheckins += checkins.length;
+
+    const activityTime = new Date(activity.activityTime).getTime();
+    if (activityTime >= oneMonthAgo) {
+      regs.forEach(r => recentActiveMembers.add(r.userId));
+    }
+  });
+
+  const avgParticipationRate = memberCount > 0 && activityCount > 0
+    ? Math.round((totalRegistrations / activityCount) / memberCount * 100)
+    : 0;
+
+  const monthActiveCount = recentActiveMembers.size;
+
+  return {
+    memberCount,
+    activityCount,
+    announcementCount,
+    monthActivityCount: monthActivities.length,
+    avgParticipationRate,
+    monthActiveCount,
+    recentActiveCount: monthActiveCount,
+    newMembersThisMonth,
+    totalRegistrations,
+    totalCheckins
+  };
+}
+
+function updateActivity(activityId, updates) {
+  return updateClubActivity(activityId, updates);
+}
+
+function getActivityDetail(activityId) {
+  return getClubActivityDetail(activityId);
+}
+
+function exportCheckinData(activityId) {
+  initClubData();
+  const activity = getClubActivityDetail(activityId);
+  if (!activity) return null;
+
+  const registrations = activity.registrations || [];
+  let text = `=== ${activity.title} 签到表 ===\n`;
+  text += `活动时间：${activity.activityTime}\n`;
+  text += `活动地点：${activity.location}\n`;
+  text += `应到人数：${registrations.length}\n`;
+  const checkedCount = registrations.filter(r => r.checkedIn).length;
+  text += `实到人数：${checkedCount}\n`;
+  text += `签到率：${registrations.length > 0 ? Math.round(checkedCount / registrations.length * 100) : 0}%\n\n`;
+  text += `序号\t姓名\t学号\t专业\t签到状态\t签到时间\n`;
+
+  registrations.forEach((r, i) => {
+    const status = r.checkedIn ? '已签到' : '未签到';
+    const checkTime = r.checkInTime ? new Date(r.checkInTime).toLocaleString() : '-';
+    text += `${i + 1}\t${r.userName || r.name || '-'}\t${r.studentNo || '-'}\t${r.major || '-'}\t${status}\t${checkTime}\n`;
+  });
+
+  return text;
+}
+
+function scanCheckin(activityId, userId) {
+  initClubData();
+  const activity = getClubActivityDetail(activityId);
+  if (!activity) {
+    return { success: false, message: '活动不存在' };
+  }
+
+  const registrations = activity.registrations || [];
+  const regIndex = registrations.findIndex(r => r.userId === userId);
+
+  if (regIndex === -1) {
+    return { success: false, message: '未报名该活动' };
+  }
+
+  if (registrations[regIndex].checkedIn) {
+    return { success: false, message: '已签到', alreadyChecked: true };
+  }
+
+  registrations[regIndex] = {
+    ...registrations[regIndex],
+    checkedIn: true,
+    checkInTime: Date.now(),
+    checkInStatus: 'checked_in'
+  };
+
+  const success = updateClubActivity(activityId, { registrations });
+  if (success) {
+    return { success: true, message: '签到成功', registration: registrations[regIndex] };
+  }
+  return { success: false, message: '签到失败' };
 }
 
 // ==================== 社团活动模块 ====================
@@ -9365,6 +9744,24 @@ module.exports = {
   isClubMember,
   joinClub,
   leaveClub,
+  isClubAdmin,
+  isClubPresident,
+  getClubJoinRequests,
+  getPendingJoinRequestCount,
+  submitJoinRequest,
+  approveJoinRequest,
+  rejectJoinRequest,
+  removeClubMember,
+  updateMemberRole,
+  updateClubInfo,
+  getClubAnnouncements,
+  publishClubAnnouncement,
+  deleteClubAnnouncement,
+  getClubStats,
+  updateActivity,
+  getActivityDetail,
+  exportCheckinData,
+  scanCheckin,
 
   getClubActivityList,
   getClubActivityDetail,

@@ -1,0 +1,58 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="member-count">
+    <text class="count-num">{{members.length}}</text>
+    <text class="count-label">位成员</text>
+  </view>
+
+  <view class="member-list">
+    <view 
+      class="member-card" 
+      wx:for="{{members}}" 
+      wx:key="userId"
+      data-userid="{{item.userId}}"
+      data-name="{{item.name}}"
+      bindtap="onMemberTap"
+    >
+      <view class="member-left">
+        <view class="avatar">{{item.avatarInitial}}</view>
+        <view class="member-info">
+          <view class="member-name">{{item.name}}</view>
+          <view class="member-meta">
+            <text class="role-tag" style="background-color: {{item.roleColor}}20; color: {{item.roleColor}};">
+              {{item.roleLabel}}
+            </text>
+            <text class="join-time">入社 {{item.joinTimeText}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <view class="member-actions" wx:if="{{item.role !== 'president'}}">
+        <view 
+          class="action-btn role-btn" 
+          data-userid="{{item.userId}}"
+          data-currentrole="{{item.role}}"
+          catchtap="onChangeRole"
+        >
+          改角色
+        </view>
+        <view 
+          class="action-btn remove-btn"
+          data-userid="{{item.userId}}"
+          data-name="{{item.name}}"
+          catchtap="onRemove"
+        >
+          移除
+        </view>
+      </view>
+      <view class="president-tag" wx:else>
+        👑
+      </view>
+    </view>
+  </view>
+
+  <view class="empty-state" wx:if="{{members.length === 0}}">
+    <view class="empty-icon">👥</view>
+    <view class="empty-text">暂无成员</view>
+  </view>
+</view>

@@ -52,6 +52,11 @@
           </view>
         </view>
         <view class="action-row">
+          <button class="action-btn primary" bindtap="onManageClub" wx:if="{{isAdmin}}">
+            <text class="btn-icon">⚙️</text>
+            <text>管理社团</text>
+            <view class="badge-dot" wx:if="{{pendingRequestCount > 0}}">{{pendingRequestCount}}</view>
+          </button>
           <button class="action-btn secondary" bindtap="onPublishActivity">
             <text class="btn-icon">📢</text>
             <text>发布活动</text>

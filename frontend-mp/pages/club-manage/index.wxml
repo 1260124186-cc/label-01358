@@ -1,0 +1,60 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header" wx:if="{{club}}">
+    <view class="club-info">
+      <image class="club-cover" src="{{club.cover}}" mode="aspectFill" wx:if="{{club.cover}}"></image>
+      <view class="club-cover placeholder" wx:else>🏷️</view>
+      <view class="club-detail">
+        <view class="club-name">{{club.name}}</view>
+        <view class="club-role">
+          <text class="role-tag">社长</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="stats-grid">
+    <view class="stats-item" style="background: linear-gradient(135deg, #3B82F6 0%, #60A5FA 100%);">
+      <text class="stats-count">{{stats.memberCount}}</text>
+      <text class="stats-label">社团成员</text>
+    </view>
+    <view class="stats-item" style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%);">
+      <text class="stats-count">{{stats.activityCount}}</text>
+      <text class="stats-label">社团活动</text>
+    </view>
+    <view class="stats-item" style="background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%);">
+      <text class="stats-count">{{pendingCount}}</text>
+      <text class="stats-label">待审批</text>
+    </view>
+    <view class="stats-item" style="background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);">
+      <text class="stats-count">{{stats.announcementCount}}</text>
+      <text class="stats-label">社团公告</text>
+    </view>
+  </view>
+
+  <view class="module-section">
+    <view class="section-title">管理功能</view>
+    <view class="module-list">
+      <view 
+        class="module-card"
+        wx:for="{{modules}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onModuleTap"
+        hover-class="module-card-hover"
+      >
+        <view class="module-icon" style="background-color: {{item.color}}20;">
+          <text class="icon-text">{{item.icon}}</text>
+        </view>
+        <view class="module-info">
+          <view class="module-title-row">
+            <text class="module-name">{{item.name}}</text>
+            <view class="badge" wx:if="{{item.badge > 0}}">{{item.badge}}</view>
+          </view>
+          <text class="module-desc">{{item.desc}}</text>
+        </view>
+        <text class="module-arrow">›</text>
+      </view>
+    </view>
+  </view>
+</view>
