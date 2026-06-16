@@ -1,0 +1,110 @@
+<view class="dispute-page {{darkMode ? 'dark' : ''}}" wx:if="{{order}}">
+  <view class="order-banner">
+    <view class="banner-icon">{{order.typeIcon}}</view>
+    <view class="banner-info">
+      <text class="banner-title">{{order.typeText}}订单</text>
+      <text class="banner-bounty">赏金 {{order.bountyText}}</text>
+    </view>
+  </view>
+
+  <view class="warning-card">
+    <text class="warning-icon">⏰</text>
+    <view class="warning-content">
+      <text class="warning-title">申诉时效提醒</text>
+      <text class="warning-desc">请在订单完成后 {{disputeWindowHours}} 小时内发起申诉</text>
+      <text class="warning-time">剩余申诉时间：{{remainingTime}}</text>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">📋</text>
+        <text class="label-text">申诉原因</text>
+        <text class="label-required">*</text>
+      </view>
+      <view class="form-picker" bindtap="onShowReasonPicker">
+        <text class="picker-value {{selectedReason ? '' : 'placeholder'}}">
+          {{selectedReason ? selectedReasonText : '请选择申诉原因'}}
+        </text>
+        <text class="picker-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">✏️</text>
+        <text class="label-text">详细描述</text>
+        <text class="label-required">*</text>
+      </view>
+      <textarea
+        class="form-textarea"
+        placeholder="请详细描述遇到的问题，至少10个字..."
+        placeholder-class="input-placeholder"
+        value="{{description}}"
+        bindinput="onDescriptionInput"
+        maxlength="500"
+        auto-height
+      ></textarea>
+      <text class="char-count">{{description.length}}/500</text>
+    </view>
+
+    <view class="form-group">
+      <view class="form-label">
+        <text class="label-icon">📷</text>
+        <text class="label-text">凭证上传</text>
+        <text class="label-optional">（可选，最多3张）</text>
+      </view>
+      <view class="evidence-list">
+        <view
+          wx:for="{{evidence}}"
+          wx:key="*this"
+          class="evidence-item"
+        >
+          <image class="evidence-img" src="{{item}}" mode="aspectFill"></image>
+          <view class="evidence-remove" data-index="{{index}}" bindtap="onRemoveEvidence">×</view>
+        </view>
+        <view class="evidence-add" wx:if="{{evidence.length < 3}}" bindtap="onUploadEvidence">
+          <text class="add-icon">+</text>
+          <text class="add-text">添加图片</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tips-section">
+    <view class="tips-title">温馨提示</view>
+    <view class="tips-list">
+      <text class="tips-item">• 请如实填写申诉原因，恶意申诉将计入违规记录</text>
+      <text class="tips-item">• 管理员将在1-3个工作日内处理您的申诉</text>
+      <text class="tips-item">• 仲裁结果为最终结果，请双方尊重裁定</text>
+    </view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="submit-btn {{canSubmit ? '' : 'disabled'}}" bindtap="onSubmit">提交申诉</view>
+  </view>
+
+  <view class="picker-mask {{showReasonPicker ? 'show' : ''}}" bindtap="onCloseReasonPicker" wx:if="{{showReasonPicker}}">
+    <view class="picker-content" catchtap="preventBubble">
+      <view class="picker-header">
+        <text class="picker-title">选择申诉原因</text>
+        <view class="picker-close" bindtap="onCloseReasonPicker">✕</view>
+      </view>
+      <view class="picker-body">
+        <view
+          wx:for="{{disputeReasons}}"
+          wx:key="value"
+          class="picker-item {{selectedReason === item.value ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          data-label="{{item.label}}"
+          bindtap="onReasonSelect"
+        >
+          <text class="picker-item-icon">{{item.icon}}</text>
+          <text class="picker-item-label">{{item.label}}</text>
+          <text wx:if="{{selectedReason === item.value}}" class="picker-item-check">✓</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

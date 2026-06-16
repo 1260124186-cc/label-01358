@@ -1,0 +1,293 @@
+<view class="detail-page {{darkMode ? 'dark' : ''}}" wx:if="{{dispute}}">
+  <view class="status-banner" style="background: linear-gradient(135deg, {{statusInfo.color}}20, {{statusInfo.color}}05);">
+    <view class="status-main">
+      <text class="status-icon">{{statusInfo.icon}}</text>
+      <view class="status-info">
+        <text class="status-text" style="color: {{statusInfo.color}};">{{statusInfo.label}}</text>
+        <text class="status-desc">申诉类型：{{dispute.reasonText}}</text>
+      </view>
+    </view>
+    <view class="bounty-tag">
+      <text class="bounty-amount">{{dispute.bountyText}}</text>
+      <text class="bounty-label">争议金额</text>
+    </view>
+  </view>
+
+  <view class="info-section">
+    <view class="section-title">
+      <text class="title-icon">📋</text>
+      <text class="title-text">申诉信息</text>
+    </view>
+
+    <view class="info-card">
+      <view class="info-row">
+        <text class="row-label">申诉方</text>
+        <view class="row-value user-info">
+          <image class="user-avatar" src="{{dispute.initiatorAvatar || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+          <view class="user-detail">
+            <text class="user-name">{{dispute.initiatorName}}</text>
+            <text class="user-role">{{dispute.initiatorRoleText}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="row-label">被申诉方</text>
+        <view class="row-value user-info">
+          <image class="user-avatar" src="{{dispute.respondentAvatar || '/images/default-avatar.png'}}" mode="aspectFill"></image>
+          <view class="user-detail">
+            <text class="user-name">{{dispute.respondentName}}</text>
+            <text class="user-role">{{dispute.initiatorRole === 'publisher' ? '跑手' : '发布者'}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="row-label">申诉原因</text>
+        <text class="row-value reason">{{dispute.reasonText}}</text>
+      </view>
+      <view class="info-row">
+        <text class="row-label">申诉时间</text>
+        <text class="row-value">{{dispute.createTimeText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="info-section">
+    <view class="section-title">
+      <text class="title-icon">📝</text>
+      <text class="title-text">申诉描述</text>
+    </view>
+    <view class="desc-card">
+      <text class="desc-text">{{dispute.description || '暂无详细描述'}}</text>
+    </view>
+  </view>
+
+  <view class="info-section" wx:if="{{dispute.evidence && dispute.evidence.length > 0}}">
+    <view class="section-title">
+      <text class="title-icon">📷</text>
+      <text class="title-text">凭证图片</text>
+    </view>
+    <view class="evidence-grid">
+      <image
+        wx:for="{{dispute.evidence}}"
+        wx:key="*this"
+        class="evidence-img"
+        src="{{item}}"
+        mode="aspectFill"
+        data-url="{{item}}"
+        data-urls="{{dispute.evidence}}"
+        bindtap="onPreviewImage"
+      ></image>
+    </view>
+  </view>
+
+  <view class="info-section">
+    <view class="section-title">
+      <text class="title-icon">📦</text>
+      <text class="title-text">关联订单</text>
+    </view>
+    <view class="order-card" bindtap="onViewOrder">
+      <view class="order-header">
+        <text class="order-type">{{dispute.typeIcon}} {{dispute.typeText}}</text>
+        <text class="order-arrow">›</text>
+      </view>
+      <view class="order-info" wx:if="{{order}}">
+        <text class="order-id">订单号：{{order.id}}</text>
+        <text class="order-time">下单时间：{{order.timeText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="info-section">
+    <view class="section-title">
+      <text class="title-icon">📊</text>
+      <text class="title-text">双方信用信息</text>
+    </view>
+
+    <view class="credit-compare">
+      <view class="credit-card">
+        <view class="credit-role">发布者</view>
+        <view class="credit-score" wx:if="{{publisherProfile}}">
+          <text class="score-number">{{publisherProfile.creditScore}}</text>
+          <text class="score-unit">分</text>
+        </view>
+        <view class="credit-score" wx:else>
+          <text class="score-number">--</text>
+        </view>
+        <view class="credit-stats" wx:if="{{publisherProfile}}">
+          <view class="stat-item">
+            <text class="stat-value">{{publisherProfile.totalAccepted || 0}}</text>
+            <text class="stat-label">接单/发单</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value">{{publisherProfile.completionRate || 0}}%</text>
+            <text class="stat-label">完成率</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value">{{publisherProfile.goodRate || 0}}%</text>
+            <text class="stat-label">好评率</text>
+          </view>
+        </view>
+        <view class="violation-badge" wx:if="{{publisherProfile && publisherProfile.violations && publisherProfile.violations.length > 0}}">
+          违规 {{publisherProfile.violations.length}} 次
+        </view>
+      </view>
+
+      <view class="vs-divider">
+        <text class="vs-text">VS</text>
+      </view>
+
+      <view class="credit-card">
+        <view class="credit-role">跑手</view>
+        <view class="credit-score" wx:if="{{runnerProfile}}">
+          <text class="score-number">{{runnerProfile.creditScore}}</text>
+          <text class="score-unit">分</text>
+        </view>
+        <view class="credit-score" wx:else>
+          <text class="score-number">--</text>
+        </view>
+        <view class="credit-stats" wx:if="{{runnerProfile}}">
+          <view class="stat-item">
+            <text class="stat-value">{{runnerProfile.totalAccepted || 0}}</text>
+            <text class="stat-label">接单数</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value">{{runnerProfile.completionRate || 0}}%</text>
+            <text class="stat-label">完成率</text>
+          </view>
+          <view class="stat-item">
+            <text class="stat-value">{{runnerProfile.goodRate || 0}}%</text>
+            <text class="stat-label">好评率</text>
+          </view>
+        </view>
+        <view class="violation-badge warning" wx:if="{{runnerProfile && runnerProfile.violations && runnerProfile.violations.length > 0}}">
+          违规 {{runnerProfile.violations.length}} 次
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="info-section" wx:if="{{escrowLog.length > 0}}">
+    <view class="section-title">
+      <text class="title-icon">💰</text>
+      <text class="title-text">赏金托管轨迹</text>
+    </view>
+    <view class="timeline">
+      <view wx:for="{{escrowLog}}" wx:key="id" class="timeline-item">
+        <view class="timeline-dot"></view>
+        <view class="timeline-content">
+          <view class="timeline-header">
+            <text class="timeline-action">{{item.remark || item.action}}</text>
+            <text class="timeline-amount">{{item.amount > 0 ? '¥' + item.amount : ''}}</text>
+          </view>
+          <text class="timeline-time">{{item.timeText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="info-section" wx:if="{{dispute.arbitrationTime}}">
+    <view class="section-title">
+      <text class="title-icon">⚖️</text>
+      <text class="title-text">仲裁结果</text>
+    </view>
+    <view class="arbitration-result">
+      <view class="result-row">
+        <text class="result-label">仲裁员</text>
+        <text class="result-value">{{dispute.arbitratorName || '管理员'}}</text>
+      </view>
+      <view class="result-row">
+        <text class="result-label">仲裁时间</text>
+        <text class="result-value">{{dispute.arbitrationTimeText}}</text>
+      </view>
+      <view class="result-row" wx:if="{{dispute.arbitrationRemark}}">
+        <text class="result-label">仲裁说明</text>
+        <text class="result-value remark">{{dispute.arbitrationRemark}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-bar" wx:if="{{canArbitrate}}">
+    <view class="arbitrate-btn" bindtap="onOpenArbitrate">开始仲裁</view>
+  </view>
+
+  <view class="modal-mask {{showArbitrateModal ? 'show' : ''}}" bindtap="onCloseArbitrate" wx:if="{{showArbitrateModal}}">
+    <view class="modal-content" catchtap="preventBubble">
+      <view class="modal-header">
+        <text class="modal-title">仲裁裁决</text>
+        <view class="modal-close" bindtap="onCloseArbitrate">✕</view>
+      </view>
+
+      <view class="modal-body">
+        <view class="form-group">
+          <text class="form-label">裁决结果</text>
+          <view class="result-options">
+            <view class="result-option {{arbitrateResult === 'resolved_publisher' ? 'active' : ''}}" data-value="resolved_publisher" bindtap="onResultSelect">
+              <text class="option-icon">🎉</text>
+              <text class="option-label">发布者胜诉</text>
+              <text class="option-desc">全额退还给发布者</text>
+            </view>
+            <view class="result-option {{arbitrateResult === 'resolved_runner' ? 'active' : ''}}" data-value="resolved_runner" bindtap="onResultSelect">
+              <text class="option-icon">🎉</text>
+              <text class="option-label">跑手胜诉</text>
+              <text class="option-desc">全额结算给跑手</text>
+            </view>
+            <view class="result-option {{arbitrateResult === 'resolved_split' ? 'active' : ''}}" data-value="resolved_split" bindtap="onResultSelect">
+              <text class="option-icon">⚖️</text>
+              <text class="option-label">部分分配</text>
+              <text class="option-desc">按比例分配赏金</text>
+            </view>
+            <view class="result-option malicious {{arbitrateResult === 'malicious' ? 'active' : ''}}" data-value="malicious" bindtap="onResultSelect">
+              <text class="option-icon">🚫</text>
+              <text class="option-label">恶意申诉</text>
+              <text class="option-desc">计入违规，结算给对方</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="form-group" wx:if="{{showSplitInput}}">
+          <text class="form-label">分配金额</text>
+          <view class="split-inputs">
+            <view class="split-item">
+              <text class="split-label">发布者</text>
+              <input
+                class="split-input"
+                type="digit"
+                value="{{publisherAmount}}"
+                bindinput="onPublisherAmountInput"
+              />
+              <text class="split-unit">元</text>
+            </view>
+            <text class="split-plus">+</text>
+            <view class="split-item">
+              <text class="split-label">跑手</text>
+              <input
+                class="split-input"
+                type="digit"
+                value="{{runnerAmount}}"
+                bindinput="onRunnerAmountInput"
+              />
+              <text class="split-unit">元</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="form-group">
+          <text class="form-label">仲裁说明（可选）</text>
+          <textarea
+            class="form-textarea"
+            placeholder="请填写仲裁说明..."
+            placeholder-class="input-placeholder"
+            value="{{arbitrateRemark}}"
+            bindinput="onRemarkInput"
+            maxlength="200"
+          ></textarea>
+        </view>
+      </view>
+
+      <view class="modal-footer">
+        <view class="cancel-btn" bindtap="onCloseArbitrate">取消</view>
+        <view class="confirm-btn" bindtap="onSubmitArbitration">确认裁决</view>
+      </view>
+    </view>
+  </view>
+</view>

@@ -161,20 +161,35 @@
       </view>
     </view>
 
-    <view class="info-card" wx:if="{{escrowInfo}}">
-      <view class="info-card-title">
-        <text class="card-icon">{{escrowInfo.icon}}</text>
-        <text class="card-text">赏金托管</text>
+    <view class="escrow-status-card" wx:if="{{escrowInfo}}">
+      <view class="escrow-status-bar" style="background: linear-gradient(135deg, {{escrowInfo.color}}20, {{escrowInfo.color}}05);">
+        <view class="escrow-status-left">
+          <text class="escrow-icon">{{escrowInfo.icon}}</text>
+          <view class="escrow-info">
+            <text class="escrow-status-text" style="color: {{escrowInfo.color}};">{{escrowInfo.label}}</text>
+            <text class="escrow-desc">{{escrowInfo.desc}}</text>
+          </view>
+        </view>
+        <text class="escrow-amount">¥{{order.bounty}}</text>
       </view>
-      <view class="info-rows">
-        <view class="info-row">
-          <text class="row-label">托管状态</text>
-          <text class="row-value" style="color: {{escrowInfo.color}};">{{escrowInfo.label}}</text>
+    </view>
+
+    <view class="dispute-action-card" wx:if="{{disputeInfo}}">
+      <view class="dispute-action-row">
+        <view class="dispute-status-tag" style="background: {{disputeInfo.statusColor}}15; color: {{disputeInfo.statusColor}};">
+          ⚖️ {{disputeInfo.statusText}}
         </view>
-        <view class="info-row">
-          <text class="row-label">托管金额</text>
-          <text class="row-value price">¥{{order.bounty}}</text>
+        <view class="dispute-view-btn" bindtap="onViewDispute">查看详情 ›</view>
+      </view>
+    </view>
+
+    <view class="dispute-action-card" wx:if="{{canDispute && !disputeInfo}}">
+      <view class="dispute-action-row">
+        <view class="dispute-tip">
+          <text class="tip-icon">💡</text>
+          <text class="tip-text">任务有争议？申诉期限还剩 {{remainingDisputeTime}}</text>
         </view>
+        <view class="dispute-btn" bindtap="onDispute">发起申诉</view>
       </view>
     </view>
 

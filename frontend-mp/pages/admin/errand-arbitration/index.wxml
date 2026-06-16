@@ -1,0 +1,97 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header">
+    <view class="header-info">
+      <view class="header-title">纠纷仲裁中心</view>
+      <view class="header-desc">共 <text class="total-count">{{stats.total}}</text> 条申诉记录</view>
+    </view>
+  </view>
+
+  <view class="stats-cards">
+    <view class="stat-card pending">
+      <text class="stat-count">{{stats.pending}}</text>
+      <text class="stat-label">待处理</text>
+    </view>
+    <view class="stat-card processing">
+      <text class="stat-count">{{stats.processing}}</text>
+      <text class="stat-label">处理中</text>
+    </view>
+    <view class="stat-card resolved">
+      <text class="stat-count">{{stats.resolved}}</text>
+      <text class="stat-label">已裁决</text>
+    </view>
+  </view>
+
+  <view class="tabs-bar">
+    <scroll-view scroll-x class="tabs-scroll">
+      <view class="tabs-list">
+        <view
+          wx:for="{{tabs}}"
+          wx:key="value"
+          class="tab-item {{activeTab === item.value ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="onTabTap"
+        >
+          <text class="tab-label">{{item.label}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="list-section">
+    <view wx:if="{{disputeList.length === 0}}" class="empty-state">
+      <text class="empty-icon">⚖️</text>
+      <text class="empty-text">暂无申诉记录</text>
+    </view>
+
+    <view
+      wx:for="{{disputeList}}"
+      wx:key="id"
+      class="dispute-card"
+      data-id="{{item.id}}"
+      bindtap="onItemTap"
+    >
+      <view class="card-header">
+        <view class="card-type">
+          <text class="type-icon">{{item.typeIcon}}</text>
+          <text class="type-text">{{item.typeText}}</text>
+        </view>
+        <view class="card-status" style="color: {{item.statusColor}}; background: {{item.statusColor}}15;">
+          <text class="status-icon">{{item.statusIcon}}</text>
+          <text class="status-text">{{item.statusText}}</text>
+        </view>
+      </view>
+
+      <view class="card-body">
+        <view class="card-row">
+          <text class="row-label">申诉方</text>
+          <view class="row-value">
+            <text class="user-name">{{item.initiatorName}}</text>
+            <text class="user-role">({{item.initiatorRoleText}})</text>
+          </view>
+        </view>
+        <view class="card-row">
+          <text class="row-label">被申诉方</text>
+          <text class="row-value">{{item.respondentName}}</text>
+        </view>
+        <view class="card-row">
+          <text class="row-label">申诉原因</text>
+          <text class="row-value reason">{{item.reasonText}}</text>
+        </view>
+        <view class="card-row">
+          <text class="row-label">涉事金额</text>
+          <text class="row-value bounty">{{item.bountyText}}</text>
+        </view>
+        <view class="card-row">
+          <text class="row-label">申诉时间</text>
+          <text class="row-value time">{{item.timeText}}</text>
+        </view>
+      </view>
+
+      <view class="card-footer">
+        <text class="footer-tip">点击查看详情并处理</text>
+        <text class="footer-arrow">›</text>
+      </view>
+    </view>
+  </view>
+</view>

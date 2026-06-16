@@ -552,12 +552,50 @@ const ERRAND_VIOLATION_TYPES = [
 ];
 
 const ERRAND_ESCROW_STATUS = [
-  { value: 'frozen', label: '已冻结', color: '#F59E0B', icon: '🔒' },
-  { value: 'released', label: '已释放', color: '#10B981', icon: '🔓' },
-  { value: 'refunded', label: '已退款', color: '#3B82F6', icon: '💰' }
+  { value: 'frozen', label: '赏金已冻结', color: '#F59E0B', icon: '🔒', desc: '赏金已托管，等待任务完成' },
+  { value: 'released', label: '已结算', color: '#10B981', icon: '✅', desc: '赏金已结算给跑手' },
+  { value: 'refunded', label: '已退还', color: '#3B82F6', icon: '↩️', desc: '赏金已退还给发布者' },
+  { value: 'disputed', label: '仲裁中', color: '#EF4444', icon: '⚖️', desc: '存在纠纷，仲裁中' }
+];
+
+const ERRAND_ESCROW_STATUS_MAP = ERRAND_ESCROW_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon, desc: s.desc };
+  return acc;
+}, {});
+
+const ERRAND_DISPUTE_STATUS = [
+  { value: 'pending', label: '待仲裁', color: '#F59E0B', icon: '⏳' },
+  { value: 'reviewing', label: '审核中', color: '#3B82F6', icon: '🔍' },
+  { value: 'resolved_publisher', label: '发布者胜诉', color: '#10B981', icon: '🎉' },
+  { value: 'resolved_runner', label: '跑手胜诉', color: '#10B981', icon: '🎉' },
+  { value: 'resolved_split', label: '部分分配', color: '#8B5CF6', icon: '⚖️' },
+  { value: 'malicious', label: '恶意申诉', color: '#EF4444', icon: '🚫' }
+];
+
+const ERRAND_DISPUTE_STATUS_MAP = ERRAND_DISPUTE_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const ERRAND_DISPUTE_REASONS = [
+  { value: 'quality_issue', label: '服务质量问题', icon: '📋' },
+  { value: 'not_delivered', label: '未送达/未完成', icon: '📦' },
+  { value: 'damaged', label: '物品损坏', icon: '💔' },
+  { value: 'wrong_item', label: '物品错送', icon: '❌' },
+  { value: 'timeout', label: '超时严重', icon: '⏰' },
+  { value: 'attitude_bad', label: '态度恶劣', icon: '😠' },
+  { value: 'other', label: '其他原因', icon: '📝' }
+];
+
+const ERRAND_ARBITRATION_TABS = [
+  { value: 'pending', label: '待处理' },
+  { value: 'processing', label: '处理中' },
+  { value: 'resolved', label: '已裁决' },
+  { value: 'all', label: '全部' }
 ];
 
 const ERRAND_TIMEOUT_MINUTES = 30;
+const ERRAND_DISPUTE_WINDOW_HOURS = 24;
 
 const ERRAND_PURCHASE_CATEGORIES = [
   { value: 'food', label: '餐饮美食', icon: '🍜' },
@@ -3427,7 +3465,13 @@ module.exports = {
   ERRAND_CREDIT_LEVELS,
   ERRAND_VIOLATION_TYPES,
   ERRAND_ESCROW_STATUS,
+  ERRAND_ESCROW_STATUS_MAP,
+  ERRAND_DISPUTE_STATUS,
+  ERRAND_DISPUTE_STATUS_MAP,
+  ERRAND_DISPUTE_REASONS,
+  ERRAND_ARBITRATION_TABS,
   ERRAND_TIMEOUT_MINUTES,
+  ERRAND_DISPUTE_WINDOW_HOURS,
   ERRAND_PURCHASE_CATEGORIES,
   PRINT_COLOR_OPTIONS,
   PRINT_SIDE_OPTIONS,

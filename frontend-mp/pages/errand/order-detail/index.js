@@ -11,7 +11,6 @@ mixPage({
     isPublisher: false,
     isRunner: false,
     runnerProfile: null,
-    escrowInfo: null,
     publisherRating: null,
     runnerRating: null,
     canRate: false,
@@ -22,7 +21,11 @@ mixPage({
     selectedTags: [],
     selectedTagsMap: {},
     ratingComment: '',
-    ratingTagsList: constants.ERRAND_RATING_TAGS
+    ratingTagsList: constants.ERRAND_RATING_TAGS,
+    escrowInfo: null,
+    canDispute: false,
+    disputeInfo: null,
+    remainingDisputeTime: ''
   },
 
   onLoad(options) {
@@ -84,8 +87,29 @@ mixPage({
         status: order.escrowStatus,
         label: escrowStatusInfo ? escrowStatusInfo.label : order.escrowStatus,
         color: escrowStatusInfo ? escrowStatusInfo.color : '#666',
-        icon: escrowStatusInfo ? escrowStatusInfo.icon : '🔒'
+        icon: escrowStatusInfo ? escrowStatusInfo.icon : '🔒',
+        desc: escrowStatusInfo ? escrowStatusInfo.desc : ''
       };
+    }
+
+    let canDispute = false;
+    let disputeInfo = null;
+    let remainingDisputeTime = '';
+
+    const existingDispute = dataService.getOrderDispute(order.id);
+    if (existingDispute) {
+      disputeInfo = existingDispute;
+      const disputeStatusInfo = constants.ERRAND_DISPUTE_STATUS.find(s => s.value === existingDispute.status);
+      disputeInfo.statusText = disputeStatusInfo ? disputeStatusInfo.label : existingDispute.status;
+      disputeInfo.statusColor = disputeStatusInfo ? disputeStatusInfo.color : '#666';
+    } else {
+      const disputeCheck = dataService.canDispute(order.id);
+      canDispute = disputeCheck.can;
+      if (disputeCheck.remainingMs > 0) {
+        const hours = Math.floor(disputeCheck.remainingMs / (1000 * 60 * 60));
+        const minutes = Math.floor((disputeCheck.remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+        remainingDisputeTime = hours + '小时' + minutes + '分钟';
+      }
     }
 
     let canRate = false;
@@ -144,6 +168,9 @@ mixPage({
       isRunner,
       runnerProfile: runnerProfile ? { ...runnerProfile, creditLevelText, creditLevelColor } : null,
       escrowInfo,
+      canDispute,
+      disputeInfo,
+      remainingDisputeTime,
       publisherRating: order.publisherRating || null,
       runnerRating: order.runnerRating || null,
       canRate,
@@ -282,6 +309,19 @@ mixPage({
       phoneNumber: this.data.order.contactPhone,
       fail: () => {}
     });
+  },
+
+  onDispute() {
+    if (this.data.order && this.data.canDispute) {
+      util.navigateTo('/pages/errand/dispute/index?orderId=' + this.data.order.id);
+    }
+  },
+
+  onViewDispute() {
+    if (this.data.disputeInfo) {
+      const role = this.data.isPublisher ? 'publisher' : 'runner';
+      util.navigateTo('/pages/errand/dispute/index?orderId=' + this.data.order.id + '&disputeId=' + this.data.disputeInfo.id + '&role=' + role);
+    }
   },
 
   preventBubble() {}

@@ -2632,10 +2632,21 @@ function checkTimeoutOrders() {
   let changed = false;
   list.forEach(item => {
     if (item.status === 'pending' && item.deadline && now > item.deadline) {
+      const wasFrozen = item.escrowStatus === 'frozen';
       item.status = 'timeout';
-      item.escrowStatus = 'refunded';
+      item.escrowStatus = item.bounty > 0 ? 'refunded' : '';
+      item.timeoutTime = now;
       item.updateTime = now;
       changed = true;
+
+      if (item.bounty > 0 && wasFrozen) {
+        addPoints(item.bounty, '跑腿订单超时退款');
+        addEscrowLog(item.id, 'refund', item.bounty, {
+          userId: item.userId,
+          action: 'refund',
+          remark: '订单超时，退还赏金'
+        });
+      }
     }
   });
   if (changed) storage.set(STORAGE_KEYS.ERRAND_ORDER_LIST, list);
@@ -2651,20 +2662,44 @@ function createErrandOrder(data) {
     return { error: '内容包含敏感词，请修改后重新发布' };
   }
 
+  const bounty = Number(data.bounty) || 0;
+  if (bounty > 0) {
+    const currentPoints = getUserPoints();
+    if (currentPoints < bounty) {
+      return { error: '积分不足，请先获取积分' };
+    }
+    const deductResult = deductPoints(bounty, '发布跑腿订单托管');
+    if (!deductResult) {
+      return { error: '积分扣除失败，请重试' };
+    }
+  }
+
   const taskType = constants.ERRAND_TASK_TYPES.find(t => t.value === data.type);
   const item = {
     id: util.generateId(),
     ...data,
+    bounty,
     typeText: taskType ? taskType.label : data.type,
     userId: userInfo.id || 'test_user',
     userName: userInfo.nickName || '张同学',
     userAvatar: userInfo.avatarUrl || '',
     status: 'pending',
-    escrowStatus: data.bounty > 0 ? 'frozen' : '',
+    escrowStatus: bounty > 0 ? 'frozen' : '',
+    escrowAmount: bounty,
     createTime: Date.now(),
     updateTime: Date.now()
   };
   storage.addToList(STORAGE_KEYS.ERRAND_ORDER_LIST, item);
+
+  if (bounty > 0) {
+    addEscrowLog(item.id, 'freeze', bounty, {
+      userId: item.userId,
+      userName: item.userName,
+      action: 'freeze',
+      remark: '发布订单，冻结赏金'
+    });
+  }
+
   return item;
 }
 
@@ -2705,13 +2740,41 @@ function completeErrandOrder(orderId) {
   const order = getErrandOrderDetail(orderId);
   if (!order) return { error: '订单不存在' };
   if (order.status !== 'in_progress' && order.status !== 'accepted') return { error: '当前状态无法完成任务' };
+
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const currentUserId = userInfo.id || 'test_user';
+  const isPublisher = order.userId === currentUserId;
+  const isRunner = order.runnerId === currentUserId;
+
+  if (!isPublisher && !isRunner) {
+    return { error: '无权操作此订单' };
+  }
+
   const result = storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, orderId, {
     status: 'completed',
     completedTime: Date.now(),
-    escrowStatus: 'released',
+    completedBy: currentUserId,
+    escrowStatus: order.escrowStatus === 'disputed' ? 'disputed' : 'released',
     updateTime: Date.now()
   });
-  if (result) updateRunnerStats(order.runnerId, 'complete');
+
+  if (result) {
+    updateRunnerStats(order.runnerId, 'complete');
+
+    if (order.bounty > 0 && order.escrowStatus !== 'disputed') {
+      grantRewardPoints(order.runnerId, order.bounty);
+      addPoints(order.bounty, '跑腿订单完成赏金');
+
+      addEscrowLog(orderId, 'release', order.bounty, {
+        fromUserId: order.userId,
+        toUserId: order.runnerId,
+        action: 'release',
+        remark: '订单完成，结算给跑手'
+      });
+    }
+  }
+
   return result || { error: '操作失败' };
 }
 
@@ -2731,15 +2794,38 @@ function cancelErrandOrder(id, reason) {
   const order = getErrandOrderDetail(id);
   if (!order) return { error: '订单不存在' };
   if (order.status !== 'pending' && order.status !== 'accepted') return { error: '当前状态无法取消' };
+
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const currentUserId = userInfo.id || 'test_user';
+  if (order.userId !== currentUserId) {
+    return { error: '只有发布者可以取消订单' };
+  }
+
   const result = storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, id, {
     status: 'cancelled',
-    escrowStatus: 'refunded',
+    escrowStatus: order.bounty > 0 ? 'refunded' : '',
     cancelReason: reason || '',
+    cancelTime: Date.now(),
     updateTime: Date.now()
   });
-  if (result && order.status === 'accepted' && order.runnerId) {
-    updateRunnerStats(order.runnerId, 'cancel');
+
+  if (result) {
+    if (order.status === 'accepted' && order.runnerId) {
+      updateRunnerStats(order.runnerId, 'cancel');
+    }
+
+    if (order.bounty > 0 && order.escrowStatus === 'frozen') {
+      addPoints(order.bounty, '取消跑腿订单退款');
+
+      addEscrowLog(id, 'refund', order.bounty, {
+        userId: order.userId,
+        action: 'refund',
+        remark: '订单取消，退还赏金'
+      });
+    }
   }
+
   return result || { error: '取消失败' };
 }
 
@@ -2800,6 +2886,259 @@ function addViolation(userId, type, typeText, orderId, desc) {
     id: util.generateId(), userId, type, typeText, orderId, time: Date.now(), desc
   });
   updateRunnerStats(userId, 'violation');
+}
+
+function addEscrowLog(orderId, action, amount, extra = {}) {
+  initErrandData();
+  const log = {
+    id: util.generateId(),
+    orderId,
+    action,
+    amount,
+    time: Date.now(),
+    ...extra
+  };
+  const logs = storage.getList(STORAGE_KEYS.ERRAND_ESCROW_LOG);
+  logs.unshift(log);
+  storage.set(STORAGE_KEYS.ERRAND_ESCROW_LOG, logs.slice(0, 200));
+  return log;
+}
+
+function getEscrowLogByOrder(orderId) {
+  initErrandData();
+  return storage.getList(STORAGE_KEYS.ERRAND_ESCROW_LOG).filter(log => log.orderId === orderId);
+}
+
+function canDispute(orderOrId) {
+  let order = null;
+  if (typeof orderOrId === 'string') {
+    order = getErrandOrderDetail(orderOrId);
+  } else {
+    order = orderOrId;
+  }
+
+  const result = {
+    can: false,
+    remainingMs: 0,
+    reason: ''
+  };
+
+  if (!order) {
+    result.reason = '订单不存在';
+    return result;
+  }
+  if (order.status !== 'completed') {
+    result.reason = '只有已完成的订单可以申诉';
+    return result;
+  }
+  if (!order.completedTime) {
+    result.reason = '订单完成时间异常';
+    return result;
+  }
+
+  const disputeWindow = constants.ERRAND_DISPUTE_WINDOW_HOURS * 3600 * 1000;
+  const now = Date.now();
+  const elapsed = now - order.completedTime;
+  result.remainingMs = Math.max(0, disputeWindow - elapsed);
+
+  if (elapsed < disputeWindow) {
+    result.can = true;
+  } else {
+    result.reason = '已超过申诉时限';
+  }
+
+  return result;
+}
+
+function getDisputeList(filters = {}) {
+  initErrandData();
+  let list = storage.getList(STORAGE_KEYS.ERRAND_DISPUTE_LIST);
+
+  if (filters.status && filters.status !== 'all') {
+    list = list.filter(item => item.status === filters.status);
+  }
+  if (filters.userId) {
+    list = list.filter(item => item.initiatorId === filters.userId || item.respondentId === filters.userId);
+  }
+  if (filters.orderId) {
+    list = list.filter(item => item.orderId === filters.orderId);
+  }
+  if (filters.keyword) {
+    const kw = filters.keyword.toLowerCase();
+    list = list.filter(item =>
+      (item.reasonText && item.reasonText.toLowerCase().includes(kw)) ||
+      (item.description && item.description.toLowerCase().includes(kw))
+    );
+  }
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getDisputeDetail(id) {
+  initErrandData();
+  return storage.getList(STORAGE_KEYS.ERRAND_DISPUTE_LIST).find(item => item.id === id) || null;
+}
+
+function createDispute(orderId, disputeData) {
+  initErrandData();
+  const order = getErrandOrderDetail(orderId);
+  if (!order) return { error: '订单不存在' };
+  if (order.status !== 'completed') return { error: '只有已完成的订单可以申诉' };
+
+  const disputeCheck = canDispute(order);
+  if (!disputeCheck.can) {
+    return { error: disputeCheck.reason || '无法发起申诉' };
+  }
+
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const currentUserId = userInfo.id || 'test_user';
+
+  const isPublisher = order.userId === currentUserId;
+  const isRunner = order.runnerId === currentUserId;
+
+  if (!isPublisher && !isRunner) {
+    return { error: '只有订单相关方可以发起申诉' };
+  }
+
+  const existingDispute = getDisputeList({ orderId }).find(d => d.status === 'pending' || d.status === 'reviewing');
+  if (existingDispute) {
+    return { error: '该订单已有申诉正在处理中' };
+  }
+
+  const reasonInfo = constants.ERRAND_DISPUTE_REASONS.find(r => r.value === disputeData.reason);
+
+  const dispute = {
+    id: util.generateId(),
+    orderId,
+    orderType: order.type,
+    orderBounty: order.bounty,
+    initiatorId: currentUserId,
+    initiatorName: userInfo.nickName || '张同学',
+    initiatorAvatar: userInfo.avatarUrl || '',
+    initiatorRole: isPublisher ? 'publisher' : 'runner',
+    respondentId: isPublisher ? order.runnerId : order.userId,
+    respondentName: isPublisher ? (order.runnerName || '跑手') : (order.userName || '发布者'),
+    respondentAvatar: isPublisher ? (order.runnerAvatar || '') : (order.userAvatar || ''),
+    reason: disputeData.reason,
+    reasonText: reasonInfo ? reasonInfo.label : disputeData.reason,
+    description: disputeData.description || '',
+    evidence: disputeData.evidence || [],
+    status: 'pending',
+    createTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  storage.addToList(STORAGE_KEYS.ERRAND_DISPUTE_LIST, dispute);
+
+  storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, orderId, {
+    escrowStatus: 'disputed',
+    hasDispute: true,
+    updateTime: Date.now()
+  });
+
+  return dispute;
+}
+
+function getArbitrationList(filters = {}) {
+  return getDisputeList(filters);
+}
+
+function arbitrateDispute(disputeId, arbitrationData) {
+  initErrandData();
+  const dispute = getDisputeDetail(disputeId);
+  if (!dispute) return { error: '申诉记录不存在' };
+  if (dispute.status === 'resolved_publisher' || dispute.status === 'resolved_runner' ||
+      dispute.status === 'resolved_split' || dispute.status === 'malicious') {
+    return { error: '该申诉已裁决' };
+  }
+
+  const app = getApp();
+  const adminInfo = app.globalData.userInfo || {};
+
+  const result = storage.updateInList(STORAGE_KEYS.ERRAND_DISPUTE_LIST, disputeId, {
+    status: arbitrationData.result,
+    arbitratorId: adminInfo.id || 'admin',
+    arbitratorName: adminInfo.nickName || '管理员',
+    arbitrationRemark: arbitrationData.remark || '',
+    publisherAmount: arbitrationData.publisherAmount || 0,
+    runnerAmount: arbitrationData.runnerAmount || 0,
+    arbitrationTime: Date.now(),
+    updateTime: Date.now()
+  });
+
+  if (result) {
+    const order = getErrandOrderDetail(dispute.orderId);
+    if (order) {
+      let escrowStatus = '';
+      const bounty = order.bounty || 0;
+
+      if (arbitrationData.result === 'resolved_publisher') {
+        escrowStatus = 'refunded';
+        addPoints(bounty, '仲裁胜诉，退还赏金');
+        addEscrowLog(dispute.orderId, 'refund', bounty, {
+          arbitratorId: adminInfo.id || 'admin',
+          remark: '仲裁：发布者胜诉，全额退还'
+        });
+      } else if (arbitrationData.result === 'resolved_runner') {
+        escrowStatus = 'released';
+        grantRewardPoints(order.runnerId, bounty);
+        addEscrowLog(dispute.orderId, 'release', bounty, {
+          arbitratorId: adminInfo.id || 'admin',
+          remark: '仲裁：跑手胜诉，全额结算'
+        });
+      } else if (arbitrationData.result === 'resolved_split') {
+        const pubAmount = arbitrationData.publisherAmount || 0;
+        const runAmount = arbitrationData.runnerAmount || 0;
+        if (pubAmount > 0) {
+          addPoints(pubAmount, '仲裁部分退还赏金');
+        }
+        if (runAmount > 0) {
+          grantRewardPoints(order.runnerId, runAmount);
+        }
+        addEscrowLog(dispute.orderId, 'split', bounty, {
+          arbitratorId: adminInfo.id || 'admin',
+          publisherAmount: pubAmount,
+          runnerAmount: runAmount,
+          remark: '仲裁：部分分配'
+        });
+        escrowStatus = 'released';
+      } else if (arbitrationData.result === 'malicious') {
+        escrowStatus = 'released';
+        addViolation(dispute.initiatorId, 'malicious_dispute', '恶意申诉', dispute.orderId, '恶意申诉，扣除信用分');
+        grantRewardPoints(order.runnerId, bounty);
+        addEscrowLog(dispute.orderId, 'release', bounty, {
+          arbitratorId: adminInfo.id || 'admin',
+          remark: '恶意申诉，结算给跑手'
+        });
+      }
+
+      storage.updateInList(STORAGE_KEYS.ERRAND_ORDER_LIST, dispute.orderId, {
+        escrowStatus,
+        disputeResult: arbitrationData.result,
+        updateTime: Date.now()
+      });
+
+      storage.addToList(STORAGE_KEYS.ERRAND_ARBITRATION_LOG, {
+        id: util.generateId(),
+        disputeId,
+        orderId: dispute.orderId,
+        arbitratorId: adminInfo.id || 'admin',
+        arbitratorName: adminInfo.nickName || '管理员',
+        result: arbitrationData.result,
+        remark: arbitrationData.remark || '',
+        createTime: Date.now()
+      });
+    }
+  }
+
+  return result || { error: '仲裁失败' };
+}
+
+function getOrderDispute(orderId) {
+  initErrandData();
+  const list = storage.getList(STORAGE_KEYS.ERRAND_DISPUTE_LIST).filter(d => d.orderId === orderId);
+  return list.length > 0 ? list[0] : null;
 }
 
 function getAddressList() {
@@ -10036,6 +10375,15 @@ module.exports = {
   getRunnerCreditDetail,
   addViolation,
   containsSensitiveWord,
+  addEscrowLog,
+  getEscrowLogByOrder,
+  canDispute,
+  getDisputeList,
+  getDisputeDetail,
+  createDispute,
+  getArbitrationList,
+  arbitrateDispute,
+  getOrderDispute,
   getAddressList,
   getAddressDetail,
   addAddress,
