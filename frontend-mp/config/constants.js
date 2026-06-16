@@ -334,6 +334,181 @@ const DEFAULT_KEYWORD_SUBSCRIPTION_SETTINGS = {
   maxDailyNotifications: 20
 };
 
+// ==================== 积分经济系统 ====================
+
+const POINT_TRANSACTION_TYPES = [
+  { value: 'reward_earn', label: '悬赏赚取', icon: '🎁', direction: 'in', color: '#10B981' },
+  { value: 'reward_spend', label: '悬赏发布', icon: '💰', direction: 'out', color: '#EF4444' },
+  { value: 'signin', label: '每日签到', icon: '📅', direction: 'in', color: '#10B981' },
+  { value: 'signin_continue', label: '连续签到奖励', icon: '🔥', direction: 'in', color: '#10B981' },
+  { value: 'exchange', label: '商城兑换', icon: '🛒', direction: 'out', color: '#EF4444' },
+  { value: 'admin_grant', label: '管理员发放', icon: '👨‍💼', direction: 'in', color: '#8B5CF6' },
+  { value: 'admin_deduct', label: '管理员扣除', icon: '⚠️', direction: 'out', color: '#EF4444' },
+  { value: 'task_first_lost', label: '首次发布失物', icon: '🔍', direction: 'in', color: '#10B981' },
+  { value: 'task_real_name', label: '完成实名认证', icon: '✅', direction: 'in', color: '#10B981' },
+  { value: 'task_survey', label: '参与问卷', icon: '📋', direction: 'in', color: '#10B981' },
+  { value: 'task_volunteer', label: '志愿签到', icon: '❤️', direction: 'in', color: '#10B981' },
+  { value: 'top_publish', label: '置顶发布', icon: '📌', direction: 'out', color: '#EF4444' },
+  { value: 'bounty_bonus', label: '悬赏加成', icon: '⚡', direction: 'out', color: '#EF4444' },
+  { value: 'refund', label: '积分退还', icon: '↩️', direction: 'in', color: '#10B981' },
+  { value: 'expired', label: '积分过期', icon: '⏰', direction: 'out', color: '#6B7280' }
+];
+
+const POINT_TRANSACTION_TYPE_MAP = POINT_TRANSACTION_TYPES.reduce((acc, t) => {
+  acc[t.value] = { label: t.label, icon: t.icon, direction: t.direction, color: t.color };
+  return acc;
+}, {});
+
+const POINT_TASK_TYPES = [
+  {
+    value: 'first_lost',
+    label: '首次发布失物',
+    icon: '🔍',
+    points: 50,
+    description: '首次在失物招领板块发布信息',
+    type: 'once',
+    module: 'lost-found',
+    moduleUrl: '/pages/lost-found-publish/index'
+  },
+  {
+    value: 'real_name',
+    label: '完成实名认证',
+    icon: '✅',
+    points: 100,
+    description: '完成实名认证，获得身份标识',
+    type: 'once',
+    module: 'real-name',
+    moduleUrl: '/pages/real-name-verify/index'
+  },
+  {
+    value: 'survey',
+    label: '参与问卷',
+    icon: '📋',
+    points: 30,
+    description: '完成一份问卷调查',
+    type: 'repeatable',
+    maxDaily: 3,
+    module: 'survey',
+    moduleUrl: '/pages/survey-list/index'
+  },
+  {
+    value: 'volunteer',
+    label: '志愿签到',
+    icon: '❤️',
+    points: 20,
+    description: '参与志愿服务并完成签到',
+    type: 'repeatable',
+    maxDaily: 1,
+    module: 'volunteer',
+    moduleUrl: '/pages/volunteer/index'
+  },
+  {
+    value: 'daily_signin',
+    label: '每日签到',
+    icon: '📅',
+    points: 10,
+    description: '每日签到获取积分',
+    type: 'daily',
+    module: 'points',
+    moduleUrl: '/pages/points-tasks/index'
+  },
+  {
+    value: 'continue_7',
+    label: '连续签到7天',
+    icon: '🔥',
+    points: 100,
+    description: '连续签到7天额外奖励',
+    type: 'achievement',
+    module: 'points',
+    moduleUrl: '/pages/points-tasks/index'
+  },
+  {
+    value: 'continue_30',
+    label: '连续签到30天',
+    icon: '🏆',
+    points: 500,
+    description: '连续签到30天额外奖励',
+    type: 'achievement',
+    module: 'points',
+    moduleUrl: '/pages/points-tasks/index'
+  }
+];
+
+const POINT_TASK_TYPE_MAP = POINT_TASK_TYPES.reduce((acc, t) => {
+  acc[t.value] = { ...t };
+  return acc;
+}, {});
+
+const POINT_MALL_CATEGORIES = [
+  { value: 'all', label: '全部', icon: '🎁' },
+  { value: 'coupon', label: '优惠券', icon: '🏷️' },
+  { value: 'top_publish', label: '置顶服务', icon: '📌' },
+  { value: 'bounty', label: '加成道具', icon: '⚡' },
+  { value: 'virtual', label: '虚拟权益', icon: '✨' }
+];
+
+const POINT_MALL_CATEGORY_MAP = POINT_MALL_CATEGORIES.reduce((acc, c) => {
+  acc[c.value] = { label: c.label, icon: c.icon };
+  return acc;
+}, {});
+
+const POINT_PRODUCT_STATUS = [
+  { value: 'available', label: '可兑换', color: '#10B981' },
+  { value: 'limited', label: '限量抢兑', color: '#F59E0B' },
+  { value: 'sold_out', label: '已售罄', color: '#6B7280' },
+  { value: 'offline', label: '已下架', color: '#9CA3AF' }
+];
+
+const POINT_PRODUCT_STATUS_MAP = POINT_PRODUCT_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const POINT_ORDER_STATUS = [
+  { value: 'pending', label: '待发货', color: '#F59E0B', icon: '⏳' },
+  { value: 'delivered', label: '已发货', color: '#3B82F6', icon: '📦' },
+  { value: 'completed', label: '已完成', color: '#10B981', icon: '✅' },
+  { value: 'cancelled', label: '已取消', color: '#6B7280', icon: '❌' },
+  { value: 'refunded', label: '已退款', color: '#8B5CF6', icon: '↩️' }
+];
+
+const POINT_ORDER_STATUS_MAP = POINT_ORDER_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const POINTS_RULES_CONFIG = {
+  earn: [
+    { title: '悬赏赚取', desc: '接取悬赏任务并完成，获得对应积分奖励', points: '按任务金额' },
+    { title: '每日签到', desc: '每日签到可获得10积分', points: '+10/天' },
+    { title: '连续签到', desc: '连续签到7天额外奖励100积分，30天额外奖励500积分', points: '+100/+500' },
+    { title: '首次发布失物', desc: '首次在失物招领板块发布信息', points: '+50' },
+    { title: '完成实名认证', desc: '完成实名认证并通过审核', points: '+100' },
+    { title: '参与问卷', desc: '完成问卷调查，每日最多3次', points: '+30/次' },
+    { title: '志愿签到', desc: '参与志愿服务并完成签到，每日最多1次', points: '+20/次' },
+    { title: '管理员发放', desc: '管理员可根据活动或特殊情况发放积分', points: '不定额' }
+  ],
+  spend: [
+    { title: '商城兑换', desc: '在积分商城兑换各类优惠券和权益', points: '按商品价格' },
+    { title: '悬赏发布', desc: '发布悬赏任务时扣除对应积分', points: '按悬赏金额' },
+    { title: '置顶发布', desc: '将失物/二手信息置顶展示，获得更多曝光', points: '50积分/天' },
+    { title: '悬赏加成券', desc: '发布悬赏时使用加成券，提高吸引力', points: '30积分/张' },
+    { title: '管理员扣除', desc: '违规操作将被扣除相应积分', points: '不定额' }
+  ],
+  expire: [
+    { title: '有效期说明', desc: '积分自获得之日起计算有效期', period: '12个月' },
+    { title: '过期规则', desc: '过期积分将自动清零，无法恢复', period: '自动清零' },
+    { title: '使用顺序', desc: '优先使用即将过期的积分', period: '先进先出' }
+  ]
+};
+
+const POINTS_VALIDITY_CONFIG = {
+  enabled: true,
+  validityDays: 365,
+  notifyBeforeDays: 30,
+  clearExpiredCron: '0 0 1 * *'
+};
+
 const STUDY_MATERIAL_CATEGORIES = [
   { value: 'course', label: '课程', color: '#4ECDC4', icon: '📚' },
   { value: 'postgraduate', label: '考研', color: '#FF6B6B', icon: '🎓' },
@@ -3838,5 +4013,18 @@ module.exports = {
 
   KEYWORD_SUBSCRIPTION_MODULES,
   KEYWORD_SUBSCRIPTION_TEMPLATE_IDS,
-  DEFAULT_KEYWORD_SUBSCRIPTION_SETTINGS
+  DEFAULT_KEYWORD_SUBSCRIPTION_SETTINGS,
+
+  POINT_TRANSACTION_TYPES,
+  POINT_TRANSACTION_TYPE_MAP,
+  POINT_TASK_TYPES,
+  POINT_TASK_TYPE_MAP,
+  POINT_MALL_CATEGORIES,
+  POINT_MALL_CATEGORY_MAP,
+  POINT_PRODUCT_STATUS,
+  POINT_PRODUCT_STATUS_MAP,
+  POINT_ORDER_STATUS,
+  POINT_ORDER_STATUS_MAP,
+  POINTS_RULES_CONFIG,
+  POINTS_VALIDITY_CONFIG
 };

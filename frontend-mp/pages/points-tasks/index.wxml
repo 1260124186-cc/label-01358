@@ -1,0 +1,163 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header-card">
+    <view class="header-bg"></view>
+    <view class="header-content">
+      <view class="points-row">
+        <view class="points-info">
+        <text class="points-label">我的积分</text>
+        <text class="points-value">{{currentPoints}}</text>
+      </view>
+      <view class="header-actions">
+        <view class="header-action" bindtap="goHistory">
+          <text class="action-icon">📋</text>
+          <text class="action-text">流水</text>
+        </view>
+        <view class="header-action" bindtap="goMall">
+          <text class="action-icon">🛒</text>
+          <text class="action-text">商城</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="signin-section">
+      <view class="signin-header">
+        <text class="signin-title">每日签到</text>
+        <view class="signin-stats">
+          <text class="stats-text">连续 <text class="stats-highlight">{{signinStats.consecutiveDays}}</text> 天</text>
+          <text class="stats-divider">|</text>
+          <text class="stats-text">累计 <text class="stats-highlight">{{signinStats.totalDays}}</text> 天</text>
+        </view>
+      </view>
+
+      <view class="week-calendar">
+        <view 
+          class="week-day {{item.isToday ? 'today' : ''}} {{item.isSigned ? 'signed' : ''}}" 
+          wx:for="{{weekDays}}" 
+          wx:key="dateStr"
+        >
+          <text class="day-name">{{item.day}}</text>
+          <view class="day-circle">
+            <text class="day-date">{{item.date}}</text>
+            <text class="day-check" wx:if="{{item.isSigned}}">✓</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="signin-btn {{signinStats.todaySigned ? 'signed' : ''}}" bindtap="doSignin">
+        <text class="signin-icon">{{signinStats.todaySigned ? '✓' : '📅'}}</text>
+        <text class="signin-text">{{signinStats.todaySigned ? '今日已签到' : '立即签到 +10'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="signin-success {{showSigninSuccess ? 'show' : ''}}">
+    <view class="success-content">
+      <text class="success-icon">🎉</text>
+      <text class="success-text">+{{signinSuccessPoints}}</text>
+      <text class="success-label">积分</text>
+    </view>
+  </view>
+
+  <view class="tasks-container">
+    <view class="task-section" wx:if="{{onceTasks.length > 0}}">
+      <view class="section-header">
+        <text class="section-title">🎯 新手任务</text>
+        <text class="section-desc">完成即可获得积分奖励</text>
+      </view>
+      <view class="task-list">
+        <view class="task-item" wx:for="{{onceTasks}}" wx:key="value" data-task="{{item}}" bindtap="doTask">
+          <view class="task-icon" style="background: #FFF0F0;">
+            <text>{{item.icon}}</text>
+          </view>
+          <view class="task-info">
+            <view class="task-header">
+              <text class="task-title">{{item.label}}</text>
+              <text class="task-points">+{{item.points}}</text>
+            </view>
+            <text class="task-desc">{{item.description}}</text>
+            <text class="task-status">{{item.statusText}}</text>
+          </view>
+          <view class="task-btn {{item.buttonDisabled ? 'disabled' : ''}}">
+            <text>{{item.buttonText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="task-section" wx:if="{{repeatableTasks.length > 0}}">
+      <view class="section-header">
+        <text class="section-title">🔄 每日任务</text>
+        <text class="section-desc">每天都可以完成</text>
+      </view>
+      <view class="task-list">
+        <view class="task-item" wx:for="{{repeatableTasks}}" wx:key="value" data-task="{{item}}" bindtap="doTask">
+          <view class="task-icon" style="background: #F0F9FF;">
+            <text>{{item.icon}}</text>
+          </view>
+          <view class="task-info">
+            <view class="task-header">
+              <text class="task-title">{{item.label}}</text>
+              <text class="task-points">+{{item.points}}/次</text>
+            </view>
+            <text class="task-desc">{{item.description}}</text>
+            <view class="task-progress" wx:if="{{item.showProgress}}">
+              <view class="progress-bar">
+                <view class="progress-fill" style="width: {{item.progressValue}}%;"></view>
+              </view>
+              <text class="progress-text">{{item.statusText}}</text>
+            </view>
+            <text class="task-status" wx:else>{{item.statusText}}</text>
+          </view>
+          <view class="task-btn {{item.buttonDisabled ? 'disabled' : ''}}">
+            <text>{{item.buttonText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="task-section" wx:if="{{achievementTasks.length > 0}}">
+      <view class="section-header">
+        <text class="section-title">🏆 成就奖励</text>
+        <text class="section-desc">达成条件即可领取</text>
+      </view>
+      <view class="task-list">
+        <view class="task-item" wx:for="{{achievementTasks}}" wx:key="value" data-task="{{item}}" bindtap="doTask">
+          <view class="task-icon" style="background: #FFF8E6;">
+            <text>{{item.icon}}</text>
+          </view>
+          <view class="task-info">
+            <view class="task-header">
+              <text class="task-title">{{item.label}}</text>
+              <text class="task-points">+{{item.points}}</text>
+            </view>
+            <text class="task-desc">{{item.description}}</text>
+            <view class="task-progress" wx:if="{{item.showProgress}}">
+              <view class="progress-bar">
+                <view class="progress-fill" style="width: {{item.progressValue}}%;"></view>
+              </view>
+              <text class="progress-text">{{item.statusText}}</text>
+            </view>
+            <text class="task-status" wx:else>{{item.statusText}}</text>
+          </view>
+          <view class="task-btn {{item.buttonDisabled ? 'disabled' : ''}}">
+            <text>{{item.buttonText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="rules-entry" bindtap="goRules">
+    <text class="rules-icon">📖</text>
+    <text class="rules-text">查看积分规则说明</text>
+    <text class="rules-arrow">›</text>
+  </view>
+
+  <view class="bottom-space"></view>
+
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-icon">⏳</text>
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>

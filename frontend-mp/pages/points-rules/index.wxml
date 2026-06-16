@@ -1,0 +1,125 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header-card">
+    <view class="header-bg"></view>
+    <view class="header-content">
+      <view class="points-row">
+        <view class="points-info">
+          <text class="points-label">我的积分</text>
+          <text class="points-value">{{currentPoints}}</text>
+        </view>
+        <view class="header-actions">
+          <view class="header-action" bindtap="goHistory">
+            <text class="action-icon">📋</text>
+            <text class="action-text">流水</text>
+          </view>
+          <view class="header-action" bindtap="goTasks">
+            <text class="action-icon">🎯</text>
+            <text class="action-text">任务</text>
+          </view>
+          <view class="header-action" bindtap="goMall">
+            <text class="action-icon">🛒</text>
+            <text class="action-text">商城</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="validity-card" wx:if="{{validityConfig}}">
+        <view class="validity-header">
+          <text class="validity-icon">⏰</text>
+          <text class="validity-title">积分有效期</text>
+        </view>
+        <view class="validity-content">
+          <view class="validity-item">
+            <text class="validity-label">状态</text>
+            <text class="validity-value">{{validityConfig.enabled ? '已启用' : '未启用'}}</text>
+          </view>
+          <view class="validity-item" wx:if="{{validityConfig.enabled}}">
+            <text class="validity-label">有效期</text>
+            <text class="validity-value">{{validityConfig.validityDays}}天</text>
+          </view>
+          <view class="validity-item" wx:if="{{validityConfig.enabled}}">
+            <text class="validity-label">到期提醒</text>
+            <text class="validity-value">到期前{{validityConfig.notifyBeforeDays}}天</text>
+          </view>
+        </view>
+        <text class="validity-desc">
+          积分自获取之日起计算，{{validityConfig.validityDays}}天后自动过期。请及时使用积分，避免浪费。
+        </text>
+      </view>
+    </view>
+  </view>
+
+  <view class="tabs-section">
+    <view class="tabs-row">
+      <view 
+        class="tab-item {{activeTab === item.value ? 'active' : ''}}" 
+        wx:for="{{tabs}}" 
+        wx:key="value"
+        data-tab="{{item.value}}"
+        bindtap="switchTab"
+      >
+        <text class="tab-text">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="rules-container">
+    <view class="rules-list" wx:if="{{currentContent.length > 0}}">
+      <view class="rule-item" wx:for="{{currentContent}}" wx:key="type">
+        <view class="rule-icon" style="background: {{item.color}}15;">
+          <text>{{item.icon}}</text>
+        </view>
+        <view class="rule-info">
+          <view class="rule-header">
+            <text class="rule-name">{{item.name}}</text>
+            <text class="rule-points" style="color: {{item.color}};" wx:if="{{item.pointsText}}">{{item.pointsText}}</text>
+          </view>
+          <text class="rule-desc">{{item.description}}</text>
+          <view class="rule-footer">
+            <text class="rule-limit" wx:if="{{item.limitText}}">{{item.limitText}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="empty-state" wx:if="{{currentContent.length === 0}}">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无相关规则</text>
+    </view>
+  </view>
+
+  <view class="faq-section">
+    <view class="section-header">
+      <text class="section-title">❓ 常见问题</text>
+    </view>
+    <view class="faq-list">
+      <view class="faq-item">
+        <text class="faq-q">Q: 积分可以做什么？</text>
+        <text class="faq-a">A: 积分可以在积分商城兑换优惠券、置顶服务、悬赏加成券等，也可以用于发布悬赏时消耗。</text>
+      </view>
+      <view class="faq-item">
+        <text class="faq-q">Q: 如何快速获得积分？</text>
+        <text class="faq-a">A: 每日签到、完成实名认证、首次发布失物、参与问卷和志愿活动都可以获得积分。连续签到还有额外奖励。</text>
+      </view>
+      <view class="faq-item">
+        <text class="faq-q">Q: 积分过期了怎么办？</text>
+        <text class="faq-a">A: 积分过期后将被清零且无法恢复。建议您在积分到期前及时使用，我们会在到期前发送提醒通知。</text>
+      </view>
+      <view class="faq-item">
+        <text class="faq-q">Q: 兑换的商品可以退款吗？</text>
+        <text class="faq-a">A: 虚拟商品（如优惠券、置顶服务）一经兑换，非特殊情况不予退款。如有问题请联系客服。</text>
+      </view>
+      <view class="faq-item">
+        <text class="faq-q">Q: 积分规则会变更吗？</text>
+        <text class="faq-a">A: 平台保留调整积分规则的权利，如有变更会提前公告通知。变更前已获得的积分不受影响。</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="contact-section">
+    <text class="contact-text">如有疑问，请联系客服：400-888-8888</text>
+  </view>
+
+  <view class="bottom-space"></view>
+</view>

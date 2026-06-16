@@ -258,7 +258,11 @@
     "pages/library/recommend/index",
     "pages/keyword-subscription/index",
     "pages/keyword-subscription/edit",
-    "pages/privacy-settings/index"
+    "pages/privacy-settings/index",
+    "pages/points-history/index",
+    "pages/points-tasks/index",
+    "pages/points-mall/index",
+    "pages/points-rules/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B6B",

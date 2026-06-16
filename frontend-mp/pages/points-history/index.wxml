@@ -1,0 +1,114 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header-card">
+    <view class="header-bg"></view>
+    <view class="header-content">
+      <view class="points-header">
+        <view class="points-label-row">
+          <text class="points-label">当前积分</text>
+          <view class="expiring-badge" wx:if="{{expiringPoints > 0}}" bindtap="goRules">
+            <text class="expiring-icon">⏰</text>
+            <text class="expiring-text">{{expiringPoints}}积分即将过期</text>
+          </view>
+        </view>
+        <view class="points-main">
+          <text class="points-value">{{currentPoints}}</text>
+        </view>
+        <view class="expiring-tip" wx:if="{{soonestExpireText}}">
+          <text>最近过期：{{soonestExpireText}}</text>
+        </view>
+      </view>
+      <view class="stats-row">
+        <view class="stat-item">
+          <text class="stat-value positive">+{{totalEarn}}</text>
+          <text class="stat-label">累计收入</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value negative">-{{totalSpend}}</text>
+          <text class="stat-label">累计支出</text>
+        </view>
+        <view class="stat-divider"></view>
+        <view class="stat-item">
+          <text class="stat-value">{{totalRecords}}</text>
+          <text class="stat-label">交易记录</text>
+        </view>
+      </view>
+      <view class="action-row">
+        <view class="action-btn" bindtap="goTasks">
+          <text class="action-icon">🎯</text>
+          <text class="action-text">赚积分</text>
+        </view>
+        <view class="action-btn" bindtap="goMall">
+          <text class="action-icon">🛒</text>
+          <text class="action-text">去兑换</text>
+        </view>
+        <view class="action-btn" bindtap="goRules">
+          <text class="action-icon">📖</text>
+          <text class="action-text">规则</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="tab-section">
+    <view class="tab-row">
+      <view 
+        class="tab-item {{activeTab === tab.value ? 'active' : ''}}" 
+        wx:for="{{tabs}}" 
+        wx:key="value"
+        data-tab="{{tab.value}}"
+        bindtap="switchTab"
+      >
+        <text class="tab-text">{{tab.label}}</text>
+        <view class="tab-underline" wx:if="{{activeTab === tab.value}}"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="list-section">
+    <view class="empty-state" wx:if="{{transactions.length === 0 && !loading}}">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无{{activeTab === 'in' ? '收入' : activeTab === 'out' ? '支出' : ''}}记录</text>
+      <text class="empty-desc">{{activeTab === 'in' ? '去完成任务赚取积分吧' : activeTab === 'out' ? '还没有消费记录哦' : '快去赚取第一笔积分吧'}}</text>
+      <view class="empty-btn" wx:if="{{activeTab !== 'out'}}" bindtap="goTasks">
+        <text>去做任务</text>
+      </view>
+    </view>
+
+    <view class="transaction-list" wx:if="{{transactions.length > 0}}">
+      <view 
+        class="transaction-item" 
+        wx:for="{{transactions}}" 
+        wx:key="id"
+        data-item="{{item}}"
+        bindtap="showTransactionDetail"
+      >
+        <view class="item-left">
+          <view class="item-icon" style="background: {{item.typeColor}}15;">
+            <text>{{item.typeIcon}}</text>
+          </view>
+          <view class="timeline-line" wx:if="{{index < transactions.length - 1}}"></view>
+        </view>
+        <view class="item-content">
+          <view class="item-header">
+            <text class="item-title">{{item.typeLabel}}</text>
+            <text class="item-points {{item.pointsClass}}">{{item.pointsText}}</text>
+          </view>
+          <text class="item-desc" wx:if="{{item.description}}">{{item.description}}</text>
+          <view class="item-footer">
+            <text class="item-time">{{item.timeText}}</text>
+            <text class="item-balance">余额：{{item.balanceAfter}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="bottom-space"></view>
+
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-icon">⏳</text>
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>
