@@ -108,6 +108,7 @@ mixPage({
       broadcast: '/pages/admin/broadcast-list/index',
       scenery: '/pages/admin/scenery-list/index',
       graduation: '/pages/admin/graduation-verify/index',
+      audit: '/pages/admin/audit-center/index',
       voting: '/pages/admin/voting-list/index'
     };
 

@@ -1,0 +1,198 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header">
+    <view class="header-info">
+      <view class="header-title">审核中心</view>
+      <view class="header-desc">待审核 <text class="pending-count">{{totalPending}}</text> 条</view>
+    </view>
+    <view class="sensitive-btn" bindtap="onManageSensitive" hover-class="sensitive-btn-hover">
+      <text class="sensitive-icon">🚫</text>
+      <text>敏感词库</text>
+    </view>
+  </view>
+
+  <view class="tabs-bar">
+    <scroll-view scroll-x class="tabs-scroll">
+      <view class="tabs-list">
+        <view
+          wx:for="{{tabs}}"
+          wx:key="value"
+          class="tab-item {{activeTab === item.value ? 'active' : ''}}"
+          data-value="{{item.value}}"
+          bindtap="onTabTap"
+        >
+          <text class="tab-icon">{{item.icon}}</text>
+          <text class="tab-label">{{item.label}}</text>
+          <view wx:if="{{auditStats[item.value] && auditStats[item.value].pending > 0}}" class="tab-badge">
+            {{auditStats[item.value].pending}}
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="list-section">
+    <view wx:if="{{auditItems.length === 0}}" class="empty-state">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无待审核内容</text>
+    </view>
+
+    <view wx:for="{{auditItems}}" wx:key="id" class="audit-card">
+      <view class="card-header" bindtap="onDetailTap" data-index="{{index}}">
+        <view class="card-type-tag" style="background-color: {{item.typeColor}}20; color: {{item.typeColor}};">
+          {{item.typeName}}
+        </view>
+        <view class="card-status status-{{item.status}}">
+          {{item.statusText}}
+        </view>
+      </view>
+
+      <view class="card-body" bindtap="onDetailTap" data-index="{{index}}">
+        <view class="card-row">
+          <text class="card-label">申请人/举报人</text>
+          <text class="card-value">{{item.applicant}}</text>
+        </view>
+        <view class="card-row">
+          <text class="card-label">内容摘要</text>
+          <text class="card-value card-summary">{{item.summary || '无'}}</text>
+        </view>
+        <view wx:if="{{item.reason}}" class="card-row">
+          <text class="card-label">原因</text>
+          <text class="card-value card-reason">{{item.reason}}</text>
+        </view>
+        <view class="card-row">
+          <text class="card-label">时间</text>
+          <text class="card-value card-time">{{item.time}}</text>
+        </view>
+      </view>
+
+      <view class="card-actions" wx:if="{{item.status === 'pending'}}">
+        <view class="action-btn approve-btn" data-id="{{item.id}}" data-type="{{item.type}}" bindtap="onApprove" hover-class="action-btn-hover">
+          ✓ 通过
+        </view>
+        <view class="action-btn reject-btn" data-id="{{item.id}}" data-type="{{item.type}}" bindtap="onRejectTap" hover-class="action-btn-hover">
+          ✕ 驳回
+        </view>
+        <view class="action-btn ban-btn" data-id="{{item.id}}" data-type="{{item.type}}" bindtap="onBan" hover-class="action-btn-hover">
+          🚫 封禁
+        </view>
+      </view>
+
+      <view class="card-footer" data-id="{{item.id}}" bindtap="onViewLog">
+        <text class="footer-log">查看审核日志 ›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 驳回原因弹窗 -->
+  <view wx:if="{{showRejectModal}}" class="modal-mask" bindtap="onRejectCancel">
+    <view class="modal-content" catchtap="">
+      <view class="modal-title">驳回审核</view>
+      <view class="modal-desc">请填写驳回原因，将通知申请人</view>
+      <textarea
+        class="modal-textarea"
+        placeholder="请输入驳回原因..."
+        value="{{rejectReason}}"
+        bindinput="onRejectReasonInput"
+        maxlength="200"
+      />
+      <view class="modal-actions">
+        <view class="modal-btn cancel-btn" bindtap="onRejectCancel">取消</view>
+        <view class="modal-btn confirm-btn" bindtap="onRejectConfirm">确认驳回</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 审核日志弹窗 -->
+  <view wx:if="{{showLogModal}}" class="modal-mask" bindtap="onCloseLog">
+    <view class="modal-content modal-log" catchtap="">
+      <view class="modal-title">审核日志</view>
+      <view wx:if="{{auditLogs.length === 0}}" class="log-empty">暂无审核记录</view>
+      <scroll-view scroll-y class="log-list" wx:else>
+        <view wx:for="{{auditLogs}}" wx:key="id" class="log-item">
+          <view class="log-dot log-dot-{{item.result}}"></view>
+          <view class="log-info">
+            <view class="log-main">
+              <text class="log-operator">{{item.operator}}</text>
+              <text class="log-result result-{{item.result}}">
+                {{item.resultText}}
+              </text>
+            </view>
+            <view wx:if="{{item.reason}}" class="log-reason">原因：{{item.reason}}</view>
+            <view class="log-time">{{item.time}}</view>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="modal-actions">
+        <view class="modal-btn confirm-btn" bindtap="onCloseLog">关闭</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 详情弹窗 -->
+  <view wx:if="{{showDetailModal}}" class="modal-mask" bindtap="onCloseDetail">
+    <view class="modal-content modal-detail" catchtap="">
+      <view class="modal-title">审核详情</view>
+      <view wx:if="{{detailItem}}" class="detail-body">
+        <view class="detail-row">
+          <text class="detail-label">类型</text>
+          <view class="detail-type-tag" style="background-color: {{detailItem.typeColor}}20; color: {{detailItem.typeColor}};">
+            {{detailItem.typeName}}
+          </view>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">申请人/举报人</text>
+          <text class="detail-value">{{detailItem.applicant}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">内容摘要</text>
+          <text class="detail-value">{{detailItem.summary || '无'}}</text>
+        </view>
+        <view wx:if="{{detailItem.reason}}" class="detail-row">
+          <text class="detail-label">举报原因</text>
+          <text class="detail-value">{{detailItem.reason}}</text>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">审核状态</text>
+          <view class="card-status status-{{detailItem.status}}">
+            {{detailItem.statusText}}
+          </view>
+        </view>
+        <view class="detail-row">
+          <text class="detail-label">提交时间</text>
+          <text class="detail-value">{{detailItem.time}}</text>
+        </view>
+      </view>
+      <view class="modal-actions">
+        <view class="modal-btn confirm-btn" bindtap="onCloseDetail">关闭</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 敏感词库弹窗 -->
+  <view wx:if="{{showSensitiveModal}}" class="modal-mask" bindtap="onCloseSensitive">
+    <view class="modal-content modal-sensitive" catchtap="">
+      <view class="modal-title">敏感词库管理</view>
+      <view class="sensitive-input-row">
+        <input
+          class="sensitive-input"
+          placeholder="输入新敏感词"
+          value="{{newSensitiveWord}}"
+          bindinput="onSensitiveInput"
+          bindconfirm="onAddSensitive"
+        />
+        <view class="sensitive-add-btn" bindtap="onAddSensitive" hover-class="action-btn-hover">添加</view>
+      </view>
+      <scroll-view scroll-y class="sensitive-list">
+        <view wx:for="{{sensitiveWords}}" wx:key="*this" class="sensitive-word-item">
+          <text class="sensitive-word-text">{{item}}</text>
+          <view class="sensitive-word-del" data-word="{{item}}" bindtap="onRemoveSensitive">✕</view>
+        </view>
+      </scroll-view>
+      <view class="sensitive-count">共 {{sensitiveWords.length}} 个敏感词</view>
+      <view class="modal-actions">
+        <view class="modal-btn confirm-btn" bindtap="onCloseSensitive">关闭</view>
+      </view>
+    </view>
+  </view>
+</view>

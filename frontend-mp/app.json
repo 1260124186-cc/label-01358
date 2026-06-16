@@ -150,6 +150,7 @@
     "pages/admin/scenery-list/index",
     "pages/admin/scenery-edit/index",
     "pages/admin/graduation-verify/index",
+    "pages/admin/audit-center/index",
     "pages/admin/lab-appointment/index",
     "pages/admin/venue-appointment/index",
     "pages/graduation/index",

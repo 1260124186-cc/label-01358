@@ -1384,8 +1384,29 @@ const ADMIN_MODULES = [
   { id: 'broadcast', name: '广播节目', icon: '🎙️', color: '#F59E0B', desc: '管理校园广播节目' },
   { id: 'scenery', name: '风光管理', icon: '🏞️', color: '#8B5CF6', desc: '管理校园风光图片' },
   { id: 'graduation', name: '离校审核', icon: '🎓', color: '#10B981', desc: '审核学生离校申请' },
+  { id: 'audit', name: '审核中心', icon: '🛡️', color: '#EF4444', desc: '统一内容审核工作台' },
   { id: 'voting', name: '投票管理', icon: '🗳️', color: '#667EEA', desc: '管理校园投票选举' }
 ];
+
+const AUDIT_TYPE_TABS = [
+  { value: 'scenery_publish', label: '风光投稿', icon: '🏞️', color: '#8B5CF6' },
+  { value: 'report_forum', label: '论坛举报', icon: '💬', color: '#EF4444' },
+  { value: 'report_agent', label: '中介举报', icon: '🏠', color: '#F59E0B' },
+  { value: 'real_name_verify', label: '实名认证', icon: '✅', color: '#3B82F6' },
+  { value: 'report_user', label: '用户举报', icon: '🚨', color: '#EC4899' }
+];
+
+const AUDIT_STATUS = [
+  { value: 'pending', label: '待审核', color: '#F59E0B' },
+  { value: 'approved', label: '已通过', color: '#10B981' },
+  { value: 'rejected', label: '已驳回', color: '#EF4444' },
+  { value: 'banned', label: '已封禁', color: '#6B7280' }
+];
+
+const AUDIT_STATUS_MAP = AUDIT_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
 
 const TICKET_REFUND_RULES = [
   { value: 'no_refund', label: '不可退票', desc: '购票后不支持退票', hours: 0, rate: 0 },
@@ -3343,6 +3364,9 @@ module.exports = {
   PUBLISH_STATUS,
   PUBLISH_STATUS_MAP,
   ADMIN_MODULES,
+  AUDIT_TYPE_TABS,
+  AUDIT_STATUS,
+  AUDIT_STATUS_MAP,
   LOST_FOUND_TYPES,
   LOST_FOUND_STATUS,
   LOST_FOUND_STATUS_MAP,

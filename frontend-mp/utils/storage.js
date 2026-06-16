@@ -222,7 +222,10 @@ const STORAGE_KEYS = {
   HOME_HIDDEN_MODULES: 'home_hidden_modules',
 
   GUIDE_LIST: 'guideList',
-  GUIDE_FAVORITES: 'guideFavorites'
+  GUIDE_FAVORITES: 'guideFavorites',
+
+  AUDIT_LOGS: 'auditLogs',
+  SENSITIVE_WORDS_CONFIG: 'sensitiveWordsConfig'
 };
 
 /**
