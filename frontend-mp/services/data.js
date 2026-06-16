@@ -2014,6 +2014,58 @@ function getServiceGuideDetail(type) {
   return details[type] || null;
 }
 
+function getGuideCategories() {
+  return mockData.GUIDE_CATEGORIES || [];
+}
+
+function getGuideList(category) {
+  var allGuides = mockData.GUIDE_LIST_DATA || [];
+  if (category && category !== 'all') {
+    allGuides = allGuides.filter(function(g) { return g.category === category; });
+  }
+  return allGuides;
+}
+
+function searchGuides(keyword) {
+  if (!keyword || !keyword.trim()) return [];
+  var kw = keyword.trim().toLowerCase();
+  var allGuides = mockData.GUIDE_LIST_DATA || [];
+  return allGuides.filter(function(g) {
+    return g.title.toLowerCase().indexOf(kw) > -1 ||
+           g.summary.toLowerCase().indexOf(kw) > -1;
+  });
+}
+
+function getGuideDetail(guideId) {
+  var allGuides = mockData.GUIDE_LIST_DATA || [];
+  return allGuides.find(function(g) { return g.id === guideId; }) || null;
+}
+
+function getGuideFavorites() {
+  return storage.getList(STORAGE_KEYS.GUIDE_FAVORITES);
+}
+
+function addGuideFavorite(guideId) {
+  var favs = getGuideFavorites();
+  if (favs.indexOf(guideId) === -1) {
+    favs.push(guideId);
+    storage.set(STORAGE_KEYS.GUIDE_FAVORITES, favs);
+  }
+  return true;
+}
+
+function removeGuideFavorite(guideId) {
+  var favs = getGuideFavorites();
+  var newFavs = favs.filter(function(id) { return id !== guideId; });
+  storage.set(STORAGE_KEYS.GUIDE_FAVORITES, newFavs);
+  return true;
+}
+
+function isGuideFavorited(guideId) {
+  var favs = getGuideFavorites();
+  return favs.indexOf(guideId) > -1;
+}
+
 function makePhoneCall(phoneNumber) {
   return new Promise((resolve, reject) => {
     wx.makePhoneCall({
@@ -9935,6 +9987,14 @@ module.exports = {
   searchPhonebook,
   getServiceGuides,
   getServiceGuideDetail,
+  getGuideCategories,
+  getGuideList,
+  searchGuides,
+  getGuideDetail,
+  getGuideFavorites,
+  addGuideFavorite,
+  removeGuideFavorite,
+  isGuideFavorited,
   makePhoneCall,
 
   getCampusShopList,

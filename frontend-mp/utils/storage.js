@@ -219,7 +219,10 @@ const STORAGE_KEYS = {
 
   HOME_SHORTCUTS: 'home_shortcuts',
   HOME_RECENTLY_USED: 'home_recently_used',
-  HOME_HIDDEN_MODULES: 'home_hidden_modules'
+  HOME_HIDDEN_MODULES: 'home_hidden_modules',
+
+  GUIDE_LIST: 'guideList',
+  GUIDE_FAVORITES: 'guideFavorites'
 };
 
 /**
