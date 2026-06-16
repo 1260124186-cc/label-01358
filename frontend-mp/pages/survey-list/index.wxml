@@ -61,6 +61,9 @@
               <view class="responded-tag" wx:if="{{item.hasResponded}}">
                 <text>已填写</text>
               </view>
+              <view class="owner-tag" wx:if="{{item.isOwner}}">
+                <text>我的</text>
+              </view>
             </view>
             <view class="action-right">
               <view
@@ -68,6 +71,12 @@
                 catchtap="onViewResult"
                 data-id="{{item.id}}"
               >查看结果</view>
+              <view
+                wx:if="{{item.isOwner}}"
+                class="action-btn dashboard-btn"
+                catchtap="onViewDashboard"
+                data-id="{{item.id}}"
+              >数据看板</view>
               <block wx:if="{{item.isOwner && item.status === 'active'}}">
                 <view
                   class="action-btn close-btn"
@@ -94,8 +103,8 @@
 
     <empty
       wx:if="{{!loading && list.length === 0}}"
-      text="暂无问卷"
-      showAction="{{true}}"
+      text="{{currentTab === 'mine' ? '暂未参与任何问卷' : '暂无问卷'}}"
+      showAction="{{currentTab !== 'mine'}}"
       actionText="创建问卷"
       bindaction="onCreate"
     />

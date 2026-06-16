@@ -9,16 +9,37 @@ mixPage({
     formData: {
       title: '',
       description: '',
-      questions: []
+      questions: [],
+      logicRules: [],
+      settings: {
+        deadline: '',
+        maxResponses: 0,
+        publicResults: false,
+        anonymousDisplay: false
+      }
     },
     questionTypes: constants.SURVEY_QUESTION_TYPES,
     submitting: false,
     showTypePicker: false,
-    addQuestionIndex: -1,
-    editingQuestionIndex: -1,
-    showOptionEditor: false,
-    optionInputValue: '',
-    optionEditQuestionIndex: -1
+    showSettings: false,
+    showLogicEditor: false,
+    editingLogicIndex: -1,
+    logicForm: {
+      sourceQuestionId: '',
+      operator: 'eq',
+      value: '',
+      action: 'show',
+      targetQuestionId: ''
+    },
+    deadlineDisplay: '',
+    questionTypeLabels: {
+      single: '单选',
+      multiple: '多选',
+      fill: '填空',
+      nps: 'NPS',
+      likert: '量表',
+      date: '日期'
+    }
   },
 
   onLoad() {
@@ -40,7 +61,8 @@ mixPage({
       id,
       type,
       title: '',
-      options: type === 'fill' ? [] : ['选项1', '选项2']
+      options: (type === 'single' || type === 'multiple') ? ['选项1', '选项2'] : [],
+      logicRules: []
     };
     questions.push(question);
     this.setData({ 'formData.questions': questions });
@@ -72,8 +94,14 @@ mixPage({
       return;
     }
     const questions = [...this.data.formData.questions];
+    const removedId = questions[index].id;
     questions.splice(index, 1);
-    this.setData({ 'formData.questions': questions });
+
+    const logicRules = this.data.formData.logicRules.filter(
+      r => r.sourceQuestionId !== removedId && r.targetQuestionId !== removedId
+    );
+
+    this.setData({ 'formData.questions': questions, 'formData.logicRules': logicRules });
   },
 
   onMoveUp(e) {
@@ -119,6 +147,77 @@ mixPage({
     this.setData({ 'formData.questions': questions });
   },
 
+  onToggleSettings() {
+    this.setData({ showSettings: !this.data.showSettings });
+  },
+
+  onDeadlineChange(e) {
+    const deadline = new Date(e.detail.value).getTime();
+    const display = e.detail.value;
+    this.setData({
+      'formData.settings.deadline': deadline,
+      deadlineDisplay: display
+    });
+  },
+
+  onMaxResponsesInput(e) {
+    const val = parseInt(e.detail.value) || 0;
+    this.setData({ 'formData.settings.maxResponses': val });
+  },
+
+  onPublicResultsChange(e) {
+    this.setData({ 'formData.settings.publicResults': e.detail.value });
+  },
+
+  onAnonymousDisplayChange(e) {
+    this.setData({ 'formData.settings.anonymousDisplay': e.detail.value });
+  },
+
+  onToggleLogicEditor() {
+    this.setData({ showLogicEditor: !this.data.showLogicEditor });
+  },
+
+  onAddLogicRule() {
+    const { logicForm, formData } = this.data;
+    if (!logicForm.sourceQuestionId || !logicForm.targetQuestionId || !logicForm.value) {
+      util.showToast('请完善逻辑规则');
+      return;
+    }
+    if (logicForm.sourceQuestionId === logicForm.targetQuestionId) {
+      util.showToast('源题目和目标题目不能相同');
+      return;
+    }
+
+    const rules = [...formData.logicRules, {
+      id: 'logic_' + Date.now(),
+      ...logicForm
+    }];
+
+    this.setData({
+      'formData.logicRules': rules,
+      logicForm: {
+        sourceQuestionId: '',
+        operator: 'eq',
+        value: '',
+        action: 'show',
+        targetQuestionId: ''
+      }
+    });
+  },
+
+  onDeleteLogicRule(e) {
+    const { index } = e.currentTarget.dataset;
+    const rules = [...this.data.formData.logicRules];
+    rules.splice(index, 1);
+    this.setData({ 'formData.logicRules': rules });
+  },
+
+  onLogicFieldChange(e) {
+    const { field } = e.currentTarget.dataset;
+    const value = e.detail.value;
+    this.setData({ [`logicForm.${field}`]: value });
+  },
+
   validateForm() {
     const { formData } = this.data;
 
@@ -133,17 +232,22 @@ mixPage({
         util.showToast(`请填写第${i + 1}题的标题`);
         return false;
       }
-      if (q.type !== 'fill' && (!q.options || q.options.length < 2)) {
+      if ((q.type === 'single' || q.type === 'multiple') && (!q.options || q.options.length < 2)) {
         util.showToast(`第${i + 1}题至少需要两个选项`);
         return false;
       }
-      if (q.type !== 'fill') {
+      if (q.type === 'single' || q.type === 'multiple') {
         const hasEmpty = q.options.some(opt => !opt.trim());
         if (hasEmpty) {
           util.showToast(`第${i + 1}题的选项不能为空`);
           return false;
         }
       }
+    }
+
+    if (formData.settings.deadline && formData.settings.deadline <= Date.now()) {
+      util.showToast('截止时间必须晚于当前时间');
+      return false;
     }
 
     return true;

@@ -1,13 +1,21 @@
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
 <view class="page {{darkMode ? 'dark' : ''}}">
-  <block wx:if="{{survey}}">
+  <block wx:if="{{!canFill}}">
+    <view class="closed-banner">
+      <text class="closed-icon">⚠️</text>
+      <text class="closed-text">{{fillReason}}</text>
+    </view>
+  </block>
+
+  <block wx:if="{{survey && canFill}}">
     <view class="survey-header card">
       <view class="card-body">
         <text class="survey-title">{{survey.title}}</text>
         <text class="survey-desc" wx:if="{{survey.description}}">{{survey.description}}</text>
         <view class="survey-info">
-          <text class="info-text">共{{survey.questions.length}}题</text>
+          <text class="info-text">共{{visibleQuestions.length}}题</text>
           <text class="info-text">{{survey.responseCount}}人已填</text>
+          <text class="info-text" wx:if="{{survey.settings.deadline}}">截止：{{survey.settings.deadlineStr || ''}}</text>
         </view>
       </view>
     </view>
@@ -20,7 +28,7 @@
 
     <view
       class="question-card card"
-      wx:for="{{survey.questions}}"
+      wx:for="{{visibleQuestions}}"
       wx:key="id"
     >
       <view class="card-body">
@@ -29,7 +37,7 @@
           <text class="question-title">{{item.title}}</text>
           <text class="question-required">*</text>
           <view class="question-type-tag {{item.type}}">
-            {{item.type === 'single' ? '单选' : item.type === 'multiple' ? '多选' : '填空'}}
+            {{questionTypeLabels[item.type] || item.type}}
           </view>
         </view>
 
@@ -85,6 +93,68 @@
             maxlength="500"
             disabled="{{alreadyResponded}}"
           />
+        </block>
+
+        <block wx:if="{{item.type === 'nps'}}">
+          <view class="nps-question">
+            <view class="nps-labels">
+              <text class="nps-label-left">完全不可能</text>
+              <text class="nps-label-right">非常可能</text>
+            </view>
+            <view class="nps-scale">
+              <view
+                class="nps-item {{answers[item.id] === String(n) ? 'selected' : ''}} {{n <= 6 ? 'detractor' : n <= 8 ? 'passive' : 'promoter'}} {{alreadyResponded ? 'disabled' : ''}}"
+                wx:for="{{11}}"
+                wx:key="*this"
+                wx:for-index="n"
+                bindtap="onNpsSelect"
+                data-q-id="{{item.id}}"
+                data-value="{{n}}"
+              >
+                {{n}}
+              </view>
+            </view>
+          </view>
+        </block>
+
+        <block wx:if="{{item.type === 'likert'}}">
+          <view class="likert-question">
+            <view class="likert-options">
+              <view
+                class="likert-item {{answers[item.id] === String(li + 1) ? 'selected' : ''}} {{alreadyResponded ? 'disabled' : ''}}"
+                wx:for="{{5}}"
+                wx:key="*this"
+                wx:for-index="li"
+                bindtap="onLikertSelect"
+                data-q-id="{{item.id}}"
+                data-value="{{li + 1}}"
+              >
+                <view class="likert-circle">{{li + 1}}</view>
+                <text class="likert-label">{{li === 0 ? '非常不同意' : li === 1 ? '不同意' : li === 2 ? '一般' : li === 3 ? '同意' : '非常同意'}}</text>
+              </view>
+            </view>
+          </view>
+        </block>
+
+        <block wx:if="{{item.type === 'date'}}">
+          <view class="date-question">
+            <view class="date-row">
+              <text class="date-label">日期</text>
+              <picker mode="date" bindchange="onDateChange" data-q-id="{{item.id}}">
+                <view class="date-picker {{answers[item.id] ? '' : 'placeholder'}}">
+                  {{answers[item.id] ? answers[item.id].split(' ')[0] : '请选择日期'}}
+                </view>
+              </picker>
+            </view>
+            <view class="date-row">
+              <text class="date-label">时间</text>
+              <picker mode="time" bindchange="onTimeChange" data-q-id="{{item.id}}">
+                <view class="date-picker {{answers[item.id] && answers[item.id].split(' ')[1] ? '' : 'placeholder'}}">
+                  {{answers[item.id] && answers[item.id].split(' ')[1] ? answers[item.id].split(' ')[1] : '请选择时间'}}
+                </view>
+              </picker>
+            </view>
+          </view>
         </block>
       </view>
     </view>

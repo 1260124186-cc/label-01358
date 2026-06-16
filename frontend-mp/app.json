@@ -55,6 +55,7 @@
     "pages/survey-create/index",
     "pages/survey-fill/index",
     "pages/survey-result/index",
+    "pages/survey-dashboard/index",
     "pages/campus-shop/index",
     "pages/campus-shop/detail",
     "pages/rental/index",

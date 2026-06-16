@@ -13,7 +13,8 @@ mixPage({
     tabs: [
       { value: 'all', label: '全部' },
       { value: 'active', label: '进行中' },
-      { value: 'closed', label: '已结束' }
+      { value: 'closed', label: '已结束' },
+      { value: 'mine', label: '我参与的' }
     ]
   },
 
@@ -35,14 +36,34 @@ mixPage({
     this.setData({ loading: true });
 
     return new Promise((resolve) => {
+      const app = getApp();
+      const userId = app.globalData.userInfo ? app.globalData.userInfo.account : '';
+      const currentTab = this.data.currentTab;
+
+      if (currentTab === 'mine') {
+        const mySurveys = dataService.getMyParticipatedSurveys(userId);
+        const formattedList = mySurveys.map(item => {
+          const questionCount = (item.questions || []).length;
+          return {
+            ...item,
+            timeText: util.relativeTime(item.createTime),
+            statusText: constants.getLabelByValue(constants.SURVEY_STATUS, item.status),
+            questionCount,
+            hasResponded: true,
+            isOwner: item.creator === userId
+          };
+        });
+        this.setData({ list: formattedList, loading: false, refreshing: false });
+        resolve();
+        return;
+      }
+
       const filters = {};
-      if (this.data.currentTab !== 'all') {
-        filters.status = this.data.currentTab;
+      if (currentTab !== 'all') {
+        filters.status = currentTab;
       }
 
       const list = dataService.getSurveyList(filters);
-      const app = getApp();
-      const userId = app.globalData.userInfo ? app.globalData.userInfo.account : '';
 
       const formattedList = list.map(item => {
         const hasResponded = userId ? dataService.hasUserResponded(item.id, userId) : false;
@@ -96,6 +117,11 @@ mixPage({
   onViewResult(e) {
     const { id } = e.currentTarget.dataset;
     util.navigateTo(`/pages/survey-result/index?id=${id}`);
+  },
+
+  onViewDashboard(e) {
+    const { id } = e.currentTarget.dataset;
+    util.navigateTo(`/pages/survey-dashboard/index?id=${id}`);
   },
 
   onCreate() {

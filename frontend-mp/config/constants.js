@@ -117,12 +117,58 @@ const MARKET_STATUS = [
 const SURVEY_QUESTION_TYPES = [
   { value: 'single', label: '单选题' },
   { value: 'multiple', label: '多选题' },
-  { value: 'fill', label: '填空题' }
+  { value: 'fill', label: '填空题' },
+  { value: 'nps', label: 'NPS评分' },
+  { value: 'likert', label: '量表题' },
+  { value: 'date', label: '日期时间' }
 ];
 
 const SURVEY_STATUS = [
   { value: 'active', label: '进行中' },
   { value: 'closed', label: '已结束' }
+];
+
+const SURVEY_LOGIC_OPERATORS = [
+  { value: 'eq', label: '等于' },
+  { value: 'neq', label: '不等于' },
+  { value: 'contains', label: '包含' },
+  { value: 'gt', label: '大于' },
+  { value: 'lt', label: '小于' },
+  { value: 'gte', label: '大于等于' },
+  { value: 'lte', label: '小于等于' }
+];
+
+const SURVEY_LOGIC_ACTIONS = [
+  { value: 'show', label: '显示' },
+  { value: 'skip', label: '跳过' }
+];
+
+const NPS_LABELS = {
+  0: '完全不可能',
+  1: '1',
+  2: '2',
+  3: '3',
+  4: '4',
+  5: '5',
+  6: '6',
+  7: '7',
+  8: '8',
+  9: '9',
+  10: '非常可能'
+};
+
+const NPS_CATEGORIES = [
+  { min: 0, max: 6, label: '贬损者', color: '#EF4444' },
+  { min: 7, max: 8, label: '中立者', color: '#F59E0B' },
+  { min: 9, max: 10, label: '推荐者', color: '#10B981' }
+];
+
+const LIKERT_OPTIONS = [
+  { value: 1, label: '非常不同意' },
+  { value: 2, label: '不同意' },
+  { value: 3, label: '一般' },
+  { value: 4, label: '同意' },
+  { value: 5, label: '非常同意' }
 ];
 
 const VOTING_STATUS = [
@@ -3250,6 +3296,11 @@ module.exports = {
   MARKET_STATUS,
   SURVEY_QUESTION_TYPES,
   SURVEY_STATUS,
+  SURVEY_LOGIC_OPERATORS,
+  SURVEY_LOGIC_ACTIONS,
+  NPS_LABELS,
+  NPS_CATEGORIES,
+  LIKERT_OPTIONS,
   NOTIFICATION_TYPES,
   NOTIFICATION_SUB_TYPES,
   STUDY_MATERIAL_CATEGORIES,

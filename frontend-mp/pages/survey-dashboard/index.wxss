@@ -1,0 +1,107 @@
+.page {
+  min-height: 100vh;
+  background-color: var(--color-bg-page);
+  padding: 24rpx;
+  padding-bottom: calc(40rpx + env(safe-area-inset-bottom));
+}
+
+.dash-header {
+  margin-bottom: 20rpx;
+}
+
+.dash-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.4;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.dash-subtitle {
+  font-size: 26rpx;
+  color: var(--color-text-muted);
+}
+
+.stats-row {
+  display: flex;
+  gap: 12rpx;
+  margin-bottom: 20rpx;
+  flex-wrap: wrap;
+}
+
+.mini-stat {
+  flex: 1;
+  min-width: 140rpx;
+}
+
+.mini-stat-value {
+  font-size: 40rpx;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+  display: block;
+  margin-bottom: 8rpx;
+}
+
+.mini-stat-value.nps {
+  color: #8B5CF6;
+}
+
+.mini-stat-value.likert {
+  color: #F59E0B;
+}
+
+.mini-stat-label {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+
+.chart-card {
+  margin-bottom: 20rpx;
+}
+
+.chart-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.line-chart-canvas {
+  width: 100%;
+  height: 400rpx;
+}
+
+.action-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.dash-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 24rpx;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.dash-action-icon {
+  font-size: 32rpx;
+}
+
+.dash-action-text {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.dash-action-btn:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}

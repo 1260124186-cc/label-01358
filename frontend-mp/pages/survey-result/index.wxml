@@ -16,100 +16,235 @@
             <text class="stat-label">题目数</text>
           </view>
         </view>
+
+        <block wx:if="{{!canView}}">
+          <view class="no-permission-banner">
+            <text class="no-permission-text">{{viewReason}}</text>
+          </view>
+        </block>
       </view>
     </view>
 
-    <view class="chart-toggle">
-      <view
-        class="toggle-btn {{chartType === 'bar' ? 'active' : ''}}"
-        bindtap="onChartTypeChange"
-        data-type="bar"
-      >柱状图</view>
-      <view
-        class="toggle-btn {{chartType === 'pie' ? 'active' : ''}}"
-        bindtap="onChartTypeChange"
-        data-type="pie"
-      >饼图</view>
-    </view>
-
-    <view
-      class="stat-card card"
-      wx:for="{{questionStats}}"
-      wx:key="id"
-    >
-      <view class="card-body">
-        <view class="stat-question-header">
-          <text class="stat-index">{{index + 1}}</text>
-          <text class="stat-title">{{item.title}}</text>
-          <view class="stat-type-tag {{item.type}}">
-            {{item.type === 'single' ? '单选' : item.type === 'multiple' ? '多选' : '填空'}}
+    <block wx:if="{{canView}}">
+      <view class="action-bar">
+        <view class="chart-toggle">
+          <view
+            class="toggle-btn {{chartType === 'bar' ? 'active' : ''}}"
+            bindtap="onChartTypeChange"
+            data-type="bar"
+          >柱状图</view>
+          <view
+            class="toggle-btn {{chartType === 'pie' ? 'active' : ''}}"
+            bindtap="onChartTypeChange"
+            data-type="pie"
+          >饼图</view>
+        </view>
+        <view class="action-btns">
+          <view class="action-btn" bindtap="onExportCsv" wx:if="{{isCreator}}">
+            <text class="action-btn-icon">📥</text>
+            <text class="action-btn-text">导出CSV</text>
+          </view>
+          <view class="action-btn" bindtap="onViewDashboard" wx:if="{{isCreator}}">
+            <text class="action-btn-icon">📊</text>
+            <text class="action-btn-text">数据看板</text>
           </view>
         </view>
-
-        <text class="stat-total">共 {{item.totalCount}} 人回答</text>
-
-        <block wx:if="{{item.type !== 'fill'}}">
-          <canvas
-            id="chart-{{index}}"
-            type="2d"
-            class="chart-canvas"
-          ></canvas>
-
-          <view class="legend">
-            <view
-              class="legend-item"
-              wx:for="{{item.options}}"
-              wx:for-item="opt"
-              wx:for-index="optIdx"
-              wx:key="optIdx"
-            >
-              <view class="legend-dot" style="background-color: {{optIdx < 10 ? ['#FF6B6B','#4ECDC4','#FFE66D','#667EEA','#FA709A','#2ECC71','#F39C12','#3498DB','#9B59B6','#E74C3C'][optIdx] : '#999'}};"></view>
-              <text class="legend-label">{{opt.label}}</text>
-              <text class="legend-count">{{opt.count}}票</text>
-              <text class="legend-percent">{{opt.percentage}}%</text>
-            </view>
-          </view>
-
-          <view class="progress-list">
-            <view
-              class="progress-item"
-              wx:for="{{item.options}}"
-              wx:for-item="opt"
-              wx:for-index="optIdx"
-              wx:key="optIdx"
-            >
-              <view class="progress-label-row">
-                <text class="progress-label">{{opt.label}}</text>
-                <text class="progress-percent">{{opt.percentage}}%</text>
-              </view>
-              <view class="progress-bar">
-                <view
-                  class="progress-fill"
-                  style="width: {{opt.percentage}}%; background-color: {{optIdx < 10 ? ['#FF6B6B','#4ECDC4','#FFE66D','#667EEA','#FA709A','#2ECC71','#F39C12','#3498DB','#9B59B6','#E74C3C'][optIdx] : '#999'}};"
-                ></view>
-              </view>
-            </view>
-          </view>
-        </block>
-
-        <block wx:if="{{item.type === 'fill'}}">
-          <view class="fill-responses">
-            <view
-              class="fill-response-item"
-              wx:for="{{item.fillAnswers}}"
-              wx:for-item="ans"
-              wx:for-index="ansIdx"
-              wx:key="ansIdx"
-            >
-              <view class="response-avatar">{{ans[0] || '?'}}</view>
-              <text class="response-text">{{ans}}</text>
-            </view>
-            <view class="no-response" wx:if="{{item.fillAnswers.length === 0}}">
-              <text>暂无回答</text>
-            </view>
-          </view>
-        </block>
       </view>
-    </view>
+
+      <view
+        class="stat-card card"
+        wx:for="{{questionStats}}"
+        wx:key="id"
+      >
+        <view class="card-body">
+          <view class="stat-question-header">
+            <text class="stat-index">{{index + 1}}</text>
+            <text class="stat-title">{{item.title}}</text>
+            <view class="stat-type-tag {{item.type}}">
+              {{questionTypeLabels[item.type] || item.type}}
+            </view>
+          </view>
+
+          <text class="stat-total">共 {{item.totalCount}} 人回答</text>
+
+          <block wx:if="{{item.type === 'single' || item.type === 'multiple'}}">
+            <canvas
+              id="chart-{{index}}"
+              type="2d"
+              class="chart-canvas"
+            ></canvas>
+
+            <view class="legend">
+              <view
+                class="legend-item"
+                wx:for="{{item.options}}"
+                wx:for-item="opt"
+                wx:for-index="optIdx"
+                wx:key="optIdx"
+              >
+                <view class="legend-dot" style="background-color: {{optIdx < 10 ? ['#FF6B6B','#4ECDC4','#FFE66D','#667EEA','#FA709A','#2ECC71','#F39C12','#3498DB','#9B59B6','#E74C3C'][optIdx] : '#999'}};"></view>
+                <text class="legend-label">{{opt.label}}</text>
+                <text class="legend-count">{{opt.count}}票</text>
+                <text class="legend-percent">{{opt.percentage}}%</text>
+              </view>
+            </view>
+
+            <view class="progress-list">
+              <view
+                class="progress-item"
+                wx:for="{{item.options}}"
+                wx:for-item="opt"
+                wx:for-index="optIdx"
+                wx:key="optIdx"
+              >
+                <view class="progress-label-row">
+                  <text class="progress-label">{{opt.label}}</text>
+                  <text class="progress-percent">{{opt.percentage}}%</text>
+                </view>
+                <view class="progress-bar">
+                  <view
+                    class="progress-fill"
+                    style="width: {{opt.percentage}}%; background-color: {{optIdx < 10 ? ['#FF6B6B','#4ECDC4','#FFE66D','#667EEA','#FA709A','#2ECC71','#F39C12','#3498DB','#9B59B6','#E74C3C'][optIdx] : '#999'}};"
+                  ></view>
+                </view>
+              </view>
+            </view>
+          </block>
+
+          <block wx:if="{{item.type === 'nps'}}">
+            <view class="nps-summary">
+              <view class="nps-score-card">
+                <text class="nps-score-value">{{item.npsScore}}</text>
+                <text class="nps-score-label">NPS得分</text>
+              </view>
+              <view class="nps-score-card">
+                <text class="nps-score-value">{{item.avgScore}}</text>
+                <text class="nps-score-label">平均分</text>
+              </view>
+            </view>
+            <view class="nps-categories">
+              <view class="nps-category detractor">
+                <text class="nps-cat-count">{{item.detractors}}</text>
+                <text class="nps-cat-label">贬损者</text>
+              </view>
+              <view class="nps-category passive">
+                <text class="nps-cat-count">{{item.passives}}</text>
+                <text class="nps-cat-label">中立者</text>
+              </view>
+              <view class="nps-category promoter">
+                <text class="nps-cat-count">{{item.promoters}}</text>
+                <text class="nps-cat-label">推荐者</text>
+              </view>
+            </view>
+            <canvas
+              id="chart-{{index}}"
+              type="2d"
+              class="chart-canvas"
+            ></canvas>
+          </block>
+
+          <block wx:if="{{item.type === 'likert'}}">
+            <view class="likert-summary">
+              <view class="likert-avg">
+                <text class="likert-avg-value">{{item.avgScore}}</text>
+                <text class="likert-avg-label">平均分</text>
+              </view>
+            </view>
+            <view class="likert-distribution">
+              <view
+                class="likert-dist-item"
+                wx:for="{{5}}"
+                wx:key="*this"
+                wx:for-index="li"
+              >
+                <text class="likert-dist-label">{{li === 0 ? '非常不同意' : li === 1 ? '不同意' : li === 2 ? '一般' : li === 3 ? '同意' : '非常同意'}}</text>
+                <view class="likert-dist-bar">
+                  <view class="likert-dist-fill likert-fill-{{li + 1}}" style="width: {{item.distribution[li] && item.totalCount ? (item.distribution[li] / item.totalCount * 100) : 0}}%;"></view>
+                </view>
+                <text class="likert-dist-count">{{item.distribution[li] || 0}}</text>
+              </view>
+            </view>
+            <canvas
+              id="chart-{{index}}"
+              type="2d"
+              class="chart-canvas"
+            ></canvas>
+          </block>
+
+          <block wx:if="{{item.type === 'date'}}">
+            <view class="date-answers">
+              <view
+                class="date-answer-item"
+                wx:for="{{item.dateAnswers}}"
+                wx:for-item="ans"
+                wx:for-index="ansIdx"
+                wx:key="ansIdx"
+              >
+                <text class="date-answer-icon">📅</text>
+                <text class="date-answer-text">{{ans}}</text>
+              </view>
+              <view class="no-response" wx:if="{{!item.dateAnswers || item.dateAnswers.length === 0}}">
+                <text>暂无回答</text>
+              </view>
+            </view>
+          </block>
+
+          <block wx:if="{{item.type === 'fill'}}">
+            <view class="tag-cloud" wx:if="{{item.tagCloud && item.tagCloud.length > 0}}">
+              <view class="tag-cloud-title">高频词标签云</view>
+              <view class="tag-cloud-container">
+                <view
+                  class="tag-item"
+                  wx:for="{{item.tagCloud}}"
+                  wx:for-item="tag"
+                  wx:for-index="tagIdx"
+                  wx:key="word"
+                  style="font-size: {{tag.fontSize}}rpx; color: {{tag.color}};"
+                >
+                  {{tag.word}}
+                  <text class="tag-count" wx:if="{{tag.count > 1}}">({{tag.count}})</text>
+                </view>
+              </view>
+            </view>
+
+            <view class="fill-responses">
+              <view class="fill-responses-header" bindtap="onFillToggle" data-index="{{index}}">
+                <text class="fill-responses-title">全部回答 ({{item.fillAnswers.length}})</text>
+                <text class="fill-toggle-icon">{{item._showAll ? '收起' : '展开'}}</text>
+              </view>
+              <view class="fill-responses-list" wx:if="{{item._showAll}}">
+                <view
+                  class="fill-response-item"
+                  wx:for="{{item.fillAnswers}}"
+                  wx:for-item="ans"
+                  wx:for-index="ansIdx"
+                  wx:key="ansIdx"
+                >
+                  <view class="response-avatar">{{ans[0] || '?'}}</view>
+                  <text class="response-text">{{ans}}</text>
+                </view>
+                <view class="no-response" wx:if="{{item.fillAnswers.length === 0}}">
+                  <text>暂无回答</text>
+                </view>
+              </view>
+            </view>
+          </block>
+        </view>
+      </view>
+    </block>
   </block>
+
+  <view class="csv-modal-mask" wx:if="{{showCsvModal}}" bindtap="onCloseCsvModal"></view>
+  <view class="csv-modal {{showCsvModal ? 'show' : ''}}">
+    <view class="csv-modal-header">
+      <text class="csv-modal-title">CSV导出</text>
+      <view class="csv-modal-close" bindtap="onCloseCsvModal">✕</view>
+    </view>
+    <scroll-view class="csv-modal-body" scroll-y="{{true}}">
+      <text class="csv-text" selectable="{{true}}">{{csvText}}</text>
+    </scroll-view>
+    <view class="csv-modal-footer">
+      <view class="csv-copy-btn" bindtap="onCopyCsv">复制到剪贴板</view>
+    </view>
+  </view>
 </view>

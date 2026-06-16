@@ -824,6 +824,75 @@ function getSurveyStatistics(surveyId) {
         }
       });
       stat.fillAnswers = fillAnswers;
+      stat.wordFrequency = computeWordFrequency(fillAnswers);
+    } else if (q.type === 'nps') {
+      const scoreCounts = {};
+      for (let i = 0; i <= 10; i++) scoreCounts[i] = 0;
+      let totalScore = 0;
+      let scoreCount = 0;
+      let promoters = 0, passives = 0, detractors = 0;
+
+      responses.forEach(r => {
+        const answer = r.answers.find(a => a.questionId === q.id);
+        if (answer && answer.value !== '' && answer.value !== undefined) {
+          const score = Number(answer.value);
+          if (!isNaN(score) && score >= 0 && score <= 10) {
+            scoreCounts[score]++;
+            totalScore += score;
+            scoreCount++;
+            if (score >= 9) promoters++;
+            else if (score >= 7) passives++;
+            else detractors++;
+          }
+        }
+      });
+
+      const npsOptions = Object.keys(scoreCounts).map(k => ({
+        label: k,
+        count: scoreCounts[k],
+        percentage: scoreCount > 0 ? Math.round(scoreCounts[k] / scoreCount * 100) : 0
+      }));
+
+      stat.options = npsOptions;
+      stat.npsScore = scoreCount > 0 ? Math.round(((promoters - detractors) / scoreCount) * 100) : 0;
+      stat.avgScore = scoreCount > 0 ? Math.round((totalScore / scoreCount) * 10) / 10 : 0;
+      stat.promoters = promoters;
+      stat.passives = passives;
+      stat.detractors = detractors;
+    } else if (q.type === 'likert') {
+      const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+      let totalScore = 0;
+      let scoreCount = 0;
+
+      responses.forEach(r => {
+        const answer = r.answers.find(a => a.questionId === q.id);
+        if (answer && answer.value !== '' && answer.value !== undefined) {
+          const score = Number(answer.value);
+          if (score >= 1 && score <= 5) {
+            distribution[score]++;
+            totalScore += score;
+            scoreCount++;
+          }
+        }
+      });
+
+      const likertOptions = Object.keys(distribution).map(k => ({
+        label: constants.LIKERT_OPTIONS.find(o => o.value === Number(k)) ? constants.LIKERT_OPTIONS.find(o => o.value === Number(k)).label : k,
+        count: distribution[k],
+        percentage: scoreCount > 0 ? Math.round(distribution[k] / scoreCount * 100) : 0
+      }));
+
+      stat.options = likertOptions;
+      stat.avgScore = scoreCount > 0 ? Math.round((totalScore / scoreCount) * 100) / 100 : 0;
+    } else if (q.type === 'date') {
+      const dateAnswers = [];
+      responses.forEach(r => {
+        const answer = r.answers.find(a => a.questionId === q.id);
+        if (answer && answer.value) {
+          dateAnswers.push(answer.value);
+        }
+      });
+      stat.dateAnswers = dateAnswers;
     }
 
     return stat;
@@ -833,6 +902,217 @@ function getSurveyStatistics(surveyId) {
     survey,
     totalResponses: responses.length,
     questionStats: stats
+  };
+}
+
+function evaluateLogicRule(rule, answers, questions) {
+  const sourceAnswer = answers[rule.sourceQuestionId];
+  if (sourceAnswer === undefined || sourceAnswer === null || sourceAnswer === '') return false;
+
+  const targetValue = rule.value;
+
+  switch (rule.operator) {
+    case 'eq':
+      return String(sourceAnswer) === String(targetValue);
+    case 'neq':
+      return String(sourceAnswer) !== String(targetValue);
+    case 'contains':
+      if (Array.isArray(sourceAnswer)) return sourceAnswer.includes(targetValue);
+      return String(sourceAnswer).includes(String(targetValue));
+    case 'gt':
+      return Number(sourceAnswer) > Number(targetValue);
+    case 'lt':
+      return Number(sourceAnswer) < Number(targetValue);
+    case 'gte':
+      return Number(sourceAnswer) >= Number(targetValue);
+    case 'lte':
+      return Number(sourceAnswer) <= Number(targetValue);
+    default:
+      return false;
+  }
+}
+
+function getVisibleQuestions(survey, answers) {
+  const questions = survey.questions || [];
+  const logicRules = survey.logicRules || [];
+  const hiddenIds = new Set();
+
+  logicRules.forEach(rule => {
+    const matched = evaluateLogicRule(rule, answers, questions);
+    if (rule.action === 'show') {
+      if (!matched) hiddenIds.add(rule.targetQuestionId);
+    } else if (rule.action === 'skip') {
+      if (matched) hiddenIds.add(rule.targetQuestionId);
+    }
+  });
+
+  return questions.filter(q => !hiddenIds.has(q.id));
+}
+
+function isSurveyExpired(survey) {
+  if (!survey.settings || !survey.settings.deadline) return false;
+  return Date.now() > survey.settings.deadline;
+}
+
+function isSurveyResponseLimitReached(survey) {
+  if (!survey.settings || !survey.settings.maxResponses) return false;
+  return (survey.responseCount || 0) >= survey.settings.maxResponses;
+}
+
+function canFillSurvey(survey) {
+  if (survey.status === 'closed') return { canFill: false, reason: '该问卷已结束' };
+  if (isSurveyExpired(survey)) return { canFill: false, reason: '该问卷已过截止时间' };
+  if (isSurveyResponseLimitReached(survey)) return { canFill: false, reason: '该问卷已达到答题人数上限' };
+  return { canFill: true };
+}
+
+function canViewResult(survey, userId) {
+  if (survey.creator === userId) return true;
+  if (survey.settings && survey.settings.publicResults) return true;
+  return false;
+}
+
+function getMyParticipatedSurveys(userId) {
+  const responses = storage.getList(STORAGE_KEYS.SURVEY_RESPONSES);
+  const userResponses = responses.filter(r => r.userId === userId);
+  const surveyIds = [...new Set(userResponses.map(r => r.surveyId))];
+  const allSurveys = storage.getList(STORAGE_KEYS.SURVEY_LIST);
+  return allSurveys.filter(s => surveyIds.includes(s.id)).map(s => {
+    const myResponse = userResponses.find(r => r.surveyId === s.id);
+    return {
+      ...s,
+      myResponseTime: myResponse ? myResponse.createTime : null,
+      isOwner: s.creator === userId
+    };
+  }).sort((a, b) => (b.myResponseTime || 0) - (a.myResponseTime || 0));
+}
+
+function computeWordFrequency(texts) {
+  const stopWords = new Set(['的', '了', '在', '是', '我', '有', '和', '就', '不', '人', '都', '一', '一个', '上', '也', '很', '到', '说', '要', '去', '你', '会', '着', '没有', '看', '好', '自己', '这']);
+  const wordCount = {};
+  texts.forEach(text => {
+    if (!text) return;
+    const words = text.split(/[\s,，。！？!?；;：:、\n\r]+/).filter(w => w.length > 1 && !stopWords.has(w));
+    words.forEach(w => {
+      wordCount[w] = (wordCount[w] || 0) + 1;
+    });
+  });
+  return Object.entries(wordCount)
+    .map(([word, count]) => ({ word, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 30);
+}
+
+function generateSurveyCSV(surveyId) {
+  const survey = getSurveyDetail(surveyId);
+  if (!survey) return '';
+
+  const responses = getSurveyResponses(surveyId);
+  const questions = survey.questions || [];
+
+  const headers = ['序号', ...questions.map((q, i) => `第${i + 1}题: ${q.title}`)];
+  const rows = responses.map((r, idx) => {
+    const row = [idx + 1];
+    questions.forEach(q => {
+      const answer = r.answers.find(a => a.questionId === q.id);
+      if (!answer || !answer.value) {
+        row.push('');
+      } else if (Array.isArray(answer.value)) {
+        row.push(answer.value.join('|'));
+      } else {
+        row.push(String(answer.value));
+      }
+    });
+    return row;
+  });
+
+  const csvLines = [headers.join(','), ...rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(','))];
+  return csvLines.join('\n');
+}
+
+function getSurveyDashboardData(surveyId) {
+  const survey = getSurveyDetail(surveyId);
+  if (!survey) return null;
+
+  const responses = getSurveyResponses(surveyId);
+  const dayMap = {};
+  responses.forEach(r => {
+    const d = new Date(r.createTime);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    dayMap[key] = (dayMap[key] || 0) + 1;
+  });
+
+  const now = new Date();
+  const dailyData = [];
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now.getTime() - i * 86400000);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    dailyData.push({ date: key, count: dayMap[key] || 0 });
+  }
+
+  const npsStats = {};
+  (survey.questions || []).filter(q => q.type === 'nps').forEach(q => {
+    const promoterCount = { count: 0 };
+    const passiveCount = { count: 0 };
+    const detractorCount = { count: 0 };
+    let totalScore = 0;
+    let scoreCount = 0;
+
+    responses.forEach(r => {
+      const answer = r.answers.find(a => a.questionId === q.id);
+      if (answer && answer.value !== '' && answer.value !== undefined) {
+        const score = Number(answer.value);
+        if (!isNaN(score)) {
+          totalScore += score;
+          scoreCount++;
+          if (score >= 9) promoterCount.count++;
+          else if (score >= 7) passiveCount.count++;
+          else detractorCount.count++;
+        }
+      }
+    });
+
+    npsStats[q.id] = {
+      promoters: promoterCount.count,
+      passives: passiveCount.count,
+      detractors: detractorCount.count,
+      npsScore: scoreCount > 0 ? Math.round(((promoterCount.count - detractorCount.count) / scoreCount) * 100) : 0,
+      avgScore: scoreCount > 0 ? Math.round((totalScore / scoreCount) * 10) / 10 : 0,
+      totalResponses: scoreCount
+    };
+  });
+
+  const likertStats = {};
+  (survey.questions || []).filter(q => q.type === 'likert').forEach(q => {
+    const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    let totalScore = 0;
+    let scoreCount = 0;
+
+    responses.forEach(r => {
+      const answer = r.answers.find(a => a.questionId === q.id);
+      if (answer && answer.value !== '' && answer.value !== undefined) {
+        const score = Number(answer.value);
+        if (score >= 1 && score <= 5) {
+          distribution[score]++;
+          totalScore += score;
+          scoreCount++;
+        }
+      }
+    });
+
+    likertStats[q.id] = {
+      distribution,
+      avgScore: scoreCount > 0 ? Math.round((totalScore / scoreCount) * 100) / 100 : 0,
+      totalResponses: scoreCount
+    };
+  });
+
+  return {
+    survey,
+    totalResponses: responses.length,
+    dailyData,
+    npsStats,
+    likertStats
   };
 }
 
@@ -9532,6 +9812,13 @@ module.exports = {
   submitSurveyResponse,
   getSurveyResponses,
   getSurveyStatistics,
+  getVisibleQuestions,
+  canFillSurvey,
+  canViewResult,
+  getMyParticipatedSurveys,
+  computeWordFrequency,
+  generateSurveyCSV,
+  getSurveyDashboardData,
 
   getVotingList,
   getVotingDetail,

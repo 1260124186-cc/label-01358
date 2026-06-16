@@ -10,7 +10,18 @@ mixPage({
     answers: {},
     submitting: false,
     alreadyResponded: false,
-    questionOptionsWithState: {}
+    questionOptionsWithState: {},
+    visibleQuestions: [],
+    canFill: true,
+    fillReason: '',
+    questionTypeLabels: {
+      single: '单选',
+      multiple: '多选',
+      fill: '填空',
+      nps: 'NPS',
+      likert: '量表',
+      date: '日期'
+    }
   },
 
   onLoad(options) {
@@ -41,11 +52,14 @@ mixPage({
       return;
     }
 
-    if (survey.status === 'closed') {
-      util.showToast('该问卷已结束');
-      setTimeout(() => {
-        wx.redirectTo({ url: `/pages/survey-result/index?id=${id}` });
-      }, 1500);
+    const fillCheck = dataService.canFillSurvey(survey);
+    if (!fillCheck.canFill && !this.data.alreadyResponded) {
+      this.setData({ canFill: false, fillReason: fillCheck.reason });
+      if (survey.settings && survey.settings.publicResults) {
+        setTimeout(() => {
+          wx.redirectTo({ url: `/pages/survey-result/index?id=${id}` });
+        }, 2000);
+      }
       return;
     }
 
@@ -53,13 +67,25 @@ mixPage({
     (survey.questions || []).forEach(q => {
       if (q.type === 'multiple') {
         answers[q.id] = [];
+      } else if (q.type === 'nps') {
+        answers[q.id] = '';
+      } else if (q.type === 'likert') {
+        answers[q.id] = '';
       } else {
         answers[q.id] = '';
       }
     });
 
     this.setData({ survey, answers });
+    this.updateVisibleQuestions();
     this.computeOptionStates();
+  },
+
+  updateVisibleQuestions() {
+    const { survey, answers } = this.data;
+    if (!survey) return;
+    const visible = dataService.getVisibleQuestions(survey, answers);
+    this.setData({ visibleQuestions: visible });
   },
 
   computeOptionStates() {
@@ -84,6 +110,7 @@ mixPage({
     if (this.data.alreadyResponded) return;
     const { qId, value } = e.currentTarget.dataset;
     this.setData({ [`answers.${qId}`]: value });
+    this.updateVisibleQuestions();
   },
 
   onMultipleSelect(e) {
@@ -102,6 +129,7 @@ mixPage({
 
     this.setData({ [`answers.${qId}`]: newValues });
     this.computeOptionStates();
+    this.updateVisibleQuestions();
   },
 
   onFillInput(e) {
@@ -110,25 +138,68 @@ mixPage({
     this.setData({ [`answers.${qId}`]: e.detail.value });
   },
 
-  validateAnswers() {
-    const { survey, answers } = this.data;
-    if (!survey) return false;
+  onNpsSelect(e) {
+    if (this.data.alreadyResponded) return;
+    const { qId, value } = e.currentTarget.dataset;
+    this.setData({ [`answers.${qId}`]: String(value) });
+    this.updateVisibleQuestions();
+  },
 
-    for (const q of survey.questions) {
+  onLikertSelect(e) {
+    if (this.data.alreadyResponded) return;
+    const { qId, value } = e.currentTarget.dataset;
+    this.setData({ [`answers.${qId}`]: String(value) });
+    this.updateVisibleQuestions();
+  },
+
+  onDateChange(e) {
+    if (this.data.alreadyResponded) return;
+    const { qId } = e.currentTarget.dataset;
+    this.setData({ [`answers.${qId}`]: e.detail.value });
+  },
+
+  onTimeChange(e) {
+    if (this.data.alreadyResponded) return;
+    const { qId } = e.currentTarget.dataset;
+    const currentDate = this.data.answers[qId] || '';
+    const time = e.detail.value;
+    this.setData({ [`answers.${qId}`]: currentDate ? currentDate + ' ' + time : time });
+  },
+
+  validateAnswers() {
+    const { visibleQuestions, answers } = this.data;
+    if (!visibleQuestions) return false;
+
+    for (const q of visibleQuestions) {
       const answer = answers[q.id];
       if (q.type === 'single') {
         if (!answer) {
-          util.showToast(`请完成第${survey.questions.indexOf(q) + 1}题`);
+          util.showToast(`请完成所有题目`);
           return false;
         }
       } else if (q.type === 'multiple') {
         if (!answer || answer.length === 0) {
-          util.showToast(`请完成第${survey.questions.indexOf(q) + 1}题`);
+          util.showToast(`请完成所有题目`);
           return false;
         }
       } else if (q.type === 'fill') {
         if (!answer || !answer.trim()) {
-          util.showToast(`请完成第${survey.questions.indexOf(q) + 1}题`);
+          util.showToast(`请完成所有题目`);
+          return false;
+        }
+      } else if (q.type === 'nps') {
+        if (!answer && answer !== '0') {
+          util.showToast(`请完成所有题目`);
+          return false;
+        }
+      } else if (q.type === 'likert') {
+        if (!answer) {
+          util.showToast(`请完成所有题目`);
+          return false;
+        }
+      } else if (q.type === 'date') {
+        if (!answer) {
+          util.showToast(`请完成所有题目`);
           return false;
         }
       }
@@ -161,7 +232,7 @@ mixPage({
         return;
       }
 
-      const answerList = this.data.survey.questions.map(q => ({
+      const answerList = this.data.visibleQuestions.map(q => ({
         questionId: q.id,
         value: this.data.answers[q.id]
       }));

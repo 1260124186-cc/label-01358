@@ -1,0 +1,60 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <block wx:if="{{survey}}">
+    <view class="dash-header card">
+      <view class="card-body">
+        <text class="dash-title">{{survey.title}}</text>
+        <text class="dash-subtitle">数据看板</text>
+      </view>
+    </view>
+
+    <view class="stats-row">
+      <view class="mini-stat card">
+        <view class="card-body">
+          <text class="mini-stat-value">{{totalResponses}}</text>
+          <text class="mini-stat-label">总回收量</text>
+        </view>
+      </view>
+      <view class="mini-stat card">
+        <view class="card-body">
+          <text class="mini-stat-value">{{todayResponses}}</text>
+          <text class="mini-stat-label">今日回收</text>
+        </view>
+      </view>
+      <view class="mini-stat card" wx:if="{{avgNps !== '--'}}">
+        <view class="card-body">
+          <text class="mini-stat-value nps">{{avgNps}}</text>
+          <text class="mini-stat-label">NPS得分</text>
+        </view>
+      </view>
+      <view class="mini-stat card" wx:if="{{avgLikert !== '--'}}">
+        <view class="card-body">
+          <text class="mini-stat-value likert">{{avgLikert}}</text>
+          <text class="mini-stat-label">Likert均分</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="chart-card card">
+      <view class="card-body">
+        <text class="chart-title">每日回收量趋势（近30天）</text>
+        <canvas
+          id="line-chart"
+          type="2d"
+          class="line-chart-canvas"
+        ></canvas>
+      </view>
+    </view>
+
+    <view class="action-row">
+      <view class="dash-action-btn" bindtap="onViewResult">
+        <text class="dash-action-icon">📊</text>
+        <text class="dash-action-text">查看统计结果</text>
+      </view>
+      <view class="dash-action-btn" bindtap="onExportCsv">
+        <text class="dash-action-icon">📥</text>
+        <text class="dash-action-text">导出CSV</text>
+      </view>
+    </view>
+  </block>
+</view>

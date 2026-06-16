@@ -43,7 +43,7 @@
         <view class="question-header">
           <view class="question-index">{{index + 1}}</view>
           <view class="question-type-tag {{item.type}}">
-            {{item.type === 'single' ? '单选' : item.type === 'multiple' ? '多选' : '填空'}}
+            {{questionTypeLabels[item.type] || item.type}}
           </view>
           <view class="question-actions">
             <view
@@ -73,7 +73,7 @@
           maxlength="100"
         />
 
-        <block wx:if="{{item.type !== 'fill'}}">
+        <block wx:if="{{item.type === 'single' || item.type === 'multiple'}}">
           <view class="option-list">
             <view
               class="option-item"
@@ -116,6 +116,165 @@
             <text>答题者将在此处输入文字</text>
           </view>
         </block>
+
+        <block wx:if="{{item.type === 'nps'}}">
+          <view class="nps-preview">
+            <view class="nps-label-left">完全不可能</view>
+            <view class="nps-scale-preview">
+              <view class="nps-num" wx:for="{{11}}" wx:key="*this" wx:for-index="n">
+                {{n}}
+              </view>
+            </view>
+            <view class="nps-label-right">非常可能</view>
+          </view>
+        </block>
+
+        <block wx:if="{{item.type === 'likert'}}">
+          <view class="likert-preview">
+            <view class="likert-option" wx:for="{{5}}" wx:key="*this" wx:for-index="li">
+              <view class="likert-num">{{li + 1}}</view>
+              <text class="likert-text">{{li === 0 ? '非常不同意' : li === 1 ? '不同意' : li === 2 ? '一般' : li === 3 ? '同意' : '非常同意'}}</text>
+            </view>
+          </view>
+        </block>
+
+        <block wx:if="{{item.type === 'date'}}">
+          <view class="fill-hint">
+            <text>答题者将选择日期和时间</text>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-header" bindtap="onToggleSettings">
+      <text class="section-title">问卷设置</text>
+      <text class="toggle-arrow {{showSettings ? 'open' : ''}}">▶</text>
+    </view>
+
+    <view class="settings-card card" wx:if="{{showSettings}}">
+      <view class="card-body">
+        <view class="setting-item">
+          <text class="setting-label">截止时间</text>
+          <picker mode="date" value="{{deadlineDisplay}}" bindchange="onDeadlineChange">
+            <view class="setting-value {{deadlineDisplay ? '' : 'placeholder'}}">
+              {{deadlineDisplay || '不限制'}}
+            </view>
+          </picker>
+        </view>
+        <view class="setting-item">
+          <text class="setting-label">答题次数限制</text>
+          <input
+            class="setting-input"
+            type="number"
+            placeholder="0 表示不限"
+            value="{{formData.settings.maxResponses || ''}}"
+            bindinput="onMaxResponsesInput"
+          />
+        </view>
+        <view class="setting-item">
+          <text class="setting-label">公开结果</text>
+          <switch
+            checked="{{formData.settings.publicResults}}"
+            bindchange="onPublicResultsChange"
+            color="#FF6B6B"
+          />
+        </view>
+        <view class="setting-item">
+          <text class="setting-label">匿名展示</text>
+          <switch
+            checked="{{formData.settings.anonymousDisplay}}"
+            bindchange="onAnonymousDisplayChange"
+            color="#FF6B6B"
+          />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="form-section">
+    <view class="section-header" bindtap="onToggleLogicEditor">
+      <text class="section-title">逻辑跳转</text>
+      <text class="toggle-arrow {{showLogicEditor ? 'open' : ''}}">▶</text>
+    </view>
+
+    <view class="logic-card card" wx:if="{{showLogicEditor}}">
+      <view class="card-body">
+        <view class="logic-rules" wx:if="{{formData.logicRules.length > 0}}">
+          <view class="logic-rule-item" wx:for="{{formData.logicRules}}" wx:key="id">
+            <view class="logic-rule-text">
+              第{{index + 1}}条：当「{{formData.questions.find(q => q.id === item.sourceQuestionId).title || '未知题目'}}」
+              {{item.operator === 'eq' ? '等于' : item.operator === 'neq' ? '不等于' : item.operator === 'contains' ? '包含' : item.operator === 'gt' ? '大于' : item.operator === 'lt' ? '小于' : item.operator === 'gte' ? '大于等于' : '小于等于'}}
+              「{{item.value}}」时，{{item.action === 'show' ? '显示' : '跳过'}}「{{formData.questions.find(q => q.id === item.targetQuestionId).title || '未知题目'}}」
+            </view>
+            <view class="logic-rule-delete" catchtap="onDeleteLogicRule" data-index="{{index}}">✕</view>
+          </view>
+        </view>
+
+        <view class="no-rules" wx:if="{{formData.logicRules.length === 0}}">
+          <text>暂无逻辑规则，添加规则可控制题目显示/跳过</text>
+        </view>
+
+        <view class="logic-form">
+          <view class="logic-form-row">
+            <text class="logic-form-label">当</text>
+            <picker
+              range="{{formData.questions}}"
+              range-key="title"
+              value="{{logicForm.sourceQuestionIndex}}"
+              bindchange="onLogicFieldChange"
+              data-field="sourceQuestionId"
+            >
+              <view class="logic-picker">
+                {{logicForm.sourceQuestionId ? (formData.questions.find(q => q.id === logicForm.sourceQuestionId).title || '选择题目') : '选择题目'}}
+              </view>
+            </picker>
+          </view>
+          <view class="logic-form-row">
+            <picker
+              range="{{['等于','不等于','包含','大于','小于','大于等于','小于等于']}}"
+              range-key="label"
+              value="{{['eq','neq','contains','gt','lt','gte','lte'].indexOf(logicForm.operator)}}"
+              bindchange="onLogicFieldChange"
+              data-field="operator"
+            >
+              <view class="logic-picker">{{['等于','不等于','包含','大于','小于','大于等于','小于等于'][['eq','neq','contains','gt','lt','gte','lte'].indexOf(logicForm.operator)]}}</view>
+            </picker>
+            <input
+              class="logic-value-input"
+              placeholder="条件值"
+              value="{{logicForm.value}}"
+              bindinput="onLogicFieldChange"
+              data-field="value"
+            />
+          </view>
+          <view class="logic-form-row">
+            <text class="logic-form-label">时</text>
+            <picker
+              range="{{['显示','跳过']}}"
+              value="{{logicForm.action === 'show' ? 0 : 1}}"
+              bindchange="onLogicFieldChange"
+              data-field="action"
+            >
+              <view class="logic-picker">{{logicForm.action === 'show' ? '显示' : '跳过'}}</view>
+            </picker>
+            <picker
+              range="{{formData.questions}}"
+              range-key="title"
+              value="{{logicForm.targetQuestionIndex}}"
+              bindchange="onLogicFieldChange"
+              data-field="targetQuestionId"
+            >
+              <view class="logic-picker">
+                {{logicForm.targetQuestionId ? (formData.questions.find(q => q.id === logicForm.targetQuestionId).title || '目标题目') : '目标题目'}}
+              </view>
+            </picker>
+          </view>
+          <view class="logic-add-btn" bindtap="onAddLogicRule">
+            <text>+ 添加规则</text>
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -167,6 +326,39 @@
           <view class="type-info">
             <text class="type-name">填空题</text>
             <text class="type-desc">自由输入文字回答</text>
+          </view>
+        </view>
+        <view
+          class="picker-option"
+          bindtap="onTypeSelect"
+          data-type="nps"
+        >
+          <view class="type-icon">★</view>
+          <view class="type-info">
+            <text class="type-name">NPS评分</text>
+            <text class="type-desc">0-10推荐度评分</text>
+          </view>
+        </view>
+        <view
+          class="picker-option"
+          bindtap="onTypeSelect"
+          data-type="likert"
+        >
+          <view class="type-icon">☰</view>
+          <view class="type-info">
+            <text class="type-name">量表题</text>
+            <text class="type-desc">1-5 Likert量表</text>
+          </view>
+        </view>
+        <view
+          class="picker-option"
+          bindtap="onTypeSelect"
+          data-type="date"
+        >
+          <view class="type-icon">📅</view>
+          <view class="type-info">
+            <text class="type-name">日期时间</text>
+            <text class="type-desc">选择日期和时间</text>
           </view>
         </view>
       </view>
