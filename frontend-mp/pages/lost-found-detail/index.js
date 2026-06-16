@@ -26,7 +26,13 @@ mixPage({
     statusInfo: null,
     maskedPhone: '',
     relatedMatches: [],
-    hasRelatedMatches: false
+    hasRelatedMatches: false,
+    myClaimApplication: null,
+    pendingClaimCount: 0,
+    verifiedApplication: null,
+    needReviewPublisher: false,
+    needReviewClaimant: false,
+    currentUserCreditScore: null
   },
 
   onLoad(options) {
@@ -57,7 +63,7 @@ mixPage({
 
     if (detail) {
       const statusInfo = constants.LOST_FOUND_STATUS_MAP[detail.status] || constants.LOST_FOUND_STATUS_MAP.active;
-      const isClosed = detail.status === 'claimed' || detail.status === 'returned' || detail.status === 'closed';
+      const isClosed = detail.status === 'claimed' || detail.status === 'returned' || detail.status === 'closed' || detail.status === 'resolved';
 
       const formattedDetail = {
         ...detail,
@@ -86,7 +92,62 @@ mixPage({
 
       // 检查收藏状态
       this.checkFavorite();
+
+      // 加载认领相关数据
+      this.loadClaimData();
     }
+  },
+
+  loadClaimData() {
+    const app = getApp();
+    const userInfo = app.globalData.userInfo;
+    if (!userInfo) return;
+
+    const { id, detail } = this.data;
+
+    // 加载待审核的认领申请数量（发布者视角）
+    const pendingApplications = dataService.getClaimApplicationsByLostFound(id, 'pending');
+    this.setData({ pendingClaimCount: pendingApplications.length });
+
+    // 加载当前用户的认领申请（认领人视角）
+    const myApplications = dataService.getClaimApplicationsByApplicant(userInfo.id);
+    const myAppForThis = myApplications.find(app => app.lostFoundId === id);
+    if (myAppForThis) {
+      const formattedApp = {
+        ...myAppForThis,
+        statusInfo: constants.CLAIM_APPLICATION_STATUS_MAP[myAppForThis.status],
+        timeText: util.relativeTime(myAppForThis.createTime),
+        reviewTimeText: myAppForThis.reviewTime ? util.relativeTime(myAppForThis.reviewTime) : ''
+      };
+      this.setData({ myClaimApplication: formattedApp });
+    }
+
+    // 加载已核验完成的申请（用于互评入口）
+    const verifiedApps = dataService.getClaimApplicationsByLostFound(id, 'verified');
+    if (verifiedApps.length > 0) {
+      const verifiedApp = verifiedApps[0];
+      const formattedVerified = {
+        ...verifiedApp,
+        statusInfo: constants.CLAIM_APPLICATION_STATUS_MAP[verifiedApp.status],
+        verifiedTimeText: util.relativeTime(verifiedApp.verifiedTime)
+      };
+      this.setData({ verifiedApplication: formattedVerified });
+
+      // 检查互评状态
+      const publisherReviewed = dataService.hasUserReviewed(verifiedApp.id, detail.userId);
+      const claimantReviewed = dataService.hasUserReviewed(verifiedApp.id, verifiedApp.applicantId);
+
+      if (detail.userId === userInfo.id && !publisherReviewed) {
+        this.setData({ needReviewPublisher: true });
+      }
+      if (verifiedApp.applicantId === userInfo.id && !claimantReviewed) {
+        this.setData({ needReviewClaimant: true });
+      }
+    }
+
+    // 加载当前用户信用分
+    const creditScore = dataService.getUserCreditScore(userInfo.id);
+    this.setData({ currentUserCreditScore: creditScore });
   },
 
   loadRelatedMatches(item) {
@@ -291,5 +352,77 @@ mixPage({
 
   goToMatchCenter() {
     util.navigateTo('/pages/lost-found-match/index');
+  },
+
+  onApplyClaim() {
+    if (!util.checkLogin()) {
+      return;
+    }
+    const { id, isPublisher } = this.data;
+    if (isPublisher) {
+      util.showToast('不能认领自己发布的信息');
+      return;
+    }
+    util.navigateTo(`/pages/lost-found-claim-apply/index?id=${id}`);
+  },
+
+  onManageClaims() {
+    if (!util.checkLogin()) {
+      return;
+    }
+    const { id } = this.data;
+    util.navigateTo(`/pages/lost-found-claim-manage/index?id=${id}`);
+  },
+
+  onViewVerifyCode() {
+    if (!util.checkLogin()) {
+      return;
+    }
+    const { myClaimApplication } = this.data;
+    if (myClaimApplication && (myClaimApplication.status === 'approved' || myClaimApplication.status === 'verified')) {
+      util.navigateTo(`/pages/lost-found-verify-code/index?applicationId=${myClaimApplication.id}`);
+    }
+  },
+
+  onViewMyApplication() {
+    const { myClaimApplication } = this.data;
+    if (myClaimApplication) {
+      wx.showModal({
+        title: '我的认领申请',
+        content: `申请状态：${myClaimApplication.statusInfo.label}\n提交时间：${myClaimApplication.timeText}\n${myClaimApplication.reviewNote ? `审核备注：${myClaimApplication.reviewNote}` : ''}`,
+        showCancel: myClaimApplication.status === 'approved',
+        cancelText: '查看核验码',
+        confirmText: '我知道了',
+        success: (res) => {
+          if (res.cancel && myClaimApplication.status === 'approved') {
+            this.onViewVerifyCode();
+          }
+        }
+      });
+    }
+  },
+
+  onReviewClaimant() {
+    if (!util.checkLogin()) {
+      return;
+    }
+    const { verifiedApplication } = this.data;
+    if (verifiedApplication) {
+      util.navigateTo(`/pages/lost-found-claim-review/index?applicationId=${verifiedApplication.id}&role=publisher`);
+    }
+  },
+
+  onReviewPublisher() {
+    if (!util.checkLogin()) {
+      return;
+    }
+    const { verifiedApplication } = this.data;
+    if (verifiedApplication) {
+      util.navigateTo(`/pages/lost-found-claim-review/index?applicationId=${verifiedApplication.id}&role=claimant`);
+    }
+  },
+
+  onViewCreditScore() {
+    util.navigateTo('/pages/credit-history/index');
   }
 });

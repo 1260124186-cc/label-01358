@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "认领管理",
+  "usingComponents": {
+    "empty": "/components/empty/index"
+  }
+}

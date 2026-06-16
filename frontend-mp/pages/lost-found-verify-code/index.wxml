@@ -1,0 +1,146 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="container" wx:if="{{application && lostFound}}">
+
+    <view class="header-section">
+      <view class="header-badge-wrap">
+        <view class="type-badge {{application.lostFoundType === 'lost' ? 'type-lost' : 'type-found'}}">
+          {{typeText}}
+        </view>
+        <view class="status-badge" style="background: {{statusInfo.color}}20; color: {{statusInfo.color}};">
+          <text class="status-icon">{{statusInfo.icon}}</text>
+          {{statusInfo.label}}
+        </view>
+      </view>
+    </view>
+
+    <view class="verify-section">
+      <view class="section-label">线下核验码</view>
+
+      <view class="verify-code-wrap {{isExpired ? 'expired' : ''}} {{isVerified ? 'verified' : ''}}" bindtap="{{!isExpired && !isVerified ? 'onCopyCode' : ''}}">
+        <block wx:if="{{!isVerified}}">
+          <view
+            class="code-digit"
+            wx:for="{{verifyCodeDigits}}"
+            wx:key="index"
+          >
+            <text class="digit-text">{{item}}</text>
+          </view>
+        </block>
+        <view class="verified-wrap" wx:else>
+          <text class="verified-icon">✅</text>
+          <text class="verified-text">核验已完成</text>
+        </view>
+      </view>
+
+      <view class="copy-tip" wx:if="{{!isExpired && !isVerified}}">点击核验码可复制</view>
+
+      <view class="countdown-section">
+        <block wx:if="{{!isVerified}}">
+          <view class="countdown-wrap {{isExpired ? 'expired' : ''}}">
+            <text class="countdown-icon">{{isExpired ? '⏰' : '⏳'}}</text>
+            <text class="countdown-label">{{isExpired ? '核验码已过期' : '剩余有效时间'}}</text>
+            <text class="countdown-time">{{remainingTimeText}}</text>
+          </view>
+          <view class="regenerate-btn" wx:if="{{isExpired}}" bindtap="onRegenerateCode">
+            <text class="regen-icon">🔄</text>
+            <text class="regen-text">重新生成核验码</text>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <view class="item-section">
+      <view class="section-title">
+        <text class="title-bar"></text>
+        物品信息
+      </view>
+
+      <view class="item-card">
+        <view class="item-header" wx:if="{{lostFound.images && lostFound.images.length > 0}}">
+          <image class="item-image" src="{{lostFound.images[0]}}" mode="aspectFill" />
+          <view class="item-main-info">
+            <text class="item-title">{{lostFound.title}}</text>
+            <view class="item-meta">
+              <text class="meta-tag">{{itemTypeText}}</text>
+            </view>
+          </view>
+        </view>
+        <view class="item-header no-image" wx:else>
+          <text class="item-title">{{lostFound.title}}</text>
+        </view>
+
+        <view class="item-detail-list">
+          <view class="detail-row">
+            <text class="detail-label">{{application.lostFoundType === 'lost' ? '丢失地点' : '拾取地点'}}</text>
+            <text class="detail-value">{{locationText || lostFound.location}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">{{application.lostFoundType === 'lost' ? '丢失时间' : '拾取时间'}}</text>
+            <text class="detail-value">{{lostFound.date}}</text>
+          </view>
+          <view class="detail-row">
+            <text class="detail-label">认领人</text>
+            <text class="detail-value">{{application.applicantName}}</text>
+          </view>
+          <view class="detail-row" wx:if="{{application.applicantPhone}}">
+            <text class="detail-label">联系电话</text>
+            <text class="detail-value">{{application.applicantPhone}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view class="claimer-section" wx:if="{{!isPublisher && !isVerified}}">
+      <view class="section-title">
+        <text class="title-bar"></text>
+        核验说明
+      </view>
+      <view class="claimer-card">
+        <view class="claimer-tip-item">
+          <text class="tip-icon">1️⃣</text>
+          <text class="tip-text">请前往约定地点与物品发布者进行线下核验</text>
+        </view>
+        <view class="claimer-tip-item">
+          <text class="tip-icon">2️⃣</text>
+          <text class="tip-text">将上方6位核验码出示给发布者核对</text>
+        </view>
+        <view class="claimer-tip-item">
+          <text class="tip-icon">3️⃣</text>
+          <text class="tip-text">核验码有效期为15分钟，过期可重新生成</text>
+        </view>
+        <view class="claimer-tip-item">
+          <text class="tip-icon">4️⃣</text>
+          <text class="tip-text">核验完成后，发布者将点击确认按钮完成交接</text>
+        </view>
+        <view class="claimer-warning">
+          <text class="warning-icon">⚠️</text>
+          <text class="warning-text">请务必确认物品无误后再完成核验交接</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="publisher-tip" wx:if="{{isPublisher && !isExpired && !isVerified}}">
+      <view class="tip-content">
+        <text class="tip-icon-pub">ℹ️</text>
+        <text class="tip-text-pub">请与认领人核对上方核验码，确认无误后点击下方按钮完成核验</text>
+      </view>
+    </view>
+
+    <view class="bottom-bar" wx:if="{{isPublisher && !isVerified}}">
+      <btn type="success" size="large" block="{{true}}" bind:click="onCompleteVerification" disabled="{{isExpired}}">
+        {{isExpired ? '核验码已过期' : '确认核验完成'}}
+      </btn>
+    </view>
+
+    <view class="bottom-bar verified-bar" wx:if="{{isVerified}}">
+      <btn type="default" size="large" block="{{true}}" disabled="{{true}}">
+        ✅ 核验已完成
+      </btn>
+    </view>
+  </view>
+
+  <view class="empty-wrap" wx:else>
+    <text class="empty-text">加载中...</text>
+  </view>
+</view>

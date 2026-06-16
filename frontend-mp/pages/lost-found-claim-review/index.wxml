@@ -1,0 +1,89 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+
+  <view class="preview-card" wx:if="{{application}}">
+    <view class="preview-header">
+      <view class="preview-avatar">
+        <image wx:if="{{targetUser.avatar}}" class="avatar-img" src="{{targetUser.avatar}}" mode="aspectFill"/>
+        <text wx:else class="avatar-default">👤</text>
+      </view>
+      <view class="preview-info">
+        <text class="preview-name">{{targetUser.name}}</text>
+        <text class="preview-role">{{targetRoleLabel}}</text>
+      </view>
+    </view>
+    <view class="preview-divider"></view>
+    <view class="preview-detail">
+      <view class="detail-row">
+        <text class="detail-icon">🔍</text>
+        <text class="detail-label">物品标题</text>
+        <text class="detail-value">{{application.lostFoundTitle || '未填写'}}</text>
+      </view>
+      <view class="detail-row">
+        <text class="detail-icon">📋</text>
+        <text class="detail-label">认领说明</text>
+        <text class="detail-value">{{application.claimDescription || '无'}}</text>
+      </view>
+      <view class="detail-row" wx:if="{{lostFound && lostFound.location}}">
+        <text class="detail-icon">📍</text>
+        <text class="detail-label">物品地点</text>
+        <text class="detail-value">{{lostFound.location}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <text class="section-title">综合评分</text>
+    <view class="rating-container">
+      <view
+        class="star-item {{item <= rating ? 'active' : ''}}"
+        wx:for="{{[1,2,3,4,5]}}"
+        wx:key="*this"
+        bindtap="onRatingTap"
+        data-value="{{item}}"
+      >
+        <text class="star-icon">{{item <= rating ? '★' : '☆'}}</text>
+      </view>
+      <text class="rating-text">{{rating}} 分</text>
+    </view>
+  </view>
+
+  <view class="section-card" wx:if="{{reviewTags.length > 0}}">
+    <text class="section-title">评价标签</text>
+    <view class="tags-wrap">
+      <view
+        class="tag-item {{selectedTags.indexOf(item.value) > -1 ? 'selected' : ''}}"
+        wx:for="{{reviewTags}}"
+        wx:key="value"
+        bindtap="onTagTap"
+        data-value="{{item.value}}"
+      >
+        <text class="tag-icon">{{item.icon}}</text>
+        <text class="tag-label">{{item.label}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-card">
+    <text class="section-title">文字评价</text>
+    <view class="textarea-wrap">
+      <textarea
+        class="review-textarea"
+        placeholder="说说您对本次服务的感受吧（选填）..."
+        placeholder-class="textarea-placeholder"
+        value="{{content}}"
+        bindinput="onContentInput"
+        maxlength="500"
+        auto-height
+      />
+      <text class="textarea-counter">{{content.length}}/500</text>
+    </view>
+  </view>
+
+  <view class="bottom-bar">
+    <view class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="onSubmit">
+      <text class="submit-text">{{submitting ? '提交中...' : '提交评价'}}</text>
+    </view>
+  </view>
+
+</view>

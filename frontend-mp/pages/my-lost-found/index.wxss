@@ -190,3 +190,136 @@
   background-color: #FEE2E2;
   color: #DC2626;
 }
+
+.action-claim-manage {
+  position: relative;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+  color: #B45309;
+  font-weight: 600;
+}
+
+.claim-dot {
+  position: absolute;
+  top: -4rpx;
+  right: -4rpx;
+  width: 16rpx;
+  height: 16rpx;
+  background: #EF4444;
+  border-radius: 50%;
+  border: 2rpx solid #FFFFFF;
+}
+
+.claim-manage-badge {
+  padding: 4rpx 12rpx;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: #FFFFFF;
+  font-size: 20rpx;
+  font-weight: 600;
+  border-radius: 20rpx;
+  margin-left: auto;
+  box-shadow: 0 4rpx 8rpx rgba(245, 158, 11, 0.3);
+}
+
+.item-claim-info {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+  margin-bottom: 8rpx;
+  padding: 8rpx 12rpx;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.06) 0%, rgba(139, 92, 246, 0.06) 100%);
+  border-radius: 8rpx;
+  border-left: 4rpx solid #6366F1;
+}
+
+.claim-info-icon {
+  font-size: 22rpx;
+  margin-right: 8rpx;
+}
+
+.claim-info-text {
+  font-size: 22rpx;
+  color: #4F46E5;
+  font-weight: 500;
+}
+
+.item-status-tag.status-claim_pending {
+  color: #B45309;
+  background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+}
+
+.item-status-tag.status-verifying {
+  color: #6D28D9;
+  background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 100%);
+}
+
+.item-status-tag.status-resolved,
+.item-status-tag.status-claimed,
+.item-status-tag.status-returned {
+  color: #047857;
+  background: linear-gradient(135deg, #D1FAE5 0%, #A7F3D0 100%);
+}
+
+.dark .item-type-tag.found {
+  background-color: rgba(8, 145, 178, 0.15);
+  color: #22D3EE;
+}
+
+.dark .item-status-tag.status-active {
+  background-color: rgba(5, 150, 105, 0.15);
+  color: #10B981;
+}
+
+.dark .item-status-tag.status-closed {
+  background-color: rgba(107, 114, 128, 0.15);
+  color: #9CA3AF;
+}
+
+.dark .item-status-tag.status-claim_pending {
+  background: rgba(251, 191, 36, 0.15);
+  color: #FBBF24;
+}
+
+.dark .item-status-tag.status-verifying {
+  background: rgba(167, 139, 250, 0.15);
+  color: #A78BFA;
+}
+
+.dark .item-status-tag.status-resolved,
+.dark .item-status-tag.status-claimed,
+.dark .item-status-tag.status-returned {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34D399;
+}
+
+.dark .action-edit {
+  background-color: rgba(255, 107, 107, 0.15);
+  color: #F87171;
+}
+
+.dark .action-status {
+  background-color: rgba(251, 191, 36, 0.15);
+  color: #FBBF24;
+}
+
+.dark .action-delete {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #F87171;
+}
+
+.dark .action-claim-manage {
+  background: rgba(251, 191, 36, 0.15);
+  color: #FBBF24;
+}
+
+.dark .claim-dot {
+  border-color: #1a1d23;
+}
+
+.dark .item-claim-info {
+  background: rgba(99, 102, 241, 0.1);
+  border-left-color: #818CF8;
+}
+
+.dark .claim-info-text {
+  color: #A5B4FC;
+}

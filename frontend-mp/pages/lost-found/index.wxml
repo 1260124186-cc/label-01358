@@ -72,6 +72,9 @@
           <view class="item-type {{item.type === 'lost' ? 'type-lost' : 'type-found'}}">
             {{item.type === 'lost' ? '寻物' : '招领'}}
           </view>
+          <view class="status-mini-tag status-{{item.status}}" wx:if="{{item.status && item.status !== 'active'}}">
+            {{item.statusText}}
+          </view>
           <view class="match-badge" wx:if="{{item.matchCount > 0}}">
             <text class="match-icon">🔗</text>
             <text class="match-count">{{item.matchCount}}个匹配</text>
@@ -89,6 +92,11 @@
             <view class="match-recommend" wx:if="{{item.topMatch && item.matchCount > 0}}">
               <text class="recommend-label">💡 智能推荐：</text>
               <text class="recommend-text">发现{{item.type === 'lost' ? '招领' : '寻物'}}「{{item.topMatch.item.title}}」匹配度 {{item.topMatch.score}}分</text>
+              <view class="match-hints" wx:if="{{item.smartHints && item.smartHints.length > 0}}">
+                <text class="match-hint-tag" wx:for="{{item.smartHints}}" wx:key="*this">
+                  {{item}}
+                </text>
+              </view>
             </view>
           </view>
           <image

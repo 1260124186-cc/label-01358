@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "线下核验",
+  "usingComponents": {
+    "btn": "/components/btn/index"
+  }
+}

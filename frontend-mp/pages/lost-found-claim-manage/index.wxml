@@ -1,0 +1,179 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <view class="header-section" wx:if="{{lostFoundTitle}}">
+    <text class="header-title">{{lostFoundTitle}}</text>
+    <text class="header-subtitle">认领申请管理</text>
+  </view>
+
+  <view class="tabs-section">
+    <view
+      class="tab-item {{currentTab === item.value ? 'active' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="value"
+      bindtap="onTabChange"
+      data-tab="{{item.value}}"
+    >{{item.label}}</view>
+  </view>
+
+  <scroll-view class="list-scroll" scroll-y="{{true}}">
+    <view class="list-container" wx:if="{{list.length > 0}}">
+      <view
+        class="claim-card"
+        wx:for="{{list}}"
+        wx:key="id"
+      >
+        <view class="claim-header" bindtap="onToggleExpand" data-id="{{item.id}}">
+          <image
+            class="applicant-avatar"
+            src="{{item.applicantAvatar || '/assets/images/default-avatar.png'}}"
+            mode="aspectFill"
+          />
+          <view class="claim-header-info">
+            <view class="claim-header-row">
+              <text class="applicant-name">{{item.applicantName}}</text>
+              <view
+                class="status-tag"
+                style="background-color: rgba({{item.statusColor === '#F59E0B' ? '245,158,11' : item.statusColor === '#10B981' ? '16,185,129' : item.statusColor === '#EF4444' ? '239,68,68' : item.statusColor === '#059669' ? '5,150,105' : '107,114,128'}}, 0.12); color: {{item.statusColor}};"
+              >
+                <text wx:if="{{item.statusIcon}}">{{item.statusIcon}} </text>{{item.statusLabel}}
+              </view>
+            </view>
+            <text class="apply-time">{{item.timeText}}申请</text>
+          </view>
+          <view class="expand-icon {{expandedIds[item.id] ? 'expanded' : ''}}">
+            <text>▼</text>
+          </view>
+        </view>
+
+        <view class="claim-detail" wx:if="{{expandedIds[item.id]}}">
+          <view class="detail-section" wx:if="{{item.claimDescription}}">
+            <view class="detail-label">
+              <text class="label-icon">📝</text>
+              <text class="label-text">认领说明</text>
+            </view>
+            <text class="detail-content">{{item.claimDescription}}</text>
+          </view>
+
+          <view class="detail-section" wx:if="{{item.featureProof}}">
+            <view class="detail-label">
+              <text class="label-icon">🔍</text>
+              <text class="label-text">特征证明</text>
+            </view>
+            <text class="detail-content">{{item.featureProof}}</text>
+          </view>
+
+          <view class="detail-section" wx:if="{{item.hasImages}}">
+            <view class="detail-label">
+              <text class="label-icon">🖼️</text>
+              <text class="label-text">证明图片</text>
+            </view>
+            <view class="image-grid">
+              <image
+                class="proof-image"
+                wx:for="{{item.images}}"
+                wx:for-item="img"
+                wx:for-index="imgIdx"
+                wx:key="*this"
+                src="{{img}}"
+                mode="aspectFill"
+                catchtap="onPreviewImage"
+                data-urls="{{item.images}}"
+                data-current="{{img}}"
+              />
+            </view>
+          </view>
+
+          <view class="detail-section" wx:if="{{item.status === 'rejected' && item.reviewNote}}">
+            <view class="detail-label">
+              <text class="label-icon">❌</text>
+              <text class="label-text">拒绝原因</text>
+            </view>
+            <text class="detail-content reject-note">{{item.reviewNote}}</text>
+          </view>
+
+          <view class="detail-section" wx:if="{{item.status === 'approved' || item.status === 'verified'}}">
+            <view class="verify-code-card" catchtap="onShowVerifyCode" data-item="{{item}}">
+              <view class="verify-code-left">
+                <text class="verify-code-icon">🔐</text>
+                <view class="verify-code-text">
+                  <text class="verify-code-title">核验码</text>
+                  <text class="verify-code-hint">点击查看核验码</text>
+                </view>
+              </view>
+              <text class="verify-code-arrow">›</text>
+            </view>
+          </view>
+
+          <view class="review-info" wx:if="{{item.reviewTimeText}}">
+            <text class="review-time">{{item.status === 'approved' ? '通过时间：' : item.status === 'rejected' ? '拒绝时间：' : '核验时间：'}}{{item.reviewTimeText}}</text>
+          </view>
+
+          <view class="action-buttons" wx:if="{{item.status === 'pending'}}">
+            <view class="action-btn btn-reject" catchtap="onShowRejectModal" data-item="{{item}}">
+              <text>拒绝</text>
+            </view>
+            <view class="action-btn btn-approve" catchtap="onApprove" data-item="{{item}}">
+              <text>通过</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <empty
+      wx:if="{{list.length === 0}}"
+      text="{{currentTab === 'pending' ? '暂无待审核申请' : currentTab === 'approved' ? '暂无已通过申请' : currentTab === 'rejected' ? '暂无已拒绝申请' : '暂无认领申请'}}"
+    />
+  </scroll-view>
+
+  <view class="modal-mask {{showRejectModal ? 'show' : ''}}" bindtap="onHideRejectModal">
+    <view class="modal-content reject-modal" catchtap="stopPropagation">
+      <view class="modal-header">
+        <text class="modal-title">拒绝认领申请</text>
+      </view>
+      <view class="modal-body">
+        <textarea
+          class="reject-textarea"
+          placeholder="请填写拒绝原因..."
+          placeholder-class="textarea-placeholder"
+          value="{{rejectReason}}"
+          bindinput="onRejectReasonInput"
+          maxlength="200"
+          auto-height
+        />
+        <text class="char-count">{{rejectReason.length}}/200</text>
+      </view>
+      <view class="modal-footer">
+        <view class="modal-btn btn-cancel" bindtap="onHideRejectModal">
+          <text>取消</text>
+        </view>
+        <view class="modal-btn btn-confirm-reject" bindtap="onConfirmReject">
+          <text>确认拒绝</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="modal-mask {{verifyCodeVisible ? 'show' : ''}}" bindtap="onHideVerifyCode">
+    <view class="modal-content verify-modal" catchtap="stopPropagation">
+      <view class="verify-header">
+        <text class="verify-icon">🔐</text>
+        <text class="verify-title">认领核验码</text>
+        <text class="verify-subtitle">请与认领人核对以下6位核验码</text>
+      </view>
+      <view class="verify-code-display">
+        <view class="code-digit" wx:for="{{verifyCodeData.code}}" wx:for-item="digit" wx:key="index">{{digit}}</view>
+      </view>
+      <view class="verify-expire">
+        <text class="expire-icon">⏰</text>
+        <text>有效期至 {{verifyCodeExpireText}}</text>
+      </view>
+      <view class="verify-copy-btn" bindtap="onCopyVerifyCode">
+        <text>复制核验码</text>
+      </view>
+      <view class="verify-close-btn" bindtap="onHideVerifyCode">
+        <text>关闭</text>
+      </view>
+    </view>
+  </view>
+</view>

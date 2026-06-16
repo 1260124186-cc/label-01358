@@ -12,6 +12,8 @@ mixPage({
     tabs: [
       { value: 'all', label: '全部' },
       { value: 'active', label: '进行中' },
+      { value: 'claim_pending', label: '审核中' },
+      { value: 'resolved', label: '已完成' },
       { value: 'closed', label: '已关闭' }
     ]
   },
@@ -33,13 +35,22 @@ mixPage({
     const userInfo = app.globalData.userInfo || {};
     const { currentTab } = this.data;
 
-    const list = dataService.getMyLostFoundList(userInfo.id, currentTab).map(item => ({
-      ...item,
-      timeText: util.relativeTime(item.createTime),
-      itemTypeText: constants.getLabelByValue(constants.ITEM_TYPES, item.itemType),
-      typeText: constants.getLabelByValue(constants.LOST_FOUND_TYPES, item.type),
-      statusText: item.status === 'active' ? '进行中' : '已关闭'
-    }));
+    const statusLabelMap = {};
+    constants.LOST_FOUND_STATUS.forEach(s => {
+      statusLabelMap[s.value] = s.label;
+    });
+
+    const list = dataService.getMyLostFoundList(userInfo.id, currentTab).map(item => {
+      const pendingApplications = dataService.getClaimApplicationsByLostFound(item.id, 'pending');
+      return {
+        ...item,
+        timeText: util.relativeTime(item.createTime),
+        itemTypeText: constants.getLabelByValue(constants.ITEM_TYPES, item.itemType),
+        typeText: constants.getLabelByValue(constants.LOST_FOUND_TYPES, item.type),
+        statusText: statusLabelMap[item.status] || item.status,
+        pendingClaimCount: pendingApplications ? pendingApplications.length : 0
+      };
+    });
 
     this.setData({ list });
   },
@@ -90,5 +101,10 @@ mixPage({
     } else {
       util.showError('删除失败，请重试');
     }
+  },
+
+  onManageClaims(e) {
+    const { item } = e.currentTarget.dataset;
+    util.navigateTo(`/pages/lost-found-claim-manage/index?lostFoundId=${item.id}`);
   }
 });

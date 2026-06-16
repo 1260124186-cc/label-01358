@@ -179,16 +179,130 @@
     </view>
   </view>
 
-  <!-- 发布者操作 -->
+  <!-- 认领状态卡片 - 待审核中 -->
+  <view class="claim-status-card claim-pending" wx:if="{{detail.status === 'claim_pending'}}">
+    <view class="claim-status-icon">⏳</view>
+    <view class="claim-status-info">
+      <text class="claim-status-title">认领审核中</text>
+      <text class="claim-status-desc" wx:if="{{isPublisher}}">您有 {{pendingClaimCount}} 个认领申请待审核</text>
+      <text class="claim-status-desc" wx:elif="{{myClaimApplication}}">您的认领申请正在审核中，请耐心等待</text>
+      <text class="claim-status-desc" wx:else>此物品正在认领审核流程中</text>
+    </view>
+    <view class="claim-status-action" wx:if="{{isPublisher}}" bindtap="onManageClaims">
+      <text>查看申请</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 认领状态卡片 - 核验中 -->
+  <view class="claim-status-card verifying" wx:if="{{detail.status === 'verifying'}}">
+    <view class="claim-status-icon verify">🔐</view>
+    <view class="claim-status-info">
+      <text class="claim-status-title">线下核验中</text>
+      <text class="claim-status-desc" wx:if="{{isPublisher}}">请与认领人线下核对核验码，确认物品信息</text>
+      <text class="claim-status-desc" wx:elif="{{myClaimApplication && myClaimApplication.status === 'approved'}}">请联系发布者进行线下核验</text>
+      <text class="claim-status-desc" wx:else>此物品正在线下核验流程中</text>
+    </view>
+    <view class="claim-status-action" bindtap="{{isPublisher ? 'onManageClaims' : (myClaimApplication && myClaimApplication.status === 'approved' ? 'onViewVerifyCode' : '')}}">
+      <text>{{isPublisher ? '管理核验' : (myClaimApplication && myClaimApplication.status === 'approved' ? '查看核验码' : '')}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 认领完成卡片 - 已完成 -->
+  <view class="claim-status-card resolved" wx:if="{{detail.status === 'resolved' && verifiedApplication}}">
+    <view class="claim-status-icon done">🎉</view>
+    <view class="claim-status-info">
+      <text class="claim-status-title">物品已成功{{detail.type === 'lost' ? '找回' : '归还'}}</text>
+      <text class="claim-status-desc">完成时间：{{verifiedApplication.verifiedTimeText}}</text>
+    </view>
+  </view>
+
+  <!-- 互评入口卡片 -->
+  <view class="review-entry-card" wx:if="{{needReviewPublisher || needReviewClaimant}}">
+    <view class="review-entry-icon">⭐</view>
+    <view class="review-entry-info">
+      <text class="review-entry-title">完成服务评价</text>
+      <text class="review-entry-desc">互评有助于提升用户信用分，共建诚信社区</text>
+    </view>
+    <view class="review-entry-actions">
+      <view class="review-btn" wx:if="{{needReviewPublisher}}" bindtap="onReviewClaimant">
+        <text>评价认领人</text>
+      </view>
+      <view class="review-btn" wx:if="{{needReviewClaimant}}" bindtap="onReviewPublisher">
+        <text>评价发布者</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我的认领申请卡片 -->
+  <view class="my-claim-card" wx:if="{{myClaimApplication && detail.status !== 'resolved'}}">
+    <view class="my-claim-header">
+      <text class="my-claim-title">我的认领申请</text>
+      <view class="my-claim-status" style="background: {{myClaimApplication.statusInfo.color}}20; color: {{myClaimApplication.statusInfo.color}};">
+        {{myClaimApplication.statusInfo.icon}} {{myClaimApplication.statusInfo.label}}
+      </view>
+    </view>
+    <view class="my-claim-body">
+      <view class="my-claim-row">
+        <text class="my-claim-label">提交时间</text>
+        <text class="my-claim-value">{{myClaimApplication.timeText}}</text>
+      </view>
+      <view class="my-claim-row" wx:if="{{myClaimApplication.reviewNote}}">
+        <text class="my-claim-label">审核备注</text>
+        <text class="my-claim-value">{{myClaimApplication.reviewNote}}</text>
+      </view>
+    </view>
+    <view class="my-claim-actions">
+      <view class="claim-action-btn secondary" bindtap="onViewMyApplication">
+        <text>查看详情</text>
+      </view>
+      <view class="claim-action-btn primary" wx:if="{{myClaimApplication.status === 'approved'}}" bindtap="onViewVerifyCode">
+        <text>查看核验码</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 发布者操作 - 认领管理入口 -->
   <view class="publisher-actions" wx:if="{{isPublisher && !detail.isClosed}}">
-    <btn type="danger" size="large" block="{{true}}" bind:click="onCloseLostFound">
+    <view class="manage-claim-btn" wx:if="{{pendingClaimCount > 0}}" bindtap="onManageClaims">
+      <text class="manage-claim-badge">{{pendingClaimCount}}</text>
+      <text>查看认领申请</text>
+    </view>
+    <view class="manage-claim-btn secondary" wx:else bindtap="onManageClaims">
+      <text>认领管理</text>
+    </view>
+    <btn type="danger" size="large" block="{{true}}" bind:click="onCloseLostFound" custom-style="margin-top: 16rpx;">
       标记为{{detail.type === 'lost' ? '已找回' : '已认领'}}
     </btn>
   </view>
 
-  <!-- 底部操作 -->
+  <!-- 底部操作栏 -->
   <view class="bottom-bar" wx:if="{{!detail.isClosed}}">
-    <btn type="primary" size="large" block="{{true}}" bind:click="onCallPhone">立即联系</btn>
+    <view class="bottom-bar-inner">
+      <view class="bottom-secondary-btn" bindtap="onCallPhone">
+        <text class="phone-icon">📞</text>
+        <text>联系{{isPublisher ? '我' : '发布者'}}</text>
+      </view>
+      <view class="bottom-primary-btn" wx:if="{{!isPublisher && !myClaimApplication}}" bindtap="onApplyClaim">
+        <text class="claim-icon">🤝</text>
+        <text>我要认领</text>
+      </view>
+      <view class="bottom-primary-btn applied" wx:elif="{{!isPublisher && myClaimApplication && myClaimApplication.status === 'pending'}}">
+        <text>已提交申请</text>
+      </view>
+      <view class="bottom-primary-btn approved" wx:elif="{{!isPublisher && myClaimApplication && myClaimApplication.status === 'approved'}}" bindtap="onViewVerifyCode">
+        <text class="verify-icon">🔐</text>
+        <text>查看核验码</text>
+      </view>
+      <view class="bottom-primary-btn rejected" wx:elif="{{!isPublisher && myClaimApplication && myClaimApplication.status === 'rejected'}}">
+        <text>申请未通过</text>
+      </view>
+      <view class="bottom-primary-btn verified" wx:elif="{{detail.status === 'verifying' && isPublisher}}" bindtap="onManageClaims">
+        <text class="verify-icon">✅</text>
+        <text>确认核验完成</text>
+      </view>
+    </view>
   </view>
   <view class="bottom-bar closed-bar" wx:else>
     <btn type="default" size="large" block="{{true}}" disabled="{{true}}">

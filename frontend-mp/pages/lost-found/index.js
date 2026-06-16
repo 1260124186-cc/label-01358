@@ -134,13 +134,32 @@ pageOptions = mixinList(pageOptions, {
       limit: 3
     });
 
+    const statusConfig = constants.LOST_FOUND_STATUS.find(s => s.value === item.status);
+    const smartHints = [];
+    if (matchResult.matches && matchResult.matches.length > 0) {
+      const topMatch = matchResult.matches[0];
+      if (topMatch.reasons) {
+        topMatch.reasons.forEach(r => {
+          if (r.type === 'itemType') smartHints.push('物品类型相同');
+          if (r.type === 'location') smartHints.push('地点相近');
+          if (r.type === 'date') smartHints.push('时间接近');
+          if (r.type === 'keyword') smartHints.push('关键词匹配');
+        });
+      }
+    }
+    if (matchResult.total > 0 && smartHints.length === 0) {
+      smartHints.push(`发现${matchResult.total}条相关信息`);
+    }
+
     return {
       ...item,
       timeText: util.relativeTime(item.createTime),
       itemTypeText: constants.getLabelByValue(constants.ITEM_TYPES, item.itemType),
       locationText: constants.getLabelByValue(constants.LOCATIONS, item.location),
+      statusText: statusConfig ? statusConfig.label : '',
       matchCount: matchResult.total,
-      topMatch: matchResult.matches[0] || null
+      topMatch: matchResult.matches[0] || null,
+      smartHints: smartHints.slice(0, 3)
     };
   }
 });

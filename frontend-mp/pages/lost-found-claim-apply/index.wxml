@@ -1,0 +1,149 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 物品信息展示 -->
+  <view class="form-section" wx:if="{{detail}}">
+    <view class="section-title">物品信息</view>
+    <view class="item-card">
+      <view class="item-header">
+        <view class="item-type {{detail.type === 'lost' ? 'type-lost' : 'type-found'}}">
+          {{detail.typeText}}
+        </view>
+        <view class="status-badge" style="background: {{statusInfo.color}}20; color: {{statusInfo.color}};">
+          {{statusInfo.label}}
+        </view>
+      </view>
+      <text class="item-title">{{detail.title}}</text>
+      <view class="item-image-wrap" wx:if="{{detail.images && detail.images.length > 0}}">
+        <image
+          class="item-image"
+          src="{{detail.images[0]}}"
+          mode="aspectFill"
+        />
+      </view>
+      <view class="item-info-table">
+        <view class="info-row">
+          <text class="info-label">物品类型</text>
+          <text class="info-value">{{detail.itemTypeText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">{{detail.type === 'lost' ? '丢失地点' : '拾取地点'}}</text>
+          <text class="info-value">{{detail.locationText}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">{{detail.type === 'lost' ? '丢失时间' : '拾取时间'}}</text>
+          <text class="info-value">{{detail.date}}</text>
+        </view>
+        <view class="info-row">
+          <text class="info-label">发布时间</text>
+          <text class="info-value">{{detail.timeText}}</text>
+        </view>
+      </view>
+      <view class="item-desc" wx:if="{{detail.description}}">
+        <text class="desc-label">详细描述</text>
+        <text class="desc-text">{{detail.description}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 认领申请表单 -->
+  <form bindsubmit="onSubmit">
+    <!-- 认领说明 -->
+    <view class="form-section">
+      <view class="section-title">
+        认领说明
+        <text class="required">*</text>
+      </view>
+      <view class="form-card">
+        <textarea
+          class="form-textarea"
+          placeholder="请详细描述物品特征如品牌、型号、购买时间、独特标识等"
+          value="{{formData.claimDescription}}"
+          bindinput="onInputChange"
+          data-field="claimDescription"
+          maxlength="500"
+        />
+        <text class="textarea-count">{{formData.claimDescription.length || 0}}/500</text>
+      </view>
+    </view>
+
+    <!-- 特征证明 -->
+    <view class="form-section">
+      <view class="section-title">
+        特征证明
+        <text class="required">*</text>
+      </view>
+      <view class="form-card">
+        <textarea
+          class="form-textarea"
+          placeholder="描述物品的独有特征如内页姓名、磨损位置、特殊划痕位置、特殊标记等"
+          value="{{formData.featureProof}}"
+          bindinput="onInputChange"
+          data-field="featureProof"
+          maxlength="500"
+        />
+        <text class="textarea-count">{{formData.featureProof.length || 0}}/500</text>
+      </view>
+    </view>
+
+    <!-- 上传图片 -->
+    <view class="form-section">
+      <view class="section-title">
+        上传图片
+        <text class="optional">（选填，最多3张）</text>
+      </view>
+      <view class="form-card">
+        <view class="image-list">
+          <view
+            class="image-item"
+            wx:for="{{formData.images}}"
+            wx:key="index"
+            catchtap="onPreviewImage"
+            data-index="{{index}}"
+          >
+            <image class="preview-image" src="{{item}}" mode="aspectFill" />
+            <view class="image-delete" catchtap="onDeleteImage" data-index="{{index}}">×</view>
+          </view>
+          <view
+            class="image-add"
+            wx:if="{{formData.images.length < 3}}"
+            bindtap="onChooseImage"
+          >
+            <text class="add-icon">+</text>
+            <text class="add-text">添加图片</text>
+          </view>
+        </view>
+        <text class="image-tip">可上传证明物品归属的相关照片</text>
+      </view>
+    </view>
+
+    <!-- 联系电话 -->
+    <view class="form-section">
+      <view class="section-title">
+        联系电话
+        <text class="optional">（选填）</text>
+      </view>
+      <view class="form-card">
+        <view class="form-item no-border">
+          <text class="form-label">手机号</text>
+          <input
+            class="form-input"
+            type="number"
+            placeholder="请输入联系电话"
+            value="{{formData.applicantPhone}}"
+            bindinput="onInputChange"
+            data-field="applicantPhone"
+            maxlength="11"
+          />
+        </view>
+      </view>
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-section">
+      <btn type="primary" size="large" block="{{true}}" loading="{{submitting}}" bind:click="onSubmit">
+        提交申请
+      </btn>
+      <text class="submit-tip">提交后请耐心等待发布者审核，审核结果将通过消息通知您</text>
+    </view>
+  </form>
+</view>

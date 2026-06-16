@@ -33,9 +33,18 @@
             <view class="item-status-tag status-{{item.status}}">
               {{item.statusText}}
             </view>
+            <view class="claim-manage-badge" wx:if="{{item.pendingClaimCount > 0}}">
+              <text>{{item.pendingClaimCount}}待审核</text>
+            </view>
           </view>
           <text class="item-title">{{item.title}}</text>
           <text class="item-desc">{{item.description}}</text>
+          <view class="item-claim-info" wx:if="{{item.status === 'claim_pending' || item.status === 'verifying' || item.status === 'resolved'}}">
+            <text class="claim-info-icon">🔔</text>
+            <text class="claim-info-text" wx:if="{{item.status === 'claim_pending'}}">有认领申请待处理</text>
+            <text class="claim-info-text" wx:elif="{{item.status === 'verifying'}}">核验中，请联系认领人</text>
+            <text class="claim-info-text" wx:elif="{{item.status === 'resolved'}}">已完成，感谢您的参与</text>
+          </view>
           <view class="item-meta">
             <text class="item-meta-text">{{item.itemTypeText}}</text>
             <text class="item-meta-dot">·</text>
@@ -43,6 +52,10 @@
           </view>
         </view>
         <view class="item-actions">
+          <view class="action-btn action-claim-manage" catchtap="onManageClaims" data-item="{{item}}" wx:if="{{item.status !== 'closed'}}">
+            <text>认领管理</text>
+            <view class="claim-dot" wx:if="{{item.pendingClaimCount > 0}}"></view>
+          </view>
           <view class="action-btn action-edit" catchtap="onEdit" data-item="{{item}}">
             <text>编辑</text>
           </view>

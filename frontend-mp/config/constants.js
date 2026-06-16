@@ -5,10 +5,48 @@ const LOST_FOUND_TYPES = [
 
 const LOST_FOUND_STATUS = [
   { value: 'active', label: '进行中', color: '#3B82F6' },
+  { value: 'claim_pending', label: '认领审核中', color: '#F59E0B' },
+  { value: 'verifying', label: '核验中', color: '#8B5CF6' },
+  { value: 'resolved', label: '已完成', color: '#10B981' },
   { value: 'claimed', label: '已认领', color: '#10B981' },
   { value: 'returned', label: '已找回', color: '#10B981' },
   { value: 'closed', label: '已关闭', color: '#6B7280' }
 ];
+
+const CLAIM_APPLICATION_STATUS = [
+  { value: 'pending', label: '待审核', color: '#F59E0B', icon: '⏳' },
+  { value: 'approved', label: '已通过', color: '#10B981', icon: '✅' },
+  { value: 'rejected', label: '已拒绝', color: '#EF4444', icon: '❌' },
+  { value: 'verified', label: '已核验完成', color: '#059669', icon: '🎉' },
+  { value: 'cancelled', label: '已取消', color: '#6B7280', icon: '↩️' }
+];
+
+const CLAIM_APPLICATION_STATUS_MAP = CLAIM_APPLICATION_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color, icon: s.icon };
+  return acc;
+}, {});
+
+const VERIFY_CODE_CONFIG = {
+  LENGTH: 6,
+  EXPIRE_MINUTES: 15,
+  EXPIRE_MS: 15 * 60 * 1000
+};
+
+const CLAIM_REVIEW_TAGS = [
+  { value: 'honest', label: '诚实守信', icon: '🤝' },
+  { value: 'friendly', label: '态度友好', icon: '😊' },
+  { value: 'quick', label: '响应迅速', icon: '⚡' },
+  { value: 'careful', label: '认真负责', icon: '💯' },
+  { value: 'patient', label: '耐心细致', icon: '🙏' },
+  { value: 'punctual', label: '准时守约', icon: '⏰' }
+];
+
+const CLAIM_CREDIT_CONFIG = {
+  SUCCESSFUL_CLAIM: 5,
+  NEGATIVE_REVIEW: -3,
+  FAKE_CLAIM: -10,
+  REJECTED_MULTIPLE: -2
+};
 
 const LOST_FOUND_STATUS_MAP = LOST_FOUND_STATUS.reduce((acc, s) => {
   acc[s.value] = { label: s.label, color: s.color };
@@ -3424,6 +3462,11 @@ module.exports = {
   LOST_FOUND_TYPES,
   LOST_FOUND_STATUS,
   LOST_FOUND_STATUS_MAP,
+  CLAIM_APPLICATION_STATUS,
+  CLAIM_APPLICATION_STATUS_MAP,
+  VERIFY_CODE_CONFIG,
+  CLAIM_REVIEW_TAGS,
+  CLAIM_CREDIT_CONFIG,
   ITEM_TYPES,
   LOCATIONS,
   MARKET_CATEGORIES,

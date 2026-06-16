@@ -278,6 +278,318 @@ function deleteLostFound(id) {
   return success;
 }
 
+// ==================== 认领申请 ====================
+
+function generateVerifyCode() {
+  const length = constants.VERIFY_CODE_CONFIG.LENGTH;
+  let code = '';
+  for (let i = 0; i < length; i++) {
+    code += Math.floor(Math.random() * 10).toString();
+  }
+  return code;
+}
+
+function createClaimApplication(data) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const application = {
+    id: util.generateId(),
+    lostFoundId: data.lostFoundId,
+    lostFoundTitle: data.lostFoundTitle,
+    lostFoundType: data.lostFoundType,
+    applicantId: userInfo.id || 'anonymous',
+    applicantName: userInfo.nickName || '匿名用户',
+    applicantAvatar: userInfo.avatarUrl || '',
+    applicantPhone: data.applicantPhone || '',
+    claimDescription: data.claimDescription || '',
+    featureProof: data.featureProof || '',
+    images: data.images || [],
+    status: 'pending',
+    createTime: Date.now(),
+    updateTime: Date.now(),
+    reviewTime: null,
+    reviewNote: '',
+    verifyCode: null,
+    verifyCodeExpireAt: null,
+    verifiedTime: null
+  };
+
+  storage.addToList(STORAGE_KEYS.LOST_FOUND_CLAIM_APPLICATIONS, application);
+  updateLostFound(data.lostFoundId, { status: 'claim_pending' });
+  createNotification({
+    type: 'interaction',
+    subType: 'claim_apply',
+    title: '新的认领申请',
+    content: `您发布的「${data.lostFoundTitle}」收到了新的认领申请`,
+    targetId: data.lostFoundId,
+    targetType: 'lostFoundClaim',
+    receiverId: data.publisherId || ''
+  });
+
+  return application;
+}
+
+function getClaimApplicationsByLostFound(lostFoundId, status = '') {
+  let list = storage.getList(STORAGE_KEYS.LOST_FOUND_CLAIM_APPLICATIONS);
+  list = list.filter(item => item.lostFoundId === lostFoundId);
+  if (status) {
+    list = list.filter(item => item.status === status);
+  }
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getClaimApplicationsByApplicant(applicantId, status = '') {
+  let list = storage.getList(STORAGE_KEYS.LOST_FOUND_CLAIM_APPLICATIONS);
+  list = list.filter(item => item.applicantId === applicantId);
+  if (status) {
+    list = list.filter(item => item.status === status);
+  }
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getClaimApplicationDetail(id) {
+  const list = storage.getList(STORAGE_KEYS.LOST_FOUND_CLAIM_APPLICATIONS);
+  return list.find(item => item.id === id) || null;
+}
+
+function reviewClaimApplication(applicationId, action, reviewNote = '') {
+  const application = getClaimApplicationDetail(applicationId);
+  if (!application) return null;
+
+  let newStatus = action === 'approve' ? 'approved' : 'rejected';
+  let verifyCode = null;
+  let verifyCodeExpireAt = null;
+
+  if (action === 'approve') {
+    verifyCode = generateVerifyCode();
+    verifyCodeExpireAt = Date.now() + constants.VERIFY_CODE_CONFIG.EXPIRE_MS;
+  }
+
+  const updates = {
+    status: newStatus,
+    reviewTime: Date.now(),
+    reviewNote,
+    verifyCode,
+    verifyCodeExpireAt,
+    updateTime: Date.now()
+  };
+
+  storage.updateInList(STORAGE_KEYS.LOST_FOUND_CLAIM_APPLICATIONS, applicationId, updates);
+
+  if (action === 'approve') {
+    updateLostFound(application.lostFoundId, { status: 'verifying' });
+    createNotification({
+      type: 'interaction',
+      subType: 'claim_approved',
+      title: '认领申请已通过',
+      content: `您对「${application.lostFoundTitle}」的认领申请已通过，请查看核验码`,
+      targetId: application.id,
+      targetType: 'lostFoundClaimVerify',
+      receiverId: application.applicantId
+    });
+  } else {
+    const pendingCount = getClaimApplicationsByLostFound(application.lostFoundId, 'pending').length;
+    if (pendingCount === 0) {
+      updateLostFound(application.lostFoundId, { status: 'active' });
+    }
+    createNotification({
+      type: 'interaction',
+      subType: 'claim_rejected',
+      title: '认领申请未通过',
+      content: `您对「${application.lostFoundTitle}」的认领申请未通过，原因：${reviewNote || '不符合要求'}`,
+      targetId: application.lostFoundId,
+      targetType: 'lostFound',
+      receiverId: application.applicantId
+    });
+  }
+
+  return { ...application, ...updates };
+}
+
+function completeClaimVerification(applicationId) {
+  const application = getClaimApplicationDetail(applicationId);
+  if (!application) return null;
+
+  const updates = {
+    status: 'verified',
+    verifiedTime: Date.now(),
+    updateTime: Date.now()
+  };
+
+  storage.updateInList(STORAGE_KEYS.LOST_FOUND_CLAIM_APPLICATIONS, applicationId, updates);
+  updateLostFound(application.lostFoundId, { status: 'resolved' });
+
+  const otherApplications = getClaimApplicationsByLostFound(application.lostFoundId);
+  otherApplications.forEach(otherApp => {
+    if (otherApp.id !== applicationId && otherApp.status === 'pending') {
+      storage.updateInList(STORAGE_KEYS.LOST_FOUND_CLAIM_APPLICATIONS, otherApp.id, {
+        status: 'rejected',
+        reviewNote: '物品已被其他认领者核实领取',
+        reviewTime: Date.now(),
+        updateTime: Date.now()
+      });
+    }
+  });
+
+  updateUserCreditScore(application.applicantId, constants.CLAIM_CREDIT_CONFIG.SUCCESSFUL_CLAIM, '成功完成认领核验');
+  const lostFound = getLostFoundDetail(application.lostFoundId);
+  if (lostFound) {
+    updateUserCreditScore(lostFound.userId, constants.CLAIM_CREDIT_CONFIG.SUCCESSFUL_CLAIM, '成功完成物品归还核验');
+  }
+
+  return { ...application, ...updates };
+}
+
+function getVerifyCodeByApplication(applicationId) {
+  const application = getClaimApplicationDetail(applicationId);
+  if (!application || !application.verifyCode) return null;
+
+  const now = Date.now();
+  if (now > application.verifyCodeExpireAt) {
+    const newCode = generateVerifyCode();
+    const newExpireAt = Date.now() + constants.VERIFY_CODE_CONFIG.EXPIRE_MS;
+    storage.updateInList(STORAGE_KEYS.LOST_FOUND_CLAIM_APPLICATIONS, applicationId, {
+      verifyCode: newCode,
+      verifyCodeExpireAt: newExpireAt,
+      updateTime: Date.now()
+    });
+    return { code: newCode, expireAt: newExpireAt, regenerated: true };
+  }
+
+  return {
+    code: application.verifyCode,
+    expireAt: application.verifyCodeExpireAt,
+    regenerated: false
+  };
+}
+
+function isVerifyCodeValid(applicationId, code) {
+  const application = getClaimApplicationDetail(applicationId);
+  if (!application || !application.verifyCode) return false;
+  if (Date.now() > application.verifyCodeExpireAt) return false;
+  return application.verifyCode === code;
+}
+
+// ==================== 认领互评 ====================
+
+function createClaimReview(data) {
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+
+  const review = {
+    id: util.generateId(),
+    applicationId: data.applicationId,
+    lostFoundId: data.lostFoundId,
+    reviewerId: userInfo.id || 'anonymous',
+    reviewerName: userInfo.nickName || '匿名用户',
+    reviewerAvatar: userInfo.avatarUrl || '',
+    targetUserId: data.targetUserId,
+    rating: data.rating,
+    tags: data.tags || [],
+    comment: data.comment || '',
+    role: data.role,
+    createTime: Date.now()
+  };
+
+  storage.addToList(STORAGE_KEYS.LOST_FOUND_CLAIM_REVIEWS, review);
+
+  if (data.rating <= 2) {
+    updateUserCreditScore(data.targetUserId, constants.CLAIM_CREDIT_CONFIG.NEGATIVE_REVIEW, `收到认领互评差评（${data.rating}星）`);
+  }
+
+  return review;
+}
+
+function getClaimReviewsByApplication(applicationId) {
+  const list = storage.getList(STORAGE_KEYS.LOST_FOUND_CLAIM_REVIEWS);
+  return list.filter(item => item.applicationId === applicationId);
+}
+
+function getClaimReviewsByUser(userId) {
+  const list = storage.getList(STORAGE_KEYS.LOST_FOUND_CLAIM_REVIEWS);
+  return list.filter(item => item.targetUserId === userId).sort((a, b) => b.createTime - a.createTime);
+}
+
+function hasUserReviewed(applicationId, reviewerId) {
+  const list = storage.getList(STORAGE_KEYS.LOST_FOUND_CLAIM_REVIEWS);
+  return list.some(item => item.applicationId === applicationId && item.reviewerId === reviewerId);
+}
+
+// ==================== 用户信用分 ====================
+
+function updateUserCreditScore(userId, scoreChange, reason = '') {
+  let scores = storage.get(STORAGE_KEYS.USER_CREDIT_SCORES) || {};
+  const userScore = scores[userId] || {
+    userId,
+    score: 80,
+    history: []
+  };
+
+  const oldScore = userScore.score;
+  userScore.score = Math.max(0, Math.min(100, userScore.score + scoreChange));
+  userScore.history.unshift({
+    change: scoreChange,
+    oldScore,
+    newScore: userScore.score,
+    reason,
+    time: Date.now()
+  });
+  if (userScore.history.length > 100) {
+    userScore.history = userScore.history.slice(0, 100);
+  }
+
+  scores[userId] = userScore;
+  storage.set(STORAGE_KEYS.USER_CREDIT_SCORES, scores);
+  return userScore;
+}
+
+function getUserCreditScore(userId) {
+  const scores = storage.get(STORAGE_KEYS.USER_CREDIT_SCORES) || {};
+  return scores[userId] || { userId, score: 80, history: [] };
+}
+
+function getSmartLostFoundRecommendations(itemId, options = {}) {
+  const item = getLostFoundDetail(itemId);
+  if (!item) return { total: 0, matches: [] };
+
+  const { minScore = 30, limit = 5 } = options;
+  const matcherService = require('./lostFoundMatcher');
+
+  try {
+    const result = matcherService.findMatchesForItem(item, { minScore, limit });
+    const smartHints = [];
+
+    if (result.matches && result.matches.length > 0) {
+      result.matches.forEach(match => {
+        const hintTexts = [];
+        if (match.item.itemType === item.itemType) {
+          hintTexts.push('物品类型相同');
+        }
+        if (match.item.location === item.location) {
+          hintTexts.push('地点相近');
+        }
+        const timeDiff = Math.abs(match.item.createTime - item.createTime);
+        if (timeDiff < 3 * 86400000) {
+          hintTexts.push('时间接近');
+        }
+        smartHints.push({
+          ...match,
+          smartHints: hintTexts
+        });
+      });
+    }
+
+    return {
+      total: result.total || 0,
+      matches: smartHints,
+      statistics: result.statistics || {}
+    };
+  } catch (e) {
+    return { total: 0, matches: [], statistics: {} };
+  }
+}
+
 // ==================== 二手市场 ====================
 
 /**
@@ -10669,6 +10981,25 @@ module.exports = {
   updateLostFound,
   deleteLostFound,
   getMyLostFoundList,
+
+  createClaimApplication,
+  getClaimApplicationsByLostFound,
+  getClaimApplicationsByApplicant,
+  getClaimApplicationDetail,
+  reviewClaimApplication,
+  completeClaimVerification,
+  getVerifyCodeByApplication,
+  isVerifyCodeValid,
+
+  createClaimReview,
+  getClaimReviewsByApplication,
+  getClaimReviewsByUser,
+  hasUserReviewed,
+
+  updateUserCreditScore,
+  getUserCreditScore,
+
+  getSmartLostFoundRecommendations,
 
   getMarketList,
   getMarketListPaged,
