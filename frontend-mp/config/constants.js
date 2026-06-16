@@ -294,6 +294,69 @@ const STUDY_REWARD_STATUS = [
   { value: 'closed', label: '已关闭', color: '#6B7280' }
 ];
 
+const STUDY_REWARD_STATUS_MAP = STUDY_REWARD_STATUS.reduce((acc, s) => {
+  acc[s.value] = { label: s.label, color: s.color };
+  return acc;
+}, {});
+
+const STUDY_REWARD_SUBJECTS = [
+  { value: '', label: '全部学科' },
+  { value: 'math', label: '数学', icon: '📐' },
+  { value: 'english', label: '英语', icon: '🔤' },
+  { value: 'physics', label: '物理', icon: '⚛️' },
+  { value: 'chemistry', label: '化学', icon: '🧪' },
+  { value: 'biology', label: '生物', icon: '🧬' },
+  { value: 'computer', label: '计算机', icon: '💻' },
+  { value: 'economics', label: '经济学', icon: '📊' },
+  { value: 'law', label: '法学', icon: '⚖️' },
+  { value: 'literature', label: '文学', icon: '📚' },
+  { value: 'engineering', label: '工程学', icon: '🔧' },
+  { value: 'other', label: '其他', icon: '📌' }
+];
+
+const STUDY_REWARD_STATUS_FILTER = [
+  { value: '', label: '全部状态' },
+  { value: 'open', label: '招募中', color: '#10B981' },
+  { value: 'adopted', label: '已解决', color: '#3B82F6' },
+  { value: 'closed', label: '已关闭', color: '#6B7280' }
+];
+
+const STUDY_REWARD_REWARD_RANGES = [
+  { value: '', label: '不限赏金', min: 0, max: Infinity },
+  { value: '0-20', label: '20积分以下', min: 0, max: 20 },
+  { value: '20-50', label: '20-50积分', min: 20, max: 50 },
+  { value: '50-100', label: '50-100积分', min: 50, max: 100 },
+  { value: '100-200', label: '100-200积分', min: 100, max: 200 },
+  { value: '200+', label: '200积分以上', min: 200, max: Infinity }
+];
+
+const STUDY_REWARD_SORT_OPTIONS = [
+  { value: 'reward_desc', label: '赏金从高到低', field: 'rewardPoints', order: 'desc' },
+  { value: 'latest', label: '最新发布', field: 'createTime', order: 'desc' },
+  { value: 'responses_desc', label: '最多回答', field: 'responseCount', order: 'desc' }
+];
+
+const STUDY_REWARD_TIME_RANGES = [
+  { value: '', label: '不限时间' },
+  { value: '1d', label: '1天内' },
+  { value: '3d', label: '3天内' },
+  { value: '1w', label: '1周内' },
+  { value: '1m', label: '1个月内' }
+];
+
+const STUDY_REWARD_MY_TABS = [
+  { value: 'published', label: '我发的' },
+  { value: 'answered', label: '我答的' }
+];
+
+const STUDY_REWARD_CREDIT_LEVELS = [
+  { min: 95, max: 100, label: '信用极好', color: '#10B981', icon: '🌟' },
+  { min: 85, max: 94, label: '信用优秀', color: '#3B82F6', icon: '👍' },
+  { min: 70, max: 84, label: '信用良好', color: '#6366F1', icon: '😊' },
+  { min: 50, max: 69, label: '信用一般', color: '#F59E0B', icon: '👌' },
+  { min: 0, max: 49, label: '信用较差', color: '#EF4444', icon: '⚠️' }
+];
+
 const SEMESTER_OPTIONS = [
   { value: '2025-2026-2', label: '2025-2026学年第二学期' },
   { value: '2025-2026-1', label: '2025-2026学年第一学期' },
@@ -3305,6 +3368,14 @@ module.exports = {
   NOTIFICATION_SUB_TYPES,
   STUDY_MATERIAL_CATEGORIES,
   STUDY_REWARD_STATUS,
+  STUDY_REWARD_STATUS_MAP,
+  STUDY_REWARD_SUBJECTS,
+  STUDY_REWARD_STATUS_FILTER,
+  STUDY_REWARD_REWARD_RANGES,
+  STUDY_REWARD_SORT_OPTIONS,
+  STUDY_REWARD_TIME_RANGES,
+  STUDY_REWARD_MY_TABS,
+  STUDY_REWARD_CREDIT_LEVELS,
   SEMESTER_OPTIONS,
   REWARD_POINTS_OPTIONS,
   FILE_TYPE_OPTIONS,

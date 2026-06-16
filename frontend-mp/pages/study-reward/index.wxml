@@ -1,0 +1,293 @@
+<page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
+<view class="page {{darkMode ? 'dark' : ''}}">
+  <!-- 顶部用户信息和积分 -->
+  <view class="header-section">
+    <view class="points-card" bindtap="onMyRewards">
+      <view class="points-info">
+        <view class="points-label">我的积分</view>
+        <view class="points-value">{{userPoints}}</view>
+      </view>
+      <view class="points-action">
+        <text class="points-action-text">我的悬赏</text>
+        <text class="points-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选区域 -->
+  <view class="filter-section">
+    <scroll-view class="filter-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="filter-tabs">
+        <view
+          class="filter-btn {{currentSubject ? 'active' : ''}}"
+          bindtap="onShowSubjectPicker"
+        >
+          <text class="filter-btn-text">{{currentSubjectText}}</text>
+          <text class="filter-btn-arrow">▼</text>
+        </view>
+        <view
+          class="filter-btn {{currentRewardRange ? 'active' : ''}}"
+          bindtap="onShowRewardPicker"
+        >
+          <text class="filter-btn-icon">💰</text>
+          <text class="filter-btn-text">{{currentRewardText}}</text>
+        </view>
+        <view
+          class="filter-btn {{currentStatus ? 'active' : ''}}"
+          bindtap="onShowStatusPicker"
+        >
+          <text class="filter-btn-text">{{currentStatusText}}</text>
+        </view>
+        <view
+          class="filter-btn {{currentTimeRange ? 'active' : ''}}"
+          bindtap="onShowTimePicker"
+        >
+          <text class="filter-btn-icon">🕐</text>
+          <text class="filter-btn-text">{{currentTimeText || '发布时间'}}</text>
+        </view>
+        <view
+          class="filter-btn sort-btn"
+          bindtap="onShowSortPicker"
+        >
+          <text class="filter-btn-icon">📊</text>
+          <text class="filter-btn-text">{{currentSortText}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 列表区域 -->
+  <scroll-view
+    class="list-scroll"
+    scroll-y="{{true}}"
+    refresher-enabled="{{true}}"
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onListRefresh"
+    bindscrolltolower="onListLoadMore"
+    lower-threshold="50"
+  >
+    <!-- 骨架屏 -->
+    <skeleton
+      wx:if="{{showSkeleton}}"
+      type="{{skeletonConfig.type}}"
+      count="{{skeletonConfig.count}}"
+      loading="{{true}}"
+    />
+
+    <!-- 列表内容 -->
+    <view class="list-container" wx:if="{{!showSkeleton && list.length > 0}}">
+      <view
+        class="reward-card"
+        wx:for="{{list}}"
+        wx:key="id"
+        hover-class="reward-card-hover"
+        bindtap="onItemTap"
+        data-item="{{item}}"
+      >
+        <view class="card-header">
+          <view class="card-title">
+            <text class="title-text">{{item.title}}</text>
+          </view>
+          <view class="status-tag" style="background-color: {{item.statusColor}}20; color: {{item.statusColor}};">
+            {{item.statusText}}
+          </view>
+        </view>
+
+        <view class="card-meta">
+          <view class="meta-item">
+            <text class="meta-icon">{{item.categoryIcon}}</text>
+            <text class="meta-text">{{item.categoryText}}</text>
+          </view>
+          <view class="meta-item" wx:if="{{item.courseName}}">
+            <text class="meta-icon">📖</text>
+            <text class="meta-text">{{item.courseName}}</text>
+          </view>
+          <view class="meta-item" wx:if="{{item.subjectText}}">
+            <text class="meta-icon">{{item.subjectIcon}}</text>
+            <text class="meta-text">{{item.subjectText}}</text>
+          </view>
+        </view>
+
+        <view class="card-footer">
+          <view class="reward-points">
+            <text class="points-icon">💰</text>
+            <text class="points-value">{{item.rewardPoints}}</text>
+            <text class="points-label">积分</text>
+          </view>
+          <view class="card-stats">
+            <view class="stat-item">
+              <text class="stat-icon">💬</text>
+              <text class="stat-text">{{item.responseCount}}回答</text>
+            </view>
+            <view class="stat-item">
+              <text class="stat-icon">👁️</text>
+              <text class="stat-text">{{item.views || 0}}浏览</text>
+            </view>
+          </view>
+        </view>
+
+        <view class="card-publisher">
+          <view class="publisher-info">
+            <text class="publisher-credit-icon" style="color: {{item.creditColor}};">{{item.creditIcon}}</text>
+            <text class="publisher-name">{{item.publisherName}}</text>
+            <text class="publisher-credit" style="color: {{item.creditColor}};">{{item.creditLabel}}</text>
+          </view>
+          <text class="publish-time">{{item.timeText}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载更多 -->
+    <view class="load-more" wx:if="{{!showSkeleton && list.length > 0}}">
+      <view class="load-more-loading" wx:if="{{loadingMore}}">
+        <view class="loading-spinner"></view>
+        <text class="load-more-text">加载中...</text>
+      </view>
+      <view class="load-more-no-more" wx:elif="{{noMore}}">
+        <text class="load-more-text">没有更多了</text>
+      </view>
+      <view class="load-more-tip" wx:else>
+        <text class="load-more-text">上拉加载更多</text>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <empty
+      wx:if="{{!showSkeleton && !loading && list.length === 0}}"
+      image="{{emptyConfig.image}}"
+      text="{{emptyConfig.text}}"
+      showAction="{{emptyConfig.showAction}}"
+      actionText="{{emptyConfig.actionText}}"
+      bindaction="onEmptyAction"
+    />
+  </scroll-view>
+
+  <!-- 发布按钮 -->
+  <view class="publish-btn" hover-class="publish-btn-hover" bindtap="onPublish">
+    <text class="publish-icon">+</text>
+    <text class="publish-text">发布</text>
+  </view>
+
+  <!-- 学科选择器 -->
+  <view class="picker-mask {{showSubjectPicker ? 'show' : ''}}" bindtap="onHideSubjectPicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择学科分类</text>
+        <text class="picker-close" bindtap="onHideSubjectPicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentSubject === '' ? 'active' : ''}}"
+          bindtap="onSubjectSelect"
+          data-value=""
+        >全部学科</view>
+        <view
+          class="picker-option {{currentSubject === item.value ? 'active' : ''}}"
+          wx:for="{{subjects}}"
+          wx:key="value"
+          wx:if="{{item.value !== ''}}"
+          bindtap="onSubjectSelect"
+          data-value="{{item.value}}"
+        >
+          <text class="option-icon">{{item.icon}}</text>
+          <text class="option-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 赏金选择器 -->
+  <view class="picker-mask {{showRewardPicker ? 'show' : ''}}" bindtap="onHideRewardPicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择赏金区间</text>
+        <text class="picker-close" bindtap="onHideRewardPicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentRewardRange === '' ? 'active' : ''}}"
+          bindtap="onRewardSelect"
+          data-value=""
+          data-min="{{0}}"
+          data-max="{{Infinity}}"
+        >不限赏金</view>
+        <view
+          class="picker-option {{currentRewardRange === item.value ? 'active' : ''}}"
+          wx:for="{{rewardRanges}}"
+          wx:key="value"
+          wx:if="{{item.value !== ''}}"
+          bindtap="onRewardSelect"
+          data-value="{{item.value}}"
+          data-min="{{item.min}}"
+          data-max="{{item.max}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 状态选择器 -->
+  <view class="picker-mask {{showStatusPicker ? 'show' : ''}}" bindtap="onHideStatusPicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择状态</text>
+        <text class="picker-close" bindtap="onHideStatusPicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentStatus === '' ? 'active' : ''}}"
+          bindtap="onStatusSelect"
+          data-value=""
+        >全部状态</view>
+        <view
+          class="picker-option {{currentStatus === item.value ? 'active' : ''}}"
+          wx:for="{{statusFilters}}"
+          wx:key="value"
+          wx:if="{{item.value !== ''}}"
+          bindtap="onStatusSelect"
+          data-value="{{item.value}}"
+        >
+          <view class="status-dot" style="background-color: {{item.color}};"></view>
+          <text class="option-label">{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 时间选择器 -->
+  <view class="picker-mask {{showTimePicker ? 'show' : ''}}" bindtap="onHideTimePicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">选择发布时间</text>
+        <text class="picker-close" bindtap="onHideTimePicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentTimeRange === item.value ? 'active' : ''}}"
+          wx:for="{{timeRanges}}"
+          wx:key="value"
+          bindtap="onTimeSelect"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 排序选择器 -->
+  <view class="picker-mask {{showSortPicker ? 'show' : ''}}" bindtap="onHideSortPicker">
+    <view class="picker-content" catchtap="stopPropagation">
+      <view class="picker-header">
+        <text class="picker-title">排序方式</text>
+        <text class="picker-close" bindtap="onHideSortPicker">×</text>
+      </view>
+      <view class="picker-options">
+        <view
+          class="picker-option {{currentSort === item.value ? 'active' : ''}}"
+          wx:for="{{sortOptions}}"
+          wx:key="value"
+          bindtap="onSortSelect"
+          data-value="{{item.value}}"
+        >{{item.label}}</view>
+      </view>
+    </view>
+  </view>
+</view>

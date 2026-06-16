@@ -1718,7 +1718,65 @@ function getStudyRewardsList(filters = {}) {
     }
   }
 
-  return sortByField(list, filters.sort || 'latest', constants.SORT_OPTIONS);
+  if (filters.minReward !== undefined) {
+    list = list.filter(item => item.rewardPoints >= filters.minReward);
+  }
+
+  if (filters.maxReward !== undefined && filters.maxReward !== Infinity) {
+    list = list.filter(item => item.rewardPoints <= filters.maxReward);
+  }
+
+  if (filters.subject) {
+    list = list.filter(item => item.subject === filters.subject);
+  }
+
+  list = list.map(item => ({
+    ...item,
+    responseCount: (item.responses || []).length
+  }));
+
+  return sortByField(list, filters.sort || 'latest', constants.STUDY_REWARD_SORT_OPTIONS);
+}
+
+function getStudyRewardsListPaged(pagination = {}) {
+  const { page = 1, pageSize = 15, filters = {} } = pagination;
+  let list = getStudyRewardsList(filters);
+  return paginateList(list, page, pageSize);
+}
+
+function getMyStudyRewards(type = 'published', filters = {}) {
+  initStudyRewards();
+  const app = getApp();
+  const userInfo = app.globalData.userInfo || {};
+  const userId = userInfo.id || 'anonymous';
+
+  let list = storage.getList(STORAGE_KEYS.STUDY_REWARDS_LIST);
+
+  if (type === 'published') {
+    list = list.filter(item => item.publisherId === userId);
+  } else if (type === 'answered') {
+    list = list.filter(item => {
+      const responses = item.responses || [];
+      return responses.some(r => r.responderId === userId);
+    });
+  }
+
+  if (filters.status) {
+    list = list.filter(item => item.status === filters.status);
+  }
+
+  list = list.map(item => ({
+    ...item,
+    responseCount: (item.responses || []).length
+  }));
+
+  return list.sort((a, b) => b.createTime - a.createTime);
+}
+
+function getMyStudyRewardsPaged(type = 'published', pagination = {}) {
+  const { page = 1, pageSize = 15, filters = {} } = pagination;
+  let list = getMyStudyRewards(type, filters);
+  return paginateList(list, page, pageSize);
 }
 
 function getStudyRewardDetail(id) {
@@ -9856,6 +9914,9 @@ module.exports = {
   increaseStudyMaterialViews,
 
   getStudyRewardsList,
+  getStudyRewardsListPaged,
+  getMyStudyRewards,
+  getMyStudyRewardsPaged,
   getStudyRewardDetail,
   publishStudyReward,
   addRewardResponse,
