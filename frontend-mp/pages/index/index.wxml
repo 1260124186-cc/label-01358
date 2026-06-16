@@ -1,5 +1,25 @@
 <page-meta page-style="background-color: {{darkMode ? '#0F1117' : '#F8F9FA'}}; color: {{darkMode ? '#E8ECF1' : '#2C3E50'}}"/>
 <view class="page {{darkMode ? 'dark' : ''}} color-scheme-{{colorScheme}} {{fontSizeClass}}" aria-role="main" aria-label="校园生活服务首页">
+
+  <!-- 编辑模式遮罩 -->
+  <view class="edit-overlay" wx:if="{{editMode}}" bindtap="onEditDone"></view>
+
+  <!-- 编辑模式顶栏 -->
+  <view class="edit-topbar" wx:if="{{editMode}}">
+    <view class="edit-topbar-left">
+      <text class="edit-topbar-title">编辑常用服务</text>
+      <text class="edit-topbar-hint">拖拽排序 · 点击眼睛隐藏</text>
+    </view>
+    <view class="edit-topbar-right">
+      <view class="edit-reset-btn" bindtap="onEditReset">
+        <text>重置</text>
+      </view>
+      <view class="edit-done-btn" bindtap="onEditDone">
+        <text>完成</text>
+      </view>
+    </view>
+  </view>
+
   <!-- 校区切换栏 -->
   <view class="campus-bar" bindtap="onCampusTap" hover-class="campus-bar-hover">
     <view class="campus-bar-left">
@@ -20,6 +40,43 @@
     <view class="search-entry-bar">
       <text class="search-entry-icon">🔍</text>
       <text class="search-entry-placeholder">搜索失物招领、二手市场、校园动态...</text>
+    </view>
+  </view>
+
+  <!-- 今日待办摘要条 -->
+  <view class="today-summary" wx:if="{{todaySummary.nextCourse || todaySummary.pendingErrandCount > 0 || todaySummary.unreadNotificationCount > 0 || todaySummary.upcomingActivities.length > 0}}">
+    <view class="summary-scroll" enable-flex="{{true}}">
+      <view class="summary-item" wx:if="{{todaySummary.nextCourse}}" bindtap="onSummaryTap" data-type="course">
+        <view class="summary-icon summary-icon-course">📚</view>
+        <view class="summary-text-wrap">
+          <text class="summary-label">下一节课</text>
+          <text class="summary-value">{{todaySummary.nextCourse.name}} {{todaySummary.nextCourse.startTime}}</text>
+        </view>
+      </view>
+      <view class="summary-divider" wx:if="{{todaySummary.nextCourse && (todaySummary.upcomingActivities.length > 0 || todaySummary.pendingErrandCount > 0 || todaySummary.unreadNotificationCount > 0)}}"></view>
+      <view class="summary-item" wx:if="{{todaySummary.upcomingActivities.length > 0}}" bindtap="onSummaryTap" data-type="activity">
+        <view class="summary-icon summary-icon-activity">🎉</view>
+        <view class="summary-text-wrap">
+          <text class="summary-label">即将开始</text>
+          <text class="summary-value">{{todaySummary.upcomingActivities[0].name}}</text>
+        </view>
+      </view>
+      <view class="summary-divider" wx:if="{{todaySummary.upcomingActivities.length > 0 && (todaySummary.pendingErrandCount > 0 || todaySummary.unreadNotificationCount > 0)}}"></view>
+      <view class="summary-item" wx:if="{{todaySummary.pendingErrandCount > 0}}" bindtap="onSummaryTap" data-type="errand">
+        <view class="summary-icon summary-icon-errand">🏃</view>
+        <view class="summary-text-wrap">
+          <text class="summary-label">跑腿订单</text>
+          <text class="summary-value">{{todaySummary.pendingErrandCount}}单待处理</text>
+        </view>
+      </view>
+      <view class="summary-divider" wx:if="{{todaySummary.pendingErrandCount > 0 && todaySummary.unreadNotificationCount > 0}}"></view>
+      <view class="summary-item" wx:if="{{todaySummary.unreadNotificationCount > 0}}" bindtap="onSummaryTap" data-type="notification">
+        <view class="summary-icon summary-icon-notify">🔔</view>
+        <view class="summary-text-wrap">
+          <text class="summary-label">未读消息</text>
+          <text class="summary-value">{{todaySummary.unreadNotificationCount}}条未读</text>
+        </view>
+      </view>
     </view>
   </view>
 
@@ -54,52 +111,176 @@
     </swiper>
   </view>
 
-  <!-- 功能分类导航 -->
-  <view class="nav-section">
-    <view class="nav-grid">
+  <!-- 常用服务（宫格） -->
+  <view class="section-block">
+    <view class="section-header">
+      <view class="section-title-wrap">
+        <view class="section-icon"></view>
+        <text class="section-title">常用服务</text>
+      </view>
+      <view class="section-subtitle" wx:if="{{!editMode}}">
+        <text class="section-subtitle-text">长按编辑</text>
+      </view>
+    </view>
+    <view class="shortcut-grid" wx:if="{{!editMode}}">
       <view
-        class="nav-item"
-        wx:for="{{navItems}}"
+        class="shortcut-item"
+        wx:for="{{shortcutItems}}"
         wx:key="id"
-        bindtap="onNavTap"
-        data-item="{{item}}"
+        bindtap="onServiceTap"
+        bindlongpress="onShortcutLongPress"
+        data-id="{{item.id}}"
+        data-idx="{{index}}"
+        hover-class="shortcut-item-hover"
       >
-        <view class="nav-icon-wrap" style="background: {{item.bgColor}};">
-          <image class="nav-icon" src="{{item.icon}}" mode="aspectFit" />
+        <view class="shortcut-icon-wrap" style="background: {{item.bgColor}};">
+          <text class="shortcut-icon-emoji">{{item.icon}}</text>
         </view>
-        <text class="nav-text">{{item.name}}</text>
+        <text class="shortcut-name">{{item.name}}</text>
+      </view>
+      <!-- 空位补全 -->
+      <view
+        class="shortcut-item shortcut-placeholder"
+        wx:for="{{8 - shortcutItems.length}}"
+        wx:key="*this"
+      >
+        <view class="shortcut-icon-wrap shortcut-icon-placeholder">
+          <text class="shortcut-icon-emoji">+</text>
+        </view>
+        <text class="shortcut-name shortcut-name-placeholder">添加</text>
       </view>
     </view>
   </view>
 
-  <!-- 今日天气入口 -->
-  <view class="weather-entry" wx:if="{{weatherData}}" bindtap="onWeatherTap">
-    <view class="weather-entry-main">
-      <view class="weather-entry-left">
-        <text class="weather-entry-icon">{{weatherData.current.weatherIcon}}</text>
-        <view class="weather-entry-info">
-          <text class="weather-entry-title">今日天气</text>
-          <text class="weather-entry-subtitle">{{weatherData.current.weather}} · 空气{{weatherData.airQuality.aqiLevel}}</text>
+  <!-- 编辑模式网格 -->
+  <view class="edit-grid" wx:if="{{editMode}}">
+    <movable-area class="edit-movable-area">
+      <view
+        class="edit-grid-item {{item.hidden ? 'edit-item-hidden' : ''}} {{dragItemId === item.id ? 'edit-item-dragging' : ''}}"
+        wx:for="{{editItems}}"
+        wx:key="id"
+        data-idx="{{index}}"
+        bindtap="onEditItemToggleHide"
+      >
+        <view class="edit-item-drag-handle">⠿</view>
+        <view class="shortcut-icon-wrap" style="background: {{item.bgColor}};">
+          <text class="shortcut-icon-emoji">{{item.icon}}</text>
+        </view>
+        <text class="shortcut-name">{{item.name}}</text>
+        <view class="edit-item-eye">
+          <text>{{item.hidden ? '👁️‍🗨️' : '👁️'}}</text>
+        </view>
+        <view class="edit-item-mask" wx:if="{{item.hidden}}"></view>
+      </view>
+    </movable-area>
+  </view>
+
+  <!-- 天气卡片与课程联动 -->
+  <view class="weather-course-card" wx:if="{{weatherData}}" bindtap="onWeatherTap">
+    <view class="weather-course-main">
+      <view class="weather-course-left">
+        <text class="weather-course-weather-icon">{{weatherData.current.weatherIcon}}</text>
+        <view class="weather-course-info">
+          <text class="weather-course-title">今日天气</text>
+          <text class="weather-course-subtitle">{{weatherData.current.weather}} · {{weatherData.current.temperature}}° · 空气{{weatherData.airQuality.aqiLevel}}</text>
         </view>
       </view>
-      <view class="weather-entry-right">
-        <text class="weather-entry-temp">{{weatherData.current.temperature}}°</text>
-        <text class="weather-entry-temp-range">{{weatherData.current.temperatureMin}}° / {{weatherData.current.temperatureMax}}°</text>
+      <view class="weather-course-right">
+        <text class="weather-course-temp">{{weatherData.current.temperature}}°</text>
+        <text class="weather-course-range">{{weatherData.current.temperatureMin}}° / {{weatherData.current.temperatureMax}}°</text>
       </view>
     </view>
-    <view class="weather-entry-dress">
-      <text class="weather-entry-dress-icon">👕</text>
-      <text class="weather-entry-dress-label">穿衣建议：</text>
-      <text class="weather-entry-dress-text">{{weatherData.current.dressAdvice}}</text>
+    <view class="weather-course-tip" wx:if="{{weatherCourseTip}}">
+      <view class="tip-badge">💡 智能提示</view>
+      <text class="tip-text">{{weatherCourseTip}}</text>
     </view>
-    <view class="weather-entry-footer">
-      <text class="weather-entry-arrow-text">查看详情</text>
-      <text class="weather-entry-arrow">›</text>
+    <view class="weather-course-dress">
+      <text class="weather-course-dress-icon">👕</text>
+      <text class="weather-course-dress-label">穿衣建议：</text>
+      <text class="weather-course-dress-text">{{weatherData.current.dressAdvice}}</text>
+    </view>
+    <view class="weather-course-footer">
+      <text class="weather-course-arrow-text">查看详情</text>
+      <text class="weather-course-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 最近使用 -->
+  <view class="section-block" wx:if="{{recentlyUsedItems.length > 0 && !editMode}}">
+    <view class="section-header">
+      <view class="section-title-wrap">
+        <view class="section-icon section-icon-recent"></view>
+        <text class="section-title">最近使用</text>
+      </view>
+    </view>
+    <scroll-view class="recent-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+      <view class="recent-list">
+        <view
+          class="recent-item"
+          wx:for="{{recentlyUsedItems}}"
+          wx:key="id"
+          bindtap="onServiceTap"
+          data-id="{{item.id}}"
+          hover-class="recent-item-hover"
+        >
+          <view class="recent-icon-wrap" style="background: {{item.bgColor}};">
+            <text class="recent-icon-emoji">{{item.icon}}</text>
+          </view>
+          <text class="recent-name">{{item.name}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 全部服务 -->
+  <view class="section-block" wx:if="{{!editMode}}">
+    <view class="section-header" bindtap="onToggleAllServices">
+      <view class="section-title-wrap">
+        <view class="section-icon section-icon-all"></view>
+        <text class="section-title">全部服务</text>
+      </view>
+      <view class="section-toggle">
+        <text class="section-toggle-text">{{allServicesExpanded ? '收起' : '展开'}}</text>
+        <text class="section-toggle-arrow {{allServicesExpanded ? 'arrow-up' : ''}}">›</text>
+      </view>
+    </view>
+    <!-- 默认展示前 8 个 -->
+    <view class="all-services-grid" wx:if="{{!allServicesExpanded}}">
+      <view
+        class="all-service-item"
+        wx:for="{{allServicesItems}}"
+        wx:key="id"
+        wx:if="{{index < 8}}"
+        bindtap="onServiceTap"
+        data-id="{{item.id}}"
+        hover-class="all-service-item-hover"
+      >
+        <view class="all-service-icon-wrap" style="background: {{item.bgColor}};">
+          <text class="all-service-icon-emoji">{{item.icon}}</text>
+        </view>
+        <text class="all-service-name">{{item.name}}</text>
+      </view>
+    </view>
+    <!-- 展开全部 -->
+    <view class="all-services-grid all-services-grid-expanded" wx:if="{{allServicesExpanded}}">
+      <view
+        class="all-service-item"
+        wx:for="{{allServicesItems}}"
+        wx:key="id"
+        bindtap="onServiceTap"
+        data-id="{{item.id}}"
+        hover-class="all-service-item-hover"
+      >
+        <view class="all-service-icon-wrap" style="background: {{item.bgColor}};">
+          <text class="all-service-icon-emoji">{{item.icon}}</text>
+        </view>
+        <text class="all-service-name">{{item.name}}</text>
+      </view>
     </view>
   </view>
 
   <!-- 快捷入口 -->
-  <view class="quick-section">
+  <view class="quick-section" wx:if="{{!editMode}}">
     <view class="quick-grid">
       <view class="quick-item" hover-class="hover-scale" bindtap="onQuickPublish" data-type="lost">
         <view class="quick-icon" style="background: linear-gradient(135deg, #FFE8E8 0%, #FFD4D4 100%);">
@@ -135,7 +316,7 @@
   </view>
 
   <!-- 校园动态 -->
-  <view class="news-section">
+  <view class="news-section" wx:if="{{!editMode}}">
     <view class="section-header">
       <view class="section-title-wrap">
         <view class="section-icon"></view>

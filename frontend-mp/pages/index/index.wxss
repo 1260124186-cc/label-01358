@@ -1,4 +1,3 @@
-/* 首页 - 参考小红书/Airbnb设计风格 */
 .page {
   min-height: 100vh;
   background-color: var(--color-bg-page);
@@ -112,6 +111,86 @@
   flex: 1;
 }
 
+/* ==================== 今日待办摘要 ==================== */
+.today-summary {
+  margin: 16rpx 24rpx 0;
+  padding: 20rpx 24rpx;
+  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 6rpx 24rpx rgba(102, 126, 234, 0.3);
+}
+
+.summary-scroll {
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 8rpx 0;
+}
+
+.summary-icon {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.summary-icon-course {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.summary-icon-activity {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.summary-icon-errand {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.summary-icon-notify {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.summary-text-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.summary-label {
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.75);
+  line-height: 1.2;
+}
+
+.summary-value {
+  font-size: 24rpx;
+  color: #FFFFFF;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200rpx;
+}
+
+.summary-divider {
+  width: 1rpx;
+  height: 36rpx;
+  background: rgba(255, 255, 255, 0.25);
+  margin: 0 20rpx;
+  flex-shrink: 0;
+}
+
 /* ==================== 轮播区域 ==================== */
 .banner-section {
   padding: 24rpx 24rpx 0;
@@ -182,74 +261,10 @@
   text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
 }
 
-/* ==================== 功能导航 ==================== */
-.nav-section {
-  padding: 24rpx;
-}
-
-.nav-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-  background: linear-gradient(135deg, #FFFFFF 0%, #FAFBFC 100%);
-  border-radius: var(--radius-2xl);
-  padding: 32rpx 0;
-  box-shadow: var(--shadow-card);
-}
-
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 25%;
-  padding: 16rpx 0;
-  transition: all var(--transition-normal);
-  box-sizing: border-box;
-}
-
-.nav-item:active {
-  transform: scale(0.92);
-}
-
-.nav-icon-wrap {
-  width: 108rpx;
-  height: 108rpx;
-  border-radius: var(--radius-xl);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16rpx;
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-sm);
-}
-
-.nav-icon-wrap::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 100%);
-}
-
-.nav-icon {
-  width: 52rpx;
-  height: 52rpx;
-  position: relative;
-  z-index: 1;
-}
-
-.nav-text {
-  font-size: 26rpx;
-  color: var(--color-text-primary);
-  font-weight: 600;
-}
-
-/* ==================== 校园动态 ==================== */
-.news-section {
+/* ==================== 通用 Section ==================== */
+.section-block {
   padding: 0 24rpx;
+  margin-top: 28rpx;
 }
 
 .section-header {
@@ -272,27 +287,550 @@
   margin-right: 12rpx;
 }
 
+.section-icon-recent {
+  background: linear-gradient(180deg, #8B5CF6 0%, #C084FC 100%);
+}
+
+.section-icon-all {
+  background: linear-gradient(180deg, #10B981 0%, #6EE7B7 100%);
+}
+
 .section-title {
   font-size: 34rpx;
   font-weight: 700;
   color: var(--color-text-primary);
 }
 
-.section-more {
+.section-subtitle {
+  padding: 4rpx 0;
+}
+
+.section-subtitle-text {
+  font-size: 22rpx;
+  color: var(--color-text-muted);
+}
+
+.section-toggle {
   display: flex;
   align-items: center;
-  padding: 8rpx 0;
+  padding: 8rpx 16rpx;
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-xs);
 }
 
-.more-text {
-  font-size: 26rpx;
+.section-toggle-text {
+  font-size: 24rpx;
   color: var(--color-text-secondary);
+  margin-right: 4rpx;
 }
 
-.more-arrow {
+.section-toggle-arrow {
   font-size: 24rpx;
   color: var(--color-text-muted);
-  margin-left: 4rpx;
+  transition: transform 0.3s ease;
+}
+
+.section-toggle-arrow.arrow-up {
+  transform: rotate(-90deg);
+}
+
+/* ==================== 常用服务宫格 ==================== */
+.shortcut-grid {
+  display: flex;
+  flex-wrap: wrap;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFBFC 100%);
+  border-radius: var(--radius-2xl);
+  padding: 28rpx 0 12rpx;
+  box-shadow: var(--shadow-card);
+}
+
+.shortcut-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+  padding: 16rpx 0 20rpx;
+  transition: all var(--transition-normal);
+  box-sizing: border-box;
+  position: relative;
+}
+
+.shortcut-item-hover {
+  transform: scale(0.92);
+}
+
+.shortcut-icon-wrap {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12rpx;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.shortcut-icon-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 100%);
+}
+
+.shortcut-icon-emoji {
+  font-size: 40rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.shortcut-name {
+  font-size: 24rpx;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.3;
+}
+
+.shortcut-placeholder {
+  opacity: 0.5;
+}
+
+.shortcut-icon-placeholder {
+  background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%) !important;
+  border: 2rpx dashed #D1D5DB;
+}
+
+.shortcut-name-placeholder {
+  color: var(--color-text-muted);
+}
+
+/* ==================== 编辑模式 ==================== */
+.edit-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 99;
+}
+
+.edit-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 101;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 24rpx;
+  padding-top: calc(20rpx + env(safe-area-inset-top));
+  background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+  box-shadow: 0 4rpx 16rpx rgba(102, 126, 234, 0.3);
+}
+
+.edit-topbar-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.edit-topbar-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.edit-topbar-hint {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 4rpx;
+}
+
+.edit-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.edit-reset-btn {
+  padding: 12rpx 24rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-full);
+}
+
+.edit-reset-btn text {
+  font-size: 26rpx;
+  color: #FFFFFF;
+}
+
+.edit-done-btn {
+  padding: 12rpx 32rpx;
+  background: #FFFFFF;
+  border-radius: var(--radius-full);
+}
+
+.edit-done-btn text {
+  font-size: 26rpx;
+  color: #667EEA;
+  font-weight: 600;
+}
+
+.edit-grid {
+  position: relative;
+  z-index: 100;
+  margin: 0 24rpx;
+  padding: 24rpx 0;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFBFC 100%);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-card);
+}
+
+.edit-movable-area {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.edit-grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+  padding: 16rpx 0 20rpx;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.edit-grid-item.edit-item-hidden {
+  opacity: 0.4;
+}
+
+.edit-grid-item.edit-item-dragging {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-lg);
+  z-index: 10;
+}
+
+.edit-item-drag-handle {
+  position: absolute;
+  top: 0;
+  right: 20rpx;
+  font-size: 20rpx;
+  color: var(--color-text-muted);
+  line-height: 1;
+}
+
+.edit-item-eye {
+  position: absolute;
+  top: 8rpx;
+  left: 20rpx;
+  font-size: 20rpx;
+}
+
+.edit-item-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 12rpx;
+  pointer-events: none;
+}
+
+/* ==================== 天气卡片与课程联动 ==================== */
+.weather-course-card {
+  margin: 28rpx 24rpx 0;
+  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+  border-radius: var(--radius-2xl);
+  padding: 32rpx;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8rpx 32rpx rgba(29, 78, 216, 0.25);
+  transition: all var(--transition-normal);
+}
+
+.weather-course-card:active {
+  transform: scale(0.98);
+  opacity: 0.95;
+}
+
+.weather-course-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.weather-course-left {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.weather-course-weather-icon {
+  font-size: 72rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  filter: drop-shadow(0 4rpx 8rpx rgba(0, 0, 0, 0.2));
+}
+
+.weather-course-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.weather-course-title {
+  font-size: 34rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin-bottom: 8rpx;
+}
+
+.weather-course-subtitle {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.weather-course-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: 20rpx;
+}
+
+.weather-course-temp {
+  font-size: 56rpx;
+  font-weight: 700;
+  color: #FFFFFF;
+  line-height: 1.1;
+}
+
+.weather-course-range {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.weather-course-tip {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-lg);
+  padding: 20rpx 24rpx;
+  margin-bottom: 20rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.1);
+}
+
+.tip-badge {
+  display: inline-block;
+  padding: 4rpx 12rpx;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-xs);
+  margin-bottom: 10rpx;
+  font-size: 20rpx;
+  color: #FFFFFF;
+  font-weight: 600;
+}
+
+.tip-text {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.weather-course-dress {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-lg);
+  padding: 20rpx 24rpx;
+  margin-bottom: 20rpx;
+  display: flex;
+  align-items: flex-start;
+}
+
+.weather-course-dress-icon {
+  font-size: 28rpx;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+  margin-top: 2rpx;
+}
+
+.weather-course-dress-label {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #FFFFFF;
+  flex-shrink: 0;
+  margin-right: 8rpx;
+}
+
+.weather-course-dress-text {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.5;
+  flex: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.weather-course-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.weather-course-arrow-text {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.8);
+  margin-right: 8rpx;
+}
+
+.weather-course-arrow {
+  font-size: 28rpx;
+  color: #FFFFFF;
+  opacity: 0.8;
+}
+
+/* ==================== 最近使用 ==================== */
+.recent-scroll {
+  white-space: nowrap;
+}
+
+.recent-list {
+  display: inline-flex;
+  gap: 16rpx;
+  padding: 4rpx 0;
+}
+
+.recent-item {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFBFC 100%);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-sm);
+  min-width: 120rpx;
+  transition: all var(--transition-fast);
+}
+
+.recent-item-hover {
+  transform: scale(0.95);
+}
+
+.recent-icon-wrap {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.recent-icon-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 100%);
+}
+
+.recent-icon-emoji {
+  font-size: 30rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.recent-name {
+  font-size: 22rpx;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* ==================== 全部服务 ==================== */
+.all-services-grid {
+  display: flex;
+  flex-wrap: wrap;
+  background: linear-gradient(135deg, #FFFFFF 0%, #FAFBFC 100%);
+  border-radius: var(--radius-2xl);
+  padding: 20rpx 0 4rpx;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  max-height: 400rpx;
+  transition: max-height 0.4s ease;
+}
+
+.all-services-grid-expanded {
+  max-height: none;
+}
+
+.all-service-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 25%;
+  padding: 14rpx 0 18rpx;
+  transition: all var(--transition-normal);
+  box-sizing: border-box;
+}
+
+.all-service-item-hover {
+  transform: scale(0.92);
+}
+
+.all-service-icon-wrap {
+  width: 84rpx;
+  height: 84rpx;
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10rpx;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.all-service-icon-wrap::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 100%);
+}
+
+.all-service-icon-emoji {
+  font-size: 36rpx;
+  position: relative;
+  z-index: 1;
+}
+
+.all-service-name {
+  font-size: 24rpx;
+  color: var(--color-text-primary);
+  font-weight: 500;
+  text-align: center;
+}
+
+/* ==================== 校园动态 ==================== */
+.news-section {
+  padding: 0 24rpx;
 }
 
 .news-card {
@@ -392,6 +930,7 @@
 /* ==================== 快捷入口 ==================== */
 .quick-section {
   padding: 0 24rpx 24rpx;
+  margin-top: 24rpx;
 }
 
 .quick-grid {
@@ -456,135 +995,7 @@
   color: var(--color-text-muted);
 }
 
-/* ==================== 今日天气入口 ==================== */
-.weather-entry {
-  margin: 0 24rpx 24rpx;
-  background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
-  border-radius: var(--radius-2xl);
-  padding: 32rpx;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 8rpx 32rpx rgba(29, 78, 216, 0.25);
-  transition: all var(--transition-normal);
-}
-
-.weather-entry:active {
-  transform: scale(0.98);
-  opacity: 0.95;
-}
-
-.weather-entry-main {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24rpx;
-}
-
-.weather-entry-left {
-  display: flex;
-  align-items: center;
-  flex: 1;
-  min-width: 0;
-}
-
-.weather-entry-icon {
-  font-size: 72rpx;
-  margin-right: 20rpx;
-  flex-shrink: 0;
-  filter: drop-shadow(0 4rpx 8rpx rgba(0, 0, 0, 0.2));
-}
-
-.weather-entry-info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.weather-entry-title {
-  font-size: 34rpx;
-  font-weight: 600;
-  color: #FFFFFF;
-  margin-bottom: 8rpx;
-}
-
-.weather-entry-subtitle {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.85);
-}
-
-.weather-entry-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-left: 20rpx;
-}
-
-.weather-entry-temp {
-  font-size: 56rpx;
-  font-weight: 700;
-  color: #FFFFFF;
-  line-height: 1.1;
-}
-
-.weather-entry-temp-range {
-  font-size: 22rpx;
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.weather-entry-dress {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: var(--radius-lg);
-  padding: 20rpx 24rpx;
-  margin-bottom: 20rpx;
-  display: flex;
-  align-items: flex-start;
-}
-
-.weather-entry-dress-icon {
-  font-size: 28rpx;
-  margin-right: 12rpx;
-  flex-shrink: 0;
-  margin-top: 2rpx;
-}
-
-.weather-entry-dress-label {
-  font-size: 24rpx;
-  font-weight: 600;
-  color: #FFFFFF;
-  flex-shrink: 0;
-  margin-right: 8rpx;
-}
-
-.weather-entry-dress-text {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.9);
-  line-height: 1.5;
-  flex: 1;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
-
-.weather-entry-footer {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-}
-
-.weather-entry-arrow-text {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.8);
-  margin-right: 8rpx;
-}
-
-.weather-entry-arrow {
-  font-size: 28rpx;
-  color: #FFFFFF;
-  opacity: 0.8;
-}
-
-/* ==================== 暗色模式 - 轮播图对比度增强 ==================== */
+/* ==================== 暗色模式 ==================== */
 .dark .banner-overlay {
   background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.15) 100%);
 }
@@ -597,12 +1008,29 @@
   text-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.5);
 }
 
-.dark .nav-item:active {
-  transform: scale(0.92);
+.dark .shortcut-grid {
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-elevated) 100%);
 }
 
-.dark .news-item:active {
-  background-color: var(--color-bg-input);
+.dark .shortcut-icon-placeholder {
+  background: linear-gradient(135deg, var(--color-bg-elevated) 0%, var(--color-bg-input) 100%) !important;
+  border-color: var(--color-border);
+}
+
+.dark .edit-grid {
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-elevated) 100%);
+}
+
+.dark .all-services-grid {
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-elevated) 100%);
+}
+
+.dark .recent-item {
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-elevated) 100%);
+}
+
+.dark .quick-item {
+  background: linear-gradient(135deg, var(--color-bg-card) 0%, var(--color-bg-elevated) 100%);
 }
 
 .dark .quick-item:active {
@@ -612,4 +1040,12 @@
 .dark .search-entry-bar {
   background-color: var(--color-bg-card);
   border: 1rpx solid var(--color-border);
+}
+
+.dark .news-item:active {
+  background-color: var(--color-bg-input);
+}
+
+.dark .section-toggle {
+  background-color: var(--color-bg-card);
 }

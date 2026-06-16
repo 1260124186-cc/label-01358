@@ -215,7 +215,11 @@ const STORAGE_KEYS = {
   USER_DELETED_ACCOUNT: 'userDeletedAccount',
 
   PERSONAL_TODO_LIST: 'personalTodoList',
-  CALENDAR_EVENT_CACHE: 'calendarEventCache'
+  CALENDAR_EVENT_CACHE: 'calendarEventCache',
+
+  HOME_SHORTCUTS: 'home_shortcuts',
+  HOME_RECENTLY_USED: 'home_recently_used',
+  HOME_HIDDEN_MODULES: 'home_hidden_modules'
 };
 
 /**
